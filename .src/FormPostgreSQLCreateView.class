@@ -1,0 +1,83 @@
+' Gambas class file
+
+Public Sub Form_open()
+  ' initialize the vsplit
+  Dim query As String
+  VSplitMain.Settings = [1, 1]
+  EditorViewQuery.Flags[EditorViewQuery.ShowLineNumbers] = True
+  For Each query In FMain.db.dbobjects["queries"]["sql queries"]
+    ComboBoxChooseQuery.Add(FMain.db.dbobjects["queries"]["sql queries"].key)
+  Next
+End
+
+
+Public Sub RadioButtonCreateFromQuery_Click()
+  ' enable the combobox
+  ComboBoxChooseQuery.Enabled = True
+  EditorViewQuery.Enabled = False
+End
+
+Public Sub RadioButtonEnterQuery_Click()
+  ' enable the editor
+  EditorViewQuery.Enabled = True
+  ComboBoxChooseQuery.Enabled = False
+End
+
+Public Sub ToolButtonCancel_Click()
+ ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your view design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub ComboBoxChooseQuery_Click()
+  ' put the query text into the editor
+  EditorViewQuery.Text = FMain.db.dbobjects["queries"]["sql queries"][ComboBoxChooseQuery.Text]
+  EditorViewQuery.HighlightAll()
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' embed the results form in the panel and show the results
+  Dim res As FormPostgreSQLQueryResult
+  Dim con As New Connection
+  con.Type = FMain.db.con.Type
+  con.Host = FMain.db.con.Host
+  con.Port = FMain.db.con.Port
+  con.Login = FMain.db.con.Login
+  con.Password = FMain.db.con.Password
+  con.Name = FMain.db.con.Name
+  con.Open
+  res = New FormPostgreSQLQueryResult(PanelResult)
+  res.DataSourceMain.Table = EditorViewQuery.Text
+  res.DataSourceMain.Connection = con
+End
+
+Public Sub ToolButtonCreateView_Click()
+  ' create the view and close the tab
+  Dim child As Object
+  Dim repl As String
+  If Message.Question("Do you want to create the view?", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      If CheckBoxReplace.Value Then
+        repl = " OR REPLACE "
+      Else
+        repl = " "
+      Endif
+      FMain.db.execute("CREATE" & repl & "VIEW " & Left$(.Text, -7) & " AS " & EditorViewQuery.Text)
+      FMain.db.refresh_db_tree()
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+
+End

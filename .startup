@@ -1,0 +1,24 @@
+FMain
+Baze Database Environment
+0
+0
+0.3.1
+
+gb.image
+gb.qt4
+gb.form
+gb.db
+gb.db.form
+gb.db.postgresql
+gb.db.sqlite3
+gb.eval
+gb.eval.highlight
+gb.settings
+gb.image.effect
+gb.pcre
+gb.qt4.ext
+gb.qt4.webkit
+gb.web
+gb.xml
+gb.xml.xslt
+

@@ -1,0 +1,26 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub Form_Open()
+  ' on load get all table names
+  Dim dbobjects As Collection
+  Dim tbl As Object
+  dbobjects = FMain.db.get_db_objects()
+  For Each tbl In dbobjects["tables"]
+    ComboBoxTables.Add(tbl["table"])
+  Next
+End
+
+Public Sub ButtonOK_Click()
+  ' pass the table name back to the caller and close
+  caller.tbl = ComboBoxTables.Current.Text
+  Me.Hide
+End
+
+Public Sub ButtonCancel_Click()
+  ' cancel the request
+  caller.canceled = True
+  Me.hide
+
+End

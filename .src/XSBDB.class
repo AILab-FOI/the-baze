@@ -1,0 +1,36 @@
+' Gambas class file
+
+Inherits DBaze
+
+Public dsn As String
+Public xsb As String
+Public xsb_engine As XSBEngine
+Public con As DatalogConnection
+
+Public Sub _new(dsn As String, username As String, password As String, store_password As Boolean, xsb As String)
+  Me.dsn = dsn
+  Me.username = username
+  Me.password = password
+  Me.store_password = store_password
+  Me.xsb = xsb
+  
+  Me.connection_settings["connection type"] = "XSB"
+  Me.connection_settings["dsn"] = dsn
+  Me.connection_settings["username"] = username
+  Me.connection_settings["xsb"] = xsb
+  If Me.store_password Then
+    Me.connection_settings["password"] = password
+  Endif
+End
+
+Public Function connect() As Boolean
+  ' connect to the database
+  xsb_engine = New XSBEngine(Me.xsb)
+  Try con = New DatalogConnection(xsb_engine, Me.dsn, Me.username, Me.password)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+  
+End

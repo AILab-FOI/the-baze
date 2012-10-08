@@ -1,0 +1,144 @@
+' Gambas class file
+
+Public store_password As Boolean 'should the password be stored in the file or asked for
+
+Public username As String
+Public password As String
+Public baze_file As String
+Public temporary_folder As String
+Public $baze_sqlite As New Connection
+Public connection_settings As New Collection
+Public dbobjects As New Collection
+Public js As New JSON
+
+Public Sub init_folder()
+  ' create a new temporary folder
+  ' dump the JSON connection settings into baze.js
+  ' and add a new SQLite file into baze.sqlite
+  temporary_folder = Temp()
+  Mkdir temporary_folder
+  File.Save(temporary_folder & "/baze.js", contoJSON())
+  File.Save(temporary_folder & "/dbobjects.js", "")
+  With $baze_sqlite
+    .Type = "sqlite"
+    .host = temporary_folder
+    .Name = ""
+  End With
+  $baze_sqlite.Open
+  $baze_sqlite.Databases.add("baze.sqlite")
+  $baze_sqlite.Close
+ 
+  Catch
+    Message.Info(Error.Text)
+End
+
+Public Function contoJSON() As String
+  'dump the connection settings to JSON
+  Return js.Encode(Me.connection_settings)
+End
+
+Public Function dbotoJSON() As String
+  'dump the database objects to JSON
+  Return js.Encode(Me.dbobjects)
+End
+
+
+Public Sub Save()
+  ' zip the temporary files to the baze file
+  File.Save(temporary_folder & "/baze.js", contoJSON())
+  File.Save(temporary_folder & "/dbobjects.js", dbotoJSON())
+  Exec ["tar", "cf", baze_file, "-C", temporary_folder, "baze.sqlite", "baze.js", "dbobjects.js"] Wait
+End
+
+Public Sub new_file()
+  ' create a temporary folder to store the connection settings and zip it 
+  ' into the specified file
+  init_folder()
+  Save()
+End
+
+Public Sub load_file(dbfile As String) As Variant
+  ' load a given baze file and return the appropriate DB connection object
+  Dim js_content, js_line As String
+  Dim js_file As File
+  Dim save_password As Boolean
+  Dim db As Variant
+  temporary_folder = Temp()
+  Mkdir temporary_folder
+  Exec ["tar", "xf", dbfile, "-C", temporary_folder] Wait
+  Try js_file = Open temporary_folder & "/baze.js" For Input
+  If Error Then
+    Message.Error("This is not a valid baze file!")
+    FMain.Close
+    Return
+  Endif
+  js_content = ""
+  While Not Eof(js_file)
+    Line Input #js_file, js_line
+    js_content &= js_line
+  Wend
+  connection_settings = js.Decode(js_content)
+  Try js_file = Open temporary_folder & "/dbobjects.js" For Input
+  If Error Then
+    Message.Error("This is not a valid baze file!")
+    FMain.Close
+    Return
+  Endif
+  js_content = ""
+  While Not Eof(js_file)
+    Line Input #js_file, js_line
+    js_content &= js_line
+  Wend
+  If Len(js_content) = 0 Or Len(js_content) = 2 Then
+    initialize_dbobjects()
+  Else
+    dbobjects = js.Decode(js_content)
+  Endif
+  
+  Select Case connection_settings["connection type"]
+    Case "PostgreSQL"
+      pgnoconnect:
+      If Not connection_settings.Exist("password") Then
+        FormAskPasword.ShowModal
+        password = FMain.password
+        save_password = False
+      Else
+        password = connection_settings["password"]
+        save_password = True
+      Endif
+      db = New PostgreSQLDB(
+        connection_settings["host"], 
+        connection_settings["port"],
+        connection_settings["dbname"], 
+        connection_settings["username"], 
+        password, 
+        save_password)
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      If Not db.connect() Then
+        Goto pgnoconnect
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
+    End Select
+End
+
+Public Sub initialize_dbobjects()
+  ' initialize dbobjects
+  Me.dbobjects["queries"] = New Collection
+  Me.dbobjects["queries"]["sql queries"] = New Collection
+  Me.dbobjects["queries"]["qbe queries"] = New Collection
+  Me.dbobjects["queries"]["update queries"] = New Collection
+  Me.dbobjects["queries"]["insert queries"] = New Collection
+  Me.dbobjects["queries"]["delete queries"] = New Collection
+  
+  Me.dbobjects["forms"] = New Collection
+  Me.dbobjects["scripts"] = New Collection
+  
+End
+
+
+

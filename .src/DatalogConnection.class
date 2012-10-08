@@ -1,0 +1,113 @@
+' Gambas class file
+
+' Gambas class file DatalogConnection
+' by Markus Schatten <markus_dot_schatten_at_foi_dot_hr>
+' Faculty of Organization and Informatics,
+' Varazdin, Croatia, 2007
+
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+Export
+
+Private engine As XSBEngine
+Private resultSet As Object[]
+Private result As Collection
+
+Public Function execute(query As String, Optional allResults As Boolean = True, Optional distinct As Boolean = False) As Object[]
+  
+  Dim result As Object[]
+  
+  result = engine.execute(query, allResults, distinct)
+  Return result
+  
+End
+
+Public Sub load(module As String)
+  
+  engine.load(module)
+  
+End
+
+Private Function constructUpdateQuery(type As String, relation As String, numArgs As String) As String
+  Dim query As String
+  Dim i As Integer
+  query = "odbc_" & type & "( " & type & "_" & relation & "("
+  For i = 1 To Val(numArgs)
+    query = query & "__X" & Str(i) & ", "
+  Next 
+  query = Left(query, -2) & "), ( " & relation & "("
+  For i = 1 To numArgs
+    query = query & "__X" & Str(i) & ", "
+  Next 
+  query = Left(query, -2) & ") ) )."
+  
+  Return query
+  
+End
+
+
+Public Sub _new(xsb As XSBEngine, dsn As String, username As String, password As String)
+  Dim query As String
+  engine = xsb
+  
+  engine.load("odbc_call")
+  Sleep 0.5
+  If Not engine.success Then 
+    Print engine.result
+    Error.Raise(engine.result)
+  Endif 
+  engine.execute("odbc_open( \'" & dsn & "\', \'" & username & "\', \'" & password & "\').")  
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  engine.load("lists")  
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  engine.execute("setof(_R, (_R ^ odbc_sql([],'select tablename from pg_tables " & 
+    "where tablename not like ''pg_%'' and tablename not like ''sql_%''',_R)), _L), flatten(_L,__L), " &
+    "setof( _X, ( _X ^ ( member( _X, __L ), odbc_attach( _X, table( _X ) ) ) ), _L1 ).")
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  query = "setof(_R, (_R ^ odbc_sql([],'SELECT COUNT(*), tb.tablename " &
+    "FROM pg_attribute att, pg_type tp, pg_tables tb " &
+    "WHERE att.attrelid = tp.typrelid " &
+    "AND tp.typname = tb.tablename " &
+    "AND tb.tablename NOT LIKE ''pg_%'' " &
+    "AND tb.tablename NOT LIKE ''sql_%'' " &
+    "AND att.attstattarget <> 0 " &
+    "GROUP BY 2' " &
+    ",_R)), _L), " &
+    "member( [NumArgs, Relation], _L )."
+    
+  resultSet = engine.execute(query, True, True)
+  Print "Importing relations:\n"
+  query = ""
+  For Each result In resultSet
+    Print result["Relation"] & "/" & result["NumArgs"]
+    query = query & Left(constructUpdateQuery("insert", result["Relation"], result["NumArgs"]), -1) & ", "
+    query = query & Left(constructUpdateQuery("delete", result["Relation"], result["NumArgs"]), -1) & ", "
+  Next 
+  query = query & Left(query, -2) & "."
+  engine.execute(query)
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  Print "\nSuccess!"
+  
+ 
+End
+

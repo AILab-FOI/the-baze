@@ -1,0 +1,35 @@
+' Gambas class file
+
+Public tbl As String
+Public canceled As Boolean
+
+Public Sub ToolButtonUpdateTable_Click()
+  ' open the table chooser
+  Dim cho As New FormPostgreSQLChooseTable
+  Dim table_updater As FormPostgreSQLEditTableData
+  Dim con As Connection
+  Dim i As Integer
+  cho.caller = Me
+  cho.ShowModal()
+  If Not canceled Then
+    For i = 0 To FMain.main_tabstrip.Count - 1
+      If FMain.main_tabstrip[i].Text = tbl & " - Table" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    FMain.main_tabstrip.count += 1
+    con = New Connection
+    con.Type = FMain.db.con.Type
+    con.Host = FMain.db.con.Host
+    con.Port = FMain.db.con.Port
+    con.Login = FMain.db.con.Login
+    con.Password = FMain.db.con.Password
+    con.Name = FMain.db.con.Name
+    con.Open
+    table_updater = New FormPostgreSQLEditTableData(FMain.main_tabstrip)
+    table_updater.data_source.Table = tbl
+    table_updater.data_source.Connection = con
+    FMain.main_tabstrip.Text = tbl & " - Table"
+  Endif
+End

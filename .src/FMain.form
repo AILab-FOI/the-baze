@@ -1,0 +1,187 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,101.25,73)
+  Expand = True
+  Icon = Picture["images/majin-bu.png"]
+  Arrangement = Arrange.Fill
+  { MenuFile Menu
+    Text = ("File")
+    { MenuNew Menu
+      Text = ("New database")
+      Picture = Picture["icon:/32/new"]
+      Shortcut = "Ctrl+N"
+    }
+    { MenuOpen Menu
+      Text = ("Open")
+      Picture = Picture["icon:/32/open"]
+      Shortcut = "Ctrl+O"
+    }
+    { MenuSave Menu
+      Text = ("Save")
+      Picture = Picture["icon:/32/save"]
+      Shortcut = "Ctrl+S"
+    }
+    { MenuSaveAs Menu
+      Text = ("Save as")
+      Picture = Picture["icon:/32/save-as"]
+      Shortcut = "Ctrl+Shift+S"
+    }
+    { MenuQuit Menu
+      Text = ("Quit")
+      Picture = Picture["icon:/32/quit"]
+      Shortcut = "Alt+F4"
+    }
+  }
+  { MenuEdit Menu
+    Text = ("Edit")
+    { MenuCopy Menu
+      Text = ("Copy")
+      Picture = Picture["icon:/32/copy"]
+      Shortcut = "Ctrl+C"
+    }
+    { MenuCut Menu
+      Text = ("Cut")
+      Picture = Picture["icon:/32/cut"]
+      Shortcut = "Ctrl+X"
+    }
+    { MenuPaste Menu
+      Text = ("Paste")
+      Picture = Picture["icon:/32/paste"]
+      Shortcut = "Ctrl+V"
+    }
+    { MenuFind Menu
+      Text = ("Find")
+      Picture = Picture["icon:/32/find"]
+      Shortcut = "Ctrl+F"
+    }
+    { MenuReplace Menu
+      Text = ("Replace")
+      Picture = Picture["icon:/32/replace"]
+      Shortcut = "Ctrl+R"
+    }
+  }
+  { MenuSettings Menu
+    Text = ("Settings")
+    { MenuConnectionSettings Menu
+      Text = ("Connection settings")
+      Picture = Picture["icon:/32/network"]
+      Shortcut = "Ctrl+Shift+C"
+    }
+    { MenuApplicationSettings Menu
+      Text = ("Application settings")
+      Picture = Picture["icon:/32/options"]
+      Shortcut = "Ctrl+Shift+A"
+    }
+  }
+  { MenuHelp Menu
+    Text = ("?")
+    { MenuAbout Menu
+      Text = ("About Baze")
+      Picture = Picture["icon:/32/lamp"]
+    }
+  }
+  { MenuTreeTable Menu
+    Text = ("Table menu")
+    Visible = False
+    { MenuUpdateData Menu
+      Text = ("Update data")
+      Picture = Picture["icon:/32/edit"]
+    }
+    { MenuDropTable Menu
+      Text = ("Drop table")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeView Menu
+    Text = ("View menu")
+    Visible = False
+    { MenuDropView Menu
+      Text = ("Drop view")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeIndex Menu
+    Text = ("Index menu")
+    Visible = False
+    { MenuDropIndex Menu
+      Text = ("Drop index")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeFunction Menu
+    Text = ("Function menu")
+    Visible = False
+    { MenuDropFunction Menu
+      Text = ("Drop function")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeTrigger Menu
+    Text = ("Trigger menu")
+    Visible = False
+    { MenuDropTrigger Menu
+      Text = ("Drop trigger")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeSequence Menu
+    Text = ("Sequence menu")
+    Visible = False
+    { MenuDropSequence Menu
+      Text = ("Drop sequence")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuTreeType Menu
+    Text = ("Type menu")
+    Visible = False
+    { MenuDropType Menu
+      Text = ("Drop type")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { HSplitMain HSplit
+    MoveScaled(0,0,99,73)
+    { ToolPanelMain ToolPanel
+      MoveScaled(0,0,22,73)
+      Foreground = Color.TextBackground
+      Arrangement = Arrange.Vertical
+      Margin = True
+      Count = 4
+      Index = 0
+      Text = ("Data definition")
+      Index = 1
+      Text = ("Data manipulation")
+      Index = 2
+      Text = ("Data querying")
+      Index = 3
+      Text = ("Application")
+      { ToolButtonNewForm ToolButton
+        MoveScaled(4,1,14,8)
+        Mouse = Mouse.Pointing
+        Text = ("New form")
+        Picture = Picture["icon:/32/new-window"]
+      }
+      { ToolButtonNewScript ToolButton
+        MoveScaled(4,9,14,8)
+        Mouse = Mouse.Pointing
+        Text = ("New script")
+        Picture = Picture["icon:/32/exec"]
+      }
+      Index = 0
+    }
+    { TabStripMain TabStrip
+      MoveScaled(22,0,55,73)
+      Expand = True
+      Arrangement = Arrange.Fill
+      AutoResize = True
+      Index = 0
+      Text = ("Tab 0")
+      Index = 0
+    }
+    { TreeViewMain TreeView
+      MoveScaled(77,0,21,73)
+    }
+  }
+}

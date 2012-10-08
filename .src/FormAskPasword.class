@@ -1,0 +1,14 @@
+' Gambas class file
+
+
+Public Sub ButtonOK_Click()
+  FMain.password = TextBoxPassword.Text
+  Me.Close
+End
+
+Public Sub TextBoxPassword_KeyPress()
+  ' on press enter do like ok
+  If Key.Code = Key.Return Then
+    ButtonOK_Click()
+  Endif
+End

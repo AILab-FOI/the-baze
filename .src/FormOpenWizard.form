@@ -1,0 +1,494 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,88,64)
+  Icon = Picture["images/majin-bu.png"]
+  Resizable = False
+  { WizardIntro Wizard
+    MoveScaled(1,1,86,61)
+    Count = 8
+    Index = 0
+    Text = ("Database connection wizard")
+    { PictureBox1 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FrameActions Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { RadioButtonNew RadioButton
+        MoveScaled(2,2,17,3)
+        Text = ("New database")
+        Value = True
+      }
+      { RadioButtonOpen RadioButton
+        MoveScaled(2,7,17,3)
+        Text = ("Open database")
+      }
+      { RadioButtonConnect RadioButton
+        MoveScaled(2,38,30,4)
+        Text = ("Connect to existing database")
+      }
+      { ComboBoxDBTypes ComboBox
+        MoveScaled(23,43,23,4)
+        Enabled = False
+        ReadOnly = True
+        List = [("SQLite"), ("PostgreSQL"), ("XSB"), ("Flora2"), ("ZODB"), ("eXist"), ("CouchDB")]
+        Text = ("Choose ...")
+      }
+      { LabelDBType Label
+        MoveScaled(7,43,15,3)
+        Enabled = False
+        Text = ("Database type")
+      }
+      { ToolButtonOpen ToolButton
+        MoveScaled(22,24,5,4)
+        Enabled = False
+        Picture = Picture["icon:/32/open"]
+      }
+      { ListViewRecent ListView
+        MoveScaled(22,12,22,10)
+        Enabled = False
+      }
+      { LabelRecent Label
+        MoveScaled(4,12,17,3)
+        Enabled = False
+        Text = ("Recent databases")
+      }
+      { LabelOther Label
+        MoveScaled(5,25,12,3)
+        Enabled = False
+        Text = ("Open other")
+      }
+      { LabelChosenFile Label
+        MoveScaled(5,30,41,5)
+        Enabled = False
+      }
+    }
+    Index = 1
+    Text = ("Connection settings - PostgreSQL")
+    { PictureBox2 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FramePostgreSQLConnrction Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelPGHost Label
+        MoveScaled(4,7,9,4)
+        Text = ("Host")
+      }
+      { LabelPGPort Label
+        MoveScaled(4,13,9,4)
+        Text = ("Port")
+      }
+      { LabelPGDBName Label
+        MoveScaled(4,19,15,4)
+        Text = ("Database name")
+      }
+      { LabelPGUsername Label
+        MoveScaled(4,25,10,4)
+        Text = ("Username")
+      }
+      { LabelPGPassword Label
+        MoveScaled(4,31,9,4)
+        Text = ("Password")
+      }
+      { TextBoxPGHost TextBox
+        MoveScaled(23,7,19,4)
+        Text = ("localhost")
+      }
+      { TextBoxPGPort TextBox
+        MoveScaled(23,13,7,4)
+        Text = ("5432")
+      }
+      { TextBoxPGDBName TextBox
+        MoveScaled(23,19,19,4)
+      }
+      { TextBoxPGUsername TextBox
+        MoveScaled(23,25,19,4)
+      }
+      { TextBoxPGPassword TextBox
+        MoveScaled(23,31,19,4)
+        Password = True
+      }
+      { LabelPGPlease Label
+        MoveScaled(4,1,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonPGTest Button
+        MoveScaled(32,42,15,4)
+        Text = ("Test settings")
+      }
+      { CheckBoxPGStoreP CheckBox
+        MoveScaled(23,37,18,4)
+        Text = ("Store password")
+      }
+    }
+    Index = 2
+    Text = ("Connection settings - PostgreSQL + XSB")
+    { PictureBox3 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FrameXSBConnection Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelXHost Label
+        MoveScaled(4,9,9,4)
+        ToolTip = ("From /etc/odbc.ini")
+        Text = ("DSN")
+      }
+      { LabelXUsername Label
+        MoveScaled(4,16,10,4)
+        Text = ("Username")
+      }
+      { LabelXPassword Label
+        MoveScaled(4,23,9,4)
+        Text = ("Password")
+      }
+      { TextBoxXUsername TextBox
+        MoveScaled(26,16,19,4)
+      }
+      { TextBoxXPassword TextBox
+        MoveScaled(26,23,19,4)
+        Password = True
+      }
+      { LabelXPlease Label
+        MoveScaled(4,1,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonXTest Button
+        MoveScaled(32,43,15,4)
+        Text = ("Test settings")
+      }
+      { TextBoxXXSB TextBox
+        MoveScaled(26,35,15,4)
+        Text = ("/home/markus/myPackages/XSB/bin/xsb")
+      }
+      { LabelXXSB Label
+        MoveScaled(4,35,21,4)
+        Text = ("Path to XSB executable")
+      }
+      { ToolButtonFindXSB ToolButton
+        MoveScaled(42,35,5,4)
+        Picture = Picture["icon:/32/open"]
+      }
+      { CheckBoxXStoreP CheckBox
+        MoveScaled(26,29,18,4)
+        Text = ("Store password")
+      }
+      { ComboBoxXDSN ComboBox
+        MoveScaled(26,9,19,4)
+        ReadOnly = True
+      }
+    }
+    Index = 3
+    Text = ("Connection settings - PostgreSQL + Flora2")
+    { PictureBox4 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FrameFlora2Connection Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelfHost Label
+        MoveScaled(4,9,9,4)
+        ToolTip = ("From /etc/odbc.ini")
+        Text = ("DSN")
+      }
+      { LabelfUsername Label
+        MoveScaled(4,16,10,4)
+        Text = ("Username")
+      }
+      { LabelfPassword Label
+        MoveScaled(4,23,9,4)
+        Text = ("Password")
+      }
+      { TextBoxfUsername TextBox
+        MoveScaled(26,16,19,4)
+      }
+      { TextBoxfPassword TextBox
+        MoveScaled(26,23,19,4)
+        Password = True
+      }
+      { LabelXPlease2 Label
+        MoveScaled(4,1,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonfTest Button
+        MoveScaled(32,43,15,4)
+        Text = ("Test settings")
+      }
+      { TextBoxfflora2 TextBox
+        MoveScaled(26,35,15,4)
+      }
+      { Labelfflora2 Label
+        MoveScaled(4,35,22,4)
+        Text = ("Path to Flora2 executable")
+      }
+      { ToolButtonFindFlora2 ToolButton
+        MoveScaled(42,35,5,4)
+        Picture = Picture["icon:/32/open"]
+      }
+      { CheckBoxfStoreP CheckBox
+        MoveScaled(26,29,18,4)
+        Text = ("Store password")
+      }
+      { ComboBoxfDSN ComboBox
+        MoveScaled(26,9,19,4)
+        ReadOnly = True
+      }
+    }
+    Index = 4
+    Text = ("Connection settings - ZODB")
+    { PictureBox5 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FramePostgreSQLConnrction4 Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelZHost Label
+        MoveScaled(3,13,9,4)
+        Enabled = False
+        Text = ("Host")
+      }
+      { LabelZPort Label
+        MoveScaled(3,18,9,4)
+        Enabled = False
+        Text = ("Port")
+      }
+      { LabelZUsername Label
+        MoveScaled(3,28,10,4)
+        Text = ("Username")
+      }
+      { LabelZPassword Label
+        MoveScaled(3,33,9,4)
+        Text = ("Password")
+      }
+      { TextBoxZHost TextBox
+        MoveScaled(26,13,19,4)
+        Enabled = False
+        Text = ("localhost")
+      }
+      { TextBoxZPort TextBox
+        MoveScaled(26,18,7,4)
+        Enabled = False
+      }
+      { TextBoxZUsername TextBox
+        MoveScaled(26,28,19,4)
+      }
+      { TextBoxZPassword TextBox
+        MoveScaled(26,33,19,4)
+        Password = True
+      }
+      { LabelPGfPlease2 Label
+        MoveScaled(3,2,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonZTest Button
+        MoveScaled(30,43,15,4)
+        Text = ("Test settings")
+      }
+      { TextBoxZDBFile TextBox
+        MoveScaled(26,23,15,4)
+        Password = True
+      }
+      { LabelZDBFile Label
+        MoveScaled(3,23,12,4)
+        Text = ("Database file")
+      }
+      { ToolButtonFindZDBFile ToolButton
+        MoveScaled(42,23,5,4)
+        Picture = Picture["icon:/32/open"]
+      }
+      { CheckBoxZStoreP CheckBox
+        MoveScaled(26,38,18,4)
+        Text = ("Store password")
+      }
+      { ComboBoxZStorageType ComboBox
+        MoveScaled(26,8,19,4)
+        ReadOnly = True
+        List = [("File storage"), ("Client storage")]
+        Text = ("Choose...")
+      }
+      { LabelZStorageType Label
+        MoveScaled(3,8,13,4)
+        Text = ("Storage type")
+      }
+    }
+    Index = 5
+    Text = ("Connection settings - eXist")
+    { PictureBox6 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FramePostgreSQLConnrction5 Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelEHost Label
+        MoveScaled(4,10,9,4)
+        Text = ("Host")
+      }
+      { LabelEPort Label
+        MoveScaled(4,17,9,4)
+        Text = ("Port")
+      }
+      { LabelEUsername Label
+        MoveScaled(4,24,10,4)
+        Text = ("Username")
+      }
+      { LabelEPassword Label
+        MoveScaled(4,31,9,4)
+        Text = ("Password")
+      }
+      { TextBoxEHost TextBox
+        MoveScaled(23,10,19,4)
+        Text = ("localhost")
+      }
+      { TextBoxEPort TextBox
+        MoveScaled(23,17,7,4)
+        Text = ("80")
+      }
+      { TextBoxEUsername TextBox
+        MoveScaled(23,24,19,4)
+      }
+      { TextBoxEPassword TextBox
+        MoveScaled(23,31,19,4)
+        Password = True
+      }
+      { LabelEPlease Label
+        MoveScaled(4,3,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonETest Button
+        MoveScaled(32,42,15,4)
+        Text = ("Test settings")
+      }
+      { CheckBoxEStoreP CheckBox
+        MoveScaled(23,37,18,4)
+        Text = ("Store password")
+      }
+    }
+    Index = 6
+    Text = ("Connection settings - CouchDB")
+    { PictureBox7 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FramePostgreSQLConnrction6 Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelCHost Label
+        MoveScaled(4,10,9,4)
+        Text = ("Host")
+      }
+      { LabelCPort Label
+        MoveScaled(4,17,9,4)
+        Text = ("Port")
+      }
+      { LabelCUsername Label
+        MoveScaled(4,24,10,4)
+        Text = ("Username")
+      }
+      { LabelCPassword Label
+        MoveScaled(4,31,9,4)
+        Text = ("Password")
+      }
+      { TextBoxCHost TextBox
+        MoveScaled(23,10,19,4)
+        Text = ("localhost")
+      }
+      { TextBoxCPort TextBox
+        MoveScaled(23,17,7,4)
+        Text = ("80")
+      }
+      { TextBoxCUsername TextBox
+        MoveScaled(23,24,19,4)
+      }
+      { TextBoxCPassword TextBox
+        MoveScaled(23,31,19,4)
+        Password = True
+      }
+      { LabelCPlease Label
+        MoveScaled(4,3,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonCTest Button
+        MoveScaled(32,42,15,4)
+        Text = ("Test settings")
+      }
+      { CheckBoxCStoreP CheckBox
+        MoveScaled(23,37,18,4)
+        Text = ("Store password")
+      }
+    }
+    Index = 7
+    Text = ("Connection settings - SQLite")
+    { PictureBox8 PictureBox
+      MoveScaled(-5,1,55,49)
+      Background = &HFFFFFF&
+      Expand = True
+      Picture = Picture["majin_buu.jpg"]
+    }
+    { FramePostgreSQLConnrction7 Frame
+      MoveScaled(35,1,49,49)
+      Background = Color.Background
+      { LabelSUsername Label
+        MoveScaled(4,19,10,4)
+        Text = ("Username")
+      }
+      { LabelSPassword Label
+        MoveScaled(4,26,9,4)
+        Text = ("Password")
+      }
+      { TextBoxSUsername TextBox
+        MoveScaled(21,19,19,4)
+      }
+      { TextBoxSPassword TextBox
+        MoveScaled(21,26,19,4)
+        Password = True
+      }
+      { LabelSPlease Label
+        MoveScaled(4,4,31,4)
+        Text = ("Please enter the connection data:")
+      }
+      { ButtonSTest Button
+        MoveScaled(32,42,15,4)
+        Text = ("Test settings")
+      }
+      { CheckBoxSStoreP CheckBox
+        MoveScaled(23,34,18,4)
+        Text = ("Store password")
+      }
+      { ToolButtonFindSDBFile ToolButton
+        MoveScaled(42,12,5,4)
+        Picture = Picture["icon:/32/open"]
+      }
+      { TextBoxSDBFile TextBox
+        MoveScaled(21,12,19,4)
+        Password = True
+      }
+      { LabelSDBFile Label
+        MoveScaled(4,12,12,4)
+        Text = ("Database file")
+      }
+    }
+    Index = 0
+  }
+}

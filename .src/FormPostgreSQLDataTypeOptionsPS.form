@@ -1,0 +1,27 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,44,22)
+  { CheckBoxIs2DArray CheckBox
+    MoveScaled(20,3,16,4)
+    Text = ("2D array [][]")
+  }
+  { CheckBoxIsArray CheckBox
+    MoveScaled(3,3,16,4)
+    Text = ("Array type []")
+  }
+  { LabelPrecision Label
+    MoveScaled(4,10,14,4)
+    Text = ("Precision")
+  }
+  { ValueBoxPrecision ValueBox
+    MoveScaled(13,10,5,4)
+  }
+  { LabelScale Label
+    MoveScaled(21,10,14,4)
+    Text = ("Scale")
+  }
+  { ValueBoxScale ValueBox
+    MoveScaled(29,10,5,4)
+  }
+}

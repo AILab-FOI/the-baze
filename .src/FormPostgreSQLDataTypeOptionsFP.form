@@ -1,0 +1,41 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,57,24)
+  { CheckBoxIs2DArray CheckBox
+    MoveScaled(25,2,16,4)
+    Text = ("2D array [][]")
+  }
+  { CheckBoxIsArray CheckBox
+    MoveScaled(3,2,16,4)
+    Text = ("Array type []")
+  }
+  { LabelPrecision Label
+    MoveScaled(5,13,14,4)
+    Enabled = False
+    Text = ("Precision")
+  }
+  { ValueBoxPrecision ValueBox
+    MoveScaled(13,13,5,4)
+    Enabled = False
+  }
+  { LabelField Label
+    MoveScaled(22,13,14,4)
+    Enabled = False
+    Text = ("Field")
+  }
+  { ComboBoxField ComboBox
+    MoveScaled(27,13,17,4)
+    Enabled = False
+    ReadOnly = True
+    List = [("YEAR"), ("MONTH"), ("DAY"), ("HOUR"), ("MINUTE"), ("SECOND"), ("YEAR TO MONTH"), ("DAY TO HOUR"), ("DAY TO MINUTE"), ("DAY TO SECOND"), ("HOUR TO MINUTE"), ("HOUR TO SECOND"), ("MINUTE TO SECOND")]
+  }
+  { CheckBoxPrecision CheckBox
+    MoveScaled(3,9,19,3)
+    Text = ("Specify precision")
+  }
+  { CheckBoxField CheckBox
+    MoveScaled(25,9,14,2)
+    Text = ("Specify field")
+  }
+}

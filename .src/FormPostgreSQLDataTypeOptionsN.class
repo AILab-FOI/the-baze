@@ -1,0 +1,56 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub reload()
+  ' reload constraint if available
+  Dim row As Integer
+  row = caller.main_table_view.Row
+  With caller.pgtable
+    If .options.Count < row Then
+      Return
+    Else
+      If IsNull(.options[row]["1d array"]) Then
+        .options[row]["1d array"] = False
+      Endif
+      CheckBoxIsArray.value = .options[row]["1d array"]
+      If IsNull(.options[row]["2d array"]) Then
+        .options[row]["2d array"] = False
+      Endif
+      CheckBoxIs2DArray.Value = .options[row]["2d array"]
+      If IsNull(.options[row]["size"]) Then
+        .options[row]["size"] = False
+      Endif
+      ValueBoxSizeN.Text = .options[row]["size"]
+    Endif
+  End With
+  Catch
+    Return
+End
+
+
+Public Sub CheckBoxIsArray_Click()
+  ' an attribute is either a 1D array or 2D array, but not both 
+  ' so set the 2D array checkbox to false
+  If CheckBoxIsArray.Value = True Then
+    CheckBoxIs2DArray.Value = False
+    CheckBoxIsArray.Value = True
+  Endif
+  caller.pgtable.options[caller.main_table_view.Row]["1d array"] = CheckBoxIsArray.Value
+End
+
+Public Sub CheckBoxIs2DArray_Click()
+  ' an attribute is either a 1D array or 2D array, but not both 
+  ' so set the 1D array checkbox to false
+  If CheckBoxIs2DArray.Value = True Then
+    CheckBoxIs2DArray.Value = True
+    CheckBoxIsArray.Value = False
+  Endif
+  caller.pgtable.options[caller.main_table_view.Row]["2d array"] = CheckBoxIs2DArray.Value
+End
+
+Public Sub ValueBoxSizeN_KeyRelease()
+  ' set the precision for the current attribute
+  caller.pgtable.options[caller.main_table_view.Row]["size"] = ValueBoxSizeN.Text
+End
+

@@ -1,0 +1,300 @@
+' Gambas class file
+
+'return value from intro wizard
+' can be canceled (if canceled), 
+' new (if new file has to be created)
+' a filename (if the file should be opened)
+' connection (if a new connection should be established)
+Public wizard_return As String
+' if wizard_return is connection then here are the settings
+' else null
+Public connection_settings As Collection
+' current file we are working on
+Public current_file As String
+' password entered by user
+Public password As String
+' the db connection
+Public db As Variant
+' main tab strip
+Public main_tabstrip As TabStrip
+' main tree view
+Public main_treeview As TreeView
+' main tool panel
+Public main_toolpanel As ToolPanel
+  
+Public Sub _new()
+  ' make components visible to DB classes
+  Me.main_tabstrip = TabStripMain
+  Me.main_treeview = TreeViewMain
+  Me.main_toolpanel = ToolPanelMain
+  
+  ' open the wizard first
+  FormOpenWizard.ShowModal
+  If wizard_return = "canceled" Then ' wizard cancelled, close app
+    Me.close
+    Else
+      If wizard_return = "connection" Then ' create a new connection
+        If connection_settings = Null Then ' no connection settings supplied (X button), close app
+          Me.close
+        End If
+        save_file_as()
+        db = connection_settings["connection"]
+        db.baze_file = current_file
+        db.new_file()
+        db.initialize_dbobjects()
+        db.initialize_gui()
+        shift_recent_files(current_file)
+      Else
+        If wizard_return = "new" Then ' create a new (internal) baze file
+          save_file_as()
+          db = New SQLiteDBInternal("", "", "", False)
+          db.baze_file = current_file
+          db.new_file()
+          shift_recent_files(current_file)
+          Else
+            ' open an existing file
+            db = New DBaze
+            current_file = wizard_return
+            db = db.load_file(wizard_return)
+            Try db.initialize_gui()
+            shift_recent_files(current_file)
+        End If
+      End If
+  Endif
+End
+
+Public Sub Form_Open()
+  ' setup the main window horizontal split
+  ' Dim sql_split As New FormSQLSplit(TabStripMain)
+  HSplitMain.Settings = [1, 4, 1]
+  
+End
+
+Public Sub save_file_as()
+  ' save the newly created file
+  ' add .baze file extension if none specified
+  again:
+  Dialog.Filter = ["*.baze", "Baze file"]
+  If Dialog.SaveFile() Then Goto again
+  current_file = Dialog.Path
+  If String.Right(current_file, 5) <> ".baze" Then current_file &= ".baze"
+  Catch
+    Message.Info(Error.Text)
+    save_file_as()
+End
+
+
+
+
+Public Sub shift_recent_files(next_file As String)
+  ' shift the settings and add next_file on top
+  If next_file <> Settings["FormOpenWizard/sixth"] And next_file <> Settings["FormOpenWizard/fifth"] And next_file <> Settings["FormOpenWizard/fourth"] And next_file <> Settings["FormOpenWizard/third"] And next_file <> Settings["FormOpenWizard/second"] And next_file <> Settings["FormOpenWizard/first"] Then
+    Settings["FormOpenWizard/sixth"] = Settings["FormOpenWizard/fifth"]
+    Settings["FormOpenWizard/fifth"] = Settings["FormOpenWizard/fourth"]
+    Settings["FormOpenWizard/fourth"] = Settings["FormOpenWizard/third"]
+    Settings["FormOpenWizard/third"] = Settings["FormOpenWizard/second"]
+    Settings["FormOpenWizard/second"] = Settings["FormOpenWizard/first"]
+    Settings["FormOpenWizard/first"] = next_file
+  Endif
+End
+
+Public Sub TreeViewMain_Menu()
+ ' show the appropriate menu in the tree view
+  Select TreeViewMain.Current.ParentKey
+    Case "Tables"
+       MenuTreeTable.Popup()
+    Case "Views"
+      MenuTreeView.Popup()
+    Case "Indices"
+      MenuTreeIndex.Popup()
+    Case "Functions"
+      MenuTreeFunction.Popup()
+    Case "Triggers"
+      MenuTreeTrigger.Popup()
+    Case "Sequences"
+      MenuTreeSequence.Popup()
+    Case "Types"
+      MenuTreeType.Popup()
+  End Select
+  
+
+End
+
+Public Sub pg_escape(repl_string As String) As String
+  ' escape "-characters in a string
+  Return Replace(repl_string, "\"", "\"\"")  
+End
+
+Public Sub MenuDropTable_Click()
+  ' drop the table
+  If Message.Question("Are you sure that you want to drop table " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP TABLE \"" & pg_escape(TreeViewMain.Current.Text) & "\"", True)) Then
+      If Message.Question("Error while dropping table probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP TABLE \"" & pg_escape(TreeViewMain.Current.Text) & "\" CASCADE")) Then
+           Message.Error("Error while dropping table " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+  
+End
+
+Public Sub MenuDropView_Click()
+  ' drop the view
+  If Message.Question("Are you sure that you want to drop view " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP VIEW \"" & pg_escape(TreeViewMain.Current.Text) & "\"", True)) Then
+      If Message.Question("Error while dropping view probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP VIEW \"" & pg_escape(TreeViewMain.Current.Text) & "\" CASCADE")) Then
+           Message.Error("Error while dropping view " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+  
+End
+
+Public Sub MenuDropIndex_Click()
+  ' drop the index
+  If Message.Question("Are you sure that you want to drop index " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP INDEX \"" & pg_escape(TreeViewMain.Current.Text) & "\"", True)) Then
+      If Message.Question("Error while dropping index probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP INDEX \"" & pg_escape(TreeViewMain.Current.Text) & "\" CASCADE")) Then
+           Message.Error("Error while dropping index " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+  
+End
+
+Public Sub MenuDropSequence_Click()
+  ' drop the sequence
+  If Message.Question("Are you sure that you want to drop sequence " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP SEQUENCE \"" & pg_escape(TreeViewMain.Current.Text) & "\"", True)) Then
+      If Message.Question("Error while dropping sequence probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP SEQUENCE \"" & pg_escape(TreeViewMain.Current.Text) & "\" CASCADE")) Then
+           Message.Error("Error while dropping SEQUENCE " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+  
+End
+
+Public Sub MenuDropType_Click()
+  ' drop the type
+  If Message.Question("Are you sure that you want to drop type " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP TYPE \"" & pg_escape(TreeViewMain.Current.Text) & "\"", True)) Then
+      If Message.Question("Error while dropping sequence probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP TYPE \"" & pg_escape(TreeViewMain.Current.Text) & "\" CASCADE")) Then
+           Message.Error("Error while dropping type " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+  
+End
+
+Public Sub MenuDropFunction_Click()
+  ' drop the function
+  Dim func As String
+  Dim params As String
+  func = TreeViewMain.Current.Text
+  params = XSBEngine.findall(func, "(.*)[(]([^(]*)[)]", 2)[0]
+  func = XSBEngine.findall(func, "(.*)[(]([^(]*)[)]", 1)[0]
+  If params = ")" Then params = ""
+  If Message.Question("Are you sure that you want to drop function " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP FUNCTION \"" & pg_escape(func) & "\"" & "(" & params & ")", True)) Then
+      If Message.Question("Error while dropping function probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP FUNCTION \"" & pg_escape(func) & "\"" & "(" & params & ")" & " CASCADE")) Then
+           Message.Error("Error while dropping function " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuDropTrigger_Click()
+  ' drop the trigger
+  Dim trigger As String
+  Dim tbl As String
+  trigger = TreeViewMain.Current.Text
+  tbl = XSBEngine.findall(trigger, "(.*) on (.*)", 2)[0]
+  trigger = XSBEngine.findall(trigger, "(.*) on (.*)", 1)[0]
+  If Message.Question("Are you sure that you want to drop trigger " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    If IsNull(db.execute("DROP TRIGGER \"" & pg_escape(trigger) & "\"" & " ON \"" & pg_escape(tbl) & "\"", True)) Then
+      If Message.Question("Error while dropping trigger probably due to constraints! Should I use the CASCADE option?", "Yes", "No") = 1 Then
+         If IsNull(db.execute("DROP TRIGGER \"" & pg_escape(trigger) & "\"" & " ON \"" & pg_escape(tbl) & "\"" & " CASCADE")) Then
+           Message.Error("Error while dropping trigger " & TreeViewMain.Current.Text & "!")
+         Endif
+      Endif
+    Endif
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuUpdateData_Click()
+  ' open the table data editor
+  Dim tbl As String
+  Dim table_updater As FormPostgreSQLEditTableData
+  If TreeViewMain.Current.ParentKey = "Tables" Then
+    tbl = TreeViewMain.Current.Text
+    main_tabstrip.count += 1
+    table_updater = New FormPostgreSQLEditTableData(FMain.main_tabstrip)
+    table_updater.data_source.Connection = FMain.db.con
+    table_updater.data_source.Table = tbl
+    main_tabstrip.Text = tbl & " - Table"
+  Endif
+End
+
+
+
+Public Sub TreeViewMain_DblClick()
+  ' on double click open the given object
+  Dim tbl As String
+  Dim table_updater As FormPostgreSQLEditTableData
+  Dim con As Connection
+  Dim i As Integer
+  Dim sql_view As FormSQLSplit
+  If TreeViewMain.Current.ParentKey = "SQL queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - SQL query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    sql_view = New FormSQLSplit(TabStripMain)
+    sql_view.sql_editor.Text = db.dbobjects["queries"]["sql queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - SQL query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Tables" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Table" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    tbl = TreeViewMain.Current.Text
+    main_tabstrip.count += 1
+    con = New Connection
+    con.Type = FMain.db.con.Type
+    con.Host = FMain.db.con.Host
+    con.Port = FMain.db.con.Port
+    con.Login = FMain.db.con.Login
+    con.Password = FMain.db.con.Password
+    con.Name = FMain.db.con.Name
+    con.Open
+    table_updater = New FormPostgreSQLEditTableData(FMain.main_tabstrip)
+    table_updater.data_source.Table = tbl
+    table_updater.data_source.Connection = con
+    main_tabstrip.Text = tbl & " - Table"
+  Endif
+End

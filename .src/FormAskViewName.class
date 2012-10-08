@@ -1,0 +1,29 @@
+' Gambas class file
+
+Public caller As Object
+
+
+Public Sub ButtonOK_Click()
+  ' return the entered view name
+  If TextBoxViewName.Text Then
+    caller.view_name = TextBoxViewName.Text 
+    Me.Hide
+  Else
+    Message.Warning("Please enter a view name!")
+  Endif
+End
+
+
+Public Sub ButtonCancel_Click()
+  ' cancel the request
+  caller.request_canceled = True
+  Me.Hide
+End
+
+Public Sub TextBoxViewName_KeyPress()
+    ' if enter is pressed close the form
+  If Key.code = Key.Return Then
+    caller.view_name = TextBoxViewName.Text
+    Me.Hide
+  Endif
+End

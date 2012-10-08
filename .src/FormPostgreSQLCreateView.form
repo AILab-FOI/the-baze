@@ -1,0 +1,67 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,76,70)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(2,2,72,66)
+    Expand = True
+    { VBoxViewDesign VBox
+      MoveScaled(2,4,68,42)
+      { PanelToolBox Panel
+        MoveScaled(1,2,67,5)
+        Arrangement = Arrange.Row
+        AutoResize = True
+        { ToolButtonExecute ToolButton
+          MoveScaled(0,0,5,4)
+          ToolTip = ("Run query")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonCreateView ToolButton
+          MoveScaled(5,0,5,4)
+          ToolTip = ("Create view")
+          Picture = Picture["icon:/32/make-all"]
+        }
+        { ToolButtonCancel ToolButton
+          MoveScaled(10,0,5,4)
+          ToolTip = ("Cancel")
+          Picture = Picture["icon:/32/halt"]
+        }
+      }
+      { PanelChoose Panel
+        MoveScaled(1,9,66,11)
+        AutoResize = True
+        { RadioButtonCreateFromQuery RadioButton
+          MoveScaled(1,1,24,3)
+          Text = ("Create view from query")
+        }
+        { ComboBoxChooseQuery ComboBox
+          MoveScaled(25,0,22,4)
+          Enabled = False
+          ReadOnly = True
+          Sorted = True
+        }
+        { RadioButtonEnterQuery RadioButton
+          MoveScaled(1,6.375,24,3)
+          Text = ("Enter query directly")
+        }
+        { CheckBoxReplace CheckBox
+          MoveScaled(26,6,32,3)
+          Text = ("Replace existing view if it exists")
+          Value = CheckBox.True
+        }
+      }
+      { EditorViewQuery Editor
+        MoveScaled(2,21,65,19)
+        Enabled = False
+        Expand = True
+        Highlight = Highlight.SQL
+      }
+    }
+    { PanelResult Panel
+      MoveScaled(2,47,68,18)
+      Expand = True
+      Arrangement = Arrange.Fill
+    }
+  }
+}

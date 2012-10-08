@@ -1,0 +1,50 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,45,37)
+  Text = ("Choose a reference")
+  Resizable = False
+  { LabelChooseTable Label
+    MoveScaled(5,5,14,3)
+    Text = ("Choose table:")
+  }
+  { ComboBoxTable ComboBox
+    MoveScaled(21,5,19,4)
+    ReadOnly = True
+  }
+  { LabelChooseAttribute Label
+    MoveScaled(5,11,16,3)
+    Text = ("Choose attribute:")
+  }
+  { ComboBoxAttribute ComboBox
+    MoveScaled(21,11,19,4)
+    Enabled = False
+    ReadOnly = True
+  }
+  { ButtonOK Button
+    MoveScaled(30,31,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(19,31,10,4)
+    Text = ("Cancel")
+  }
+  { LabelOnDelete Label
+    MoveScaled(5,17,16,3)
+    Text = ("On delete:")
+  }
+  { ComboBoxOnDelete ComboBox
+    MoveScaled(21,17,19,4)
+    ReadOnly = True
+    List = [("NO ACTION"), ("RESTRICT"), ("CASCADE"), ("SET NULL"), ("SET DEFAULT")]
+  }
+  { LabelOnUpdate Label
+    MoveScaled(5,23,16,3)
+    Text = ("On update:")
+  }
+  { ComboBoxOnUpdate ComboBox
+    MoveScaled(21,23,19,4)
+    ReadOnly = True
+    List = [("NO ACTION"), ("RESTRICT"), ("CASCADE"), ("SET NULL"), ("SET DEFAULT")]
+  }
+}

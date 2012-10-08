@@ -1,0 +1,23 @@
+' Gambas class file
+
+Inherits DBaze
+
+Public host As String
+Public port As String
+
+Public Sub _new(host As String, port As String, username As String, password As String, store_password As Boolean)
+  Me.host = host
+  Me.port = port
+  Me.username = username
+  Me.password = password
+  Me.store_password = store_password
+  
+  Me.connection_settings["connection type"] = "eXist"
+  Me.connection_settings["host"] = host
+  Me.connection_settings["port"] = port
+  Me.connection_settings["username"] = username
+  If Me.store_password Then
+    Me.connection_settings["password"] = password
+  Endif
+End
+

@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Vertical
+  { ToolButtonNewSQLQuery ToolButton
+    MoveScaled(9,8,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New SQL query")
+    Picture = Picture["icon:/32/find"]
+  }
+  { ToolButtonNewQBEQuery ToolButton
+    MoveScaled(9,17,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New QBE query")
+    Picture = Picture["icon:/32/find"]
+  }
+}

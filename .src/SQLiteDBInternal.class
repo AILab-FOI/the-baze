@@ -1,0 +1,8 @@
+' Gambas class file
+
+Inherits SQLiteDB
+
+Public Sub _new()
+  Me.connection_settings["connection type"] = "SQLiteInternal" 
+   
+End

@@ -1,0 +1,19 @@
+' Gambas class file
+
+Inherits DBaze
+
+Public dbfile As String
+
+Public Sub _new(dbfile As String, username As String, password As String, store_password As Boolean)
+  Me.dbfile = dbfile
+  Me.username = username
+  Me.password = password
+  Me.store_password = store_password
+  
+  Me.connection_settings["connection type"] = "SQLite"
+  Me.connection_settings["dbfile"] = dbfile
+  Me.connection_settings["username"] = username
+  If Me.store_password Then
+    Me.connection_settings["password"] = password
+  Endif
+End

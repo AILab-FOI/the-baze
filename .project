@@ -1,0 +1,28 @@
+# Gambas Project File 3.0
+# Compiled with Gambas 3.3.0
+Title=Baze Database Environment
+Startup=FMain
+Icon=majin_buu.jpg
+Version=0.3.2
+Component=gb.image
+Component=gb.qt4
+Component=gb.form
+Component=gb.db
+Component=gb.db.form
+Component=gb.db.postgresql
+Component=gb.db.sqlite3
+Component=gb.eval
+Component=gb.eval.highlight
+Component=gb.settings
+Component=gb.image.effect
+Component=gb.pcre
+Component=gb.qt4.ext
+Component=gb.qt4.webkit
+Component=gb.web
+Component=gb.xml
+Component=gb.xml.xslt
+Authors="Markus Schatten <markus_dot_schatten_at_foi_dot_hr>"
+TabSize=2
+Translate=1
+Language=en_US
+Packager=1

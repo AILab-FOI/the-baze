@@ -1,0 +1,233 @@
+' Gambas class file
+
+' Gambas class file XSBEngine
+' by Markus Schatten <markus_dot_schatten_at_foi_dot_hr>
+' Faculty of Organization and Informatics,
+' Varazdin, Croatia, 2007
+
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+Export
+
+Public xsb_home As String
+Public xsb_command As String
+Public result As String
+Public resultsArray As Object[]
+Public success As Boolean
+Private proc As Process
+Private buff_size As Integer
+
+Static Public Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
+        Dim re As Regexp
+        Dim matches As New String[]
+        re = New Regexp(subj, pattern)
+        Do While re.offset >= 0 And subj <> ""
+                If submatchindex = 0 Then 
+                        matches.push(re.Text)
+                Else
+                        matches.push(re.SubMatches[submatchindex].Text)
+                End If
+                If Len(subj) > Len(re.text) Then
+                        subj = Mid(subj, re.offset + Len(re.text) + 1)
+                Else
+                        subj = ""       
+                End If
+                If subj <> "" Then re.exec(subj)
+        Loop
+        Return matches
+End
+
+Private Function renameDontCare(query As String) As String
+  
+  Dim re As Regexp
+  Dim counter As Integer
+  Dim result As String
+  
+  counter = 0
+  result = ""
+  
+  re = New Regexp(query, "(^|[^_A-Za-z0-9])([_])[^_A-Za-z0-9]")
+  Do While re.offset >= 0 And query <> ""
+    result = result & Left(query, re.SubMatches[2].Offset) & "_Gambas_Don_T_Care_Variable_" & Str(counter)
+    counter += 1
+    If Len(query) > Len(re.SubMatches[2].text) Then
+      query = Mid(query, re.SubMatches[2].offset + Len(re.SubMatches[2].text) + 1)
+    Else 
+      result = result & query
+      query = ""
+    End If
+    If query <> "" Then re.exec(query)
+    If Not re.offset >= 0 Then result = result & query
+  Loop 
+  If result = "" Then result = query
+  Return result
+End
+
+
+Private Function removeDups(listArray As String[]) As String[]
+  
+  Dim i, j As String
+  Dim hasDup As Boolean
+  Dim list As New String[]
+  
+  For Each i In listArray
+    For Each j In list
+      If i = j Then 
+        hasDup = True
+      Endif 
+    Next 
+    If Not hasDup Then 
+      list.push(i)
+    Endif 
+    hasDup = False
+  Next 
+  
+  Return list
+  
+End
+
+Public Sub load(module As String)
+  execute("['" & module & "'].")
+  
+End
+
+
+Public Function execute(query As String, Optional allResults As Boolean = False, Optional distinct As Boolean = False) As Object[]
+  Dim i, oldResult, predicate As String
+  Dim allVars, vars, answers As String[]
+  Dim returnVars, returnResults, newRes, newReturn, newVars As New String[]
+  Dim k, dontcareCount As Integer
+  Dim results As Collection
+  
+  query = renameDontCare(query)
+  vars = FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z][a-zA-Z0-9_]*)", 2)
+  vars = removeDups(vars)
+  
+  allVars = FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z_][a-zA-Z0-9_]*)", 2)
+  dontcareCount = 0
+  For k = 0 To allVars.count - 1
+    If allVars[k] = "_" Then 
+      allVars[k] = "_" & Str(dontcareCount)
+      dontcareCount = dontcareCount + 1
+    Endif 
+  Next
+  allVars = removeDups(allVars)
+  
+  
+    
+  If allResults Then 
+    If distinct Then 
+      predicate = "setof"
+    Else 
+      predicate = "findall"
+    Endif 
+    predicate = predicate & "(["
+    For Each i In vars
+      predicate = predicate & i & ", "
+    Next
+    predicate = Left(predicate, -2)
+    predicate = predicate & "], ("
+    For Each i In allVars
+      predicate = predicate & i & " ^ "      
+    Next 
+    predicate = predicate & "( " & Left(query, -1) & " ) ), GambasXSBResultListVariable )."
+    query = predicate
+  Endif 
+  
+  oldResult = result
+  Print #proc, query & "\n"
+  Sleep 0.5
+  Read #proc, result, buff_size
+  Do While oldResult <> result And result <> "" And Lof(proc) > 0
+    oldResult = result
+    Sleep 0.1
+    Read #proc, result, buff_size
+  Loop 
+  If result = "" Then 
+    result = oldResult
+  Endif 
+  
+  answers = Split(result, "\n")
+  For Each i In answers
+    If Left(i, 7) = "++Error"
+      Print result
+      success = False
+      Error.Raise(result)
+    Endif
+    If Left(i, 1) <> " " And Left(i, 9) <> "++Warning" Then 
+      Select Case i
+        Case ""
+          
+        Case "yes"
+          success = True
+        Case "no"
+          success = False
+        Default 
+          If vars.count > 0 Then 
+            Try returnVars.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
+            If Error Then Print "error" 
+            Try returnResults.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
+            If Error Then Print "error" 
+          Endif 
+      End Select 
+    Endif 
+  Next 
+  
+  resultsArray = New Object[]
+  
+  If allResults Then 
+    For k = 0 To returnVars.count - 1
+      If returnVars[k] = "GambasXSBResultListVariable" Then 
+        newRes = FindAll(returnResults[k], "\\[([^\\]\\[]+)\\]", 1)
+        Break 
+      Endif 
+    Next 
+    For Each i In returnVars
+      If i <> "GambasXSBResultListVariable"
+        newVars.push(i)
+      Endif 
+    Next 
+    returnVars = newVars
+    returnResults = New String[]
+    For Each i In newRes
+      newReturn = Split(i, ",")
+      results = New Collection
+      For k = 0 To returnVars.count - 1
+        results[returnVars[k]] = newReturn[k]
+      Next 
+      resultsArray.Add(results)
+    Next 
+  Else 
+    results = New Collection
+    For k = 0 To returnVars.count - 1
+      results[returnVars[k]] = returnResults[k]
+    Next   
+    resultsArray.Add(results)
+  Endif 
+  
+  Return resultsArray
+  
+End
+
+Public Sub _new(Optional home As String = "/usr/bin/xsb", Optional params As String = "--nobanner --quietload --noprompt 2>&1")
+  xsb_home = home  
+  buff_size = -1000
+  xsb_command = home & " " & params
+  proc = Shell xsb_command For Read Write
+  Write #proc, "[odbc_call].\n"
+  Read #proc, result, buff_size
+  Print result
+  
+End

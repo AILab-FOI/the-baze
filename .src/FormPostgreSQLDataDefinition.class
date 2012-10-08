@@ -1,0 +1,36 @@
+' Gambas class file
+
+Public table_name As String
+Public view_name As String
+Public request_canceled As Boolean
+
+Public Sub ToolButtonNewTable_Click()
+  ' open table designer
+  Dim ask As New FormAskTableName
+  Dim table_designer As FormPostgreSQLCreateTable
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    table_designer = New FormPostgreSQLCreateTable(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = table_name & " - Table"
+  Endif
+  
+
+End
+
+Public Sub ToolButtonNewView_Click()
+  ' open the view designer
+  Dim ask As New FormAskViewName
+  Dim view_designer As FormPostgreSQLCreateView
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    view_designer = New FormPostgreSQLCreateView(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = view_name & " - View"
+  Endif
+
+End

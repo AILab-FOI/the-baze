@@ -1,0 +1,71 @@
+' Gambas class file
+
+Public sql_editor As Editor
+
+Public Sub _new()
+  ' make editor visible
+  sql_editor = EditorSQL
+End
+
+
+Public Sub Form_Open()
+  VSplitMain.Settings = [1, 1]
+  EditorSQL.Flags[EditorSQL.ShowLineNumbers] = True
+End
+
+Public Sub ToolButtonExecute_Click()
+' execute the query and show the results
+  Dim results As Object[] 
+  Dim one_line As Collection
+  Dim value As Variant
+  Dim first As Boolean
+  Dim counter_row As Integer
+  Dim counter_col As Integer
+  Try results = FMain.db.execute(EditorSQL.Text)
+  If Error Then 
+    Message.Error(Error.Text)
+    Stop Event
+    Return
+  Else
+    FMain.db.new_sql_query(Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - 12), EditorSQL.Text) 
+    If results Then 
+      first = True
+      counter_row = 0
+      TableViewResults.Rows.Count = results.Count
+      If results.Count > 0 Then
+        TableViewResults.Columns.Count = results[0].Count
+        For Each one_line In results
+          counter_col = 0
+          For Each value In one_line
+            If first Then
+              TableViewResults.Columns[counter_col].Title = one_line.Key
+            Endif
+            TableViewResults.Row = counter_row
+            TableViewResults.Column = counter_col
+            TableViewResults.Current.Text = value 
+            counter_col += 1
+          Next
+          counter_row += 1
+          first = False
+        Next
+        TableViewResults.Enabled = True
+        TableViewResults.Row = 0 
+        TableViewResults.Column = 0
+      Else
+        TableViewResults.Columns.Count = 0
+      Endif
+    Endif
+  Endif
+End
+
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End

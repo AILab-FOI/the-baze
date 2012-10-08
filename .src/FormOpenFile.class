@@ -1,0 +1,23 @@
+' Gambas class file
+
+
+
+
+Public Sub ButtonOK_Click()
+  FormOpenWizard.openfile = FileChooserMain.Value
+  Me.Close
+
+End
+
+Public Sub ButtonCancel_Click()
+
+  Me.Hide
+
+End
+
+Public Sub FileChooserMain_DblClick()
+  
+  FormOpenWizard.openfile = FileChooserMain.Value
+  Me.Close
+  
+End

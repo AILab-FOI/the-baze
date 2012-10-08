@@ -1,0 +1,47 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub Form_Open()
+  ' load the form with db tables
+  Dim objects As Collection
+  Dim tab As Object
+  objects = FMain.db.get_db_objects()
+  For Each tab In objects["tables"]
+    ComboBoxTable.Add(tab["table"])
+  Next
+End
+
+Public Sub ButtonOK_Click()
+  ' return the selected table reference
+  If ComboBoxTable.text <> "" And ComboBoxAttribute.text <> "" Then
+    caller.reference = "\"" & ComboBoxTable.Text & "\"(\"" & ComboBoxAttribute.Text & "\")"
+    caller.onDelete = ComboBoxOnDelete.Text
+    caller.onUpdate = ComboBoxOnUpdate.Text
+    Me.Hide
+  Else
+    Message.Info("Please select both table and attribute!")
+  Endif
+End
+
+Public Sub ButtonCancel_Click()
+  ' don't return anything
+  caller.reference = ""
+  caller.onDelete = ""
+  caller.onUpdate = ""
+  Me.hide
+End
+
+Public Sub ComboBoxTable_click()
+  ' on change, load the appropriate attributes
+  Dim query As String
+  Dim result As Object[]
+  Dim res As Object
+  query = "SELECT a.attname as attribute, a.attnum FROM pg_catalog.pg_attribute a WHERE a.attrelid = (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & ComboBoxTable.Text & "' AND pg_catalog.pg_table_is_visible(c.oid)) AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum"
+  result = FMain.db.execute(query)
+  ComboBoxAttribute.List = []
+  For Each res In result
+    ComboBoxAttribute.Add(res["attribute"])
+  Next
+  ComboBoxAttribute.Enabled = True
+End

@@ -1,0 +1,315 @@
+' Gambas class file
+
+' holds the filename to be opened
+Public openfile As String
+' are there recently opened files
+Public hasrecent As Boolean
+' store the database type
+Public dbtype As String
+' path to XSB
+Public xsb_exe As String
+
+Public Sub _new()
+  Dim setting As String
+  Dim helper As String[]
+  ' set return value to canceled in case the user clicks the x button
+  FMain.wizard_return = "canceled"
+  ' check if there are recent files in stored settings and get the last six
+  hasrecent = True
+  dbtype = ""
+  setting = Settings["FormOpenWizard/first"]
+  helper = Split(setting, "/")
+  Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+  If setting <> "" Then
+    ListViewRecent.Add("first", setting)
+    setting = Settings["FormOpenWizard/second"]
+    helper = Split(setting, "/")
+    Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+    If setting <> "" Then
+      ListViewRecent.Add("second", setting)
+      setting = Settings["FormOpenWizard/third"]
+      helper = Split(setting, "/")
+      Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+      If setting <> "" Then
+        ListViewRecent.Add("third", setting)
+        setting = Settings["FormOpenWizard/fourth"]
+        helper = Split(setting, "/")
+        Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+        If setting <> "" Then
+          ListViewRecent.Add("fourth", setting)
+          setting = Settings["FormOpenWizard/fifth"]
+          helper = Split(setting, "/")
+          Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+          If setting <> "" Then
+            ListViewRecent.Add("fifth", setting)
+            setting = Settings["FormOpenWizard/sixth"]
+            helper = Split(setting, "/")
+            Try setting = helper[helper.Count - 1] & " (" & setting & ")"
+            If setting <> "" Then
+              ListViewRecent.Add("sixth", setting)
+            Endif
+          Endif
+        Endif
+      Endif
+    Endif
+    Else
+      hasrecent = False
+  Endif
+  load_odbc_dsn()
+End
+
+Private Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
+        ' findall matches of a given regex in a given string
+        Dim re As Regexp
+        Dim matches As New String[]
+        re = New Regexp(subj, pattern)
+        Do While re.offset >= 0 And subj <> ""
+                If submatchindex = 0 Then
+                        matches.push(re.Text)
+                Else
+                        matches.push(re.SubMatches[submatchindex].Text)
+                End If
+                If Len(subj) > Len(re.text) Then
+                        subj = Mid(subj, re.offset + Len(re.text) + 1)
+                Else
+                        subj = ""
+                End If
+                If subj <> "" Then re.exec(subj)
+        Loop
+        Return matches
+End
+
+Private Sub load_odbc_dsn()
+  ' parse /etc/odbc.ini and put the DSNs into the appropriate comboboxes
+  Dim odbc_ini As File
+  Dim txt As String
+  Dim tline As String
+  Dim DSNs As String[]
+  Dim dsn As String
+  Try odbc_ini = Open "/etc/odbc.ini" For Input
+  If Error Then
+    Message.Error("Cannot find odbc.ini file in /etc! Please install unixODBC")
+  Endif
+  txt = ""
+  While Not Eof(odbc_ini)
+    Line Input #odbc_ini, tLine
+    txt &= tLine
+  Wend
+  DSNs = FindAll(txt, "\\[([^\\]]+)\\]", 1) 
+  DSNs = DSNs.Sort(gb.IgnoreCase)
+  For Each dsn In DSNs
+    ComboBoxXDSN.Add(dsn, ComboBoxXDSN.Count)
+    ComboBoxfDSN.Add(dsn, ComboBoxXDSN.Count)
+  Next
+End
+
+
+Public Sub WizardIntro_BeforeChange()
+  ' check which option was selected (new, open, connection)
+  ' if new or open show the main frame
+  ' else show the appropriate connection settings wizard
+  Dim selected As String
+  Dim db As Variant
+  Stop Event
+  If RadioButtonNew.Value Then ' create a new baze
+    FMain.wizard_return = "new"
+    Me.Close
+  Else
+    If RadioButtonOpen.Value Then ' open an existing baze
+      If openfile = "" Then
+        Message.Error("Please choose a file to open!", "OK")
+      Else
+        FMain.wizard_return = openfile
+        Me.Close
+      Endif
+    Else ' connect to a database
+      If RadioButtonConnect.Value Then
+        If dbtype <> "" Then ' a database type has already been selected, connect to it
+          FMain.connection_settings = New Collection
+          Select Case dbtype
+            Case "PostgreSQL"
+              FMain.connection_settings["host"] = TextBoxPGHost.Text
+              FMain.connection_settings["port"] = TextBoxPGPort.Text
+              FMain.connection_settings["username"] = TextBoxPGUsername.Text
+              FMain.connection_settings["password"] = TextBoxPGPassword.Text
+              FMain.connection_settings["dbname"] = TextBoxPGDBName.Text
+              FMain.connection_settings["store password"] = CheckBoxPGStoreP.Value
+              db = New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
+              FMain.connection_settings["connection"] = db
+            Case "XSB"
+              FMain.connection_settings["dsn"] = ComboBoxXDSN.Text
+              FMain.connection_settings["username"] = TextBoxXUsername.Text
+              FMain.connection_settings["password"] = TextBoxXPassword.Text
+              FMain.connection_settings["xsb"] = TextBoxXXSB.Text
+              FMain.connection_settings["store password"] = CheckBoxXStoreP.Value
+              db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
+              FMain.connection_settings["connection"] = db
+            Case "Flora2"
+              WizardIntro[3].show
+            Case "ZODB"
+              WizardIntro[4].show
+            Case "eXist"
+              WizardIntro[5].show
+            Case "CouchDB"
+              WizardIntro[6].show
+            Case "SQLite"
+              WizardIntro[7].show
+            Case Else
+              Print "This is impossible!"
+          End Select
+          If db.connect() Then
+            Me.Close
+          Endif
+        Endif
+        FMain.wizard_return = "connection"
+        selected = ComboBoxDBTypes.Current.Text
+        dbtype = selected
+        WizardIntro[WizardIntro.Index].hide
+        Select Case selected ' show the appropriate menu
+          Case ""
+            WizardIntro[0].show
+            Message.Error("Please select a database type!", "OK")
+          Case "PostgreSQL"
+            WizardIntro[1].show
+          Case "XSB"
+            WizardIntro[2].show
+          Case "Flora2"
+            WizardIntro[3].show
+          Case "ZODB"
+            WizardIntro[4].show
+          Case "eXist"
+            WizardIntro[5].show
+          Case "CouchDB"
+            WizardIntro[6].show
+          Case "SQLite"
+            WizardIntro[7].show
+          Case Else
+            Print "This is impossible!"
+        End Select
+      Endif
+    Endif
+  Endif
+    
+End
+
+Public Sub WizardIntro_Cancel()
+  ' catch the cancel event and set the return variable to canceled
+  ' to prevent showing the main frame
+  FMain.wizard_return = "canceled"
+  Me.Close
+  
+End
+
+
+Public Sub ToolButtonOpen_Click()
+  ' open the file chooser 
+  FormOpenFile.ShowModal
+  LabelChosenFile.Text = openfile
+
+End
+
+Public Sub RadioButtonNew_Click()
+  ' if new radio is clicked disable the other two
+  toggle_open(False)
+  toggle_connect(False)
+
+End
+
+Private Sub toggle_open(value As Boolean)
+  ' if open radio is clicked disable the other two
+  ' take care that recent files remain disabled
+  ' if there are no recent files in settings
+  LabelRecent.Enabled = value
+  LabelOther.Enabled = value
+  LabelChosenFile.Enabled = value
+  If Not value Then
+    ListViewRecent.Enabled = value
+  Else
+    ListViewRecent.Enabled = hasrecent
+  Endif
+  ToolButtonOpen.Enabled = value
+  
+  
+End
+
+Private Sub toggle_connect(value As Boolean)
+  ' toggle all controls in the connect radio
+  LabelDBType.Enabled = value
+  ComboBoxDBTypes.Enabled = value
+  ComboBoxDBTypes.Index = 1
+End
+
+
+
+Public Sub RadioButtonOpen_Click()
+  ' toggle all controls in the open radio
+  toggle_connect(False)
+  toggle_open(True)
+
+End
+
+Public Sub RadioButtonConnect_Click()
+  ' if connect radio is clicked disable the other two
+  toggle_open(False)
+  toggle_connect(True)
+
+End
+
+Public Sub ListViewRecent_Click()
+  ' if recent file is selected update the file to be opened variable
+  Dim s As String
+  s = ListViewRecent.Current.Text
+  openfile = FindAll(s, "\\((.*)\\)", 1)[0]
+End
+
+
+
+
+
+Public Sub ComboBoxZStorageType_Click()
+
+  If ComboBoxZStorageType.Text = "Client storage" Then
+    LabelZHost.Enabled = True
+    LabelZPort.Enabled = True
+    TextBoxZHost.Enabled = True
+    TextBoxZPort.Enabled = True
+    LabelZDBFile.Enabled = False
+    TextBoxZDBFile.Enabled = False
+  Else
+    LabelZHost.Enabled = False
+    LabelZPort.Enabled = False
+    TextBoxZHost.Enabled = False
+    TextBoxZPort.Enabled = False
+    LabelZDBFile.Enabled = True
+    TextBoxZDBFile.Enabled = True
+  Endif
+
+End
+
+
+Public Sub ButtonPGTest_Click()
+  ' test the PostreSQL connection
+  Dim db As New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
+  
+  If db.connect() Then
+    Message.Info("Connection succesfull!")
+  Endif
+End
+
+
+Public Sub ButtonXTest_Click()
+  ' test the XSB connection
+  Dim db As New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
+  
+  If db.connect() Then
+    Message.Info("Connection succesfull!")
+  Endif
+
+End
+
+Public Sub ToolButtonFindXSB_Click()
+  ' show form to find XSB executable
+  FormFindXSB.ShowModal()
+  TextBoxXXSB.Text = xsb_exe
+
+End
