@@ -70,12 +70,19 @@ Public Sub ToolButtonCreateView_Click()
       Else
         repl = " "
       Endif
-      FMain.db.execute("CREATE" & repl & "VIEW " & Left$(.Text, -7) & " AS " & EditorViewQuery.Text)
-      FMain.db.refresh_db_tree()
-      For Each child In .Children
-        child.Close
-      Next
-      .Delete
+      If IsNull(FMain.db.execute("CREATE" & repl & "VIEW " & Left$(.Text, -7) & " AS " & EditorViewQuery.Text)) Then
+        Return
+      Else
+        With FMain.main_tabstrip.Current
+          For Each child In .Children
+            child.Close
+          Next
+            .Delete
+        End With
+        FMain.db.refresh_db_tree()
+        FMain.main_tabstrip.index = 0
+        Message.Info("View successfully created!")
+      Endif
     End With
     FMain.main_tabstrip.index = 0
   Endif

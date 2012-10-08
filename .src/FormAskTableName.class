@@ -20,7 +20,11 @@ End
 Public Sub TextBoxTableName_KeyPress()
     ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    caller.table_name = TextBoxTableName.Text
-    Me.Hide
+    If TextBoxTableName.Text <> "" Then
+      caller.table_name = TextBoxTableName.Text
+      Me.Hide
+    Else
+      Message.Info("Please enter a table name!")
+    Endif
   Endif
 End

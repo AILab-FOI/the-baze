@@ -257,7 +257,6 @@ Public Sub ToolButtonExecute_Click()
       Message.Info("Table successfully created!")
     Endif
   Endif
-
 End
 
 Public Sub ToolButtonCancel_Click()
@@ -272,8 +271,6 @@ Public Sub ToolButtonCancel_Click()
     End With
     FMain.main_tabstrip.index = 0
   Endif
-  
-
 End
 
 Public Sub CheckBoxCheck_Click()

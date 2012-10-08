@@ -169,7 +169,7 @@ Public Sub refresh_db_tree()
   Next
   FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("directory.png"))
   For Each tab In objects["triggers"]
-    FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load(objects["object types"]["triggers"]), "Triggers")
+    FMain.main_treeview.Add("tri_" & tab["trigger"] & "_on_" & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load(objects["object types"]["triggers"]), "Triggers")
   Next
   FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("directory.png"))
   For Each tab In objects["sequences"]

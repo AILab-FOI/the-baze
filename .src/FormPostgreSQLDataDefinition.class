@@ -2,6 +2,8 @@
 
 Public table_name As String
 Public view_name As String
+Public index_name As String
+Public trigger_name As String
 Public request_canceled As Boolean
 
 Public Sub ToolButtonNewTable_Click()
@@ -32,5 +34,32 @@ Public Sub ToolButtonNewView_Click()
     view_designer = New FormPostgreSQLCreateView(FMain.main_tabstrip)
     FMain.main_tabstrip.Text = view_name & " - View"
   Endif
+End
 
+Public Sub ToolButtonNewIndex_Click()
+' open the index designer
+  Dim ask As New FormAskIndexName
+  Dim index_designer As FormPostgreSQLCreateIndex
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    index_designer = New FormPostgreSQLCreateIndex(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = index_name & " - Index"
+  Endif
+End
+
+Public Sub ToolButtonNewTrigger_Click()
+' open the trigger designer
+  Dim ask As New FormAskTriggerName
+  Dim trigger_designer As FormPostgreSQLCreateTrigger
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    trigger_designer = New FormPostgreSQLCreateTrigger(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = trigger_name & " - Trigger"
+  Endif
 End
