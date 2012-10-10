@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,48,77)
+  MoveScaled(0,0,48,82)
   Arrangement = Arrange.Vertical
   { ToolButtonNewTable ToolButton
     MoveScaled(8,4,32,7)
@@ -44,5 +44,11 @@
     Mouse = Mouse.Pointing
     Text = ("Create type")
     Picture = Picture["icon:/32/menu"]
+  }
+  { ToolButtonNewEnum ToolButton
+    MoveScaled(8,72,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create enum")
+    Picture = Picture["icon:/32/view-detail"]
   }
 }

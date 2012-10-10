@@ -14,180 +14,119 @@ msgstr ""
 msgid "Baze Database Environment"
 msgstr ""
 
-#: FMain.form:50
-msgid "File"
-msgstr ""
-
-#: FMain.form:53 FormOpenWizard.form:141
-msgid "New database"
-msgstr ""
-
-#: FMain.form:59
-msgid "Open"
-msgstr ""
-
-#: FMain.form:65
-msgid "Save"
-msgstr ""
-
-#: FMain.form:71
-msgid "Save as"
-msgstr ""
-
-#: FMain.form:77
-msgid "Quit"
-msgstr ""
-
-#: FMain.form:84
-msgid "Edit"
-msgstr ""
-
-#: FMain.form:87
-msgid "Copy"
-msgstr ""
-
-#: FMain.form:93
-msgid "Cut"
-msgstr ""
-
-#: FMain.form:99
-msgid "Paste"
-msgstr ""
-
-#: FMain.form:105
-msgid "Find"
-msgstr ""
-
-#: FMain.form:111
-msgid "Replace"
-msgstr ""
-
-#: FMain.form:118
-msgid "Settings"
-msgstr ""
-
-#: FMain.form:121
-msgid "Connection settings"
-msgstr ""
-
-#: FMain.form:127
-msgid "Application settings"
-msgstr ""
-
-#: FMain.form:134
-msgid "?"
-msgstr ""
-
-#: FMain.form:137
-msgid "About Baze"
-msgstr ""
-
-#: FMain.form:143
+#: FMain.form:33
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:147
+#: FMain.form:37
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:152
+#: FMain.form:42
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:158
+#: FMain.form:48
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:162
+#: FMain.form:52
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:168
+#: FMain.form:58
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:172
+#: FMain.form:62
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:178
+#: FMain.form:68
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:182
+#: FMain.form:72
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:188
+#: FMain.form:78
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:192
+#: FMain.form:82
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:198
+#: FMain.form:88
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:202
+#: FMain.form:92
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:208
+#: FMain.form:98
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:212
+#: FMain.form:102
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:227
+#: FMain.form:117
 msgid "Data definition"
 msgstr ""
 
-#: FMain.form:229
+#: FMain.form:119
 msgid "Data manipulation"
 msgstr ""
 
-#: FMain.form:231
+#: FMain.form:121
 msgid "Data querying"
 msgstr ""
 
-#: FMain.form:233
+#: FMain.form:123
 msgid "Application"
 msgstr ""
 
-#: FMain.form:238
+#: FMain.form:128
 msgid "New form"
 msgstr ""
 
-#: FMain.form:245
+#: FMain.form:135
 msgid "New script"
 msgstr ""
 
-#: FMain.form:257
+#: FMain.form:147
 msgid "Tab 0"
 msgstr ""
 
-#: FormAskIndexName.form:14
-msgid "Please enter a name for the index:"
+#: FormAskFunctionName.form:14
+msgid "Please enter a name for the function:"
 msgstr ""
 
-#: FormAskIndexName.form:23 FormAskPasword.form:25 FormAskQueryName.form:25
-#: FormAskTableName.form:24 FormAskTriggerName.form:23 FormAskViewName.form:24
+#: FormAskFunctionName.form:23 FormAskIndexName.form:23 FormAskPasword.form:25
+#: FormAskQueryName.form:25 FormAskTableName.form:24
+#: FormAskTriggerName.form:23 FormAskTypeName.form:23 FormAskViewName.form:24
 #: FormFindXSB.form:23 FormOpenFile.form:18 FormPostgreSQLChooseTable.form:30
 #: FormPostgreSQLGetReference.form:43
 msgid "OK"
 msgstr ""
 
-#: FormAskIndexName.form:28 FormAskQueryName.form:30 FormAskTableName.form:29
-#: FormAskTriggerName.form:28 FormAskViewName.form:29 FormFindXSB.form:18
-#: FormOpenFile.form:23 FormPostgreSQLChooseTable.form:25
-#: FormPostgreSQLCreateIndex.form:57 FormPostgreSQLCreateTable.form:72
-#: FormPostgreSQLCreateTrigger.form:106 FormPostgreSQLCreateView.form:48
+#: FormAskFunctionName.form:28 FormAskIndexName.form:28
+#: FormAskQueryName.form:30 FormAskTableName.form:29
+#: FormAskTriggerName.form:28 FormAskTypeName.form:28 FormAskViewName.form:29
+#: FormFindXSB.form:18 FormOpenFile.form:23 FormPostgreSQLChooseTable.form:25
+#: FormPostgreSQLCreateFunction.form:64 FormPostgreSQLCreateIndex.form:57
+#: FormPostgreSQLCreateTable.form:73 FormPostgreSQLCreateTrigger.form:106
+#: FormPostgreSQLCreateType.form:40 FormPostgreSQLCreateView.form:48
 #: FormPostgreSQLEditTableData.form:34 FormPostgreSQLGetReference.form:48
 msgid "Cancel"
+msgstr ""
+
+#: FormAskIndexName.form:14
+msgid "Please enter a name for the index:"
 msgstr ""
 
 #: FormAskPasword.form:10
@@ -214,6 +153,10 @@ msgstr ""
 msgid "Please enter a name for the trigger:"
 msgstr ""
 
+#: FormAskTypeName.form:14
+msgid "Please enter a name for the type:"
+msgstr ""
+
 #: FormAskViewName.form:15
 msgid "Please enter a name for the view:"
 msgstr ""
@@ -236,6 +179,10 @@ msgstr ""
 
 #: FormOpenWizard.form:126
 msgid "Database connection wizard"
+msgstr ""
+
+#: FormOpenWizard.form:141
+msgid "New database"
 msgstr ""
 
 #: FormOpenWizard.form:147
@@ -402,12 +349,152 @@ msgstr ""
 msgid "Choose table to edit:"
 msgstr ""
 
+#: FormPostgreSQLCreateFunction.form:58 FormPostgreSQLDataDefinition.form:41
+msgid "Create function"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:73
+msgid "Arguments"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:78
+msgid "Mode"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:84
+msgid "IN"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:84
+msgid "OUT"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:84
+msgid "INOUT"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:84
+msgid "VARIADIC"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:89
+msgid "Name"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:98
+msgid "Type"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:108 FormPostgreSQLCreateTable.form:156
+msgid "Default"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:129
+msgid "Return values"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:134
+msgid "Returns type"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:140
+msgid "Returns table"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:150
+msgid "Set of"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:193
+msgid "Function options"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:198
+msgid "Implementation language"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:208
+msgid "Use replace in function creation"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:211
+msgid "Advanced options"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:216
+msgid "Optimization"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:223
+msgid "IMMUTABLE"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:223
+msgid "STABLE"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:223
+msgid "VOLATILE"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:228
+msgid "Null input"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:235
+msgid "CALLED ON NULL INPUT"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:235
+msgid "RETURNS NULL ON NULL INPUT"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:235
+msgid "STRICT"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:240
+msgid "Security"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:247
+msgid "SECURITY INVOKER"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:247
+msgid "EXTERNAL SECURITY INVOKER"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:247
+msgid "SECURITY DEFINER"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:247
+msgid "EXTERNAL SECURITY DEFINER"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:257
+msgid "Cost"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:262
+msgid "Rows"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:277
+msgid "Set"
+msgstr ""
+
+#: FormPostgreSQLCreateFunction.form:287 FormPostgreSQLCreateIndex.form:109
+msgid "With"
+msgstr ""
+
 #: FormPostgreSQLCreateIndex.form:38 FormPostgreSQLCreateTrigger.form:59
 msgid "Table"
 msgstr ""
 
 #: FormPostgreSQLCreateIndex.form:51 FormPostgreSQLCreateTrigger.form:100
-#: FormPostgreSQLDataDefinition.form:33
+#: FormPostgreSQLDataDefinition.form:34
 msgid "Create index"
 msgstr ""
 
@@ -419,7 +506,7 @@ msgstr ""
 msgid "Concurrently"
 msgstr ""
 
-#: FormPostgreSQLCreateIndex.form:73 FormPostgreSQLCreateTable.form:113
+#: FormPostgreSQLCreateIndex.form:73 FormPostgreSQLCreateTable.form:114
 msgid "Unique"
 msgstr ""
 
@@ -447,10 +534,6 @@ msgstr ""
 msgid "Tablespace"
 msgstr ""
 
-#: FormPostgreSQLCreateIndex.form:109
-msgid "With"
-msgstr ""
-
 #: FormPostgreSQLCreateIndex.form:114
 msgid "Method"
 msgstr ""
@@ -475,6 +558,10 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: FormPostgreSQLCreateIndex.form:155
+msgid "Remove"
+msgstr ""
+
 #: FormPostgreSQLCreateIndex.form:168
 msgid "First"
 msgstr ""
@@ -495,63 +582,60 @@ msgstr ""
 msgid "Menu table design"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:47
+#: FormPostgreSQLCreateTable.form:48
 msgid "Delete this row"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:51
+#: FormPostgreSQLCreateTable.form:52
 msgid "Make primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:66 FormPostgreSQLDataDefinition.form:19
+#: FormPostgreSQLCreateTable.form:67 FormPostgreSQLCreateType.form:34
+#: FormPostgreSQLDataDefinition.form:20
 msgid "Create table"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:91
+#: FormPostgreSQLCreateTable.form:92 FormPostgreSQLCreateType.form:54
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:97
+#: FormPostgreSQLCreateTable.form:98
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:100
+#: FormPostgreSQLCreateTable.form:101
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:108
+#: FormPostgreSQLCreateTable.form:109
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:118
+#: FormPostgreSQLCreateTable.form:119
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:123
+#: FormPostgreSQLCreateTable.form:124
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:128
+#: FormPostgreSQLCreateTable.form:129
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:139
+#: FormPostgreSQLCreateTable.form:140
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:140
+#: FormPostgreSQLCreateTable.form:141
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:146
+#: FormPostgreSQLCreateTable.form:147
 msgid ")"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:155
-msgid "Default"
-msgstr ""
-
-#: FormPostgreSQLCreateTable.form:164
+#: FormPostgreSQLCreateTable.form:165
 msgid "Table constraints"
 msgstr ""
 
@@ -613,11 +697,19 @@ msgstr ""
 msgid "Chosen events"
 msgstr ""
 
+#: FormPostgreSQLCreateType.form:18
+msgid "Creat type menu"
+msgstr ""
+
+#: FormPostgreSQLCreateType.form:22
+msgid "Delete row"
+msgstr ""
+
 #: FormPostgreSQLCreateView.form:36
 msgid "Run query"
 msgstr ""
 
-#: FormPostgreSQLCreateView.form:42 FormPostgreSQLDataDefinition.form:26
+#: FormPostgreSQLCreateView.form:42 FormPostgreSQLDataDefinition.form:27
 msgid "Create view"
 msgstr ""
 
@@ -633,20 +725,20 @@ msgstr ""
 msgid "Replace existing view if it exists"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:40
-msgid "Create function"
-msgstr ""
-
-#: FormPostgreSQLDataDefinition.form:47
+#: FormPostgreSQLDataDefinition.form:48
 msgid "Create trigger"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:54
+#: FormPostgreSQLDataDefinition.form:55
 msgid "Create sequence"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:61
+#: FormPostgreSQLDataDefinition.form:62
 msgid "Create type"
+msgstr ""
+
+#: FormPostgreSQLDataDefinition.form:69
+msgid "Create enum"
 msgstr ""
 
 #: FormPostgreSQLDataManipulation.form:16

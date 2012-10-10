@@ -18,71 +18,71 @@ msgstr ""
 msgid "Menu table design"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:47
+#: FormPostgreSQLCreateTable.form:48
 msgid "Delete this row"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:51
+#: FormPostgreSQLCreateTable.form:52
 msgid "Make primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:66
+#: FormPostgreSQLCreateTable.form:67
 msgid "Create table"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:72
+#: FormPostgreSQLCreateTable.form:73
 msgid "Cancel"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:91
+#: FormPostgreSQLCreateTable.form:92
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:97
+#: FormPostgreSQLCreateTable.form:98
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:100
+#: FormPostgreSQLCreateTable.form:101
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:108
+#: FormPostgreSQLCreateTable.form:109
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:113
+#: FormPostgreSQLCreateTable.form:114
 msgid "Unique"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:118
+#: FormPostgreSQLCreateTable.form:119
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:123
+#: FormPostgreSQLCreateTable.form:124
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:128
+#: FormPostgreSQLCreateTable.form:129
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:139
+#: FormPostgreSQLCreateTable.form:140
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:140
+#: FormPostgreSQLCreateTable.form:141
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:146
+#: FormPostgreSQLCreateTable.form:147
 msgid ")"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:155
+#: FormPostgreSQLCreateTable.form:156
 msgid "Default"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:164
+#: FormPostgreSQLCreateTable.form:165
 msgid "Table constraints"
 msgstr ""
 

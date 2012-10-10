@@ -1,7 +1,12 @@
 ' Gambas class file
 
+' table name to edit data
 Public tbl As String
+' inbox for the query name of the ask form
+Public query_name As String
+' was the request canceled (should be one variable!)
 Public canceled As Boolean
+Public request_canceled As Boolean
 
 Public Sub ToolButtonUpdateTable_Click()
   ' open the table chooser
@@ -31,5 +36,80 @@ Public Sub ToolButtonUpdateTable_Click()
     table_updater.data_source.Table = tbl
     table_updater.data_source.Connection = con
     FMain.main_tabstrip.Text = tbl & " - Table"
+  Endif
+End
+
+Public Sub ToolButtonNewUpdateQuery_Click()
+' create a new tab in the tabview and add the SQL querying interface
+  Dim ui As FormSQLSplit
+  Dim ask As FormAskQueryName
+  askagain:
+  ask = New FormAskQueryName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Update queries")
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = query_name & " - Update query"
+      FMain.db.new_sql_query(query_name, " ", "update queries")
+      ui = New FormSQLSplit(FMain.main_tabstrip)
+      ui.sql_editor.text = "UPDATE "
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewInsertQuery_Click()
+' create a new tab in the tabview and add the SQL querying interface
+  Dim ui As FormSQLSplit
+  Dim ask As FormAskQueryName
+  askagain:
+  ask = New FormAskQueryName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Insert queries")
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = query_name & " - Insert query"
+      FMain.db.new_sql_query(query_name, " ", "insert queries")
+      ui = New FormSQLSplit(FMain.main_tabstrip)
+      ui.sql_editor.text = "INSERT INTO "
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewDeleteQuery_Click()
+' create a new tab in the tabview and add the SQL querying interface
+  Dim ui As FormSQLSplit
+  Dim ask As FormAskQueryName
+  askagain:
+  ask = New FormAskQueryName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Delete queries")
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = query_name & " - Delete query"
+      FMain.db.new_sql_query(query_name, " ", "delete queries")
+      ui = New FormSQLSplit(FMain.main_tabstrip)
+      ui.sql_editor.text = "DELETE FROM "
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
   Endif
 End

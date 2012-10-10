@@ -275,6 +275,45 @@ Public Sub TreeViewMain_DblClick()
     sql_view.sql_editor.Text = db.dbobjects["queries"]["sql queries"][TreeViewMain.Current.Key]
     TabStripMain.Text = TreeViewMain.Current.Key & " - SQL query"
   Endif
+  If TreeViewMain.Current.ParentKey = "Update queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Update query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    sql_view = New FormSQLSplit(TabStripMain)
+    sql_view.sql_editor.Text = db.dbobjects["queries"]["update queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Update query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Insert queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Insert query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    sql_view = New FormSQLSplit(TabStripMain)
+    sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Insert query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Delete queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Delete query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    sql_view = New FormSQLSplit(TabStripMain)
+    sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Delete query"
+  Endif
   If TreeViewMain.Current.ParentKey = "Tables" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Table" Then 

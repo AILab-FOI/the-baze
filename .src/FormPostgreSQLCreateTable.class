@@ -371,6 +371,8 @@ Public Sub CheckBoxPrimaryKey_Click()
   ListBoxPrimaryKey.Enabled = False
   ' add a primary key constraint to the current attribute
   pgtable.change_primary_key_constraint(TableViewMain.Row, CheckBoxPrimaryKey.Value)
+  Catch
+    Return
 End
 
 Public Sub ButtonFindReferencedTable_Click()
@@ -385,28 +387,34 @@ End
 
 Public Sub TableViewMain_Menu()
   ' show the popup menu
-  MenuTableDesign.Popup()
+  If all_previous(TableViewMain.Row) Then
+    MenuTableDesign.Popup()
+  Endif
 End
 
 Public Sub MenuDeleteRow_Click()
   ' delete the current row
   Dim i As Integer
-  With TableViewMain
-    For i = .Row To .Rows.Count - 2
-      TableViewMain[i, 0].Text = TableViewMain[i + 1, 0].Text
-      TableViewMain[i, 1].Text = TableViewMain[i + 1, 1].Text
-      TableViewMain[i, 2].Text = TableViewMain[i + 1, 2].Text
-    Next
-  End With
-  With pgtable
-    .attributes.Delete(TableViewMain.Row)
-    .constraints.Delete(TableViewMain.Row)
-    .datatypes.Delete(TableViewMain.Row)
-    .descriptions.Delete(TableViewMain.Row)
-  End With
-  TableViewMain.Column = 0
-  TableViewMain.Column = 1
-  TableViewMain.Column = 2
+  If all_previous(TableViewMain.Row) Then
+    With TableViewMain
+      For i = .Row To .Rows.Count - 2
+        TableViewMain[i, 0].Text = TableViewMain[i + 1, 0].Text
+        TableViewMain[i, 1].Text = TableViewMain[i + 1, 1].Text
+        TableViewMain[i, 2].Text = TableViewMain[i + 1, 2].Text
+      Next
+    End With
+    With pgtable
+      .attributes.Delete(TableViewMain.Row)
+      .constraints.Delete(TableViewMain.Row)
+      .datatypes.Delete(TableViewMain.Row)
+      .descriptions.Delete(TableViewMain.Row)
+    End With
+    TableViewMain.Column = 0
+    TableViewMain.Column = 1
+    TableViewMain.Column = 2
+  Endif
+  Catch
+    Return
 End
 
 Public Sub MenuPrimaryKey_Click()

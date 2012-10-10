@@ -14,31 +14,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FormPostgreSQLDataDefinition.form:19
+#: FormPostgreSQLDataDefinition.form:20
 msgid "Create table"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:26
+#: FormPostgreSQLDataDefinition.form:27
 msgid "Create view"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:33
+#: FormPostgreSQLDataDefinition.form:34
 msgid "Create index"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:40
+#: FormPostgreSQLDataDefinition.form:41
 msgid "Create function"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:47
+#: FormPostgreSQLDataDefinition.form:48
 msgid "Create trigger"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:54
+#: FormPostgreSQLDataDefinition.form:55
 msgid "Create sequence"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:61
+#: FormPostgreSQLDataDefinition.form:62
 msgid "Create type"
+msgstr ""
+
+#: FormPostgreSQLDataDefinition.form:69
+msgid "Create enum"
 msgstr ""
 

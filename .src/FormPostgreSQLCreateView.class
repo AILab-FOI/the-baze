@@ -88,3 +88,22 @@ Public Sub ToolButtonCreateView_Click()
   Endif
 
 End
+
+Public Sub EditorViewQuery_KeyPress_()
+  ' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    EditorViewQuery.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      EditorViewQuery.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        EditorViewQuery.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          EditorViewQuery.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End

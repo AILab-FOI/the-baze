@@ -33,15 +33,15 @@ Public Sub ButtonCancel_Click()
 End
 
 Public Sub ComboBoxTable_click()
-  ' on change, load the appropriate attributes
-  Dim query As String
-  Dim result As Object[]
-  Dim res As Object
-  query = "SELECT a.attname as attribute, a.attnum FROM pg_catalog.pg_attribute a WHERE a.attrelid = (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & ComboBoxTable.Text & "' AND pg_catalog.pg_table_is_visible(c.oid)) AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum"
-  result = FMain.db.execute(query)
+  ' on change, load the appropriate attributes  
+  Dim dbobjects As Collection
+  Dim att As Object
   ComboBoxAttribute.List = []
-  For Each res In result
-    ComboBoxAttribute.Add(res["attribute"])
+    
+  dbobjects = FMain.db.get_db_objects()
+  For Each att In dbobjects["attributes"][ComboBoxTable.Text]
+    ComboBoxAttribute.Add(att["attribute"])
   Next
+  
   ComboBoxAttribute.Enabled = True
 End

@@ -5,6 +5,7 @@
   Arrangement = Arrange.Fill
   { MenuTableDesign Menu
     Text = ("Menu table design")
+    Visible = False
     { MenuDeleteRow Menu
       Text = ("Delete this row")
     }

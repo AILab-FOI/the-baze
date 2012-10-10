@@ -14,159 +14,91 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FMain.form:50
-msgid "File"
-msgstr ""
-
-#: FMain.form:53
-msgid "New database"
-msgstr ""
-
-#: FMain.form:59
-msgid "Open"
-msgstr ""
-
-#: FMain.form:65
-msgid "Save"
-msgstr ""
-
-#: FMain.form:71
-msgid "Save as"
-msgstr ""
-
-#: FMain.form:77
-msgid "Quit"
-msgstr ""
-
-#: FMain.form:84
-msgid "Edit"
-msgstr ""
-
-#: FMain.form:87
-msgid "Copy"
-msgstr ""
-
-#: FMain.form:93
-msgid "Cut"
-msgstr ""
-
-#: FMain.form:99
-msgid "Paste"
-msgstr ""
-
-#: FMain.form:105
-msgid "Find"
-msgstr ""
-
-#: FMain.form:111
-msgid "Replace"
-msgstr ""
-
-#: FMain.form:118
-msgid "Settings"
-msgstr ""
-
-#: FMain.form:121
-msgid "Connection settings"
-msgstr ""
-
-#: FMain.form:127
-msgid "Application settings"
-msgstr ""
-
-#: FMain.form:134
-msgid "?"
-msgstr ""
-
-#: FMain.form:137
-msgid "About Baze"
-msgstr ""
-
-#: FMain.form:143
+#: FMain.form:33
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:147
+#: FMain.form:37
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:152
+#: FMain.form:42
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:158
+#: FMain.form:48
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:162
+#: FMain.form:52
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:168
+#: FMain.form:58
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:172
+#: FMain.form:62
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:178
+#: FMain.form:68
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:182
+#: FMain.form:72
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:188
+#: FMain.form:78
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:192
+#: FMain.form:82
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:198
+#: FMain.form:88
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:202
+#: FMain.form:92
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:208
+#: FMain.form:98
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:212
+#: FMain.form:102
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:227
+#: FMain.form:117
 msgid "Data definition"
 msgstr ""
 
-#: FMain.form:229
+#: FMain.form:119
 msgid "Data manipulation"
 msgstr ""
 
-#: FMain.form:231
+#: FMain.form:121
 msgid "Data querying"
 msgstr ""
 
-#: FMain.form:233
+#: FMain.form:123
 msgid "Application"
 msgstr ""
 
-#: FMain.form:238
+#: FMain.form:128
 msgid "New form"
 msgstr ""
 
-#: FMain.form:245
+#: FMain.form:135
 msgid "New script"
 msgstr ""
 
-#: FMain.form:257
+#: FMain.form:147
 msgid "Tab 0"
 msgstr ""
 
