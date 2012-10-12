@@ -227,7 +227,6 @@ End
 
 Public Sub new_sql_query(ttitle As String, tquery As String, Optional ttype As String)
   ' create new sql query and store it in dbobjects
-  Print ttype
   If ttype Then
      Me.dbobjects["queries"][ttype][ttitle] = tquery
   Else

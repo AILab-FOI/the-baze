@@ -27,3 +27,10 @@ Public Sub ToolButtonNewSQLQuery_Click()
   Endif
   
 End
+
+Public Sub ToolButtonNewQBEQuery_Click()
+  'Just testing
+  'FormQBESplit.Show()
+  
+
+End

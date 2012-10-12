@@ -6,6 +6,7 @@ Public index_name As String
 Public trigger_name As String
 Public function_name As String
 Public type_name As String
+Public sequence_name As String
 Public request_canceled As Boolean
 
 Public Sub ToolButtonNewTable_Click()
@@ -91,5 +92,19 @@ Public Sub ToolButtonNewType_Click()
     FMain.main_tabstrip.count += 1
     type_designer = New FormPostgreSQLCreateType(FMain.main_tabstrip)
     FMain.main_tabstrip.Text = type_name & " - Type"
+  Endif
+End
+
+Public Sub ToolButtonNewSequence_Click()
+' open the type designer
+  Dim ask As New FormAskSequenceName
+  Dim sequence_designer As FormPostgreSQLCreateSequence
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    sequence_designer = New FormPostgreSQLCreateSequence(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = sequence_name & " - Sequence"
   Endif
 End

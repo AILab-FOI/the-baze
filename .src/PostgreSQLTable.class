@@ -111,7 +111,6 @@ Public Sub toSQL() As String
     Endif
     statement &= "\"" & escape(attributes[i]) & "\" "
     statement &= Upper(datatypes[i])
-    Print options[i]["size"]
     If options[i]["size"] <> "" Then
       ' STAVITI PROVJERE JE LI RIJEC O BROJEVIMA
       statement &= "(" & options[i]["size"] & ")"
@@ -187,7 +186,6 @@ Public Sub toSQL() As String
   Endif
   statement = Left(statement, Len(statement) - 2)
   statement &= ")"
-  Print statement
   Return statement
 End
 

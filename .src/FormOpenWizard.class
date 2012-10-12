@@ -154,8 +154,6 @@ Public Sub WizardIntro_BeforeChange()
               WizardIntro[6].show
             Case "SQLite"
               WizardIntro[7].show
-            Case Else
-              Print "This is impossible!"
           End Select
           If db.connect() Then
             Me.Close
@@ -183,8 +181,6 @@ Public Sub WizardIntro_BeforeChange()
             WizardIntro[6].show
           Case "SQLite"
             WizardIntro[7].show
-          Case Else
-            Print "This is impossible!"
         End Select
       Endif
     Endif

@@ -29,7 +29,6 @@ Public Sub ToolButtonExecute_Click()
     Stop Event
     Return
   Else
-    Print Right$(FMain.main_tabstrip.Text, 12)
     Select Right$(FMain.main_tabstrip.Text, 12)
       Case "Insert query"
         query_type = "insert queries"

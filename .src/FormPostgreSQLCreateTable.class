@@ -442,8 +442,6 @@ Public Sub ListBoxPrimaryKey_Select()
   Dim i As Integer
   Dim keys As New String[]
   For i = 0 To ListBoxPrimaryKey.Count - 1
-    Print ListBoxPrimaryKey[i].text
-    Print ListBoxPrimaryKey[i].Selected
     If ListBoxPrimaryKey[i].Selected Then
       keys.Add(ListBoxPrimaryKey[i].Text)
     Endif
