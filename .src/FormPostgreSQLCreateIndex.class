@@ -1,0 +1,140 @@
+' Gambas class file
+
+
+Public Sub CheckBoxOpClass_Click()
+  ' toggle the op class textbox
+  TextBoxOpClass.Enabled = CheckBoxOpClass.Value
+End
+
+Public Sub CheckBoxNulls_Click()
+  ' toggle the nulls combobox
+  ComboBoxNulls.Enabled = CheckBoxNulls.Value
+End
+
+Public Sub CheckBoxWith_Click()
+  ' toggle the with textbox
+  TextBoxWith.Enabled = CheckBoxWith.Value
+End
+
+Public Sub CheckBoxTablespace_Click()
+  ' toggle the tablespace textbox
+  TextBoxTablespace.Enabled = CheckBoxTablespace.Value
+End
+
+Public Sub CheckBoxWhere_Click()
+  'toggle the where textbox
+  TextBoxWhere.Enabled = CheckBoxWhere.Value
+End
+
+Public Sub Form_Open()
+  ' on load get all table names
+  Dim dbobjects As Collection
+  Dim tbl As Object
+  dbobjects = FMain.db.get_db_objects()
+  For Each tbl In dbobjects["tables"]
+    ComboBoxTableName.Add(tbl["table"])
+  Next
+End
+
+Public Sub ComboBoxTableName_Click()
+  ' get the attributes for the given table
+  Dim dbobjects As Collection
+  Dim att As Object
+  
+  ComboBoxColumn.List = []
+  ComboBoxColumn.Enabled = True
+  ListBoxColumns.List = []
+  
+  dbobjects = FMain.db.get_db_objects()
+  For Each att In dbobjects["attributes"][ComboBoxTableName.Text]
+    ComboBoxColumn.Add(att["attribute"])
+  Next
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your index design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' construct the create index query and execute it
+  Dim query As String
+  Dim i As Integer
+  Dim child As Object
+  If ComboBoxColumn.Enabled And ListBoxColumns.Count > 0 Then
+    query = "CREATE "
+    If CheckBoxUnique.Value Then
+      query &= "UNIQUE "
+    Endif
+    query &= "INDEX "
+    If CheckBoxConcurrently.Value Then
+      query &= "CONCURRENTLY "
+    Endif
+    query &= "\"" & FMain.pg_escape(Left$(FMain.main_tabstrip.Current.Text, -8)) & "\" "
+    query &= "ON \"" & FMain.pg_escape(ComboBoxTableName.Text) & "\" "
+    query &= "USING " & ComboBoxMethod.Text & " "
+    query &= "(" 
+    For i = 0 To ListBoxColumns.Count - 1
+      query &= ListBoxColumns[i].Text & ", "
+    Next
+    query = Left$(query, -2)
+    query &= ") "
+    If CheckBoxWith.Value Then
+      query &= "WITH (" & TextBoxWith.Text & ") "
+    Endif
+    If CheckBoxTablespace.Value Then
+      query &= "TABLESPACE " & TextBoxTablespace.Text & " "
+    Endif
+    If CheckBoxWhere.Value Then
+      query &= "WHERE " & TextBoxWhere.Text
+    Endif
+    If IsNull(FMain.db.execute(query)) Then
+      Return
+    Else
+      With FMain.main_tabstrip.Current
+        For Each child In .Children
+          child.Close
+        Next
+          .Delete
+      End With
+      FMain.db.refresh_db_tree()
+      FMain.main_tabstrip.index = 0
+      Message.Info("Index successfully created!")
+    Endif
+  Else
+    Message.Warning("Please select a column or enter an expression before creating an index!")
+  Endif
+End
+
+Public Sub ToolButtonAdd_Click()
+  ' add the current column or expression to the listbox
+  Dim expr As String
+  expr = "\"" & FMain.pg_escape(ComboBoxColumn.Text) & "\" "
+  If CheckBoxOpClass.Value Then
+    expr &= TextBoxOpClass.Text & " "
+  Endif
+  If RadioButtonAsc.Value Then
+    expr &= "ASC "
+  Endif
+  If RadioButtonDesc.Value Then
+    expr &= "DESC "
+  Endif
+  If CheckBoxNulls.Value Then
+    expr &= "NULLS " & ComboBoxNulls.Text & " "
+  Endif
+  ListBoxColumns.Add(expr)
+End
+
+Public Sub ToolButtonRemove_Click()
+  ' remove the selected column or expression from the listbox
+  ListBoxColumns.Remove(ListBoxColumns.Index)
+End

@@ -1,0 +1,102 @@
+' Gambas class file
+
+' inbox for the owned by button
+Public ownedby As String
+
+Public Sub CheckBoxIncrement_Click()
+  ' toggle the increment valuebox
+  ValueBoxIncrement.Enabled = CheckBoxIncrement.Value
+End
+
+Public Sub CheckBoxMinValue_Click()
+  ' toggle the minvalue valuebox
+  ValueBoxMinValue.Enabled = CheckBoxMinValue.Value
+End
+
+Public Sub CheckBoxMaxValue_Click()
+  ' toggle the maxvalue valuebox
+  ValueBoxMaxValue.Enabled = CheckBoxMaxValue.Value
+End
+
+Public Sub CheckBoxStartWith_Click()
+  ' toggle the startwith valuebox
+  ValueBoxStartWith.Enabled = CheckBoxStartWith.Value
+End
+
+Public Sub CheckBoxCache_Click()
+  ' toggle the cache valuebox
+  ValueBoxCache.Enabled = CheckBoxCache.Value
+End
+
+Public Sub CheckBoxOwnedBy_Click()
+  ' toggle the owned by button
+  ButtonOwnedBy.Enabled = CheckBoxOwnedBy.Value
+End
+
+Public Sub ButtonOwnedBy_Click()
+  ' show the attribute chooser
+  Dim cho As New FormPostgreSQLGetTableAttribute
+  cho.caller = Me
+  cho.ShowModal()
+  LabelOwnedBy.Text = ownedby
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your sequence design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' construct the create sequence query and execute it
+  Dim query As String
+  Dim child As Object
+  If LabelOwnedBy.Text Or Not CheckBoxOwnedBy.Value Then
+    query = "CREATE SEQUENCE "
+    query &= "\"" & FMain.pg_escape(Left$(FMain.main_tabstrip.Current.Text, -11)) & "\" "
+    If CheckBoxIncrement.Value Then
+      query &= "INCREMENT BY " & ValueBoxIncrement.Text & " "
+    Endif
+    If CheckBoxMinValue.Value Then
+      query &= "MINVALUE " & ValueBoxMinValue.Text & " "
+    Endif
+    If CheckBoxMaxValue.Value Then
+      query &= "MAXVALUE " & ValueBoxMaxValue.Text & " "
+    Endif
+    If CheckBoxStartWith.Value Then
+      query &= "START WITH " & ValueBoxStartWith.Text & " "
+    Endif
+    If CheckBoxCache.Value Then
+      query &= "CACHE " & ValueBoxCache.Text & " "
+    Endif
+    If CheckBoxCycle.Value Then
+      query &= "CYCLE "
+    Endif
+    If CheckBoxOwnedBy.Value Then
+      query &= "OWNED BY " & LabelOwnedBy.Text
+    Endif
+    If IsNull(FMain.db.execute(query)) Then
+      Return
+    Else
+      With FMain.main_tabstrip.Current
+        For Each child In .Children
+          child.Close
+        Next
+          .Delete
+      End With
+      FMain.db.refresh_db_tree()
+      FMain.main_tabstrip.index = 0
+      Message.Info("Sequence successfully created!")
+    Endif
+  Else
+    Message.Warning("Please select an owner or uncheck the 'Owned by' attribute!")
+  Endif
+End

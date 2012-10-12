@@ -1,0 +1,8 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,70,33)
+  { ListBox1 ListBox
+    MoveScaled(36,6,12,13)
+  }
+}

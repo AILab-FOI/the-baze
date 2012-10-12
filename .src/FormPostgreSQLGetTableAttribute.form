@@ -1,0 +1,31 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,41,21)
+  Resizable = False
+  { LabelChooseTable Label
+    MoveScaled(2,2,14,3)
+    Text = ("Choose table:")
+  }
+  { ComboBoxTable ComboBox
+    MoveScaled(18,2,19,4)
+    ReadOnly = True
+  }
+  { LabelChooseAttribute Label
+    MoveScaled(2,8,16,3)
+    Text = ("Choose attribute:")
+  }
+  { ComboBoxAttribute ComboBox
+    MoveScaled(18,8,19,4)
+    Enabled = False
+    ReadOnly = True
+  }
+  { ButtonOK Button
+    MoveScaled(26,14,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(15,14,10,4)
+    Text = ("Cancel")
+  }
+}

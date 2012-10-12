@@ -1,0 +1,115 @@
+' Gambas class file
+
+Public Sub Form_Open()
+  ' on load get all table names
+  Dim dbobjects As Collection
+  Dim tbl As Object
+  dbobjects = FMain.db.get_db_objects()
+  For Each tbl In dbobjects["tables"]
+    ComboBoxTable.Add(tbl["table"])
+  Next
+  For Each tbl In dbobjects["functions"]
+    ComboBoxFunction.Add(tbl["function"] & "(" & tbl["arguments"] & ")")
+  Next
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your trigger design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub ComboBoxEvent_Click()
+  ' add the selected event to the listbox
+  If ListBoxEvents.Find(ComboBoxEvent.Current.Text) = -1 Then
+    ListBoxEvents.Add(ComboBoxEvent.Current.Text)
+  Endif
+End
+
+Public Sub ToolButtonRemove_Click()
+  ' remove the current chosen event
+  ListBoxEvents.Remove(ListBoxEvents.Index)
+End
+
+Public Sub ComboBoxFunction_Click()
+  ' check if the current function has arguments, if yes show the arguments textbox 
+  Dim has_params As Boolean
+  Dim params As String[]
+  Dim par As String
+  Dim i As Integer
+  params = XSBEngine.FindAll(ComboBoxFunction.Text, ".*\\((.+)\\)", 1)
+  has_params = (params.Count > 0)
+  LabelArguments.Visible = has_params
+  ListViewArguments.Visible = has_params
+  If has_params Then
+    params = Split(params[0], ",")
+    i = 0
+    For Each par In params
+      If Left(par, 1) = " " Then
+        par = Right$(par, Len(par) - 1)
+      Endif
+      ListViewArguments.Add(Str(i), par)
+      i += 1
+    Next
+  Else
+    ListViewArguments.Clear()
+  Endif
+End
+
+
+Public Sub ToolButtonExecute_Click()
+  ' construct the create trigger query and execute it
+  Dim query As String
+  Dim i As Integer
+  Dim func_name As String
+  Dim child As Object
+  If Message.Question("Do you want to create the trigger?", "Yes", "No, continue editing") = 1 Then
+    If ListBoxEvents.Count > 0 Then
+      query = "CREATE TRIGGER "
+      query &= "\"" & FMain.pg_escape(Left$(FMain.main_tabstrip.Current.Text, -10)) & "\" "
+      query &= ComboBoxTime.Text & " "
+      For i = 0 To ListBoxEvents.Count - 1
+        query &= ListBoxEvents[i].Text & " OR "
+      Next
+      query = Left$(query, -3)
+      query &= " ON "
+      query &= "\"" & FMain.pg_escape(ComboBoxTable.Text) & "\" "
+      query &= " FOR EACH "
+      query &= ComboBoxFor.Text & " "
+      query &= "EXECUTE PROCEDURE "
+      If ListViewArguments.Visible Then
+        func_name = XSBEngine.FindAll(ComboBoxFunction.Text, "(.+)\\([^\\(]*\\)", 1)[0] & "("
+        For i = 0 To ListViewArguments.Count - 1
+          func_name &= "'" & FMain.pg_escape(ListViewArguments[i].Text) & "',"
+        Next
+        func_name = Left$(func_name, -1) & ") "
+        query &= func_name
+      Else
+        query &= ComboBoxFunction.Text
+      Endif
+      If IsNull(FMain.db.execute(query)) Then
+        Return
+      Else
+        With FMain.main_tabstrip.Current
+          For Each child In .Children
+            child.Close
+          Next
+            .Delete
+        End With
+        FMain.db.refresh_db_tree()
+        FMain.main_tabstrip.index = 0
+        Message.Info("Trigger successfully created!")
+      Endif
+    Else
+      Message.Warning("Please choose an event!")
+    Endif
+  Endif
+End

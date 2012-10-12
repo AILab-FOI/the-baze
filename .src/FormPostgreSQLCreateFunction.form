@@ -1,0 +1,206 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,82,71)
+  Arrangement = Arrange.Vertical
+  { PanelToolBox Panel
+    MoveScaled(0,0,79,5)
+    { ToolButtonExecute ToolButton
+      MoveScaled(0,0,5,4)
+      ToolTip = ("Create function")
+      Picture = Picture["icon:/32/make"]
+    }
+    { ToolButtonCancel ToolButton
+      MoveScaled(5,0,5,4)
+      ToolTip = ("Cancel")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { IconPanelOptions IconPanel
+    MoveScaled(1,6,79,30)
+    Count = 4
+    Index = 0
+    Text = ("Arguments")
+    Picture = Picture["icon:/32/sort-descent"]
+    { LabelMode Label
+      MoveScaled(1,4,7,4)
+      Text = ("Mode")
+    }
+    { ComboBoxMode ComboBox
+      MoveScaled(8,4,16,4)
+      ReadOnly = True
+      List = [("IN"), ("OUT"), ("INOUT"), ("VARIADIC")]
+    }
+    { LabelName Label
+      MoveScaled(1,9,7,4)
+      Text = ("Name")
+    }
+    { TextBoxName TextBox
+      MoveScaled(8,9,16,4)
+    }
+    { LabelType Label
+      MoveScaled(1,14,7,4)
+      Text = ("Type")
+    }
+    { ComboBoxType ComboBox
+      MoveScaled(8,14,16,4)
+      ReadOnly = True
+    }
+    { LabelDefault Label
+      MoveScaled(1,19,7,4)
+      Text = ("Default")
+    }
+    { TextBoxDefault TextBox
+      MoveScaled(8,19,16,4)
+    }
+    { ListBoxArguments ListBox
+      MoveScaled(30,4,23,19)
+    }
+    { ToolButtonAdd ToolButton
+      MoveScaled(26,19,4,4)
+      Picture = Picture["icon:/16/add"]
+    }
+    { ToolButtonRemove ToolButton
+      MoveScaled(53,19,4,4)
+      Picture = Picture["icon:/16/remove"]
+    }
+    Index = 1
+    Text = ("Return values")
+    Picture = Picture["icon:/32/sort-ascent"]
+    { RadioButtonRetType RadioButton
+      MoveScaled(2,2,16,4)
+      Text = ("Returns type")
+      Value = True
+    }
+    { RadioButtonRetTable RadioButton
+      MoveScaled(2,7,16,4)
+      Text = ("Returns table")
+    }
+    { ComboBoxRetType ComboBox
+      MoveScaled(31,2,17,4)
+      ReadOnly = True
+    }
+    { CheckBoxSetOf CheckBox
+      MoveScaled(21,2,9,4)
+      Text = ("Set of")
+    }
+    { LabelColonType Label
+      MoveScaled(3,17,7,4)
+      Enabled = False
+      Text = ("Type")
+    }
+    { ComboBoxColonType ComboBox
+      MoveScaled(10,17,16,4)
+      Enabled = False
+      ReadOnly = True
+    }
+    { LabelColonName Label
+      MoveScaled(3,12,7,4)
+      Enabled = False
+      Text = ("Name")
+    }
+    { TextBoxColonName TextBox
+      MoveScaled(10,12,16,4)
+      Enabled = False
+    }
+    { ToolButtonAddColon ToolButton
+      MoveScaled(27,26,4,4)
+      Enabled = False
+      Picture = Picture["icon:/16/add"]
+    }
+    { ListBoxReturnColons ListBox
+      MoveScaled(31,12,20,18)
+      Enabled = False
+    }
+    { ToolButtonRemoveColon ToolButton
+      MoveScaled(51,26,4,4)
+      Enabled = False
+      Picture = Picture["icon:/16/remove"]
+    }
+    Index = 2
+    Text = ("Function options")
+    Picture = Picture["icon:/32/book"]
+    { LabelLanguage Label
+      MoveScaled(2,6,23,4)
+      Text = ("Implementation language")
+    }
+    { ComboBoxLanguage ComboBox
+      MoveScaled(27,6,23,4)
+      ReadOnly = True
+    }
+    { CheckBoxReplace CheckBox
+      MoveScaled(2,14,31,3)
+      Text = ("Use replace in function creation")
+    }
+    Index = 3
+    Text = ("Advanced options")
+    Picture = Picture["icon:/32/science"]
+    { CheckBoxOptimization CheckBox
+      MoveScaled(1,0,15,4)
+      Text = ("Optimization")
+    }
+    { ComboBoxOptimization ComboBox
+      MoveScaled(17,0,17,4)
+      Enabled = False
+      ReadOnly = True
+      List = [("IMMUTABLE"), ("STABLE"), ("VOLATILE")]
+    }
+    { CheckBoxNullInput CheckBox
+      MoveScaled(1,5,15,4)
+      Text = ("Null input")
+    }
+    { ComboBoxNullInput ComboBox
+      MoveScaled(17,5,17,4)
+      Enabled = False
+      ReadOnly = True
+      List = [("CALLED ON NULL INPUT"), ("RETURNS NULL ON NULL INPUT"), ("STRICT")]
+    }
+    { CheckBoxSecurity CheckBox
+      MoveScaled(1,10,15,4)
+      Text = ("Security")
+    }
+    { ComboBoxSecurity ComboBox
+      MoveScaled(17,10,17,4)
+      Enabled = False
+      ReadOnly = True
+      List = [("SECURITY INVOKER"), ("EXTERNAL SECURITY INVOKER"), ("SECURITY DEFINER"), ("EXTERNAL SECURITY DEFINER")]
+    }
+    { TextBoxCost TextBox
+      MoveScaled(9,15,7,4)
+      Enabled = False
+    }
+    { CheckBoxCost CheckBox
+      MoveScaled(1,15,8,4)
+      Text = ("Cost")
+    }
+    { CheckBoxRows CheckBox
+      MoveScaled(19,15,8,4)
+      Text = ("Rows")
+    }
+    { TextBoxRows TextBox
+      MoveScaled(27,15,7,4)
+      Enabled = False
+    }
+    { TextBoxSet TextBox
+      MoveScaled(9,20,25,4)
+      Enabled = False
+    }
+    { CheckBoxSet CheckBox
+      MoveScaled(1,20,8,4)
+      Text = ("Set")
+    }
+    { TextBoxWith TextBox
+      MoveScaled(9,25,25,4)
+      Enabled = False
+    }
+    { CheckBoxWith CheckBox
+      MoveScaled(1,25,8,4)
+      Text = ("With")
+    }
+    Index = 0
+  }
+  { EditorCode Editor
+    MoveScaled(1,38,79,32)
+    Highlight = Highlight.SQL
+  }
+}

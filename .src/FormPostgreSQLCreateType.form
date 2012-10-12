@@ -1,0 +1,39 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,83,64)
+  Arrangement = Arrange.Fill
+  { MenuCreateType Menu
+    Text = ("Creat type menu")
+    Visible = False
+    { MenuDeleteRow Menu
+      Text = ("Delete row")
+    }
+  }
+  { VBox1 VBox
+    MoveScaled(2,1,71,50)
+    { PanelToolBox Panel
+      MoveScaled(1,0,67,5)
+      { ToolButtonExecute ToolButton
+        MoveScaled(0,0,5,4)
+        ToolTip = ("Create table")
+        Picture = Picture["icon:/32/make"]
+      }
+      { ToolButtonCancel ToolButton
+        MoveScaled(5,0,5,4)
+        ToolTip = ("Cancel")
+        Picture = Picture["icon:/32/halt"]
+      }
+    }
+    { TableViewMain TableView
+      MoveScaled(1,6,68,15)
+      Expand = True
+      Mode = Select.Single
+      ShowCursor = True
+    }
+    { FrameDataTypeOptions Frame
+      MoveScaled(2,23,66,24)
+      Text = ("Data type options")
+    }
+  }
+}

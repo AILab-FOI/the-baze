@@ -1,0 +1,123 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,86,70)
+  { LabelTableName Label
+    MoveScaled(5,7,8,3)
+    Text = ("Table")
+  }
+  { ComboBoxTableName ComboBox
+    MoveScaled(25,7,17,3)
+    ReadOnly = True
+  }
+  { PanelToolBox Panel
+    MoveScaled(0,0,69,5)
+    { ToolButtonExecute ToolButton
+      MoveScaled(0,0,5,4)
+      ToolTip = ("Create index")
+      Picture = Picture["icon:/32/make"]
+    }
+    { ToolButtonCancel ToolButton
+      MoveScaled(5,0,5,4)
+      ToolTip = ("Cancel")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { FrameIndexParams Frame
+    MoveScaled(4,41,73,27)
+    Text = ("Index parameters")
+    { CheckBoxConcurrently CheckBox
+      MoveScaled(46,9,18,3)
+      Text = ("Concurrently")
+    }
+    { CheckBoxUnique CheckBox
+      MoveScaled(46,5,18,3)
+      Text = ("Unique")
+    }
+    { ComboBoxMethod ComboBox
+      MoveScaled(22,5,17,3)
+      ReadOnly = True
+      List = [("btree"), ("hash"), ("gist"), ("gin")]
+    }
+    { TextBoxWith TextBox
+      MoveScaled(22,10,17,3)
+      Enabled = False
+    }
+    { TextBoxTablespace TextBox
+      MoveScaled(22,15,17,3)
+      Enabled = False
+    }
+    { TextBoxWhere TextBox
+      MoveScaled(22,20,17,3)
+      Enabled = False
+    }
+    { CheckBoxWhere CheckBox
+      MoveScaled(2,20,18,3)
+      Text = ("Where")
+    }
+    { CheckBoxTablespace CheckBox
+      MoveScaled(2,15,18,3)
+      Text = ("Tablespace")
+    }
+    { CheckBoxWith CheckBox
+      MoveScaled(2,10,18,3)
+      Text = ("With")
+    }
+    { LabelMethod Label
+      MoveScaled(2,5,20,3)
+      Text = ("Method")
+    }
+  }
+  { FrameColumn Frame
+    MoveScaled(3,11,81,28)
+    Text = ("Column or expression parameters")
+    { LabelColumn Label
+      MoveScaled(3,4,19,3)
+      Text = ("Column or expression")
+    }
+    { ComboBoxColumn ComboBox
+      MoveScaled(23,4,17,3)
+      Enabled = False
+    }
+    { RadioButtonAsc RadioButton
+      MoveScaled(23,9,16,3)
+      Text = ("Ascending")
+      Value = True
+    }
+    { RadioButtonDesc RadioButton
+      MoveScaled(23,13,16,3)
+      Text = ("Descending")
+    }
+    { ToolButtonAdd ToolButton
+      MoveScaled(40,4,3,3)
+      ToolTip = ("Add")
+      Picture = Picture["icon:/16/add"]
+    }
+    { ListBoxColumns ListBox
+      MoveScaled(44,10,29,16)
+    }
+    { ToolButtonRemove ToolButton
+      MoveScaled(73,23,3,3)
+      ToolTip = ("Remove")
+      Picture = Picture["icon:/16/remove"]
+    }
+    { TextBoxOpClass TextBox
+      MoveScaled(23,18,17,3)
+      Enabled = False
+    }
+    { ComboBoxNulls ComboBox
+      MoveScaled(23,23,17,3)
+      Enabled = False
+      ReadOnly = True
+      List = [("First"), ("Last")]
+    }
+    { CheckBoxOpClass CheckBox
+      MoveScaled(3,18,18,3)
+      Text = ("Operator class")
+    }
+    { CheckBoxNulls CheckBox
+      MoveScaled(3,23,18,3)
+      Text = ("Nulls")
+    }
+  }
+}

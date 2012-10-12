@@ -1,0 +1,251 @@
+' Gambas class file
+
+Public datatypes As String[]
+Public languages As String[]
+
+Public Sub _new()
+  ' initialize datatypes
+  Dim user_type, user_table, language As Object
+  Dim dbobjects As Collection
+  dbobjects = FMain.db.get_db_objects()
+  datatypes = ["bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+  For Each user_type In dbobjects["types"]
+    datatypes.Push(user_type["user_type"])
+  Next
+  For Each user_table In dbobjects["tables"]
+    datatypes.Push(user_table["table"])
+  Next
+  datatypes.Push("trigger")
+  datatypes.Push("void")
+  datatypes.Sort()
+  ComboBoxType.List = datatypes
+  ComboBoxRetType.list = datatypes
+  ComboBoxColonType.List = datatypes
+  
+  languages = New String[]
+  For Each language In dbobjects["languages"]
+    languages.Push(language["language"])
+  Next
+  languages.Push("SQL")
+  languages.Sort()
+  ComboBoxLanguage.List = languages
+End
+
+
+Public Sub Form_Resize()
+  ' resize the editor
+  EditorCode.Height = Me.Height - PanelToolBox.Height - IconPanelOptions.Height
+End
+
+Public Sub RadioButtonRetType_Click()
+  ' toggle the textbox
+  CheckBoxSetOf.Enabled = RadioButtonRetType.Value
+  ComboBoxRetType.Enabled = RadioButtonRetType.Value
+  With RadioButtonRetTable
+    LabelColonName.Enabled = .Value
+    TextBoxColonName.Enabled = .Value
+    LabelColonType.Enabled = .Value
+    ComboBoxColonType.Enabled = .Value
+    ListBoxReturnColons.Enabled = .Value
+    ToolButtonAddColon.Enabled = .Value
+    ToolButtonRemoveColon.Enabled = .Value
+  End With
+End
+
+Public Sub RadioButtonRetTable_Click()
+  ' toggle the return type table controls
+  With RadioButtonRetTable
+    LabelColonName.Enabled = .Value
+    TextBoxColonName.Enabled = .Value
+    LabelColonType.Enabled = .Value
+    ComboBoxColonType.Enabled = .Value
+    ListBoxReturnColons.Enabled = .Value
+    ToolButtonAddColon.Enabled = .Value
+    ToolButtonRemoveColon.Enabled = .Value
+  End With
+  CheckBoxSetOf.Enabled = RadioButtonRetType.Value
+  ComboBoxRetType.Enabled = RadioButtonRetType.Value
+
+End
+
+Public Sub CheckBoxOptimization_Click()
+  ' toggle the optimization combobox
+  ComboBoxOptimization.Enabled = CheckBoxOptimization.Value
+End
+
+Public Sub CheckBoxNullInput_Click()
+  ' toggle the null input combobox
+  ComboBoxNullInput.Enabled = CheckBoxNullInput.Value
+End
+
+Public Sub CheckBoxSecurity_Click()
+  ' toggle the security combobox
+  ComboBoxSecurity.Enabled = CheckBoxSecurity.Value
+End
+
+Public Sub CheckBoxCost_Click()
+  ' toggle the cost textbox
+  TextBoxCost.Enabled = CheckBoxCost.Value
+End
+
+Public Sub CheckBoxRows_Click()
+  ' toggle the rows textbox
+  TextBoxRows.Enabled = CheckBoxRows.Value
+End
+
+Public Sub CheckBoxSet_Click()
+  ' toggle the set textbox
+  TextBoxSet.Enabled = CheckBoxSet.Value
+End
+
+Public Sub CheckBoxWith_Click()
+  ' toggle the with textbox
+  TextBoxWith.Enabled = CheckBoxWith.Value
+End
+
+Public Sub ToolButtonAdd_Click()
+  ' add the entered argument definition to the list box
+  Dim att_def As String
+  If ComboBoxMode.Text <> "IN" Then
+    att_def = ComboBoxMode.text & " "
+  Else
+    att_def = ""
+  Endif
+  If TextBoxName.Text Then
+    att_def &= "\"" & FMain.pg_escape(TextBoxName.Text) & "\" "
+    TextBoxName.Text = ""
+  Endif
+  att_def &= ComboBoxType.Text & " "
+  If TextBoxDefault.Text Then
+    att_def &= "= " & FMain.pg_escape(TextBoxDefault.Text)
+    TextBoxDefault.Text = ""
+  Endif
+  ListBoxArguments.Add(att_def)
+End
+
+Public Sub ToolButtonRemove_Click()
+  'remove the selected argument definition
+  ListBoxArguments.Remove(ListBoxArguments.Index)
+End
+
+Public Sub ToolButtonAddColon_Click()
+  ' add the return column specification to the listbox
+  Dim col_def As String
+  col_def = ""
+  If TextBoxColonName.Text Then
+    col_def &= TextBoxColonName.Text & " "
+    col_def &= ComboBoxColonType.Text
+    ListBoxReturnColons.Add(col_def)
+  Else
+    Message.Warning("Please specify a column name!")
+  Endif
+End
+
+Public Sub ToolButtonRemoveColon_Click()
+  ' remove the selected column definition
+  ListBoxReturnColons.Remove(ListBoxReturnColons.Index)
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' construct the create function query and execute it
+  Dim query As String
+  Dim i As Integer
+  Dim child As Object
+  query = "CREATE "
+  If CheckBoxReplace.Value Then
+    query &= "OR REPLACE "
+  Endif
+  query &= "FUNCTION "
+  query &= "\"" & FMain.pg_escape(Left$(FMain.main_tabstrip.Current.Text, -11)) & "\" ("
+  For i = 0 To ListBoxArguments.Count - 1
+    query &= ListBoxArguments[i].Text & ", "
+  Next
+  If ListBoxArguments.Count > 0 Then
+    query = Left$(query, -2)
+  Endif
+  query &= ") RETURNS "
+  If RadioButtonRetType.Value Then
+    If CheckBoxSetOf.Value Then
+      query &= "SETOF "
+    Endif
+    query &= ComboBoxRetType.Text & " "
+  Else
+    query &= "TABLE ("
+    For i = 0 To ListBoxReturnColons.Count - 1
+      query &= ListBoxReturnColons[i].Text & ", "
+    Next
+    query = Left$(query, -2)
+    query &= ") "
+  Endif
+  query &= "AS $$"
+  query &= EditorCode.Text
+  query &= "$$ "
+  query &= "LANGUAGE " & ComboBoxLanguage.Text & " "
+  If CheckBoxOptimization.Value Then
+    query &= ComboBoxOptimization.Text & " "
+  Endif
+  If CheckBoxNullInput.Value Then
+    query &= ComboBoxNullInput.Text & " "
+  Endif
+  If CheckBoxSecurity.Value Then
+    query &= ComboBoxSecurity.Text & " "
+  Endif
+  If CheckBoxCost.Value Then
+    query &= TextBoxCost.Text
+  Endif
+  If CheckBoxRows.Value Then
+    query &= TextBoxRows.Text
+  Endif
+  If CheckBoxSet.Value Then
+    query &= TextBoxSet.Text
+  Endif
+  If CheckBoxWith.Value Then
+    query &= TextBoxWith.Text
+  Endif
+  If IsNull(FMain.db.execute(query)) Then
+    Return
+  Else
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+        .Delete
+    End With
+    FMain.db.refresh_db_tree()
+    FMain.main_tabstrip.index = 0
+    Message.Info("Function successfully created!")
+  Endif
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your function design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub EditorCode_KeyPress_()  
+' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    EditorCode.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      EditorCode.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        EditorCode.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          EditorCode.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End

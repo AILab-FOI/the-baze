@@ -1,0 +1,83 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,48)
+  { LabelTime Label
+    MoveScaled(4,6,18,3)
+    Text = ("Time of triggering")
+  }
+  { ComboBoxTime ComboBox
+    MoveScaled(24,6,16,3)
+    ReadOnly = True
+    List = [("BEFORE"), ("AFTER")]
+  }
+  { LabelEvent Label
+    MoveScaled(4,11,6,3)
+    Text = ("Event")
+  }
+  { ComboBoxEvent ComboBox
+    MoveScaled(24,11,16,3)
+    ReadOnly = True
+    List = [("INSERT"), ("UPDATE"), ("DELETE"), ("TRUNCATE")]
+  }
+  { ListBoxEvents ListBox
+    MoveScaled(45,11,13,10)
+  }
+  { ToolButtonRemove ToolButton
+    MoveScaled(58,18,3,3)
+    Picture = Picture["icon:/16/remove"]
+  }
+  { LabelTable Label
+    MoveScaled(4,16,18,3)
+    Text = ("Table")
+  }
+  { ComboBoxTable ComboBox
+    MoveScaled(24,16,16,3)
+    ReadOnly = True
+    List = Null
+  }
+  { LabelFor Label
+    MoveScaled(4,21,18,3)
+    Text = ("Trigger for each")
+  }
+  { ComboBoxFor ComboBox
+    MoveScaled(24,21,16,3)
+    ReadOnly = True
+    List = [("STATEMENT"), ("ROW")]
+  }
+  { LabelExecute Label
+    MoveScaled(4,26,18,3)
+    Text = ("Execute function")
+  }
+  { ComboBoxFunction ComboBox
+    MoveScaled(24,26,16,3)
+    ReadOnly = True
+  }
+  { LabelArguments Label
+    MoveScaled(4,31,18,15)
+    Visible = False
+    Text = ("Arguments\n(double-click to edit)")
+  }
+  { PanelToolBox Panel
+    MoveScaled(0,0,69,5)
+    { ToolButtonExecute ToolButton
+      MoveScaled(0,0,5,4)
+      ToolTip = ("Create index")
+      Picture = Picture["icon:/32/make"]
+    }
+    { ToolButtonCancel ToolButton
+      MoveScaled(5,0,5,4)
+      ToolTip = ("Cancel")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { LabelEvents Label
+    MoveScaled(45,7,13,3)
+    Text = ("Chosen events")
+  }
+  { ListViewArguments ListView
+    MoveScaled(24,31,16,15)
+    Visible = False
+    Editable = True
+  }
+}

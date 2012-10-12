@@ -1,0 +1,211 @@
+' Gambas class file
+
+' PostgreSQL datatypes
+Public datatypes As String[]
+' semaphore for stopping an event
+Public stop_event As Boolean
+' datatypes without additional options
+Public basic_datatypes As String[]
+' datatypes with optional length
+Public n_datatypes As String[]
+' datatypes with optional precision
+Public p_datatypes As String[]
+' datatypes with optional precision and scale
+Public ps_datatypes As String[]
+' datatypes with optional field and precision
+Public fp_datatypes As String[]
+' the table object dealing with all attribute definitions
+Public pgtable As PostgreSQLUserType
+' make table view public
+Public main_table_view As TableView
+
+Public Sub Form_Open()
+  Dim user_type As Object
+  stop_event = False
+  main_table_view = TableViewMain
+  pgtable = New PostgreSQLUserType
+  pgtable.type_name = Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - 7)
+  datatypes = ["bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+  basic_datatypes = ["bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "xml"]
+  n_datatypes = ["char", "character", "character varying", "varchar"]
+  p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone"]
+  ps_datatypes = ["decimal", "numeric"]
+  fp_datatypes = ["interval"]
+  For Each user_type In FMain.db.get_db_objects()["types"]
+    datatypes.Push(user_type["user_type"])
+  Next
+  datatypes.Sort()
+  With TableViewMain
+    .Rows.Count = 30
+    .Columns.Count = 2
+    .Header = .Both
+    .Columns[0].Title = "Attribute name"
+    .Columns[0].Width += 50
+    .Columns[1].Title = "Data type"
+  End With
+End
+
+Public Sub TableViewMain_Click()
+  ' if the current cell is a dropdown cell, create a combobox, else edit it
+  With TableViewMain
+    If all_previous(.row) Then
+      pgtable.change_attribute(.Row, TableViewMain[.Row, 0].text, TableViewMain[.Row, 1].text)
+      If .Column = 0 Then
+        .Edit()
+        If TableViewMain[.Row, 1].text = "" Then
+          TableViewMain[.Row, 1].text = "text"
+          show_datatype_options("text")
+        Else 
+          show_datatype_options(TableViewMain[.Row, 1].text)
+        Endif
+      Endif
+      If .Column = 1 Then
+        .Edit(datatypes, True)
+        show_datatype_options(TableViewMain[.Row, 1].text)
+      Endif
+    Endif
+  End With
+End
+
+Public Sub show_datatype_options(datatype As String)
+  ' load the adequate datatype options form
+  Dim options As Object
+  Dim child As Object
+  For Each child In FrameDataTypeOptions.Children
+    child.Delete
+  Next
+  If basic_datatypes.Find(datatype) <> -1 Then
+    options = New FormPostgreSQLDataTypeOptionsMinimal(FrameDataTypeOptions)
+    options.caller = Me
+    options.reload()
+  Else
+    If n_datatypes.Find(datatype) <> -1 Then
+      options = New FormPostgreSQLDataTypeOptionsN(FrameDataTypeOptions)
+      options.caller = Me
+      options.reload()
+    Else
+      If p_datatypes.Find(datatype) <> -1 Then
+        options = New FormPostgreSQLDataTypeOptionsP(FrameDataTypeOptions)
+        options.caller = Me
+        options.reload()
+      Else
+        If ps_datatypes.Find(datatype) <> -1 Then
+          options = New FormPostgreSQLDataTypeOptionsPS(FrameDataTypeOptions)
+          options.caller = Me
+          options.reload()
+        Else
+          If fp_datatypes.Find(datatype) <> -1 Then
+            options = New FormPostgreSQLDataTypeOptionsFP(FrameDataTypeOptions)
+            options.caller = Me
+            options.reload()
+          Endif
+        Endif
+      Endif
+    Endif
+  Endif
+End
+
+
+Public Sub TableViewMain_Save(row As Integer, col As Integer, value As String)
+  ' save the value of a cell and all collumn constraints
+  Dim i As Integer
+  Dim save_row, save_col As Integer
+  save_row = TableViewMain.Row
+  save_col = TableViewMain.Column
+  If Not stop_event Then
+    If col = 0 Then
+      For i = 0 To TableViewMain.Rows.Count - 1
+        If TableViewMain[i, 0].text = value And i <> row And value <> "" Then
+          stop_event = True
+          Message.Error("There is already an attribute with the name '" & value & "' defined! Please choose another name.")
+          TableViewMain.Current.Text = ""
+          TableViewMain.Row = row
+          TableViewMain.Column = col
+          TableViewMain.edit
+          stop_event = False
+          Return
+        Endif
+      Next
+      TableViewMain.Row = save_row
+      TableViewMain.Column = save_col
+      TableViewMain[row, col].Text = value
+    Else
+      TableViewMain[row, col].Text = value
+    Endif
+    pgtable.change_attribute(row, TableViewMain[row, 0].text, TableViewMain[row, 1].text)
+    show_datatype_options(TableViewMain[row, 1].Text)
+  Endif
+  
+End
+
+Public Sub all_previous(row As Integer) As Boolean
+  ' check if all previous rows have been filled with data
+  Dim i As Integer
+  If row = 0 Then Return True
+  For i = 0 To row - 1
+    If TableViewMain[i, 0].Text = "" Then
+      Return False
+    Endif
+  Next
+  Return True
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your type design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub TableViewMain_Menu()
+  ' show the popup menu
+  If all_previous(TableViewMain.Row) Then
+    MenuCreateType.Popup()
+  Endif
+End
+
+Public Sub MenuDeleteRow_Click()
+  ' delete the current row
+  Dim i As Integer
+  With TableViewMain
+    For i = .Row To .Rows.Count - 2
+      TableViewMain[i, 0].Text = TableViewMain[i + 1, 0].Text
+      TableViewMain[i, 1].Text = TableViewMain[i + 1, 1].Text
+    Next
+  End With
+  With pgtable
+    .attributes.Delete(TableViewMain.Row)
+    .datatypes.Delete(TableViewMain.Row)
+  End With
+  TableViewMain.Column = 0
+  TableViewMain.Column = 1
+  Catch
+    Return
+End
+
+Public Sub ToolButtonExecute_Click()  
+' ask the user if he/she is sure and then create the table
+  Dim child As Object
+  If Message.Question("Do you want to create the type?", "Yes", "No, continue editing") = 1 Then
+    If IsNull(FMain.db.execute(pgtable.toSQL())) Then
+      Return
+    Else
+      With FMain.main_tabstrip.Current
+        For Each child In .Children
+          child.Close
+        Next
+          .Delete
+      End With
+      FMain.db.refresh_db_tree()
+      FMain.main_tabstrip.index = 0
+      Message.Info("Type successfully created!")
+    Endif
+  Endif
+End

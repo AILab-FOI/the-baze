@@ -1,0 +1,79 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,56,49)
+  { CheckBoxIncrement CheckBox
+    MoveScaled(4,7,15,4)
+    Text = ("Increment by")
+  }
+  { ValueBoxIncrement ValueBox
+    MoveScaled(23,7,5,4)
+    Enabled = False
+    Value = "1"
+  }
+  { CheckBoxMinValue CheckBox
+    MoveScaled(4,12,17,4)
+    Text = ("Minimum value")
+  }
+  { ValueBoxMinValue ValueBox
+    MoveScaled(23,12,5,4)
+    Enabled = False
+    Value = "1"
+  }
+  { CheckBoxMaxValue CheckBox
+    MoveScaled(4,17,17,4)
+    Text = ("Maximum value")
+  }
+  { ValueBoxMaxValue ValueBox
+    MoveScaled(23,17,5,4)
+    Enabled = False
+    Value = "2"
+  }
+  { CheckBoxStartWith CheckBox
+    MoveScaled(4,22,17,4)
+    Text = ("Start with")
+  }
+  { ValueBoxStartWith ValueBox
+    MoveScaled(23,22,5,4)
+    Enabled = False
+    Value = "1"
+  }
+  { CheckBoxCache CheckBox
+    MoveScaled(4,27,17,4)
+    Text = ("Cache")
+  }
+  { ValueBoxCache ValueBox
+    MoveScaled(23,27,5,4)
+    Enabled = False
+    Value = "1"
+  }
+  { CheckBoxCycle CheckBox
+    MoveScaled(4,32,17,4)
+    Text = ("Cycle")
+  }
+  { CheckBoxOwnedBy CheckBox
+    MoveScaled(4,37,17,4)
+    Text = ("Owned by")
+  }
+  { LabelOwnedBy Label
+    MoveScaled(24,37,29,4)
+  }
+  { ButtonOwnedBy Button
+    MoveScaled(18,37,4,4)
+    Enabled = False
+    Text = ("...")
+  }
+  { PanelToolBox Panel
+    MoveScaled(0,0,69,5)
+    { ToolButtonExecute ToolButton
+      MoveScaled(0,0,5,4)
+      ToolTip = ("Create index")
+      Picture = Picture["icon:/32/make"]
+    }
+    { ToolButtonCancel ToolButton
+      MoveScaled(5,0,5,4)
+      ToolTip = ("Cancel")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+}
