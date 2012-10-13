@@ -111,7 +111,8 @@ msgstr ""
 #: FormAskSequenceName.form:24 FormAskTableName.form:24
 #: FormAskTriggerName.form:24 FormAskTypeName.form:24 FormAskViewName.form:24
 #: FormFindXSB.form:23 FormOpenFile.form:18 FormPostgreSQLChooseTable.form:30
-#: FormPostgreSQLGetReference.form:43 FormPostgreSQLGetTableAttribute.form:38
+#: FormPostgreSQLGetReference.form:43 FormPostgreSQLGetTable.form:25
+#: FormPostgreSQLGetTableAttribute.form:38
 msgid "OK"
 msgstr ""
 
@@ -122,10 +123,10 @@ msgstr ""
 #: FormFindXSB.form:18 FormOpenFile.form:23 FormPostgreSQLChooseTable.form:25
 #: FormPostgreSQLCreateEnum.form:50 FormPostgreSQLCreateFunction.form:64
 #: FormPostgreSQLCreateIndex.form:57 FormPostgreSQLCreateSequence.form:111
-#: FormPostgreSQLCreateTable.form:73 FormPostgreSQLCreateTrigger.form:106
+#: FormPostgreSQLCreateTable.form:84 FormPostgreSQLCreateTrigger.form:106
 #: FormPostgreSQLCreateType.form:40 FormPostgreSQLCreateView.form:48
 #: FormPostgreSQLEditTableData.form:34 FormPostgreSQLGetReference.form:48
-#: FormPostgreSQLGetTableAttribute.form:43
+#: FormPostgreSQLGetTable.form:30 FormPostgreSQLGetTableAttribute.form:43
 msgid "Cancel"
 msgstr ""
 
@@ -407,7 +408,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: FormPostgreSQLCreateFunction.form:108 FormPostgreSQLCreateTable.form:156
+#: FormPostgreSQLCreateFunction.form:108 FormPostgreSQLCreateTable.form:167
 msgid "Default"
 msgstr ""
 
@@ -523,7 +524,7 @@ msgstr ""
 msgid "Concurrently"
 msgstr ""
 
-#: FormPostgreSQLCreateIndex.form:73 FormPostgreSQLCreateTable.form:114
+#: FormPostgreSQLCreateIndex.form:73 FormPostgreSQLCreateTable.form:125
 msgid "Unique"
 msgstr ""
 
@@ -623,65 +624,77 @@ msgstr ""
 msgid "Owned by"
 msgstr ""
 
-#: FormPostgreSQLCreateSequence.form:97 FormPostgreSQLCreateTable.form:141
+#: FormPostgreSQLCreateSequence.form:97 FormPostgreSQLCreateTable.form:152
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:44
+#: FormPostgreSQLCreateTable.form:55
 msgid "Menu table design"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:48
+#: FormPostgreSQLCreateTable.form:59
 msgid "Delete this row"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:52
+#: FormPostgreSQLCreateTable.form:63
 msgid "Make primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:67 FormPostgreSQLCreateType.form:34
+#: FormPostgreSQLCreateTable.form:78 FormPostgreSQLCreateType.form:34
 #: FormPostgreSQLDataDefinition.form:20
 msgid "Create table"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:92 FormPostgreSQLCreateType.form:54
+#: FormPostgreSQLCreateTable.form:103 FormPostgreSQLCreateType.form:54
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:98
+#: FormPostgreSQLCreateTable.form:109
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:101
+#: FormPostgreSQLCreateTable.form:112
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:109
+#: FormPostgreSQLCreateTable.form:120
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:119
+#: FormPostgreSQLCreateTable.form:130
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:124
+#: FormPostgreSQLCreateTable.form:135
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:129
+#: FormPostgreSQLCreateTable.form:140
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:140
+#: FormPostgreSQLCreateTable.form:151
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:147
+#: FormPostgreSQLCreateTable.form:158
 msgid ")"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:165
+#: FormPostgreSQLCreateTable.form:176
 msgid "Table constraints"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:238
+msgid "Structure & inheritance"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:246
+msgid "Inherits"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:274
+msgid "Like"
 msgstr ""
 
 #: FormPostgreSQLCreateTrigger.form:28
@@ -908,7 +921,8 @@ msgstr ""
 msgid "Choose a reference"
 msgstr ""
 
-#: FormPostgreSQLGetReference.form:22 FormPostgreSQLGetTableAttribute.form:17
+#: FormPostgreSQLGetReference.form:22 FormPostgreSQLGetTable.form:15
+#: FormPostgreSQLGetTableAttribute.form:17
 msgid "Choose table:"
 msgstr ""
 

@@ -14,75 +14,87 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FormPostgreSQLCreateTable.form:44
+#: FormPostgreSQLCreateTable.form:55
 msgid "Menu table design"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:48
+#: FormPostgreSQLCreateTable.form:59
 msgid "Delete this row"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:52
+#: FormPostgreSQLCreateTable.form:63
 msgid "Make primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:67
+#: FormPostgreSQLCreateTable.form:78
 msgid "Create table"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:73
+#: FormPostgreSQLCreateTable.form:84
 msgid "Cancel"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:92
+#: FormPostgreSQLCreateTable.form:103
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:98
+#: FormPostgreSQLCreateTable.form:109
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:101
+#: FormPostgreSQLCreateTable.form:112
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:109
+#: FormPostgreSQLCreateTable.form:120
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:114
+#: FormPostgreSQLCreateTable.form:125
 msgid "Unique"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:119
+#: FormPostgreSQLCreateTable.form:130
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:124
+#: FormPostgreSQLCreateTable.form:135
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:129
+#: FormPostgreSQLCreateTable.form:140
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:140
+#: FormPostgreSQLCreateTable.form:151
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:141
+#: FormPostgreSQLCreateTable.form:152
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:147
+#: FormPostgreSQLCreateTable.form:158
 msgid ")"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:156
+#: FormPostgreSQLCreateTable.form:167
 msgid "Default"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:165
+#: FormPostgreSQLCreateTable.form:176
 msgid "Table constraints"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:238
+msgid "Structure & inheritance"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:246
+msgid "Inherits"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:274
+msgid "Like"
 msgstr ""
 

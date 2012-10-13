@@ -95,15 +95,31 @@ Public Sub change_table_unique_constraint(unique As Boolean, tuples As String[])
   Endif  
 End
 
+Public Sub change_table_inherits_constraint(inherit As Boolean, tables As String[])
+  ' change the inheritance constraint
+  table_constraints["inherits"] = inherit
+  If inherit Then
+    table_constraints["inherits tables"] = tables
+  Endif  
+End
+
+Public Sub change_table_like_constraint(like_ As Boolean, tables As String[])
+  ' change the inheritance constraint
+  table_constraints["like"] = like_
+  If like_ Then
+    table_constraints["like tables"] = tables
+  Endif  
+End
+
 Public Sub change_options(attribute As Integer, att_options As Collection)
   options[attribute] = att_options
 End
 
 Public Sub toSQL() As String
   ' construct a CREATE TABLE statement
-  ' RJESITI KOMENTARE
+  ' RJESITI KOMENTARE, LIKE i INHERITS
   Dim i As Integer
-  Dim statement, unique_tuple As String
+  Dim statement, unique_tuple, tbl As String
   statement = "CREATE TABLE \"" & escape(table_name) & "\" (" 
   For i = 0 To attributes.Count - 1 
     If attributes[i] = "" Then
@@ -184,8 +200,20 @@ Public Sub toSQL() As String
       statement &= "UNIQUE(" & escape(unique_tuple) & "), "
     Next
   Endif
-  statement = Left(statement, Len(statement) - 2)
-  statement &= ")"
+  If table_constraints["like"] Then
+    For Each tbl In table_constraints["like tables"]
+      statement &= "LIKE " & escape(tbl) & ", " ""
+    Next
+  Endif
+  statement = Left$(statement, -2)
+  statement &= ") "
+  If table_constraints["inherits"] Then
+    statement &= "INHERITS ("
+    For Each tbl In table_constraints["inherits tables"]
+      statement &= escape(tbl) & ", "
+    Next
+    statement = Left$(statement, -2) & ")"
+  Endif
   Return statement
 End
 

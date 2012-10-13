@@ -3,7 +3,7 @@
 Title=Baze Database Environment
 Startup=FMain
 Icon=majin_buu.jpg
-Version=0.3.4
+Version=0.3.5
 Component=gb.image
 Component=gb.qt4
 Component=gb.form

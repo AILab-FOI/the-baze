@@ -1,0 +1,30 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub Form_Open()
+  ' load the form with db tables
+  Dim objects As Collection
+  Dim tab As Object
+  objects = FMain.db.get_db_objects()
+  For Each tab In objects["tables"]
+    ComboBoxTable.Add(tab["table"])
+  Next
+End
+
+Public Sub ButtonOK_Click()
+  ' return the selected table reference
+  If ComboBoxTable.text <> "" Then
+    caller.inherits_from = "\"" & ComboBoxTable.Text & "\""
+    Me.Hide
+  Else
+    Message.Info("Please select a table to inherit from!")
+  Endif
+End
+
+Public Sub ButtonCancel_Click()
+  ' don't return anything
+  caller.inherits_from = ""
+  Me.hide
+End
+

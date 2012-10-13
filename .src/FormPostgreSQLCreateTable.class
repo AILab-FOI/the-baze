@@ -18,6 +18,8 @@ Public fp_datatypes As String[]
 Public reference As String
 Public onDelete As String
 Public onUpdate As String
+' message inbox for ineritance manager
+Public inherits_from As String
 ' the table object dealing with all attribute definitions and constraints
 Public pgtable As PostgreSQLTable
 ' main table view
@@ -25,6 +27,13 @@ Public main_table_view As TableView
 
 Public Sub Form_Open()
   Dim user_type As Object
+  Dim dbobjects As Collection
+  Dim tbl As Object
+  dbobjects = FMain.db.get_db_objects()
+  For Each tbl In dbobjects["tables"]
+    ComboboxInherits.Add(tbl["table"])
+    ComboboxLike.Add(tbl["table"])
+  Next
   stop_event = False
   main_table_view = TableViewMain
   pgtable = New PostgreSQLTable
@@ -479,4 +488,38 @@ Public Sub CheckBoxDefault_Click()
     TextBoxDefault.Enabled = False
   Endif
 
+End
+
+Public Sub CheckBoxInherits_Click()
+  ' toggle inherits controls
+  ComboboxInherits.Enabled = CheckBoxInherits.Value
+  ToolButtonAddInherits.Enabled = CheckBoxInherits.Value
+  ListBoxInherits.Enabled = CheckBoxInherits.Value
+  ToolButtonRemoveInherits.Enabled = CheckBoxInherits.Value
+  pgtable.change_table_inherits_constraint(CheckBoxInherits.Value, ListBoxInherits.List)
+End
+
+Public Sub CheckBoxLike_Click()
+  ' toggle like controls
+  ComboboxLike.Enabled = CheckBoxLike.Value
+  ToolButtonAddLike.Enabled = CheckBoxLike.Value
+  ListBoxLike.Enabled = CheckBoxLike.Value
+  ToolButtonRemoveLike.Enabled = CheckBoxLike.Value
+  pgtable.change_table_like_constraint(CheckBoxLike.Value, ListBoxLike.List)
+End
+
+Public Sub ToolButtonAddInherits_Click()
+  ' update the inheritance constraint and add the table to the listbox
+  If ListBoxInherits.Find(ComboboxInherits.Text) = -1 Then
+    ListBoxInherits.Add(ComboboxInherits.Text)
+    pgtable.change_table_inherits_constraint(CheckBoxInherits.Value, ListBoxInherits.List)
+  Endif
+End
+
+Public Sub ToolButtonAddLike_Click()
+  ' update the like constraint and add the table to the listbox
+  If ListBoxLike.Find(ComboboxLike.Text) = -1 Then
+    ListBoxLike.Add(ComboboxLike.Text)
+    pgtable.change_table_like_constraint(CheckBoxLike.Value, ListBoxLike.List)
+  Endif
 End

@@ -41,7 +41,7 @@
       MoveScaled(2,27,82,30)
       Expand = True
       Arrangement = Arrange.Fill
-      Count = 3
+      Count = 4
       Index = 0
       Text = ("Data type options")
       Picture = Picture["icon:/32/options"]
@@ -149,6 +149,58 @@
         }
         { ToolButtonRemove ToolButton
           MoveScaled(17,13,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/remove"]
+        }
+      }
+      Index = 3
+      Text = ("Structure & inheritance")
+      Picture = Picture["icon:/32/insert-image"]
+      { PanelInheritance Panel
+        MoveScaled(0,1,52,28)
+        { CheckBoxInherits CheckBox
+          MoveScaled(1,2,11,4)
+          Text = ("Inherits")
+        }
+        { ComboBoxInherits ComboBox
+          MoveScaled(12,2,17,4)
+          Enabled = False
+          ReadOnly = True
+        }
+        { ListBoxInherits ListBox
+          MoveScaled(33,2,16,11)
+          Enabled = False
+        }
+        { ToolButtonAddInherits ToolButton
+          MoveScaled(29,2,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/add"]
+        }
+        { ToolButtonRemoveInherits ToolButton
+          MoveScaled(49,9,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/remove"]
+        }
+        { CheckBoxLike CheckBox
+          MoveScaled(1,15,11,4)
+          Text = ("Like")
+        }
+        { ComboBoxLike ComboBox
+          MoveScaled(12,15,17,4)
+          Enabled = False
+          ReadOnly = True
+        }
+        { ToolButtonAddLike ToolButton
+          MoveScaled(29,15,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/add"]
+        }
+        { ListBoxLike ListBox
+          MoveScaled(33,15,16,11)
+          Enabled = False
+        }
+        { ToolButtonRemoveLike ToolButton
+          MoveScaled(49,22,4,4)
           Enabled = False
           Picture = Picture["icon:/16/remove"]
         }
