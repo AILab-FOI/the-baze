@@ -1,0 +1,63 @@
+' Gambas class file
+
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if he/she is sure and then close the tab
+  Dim child As Variant
+  If Message.Question("Do you want to discard your enum type design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End
+
+Public Sub ToolButtonAdd_Click()
+  ' add the value to the listbox
+  If ListBoxValues.Find(TextBoxValue.Text) <> -1 Then
+    Message.Warning("The value '" & TextBoxValue.Text & "' has already been entered!")
+  Else
+    ListBoxValues.Add(TextBoxValue.Text)
+    TextBoxValue.Text = ""
+  Endif
+End
+
+Public Sub ToolButtonRemove_Click()
+  ' remove the current selected value from the listbox
+  ListBoxValues.Remove(ListBoxValues.Index)
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' construct the create type as enum query and execute it
+  Dim query As String
+  Dim child As Object
+  Dim i As Integer
+  If ListBoxValues.Count > 0 Then
+    query = "CREATE TYPE "
+    query &= "\"" & FMain.pg_escape(Left$(FMain.main_tabstrip.Current.Text, -7)) & "\" "
+    query &= "AS ENUM ("
+    For i = 0 To ListBoxValues.Count - 1 
+      query &= "'" & ListBoxValues[i].Text & "', "
+    Next
+    query = Left$(query, -2)
+    query &= ")"
+    If IsNull(FMain.db.execute(query)) Then
+      Return
+    Else
+      With FMain.main_tabstrip.Current
+        For Each child In .Children
+          child.Close
+        Next
+          .Delete
+      End With
+      FMain.db.refresh_db_tree()
+      FMain.main_tabstrip.index = 0
+      Message.Info("Enum type successfully created!")
+    Endif
+  Else
+    Message.Warning("Please add some values to the enum type!")
+  Endif
+End

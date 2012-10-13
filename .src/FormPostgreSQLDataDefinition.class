@@ -7,6 +7,7 @@ Public trigger_name As String
 Public function_name As String
 Public type_name As String
 Public sequence_name As String
+Public enum_name As String
 Public request_canceled As Boolean
 
 Public Sub ToolButtonNewTable_Click()
@@ -21,8 +22,6 @@ Public Sub ToolButtonNewTable_Click()
     table_designer = New FormPostgreSQLCreateTable(FMain.main_tabstrip)
     FMain.main_tabstrip.Text = table_name & " - Table"
   Endif
-  
-
 End
 
 Public Sub ToolButtonNewView_Click()
@@ -96,7 +95,7 @@ Public Sub ToolButtonNewType_Click()
 End
 
 Public Sub ToolButtonNewSequence_Click()
-' open the type designer
+' open the sequence designer
   Dim ask As New FormAskSequenceName
   Dim sequence_designer As FormPostgreSQLCreateSequence
   ask.caller = Me
@@ -106,5 +105,19 @@ Public Sub ToolButtonNewSequence_Click()
     FMain.main_tabstrip.count += 1
     sequence_designer = New FormPostgreSQLCreateSequence(FMain.main_tabstrip)
     FMain.main_tabstrip.Text = sequence_name & " - Sequence"
+  Endif
+End
+
+Public Sub ToolButtonNewEnum_Click()
+' open the enum designer
+  Dim ask As New FormAskEnumName
+  Dim enum_designer As FormPostgreSQLCreateEnum
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    enum_designer = New FormPostgreSQLCreateEnum(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = enum_name & " - Enum"
   Endif
 End

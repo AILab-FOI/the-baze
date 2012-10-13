@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,82,71)
+  MoveScaled(0,0,87,71)
   Arrangement = Arrange.Vertical
   { PanelToolBox Panel
     MoveScaled(0,0,79,5)

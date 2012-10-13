@@ -1,21 +1,21 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,40,19)
+  MoveScaled(0,0,39,19)
   Resizable = False
   { LabelIndexName Label
-    MoveScaled(3,2,30,4)
+    MoveScaled(2,2,30,4)
     Text = ("Please enter a name for the index:")
   }
   { TextBoxIndexName TextBox
-    MoveScaled(3,7,35,4)
+    MoveScaled(2,7,35,4)
   }
   { ButtonOK Button
-    MoveScaled(27,13,11,4)
+    MoveScaled(26,13,11,4)
     Text = ("OK")
   }
   { ButtonCancel Button
-    MoveScaled(14,13,11,4)
+    MoveScaled(13,13,11,4)
     Text = ("Cancel")
   }
 }

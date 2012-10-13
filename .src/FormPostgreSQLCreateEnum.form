@@ -1,0 +1,36 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,67,28)
+  { LabelValue Label
+    MoveScaled(2,6,6,4)
+    Text = ("Value")
+  }
+  { ToolButtonAdd ToolButton
+    MoveScaled(25,6,4,4)
+    Picture = Picture["icon:/16/add"]
+  }
+  { ListBoxValues ListBox
+    MoveScaled(34,6,20,18)
+  }
+  { ToolButtonRemove ToolButton
+    MoveScaled(54,20,4,4)
+    Picture = Picture["icon:/16/remove"]
+  }
+  { TextBoxValue TextBox
+    MoveScaled(8,6,17,4)
+  }
+  { PanelToolBox Panel
+    MoveScaled(0,0,69,5)
+    { ToolButtonExecute ToolButton
+      MoveScaled(0,0,5,4)
+      ToolTip = ("Create index")
+      Picture = Picture["icon:/32/make"]
+    }
+    { ToolButtonCancel ToolButton
+      MoveScaled(5,0,5,4)
+      ToolTip = ("Cancel")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+}

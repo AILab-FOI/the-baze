@@ -1,3 +1,4 @@
 *~
 *.gambas
 *.gz
+.netrc

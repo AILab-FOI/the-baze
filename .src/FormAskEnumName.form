@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,39,18)
+  Resizable = False
+  { LabelEnumName Label
+    MoveScaled(2,1,34,4)
+    Text = ("Please enter a name for the enum type:")
+  }
+  { TextBoxEnumName TextBox
+    MoveScaled(2,6,35,4)
+  }
+  { ButtonOK Button
+    MoveScaled(26,12,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(13,12,11,4)
+    Text = ("Cancel")
+  }
+}
