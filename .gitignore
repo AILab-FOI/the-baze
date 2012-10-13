@@ -2,3 +2,5 @@
 *.gambas
 *.gz
 .netrc
+.gitignore
+
