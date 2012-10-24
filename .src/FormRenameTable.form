@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,41,18)
+  { LabelTableName Label
+    MoveScaled(2,1,37,4)
+    Text = ("Please provide a name for the altered table:")
+  }
+  { !TextBoxTableName TextBox
+    MoveScaled(2,6,37,4)
+    #Public = True
+  }
+  { ButtonOK Button
+    MoveScaled(28,12,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(15,12,11,4)
+    Text = ("Cancel")
+  }
+}

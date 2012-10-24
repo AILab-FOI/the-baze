@@ -157,8 +157,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   Loop 
   If result = "" Then 
     result = oldResult
-  Endif 
-  
+  Endif
   answers = Split(result, "\n")
   For Each i In answers
     If Left(i, 7) = "++Error"
@@ -223,7 +222,7 @@ End
 
 Public Sub _new(Optional home As String = "/usr/bin/xsb", Optional params As String = "--nobanner --quietload --noprompt 2>&1")
   xsb_home = home  
-  buff_size = -1000
+  buff_size = -20000 ' should be an argument that will be increased dynamically if queries get big!
   xsb_command = home & " " & params
   proc = Shell xsb_command For Read Write
   Write #proc, "[odbc_call].\n"

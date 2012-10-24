@@ -92,7 +92,6 @@ Public Sub _new(xsb As XSBEngine, dsn As String, username As String, password As
     "GROUP BY 2' " &
     ",_R)), _L), " &
     "member( [NumArgs, Relation], _L )."
-    
   resultSet = engine.execute(query, True, True)
   Print "Importing relations:\n"
   query = ""

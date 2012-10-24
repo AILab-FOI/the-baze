@@ -7,6 +7,7 @@ Public port As String
 Public dbname As String
 Public con As New Connection
 Public system_objects As Collection
+Public original As String[]
 
 Public Sub _new(host As String, port As String, dbname As String, username As String, password As String, store_password As Boolean)
   Me.host = host
@@ -41,6 +42,7 @@ Public Sub connect() As Boolean
       Return False
     End If  
   End With 
+  execute("SET client_min_messages TO WARNING;")
   Return True
   
 End
@@ -55,7 +57,9 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
   Dim context As New Collection
   Dim field_name As String
   Dim counter As Collection
-  Try res = con.Exec(query)
+  original = New String[]
+  Try con.Exec("ROLLBACK")
+  Try res = con.Exec(rewrite_query(query))
   If Error Then 
     If Not no_messages Then
       Message.Info(Error.Text)
@@ -233,6 +237,52 @@ Public Sub new_sql_query(ttitle As String, tquery As String, Optional ttype As S
      Me.dbobjects["queries"]["sql queries"][ttitle] = tquery
   Endif
   Me.Save()
+End
+
+Public Function rewrite_query(query As String) As String
+  ' rewrite the query to return distinct column names
+  Dim has_asterisk As String[]
+  Dim defined_limit As String[]
+  Dim replace_limit As String
+  Dim query_copy As String
+  Dim res As Result
+  Dim rfield As ResultField
+  Dim with_string As String
+  Dim i As Integer
+  has_asterisk = XSBEngine.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
+  If has_asterisk.Count > 0 Then
+    query_copy = query
+    defined_limit = XSBEngine.FindAll(query, "(?i)(limit +[0-9]+)", 1)
+    If defined_limit.Count > 0 Then
+      For Each replace_limit In defined_limit
+        query = Replace(query, replace_limit, "LIMIT 1")
+      Next
+    Else
+      query &= " LIMIT 1"
+    Endif
+    res = con.Exec(query)
+    For Each res
+      For Each rfield In res.Fields
+        original.Push(rfield.name)
+      Next
+    Next
+    If original.Count = 0 Then
+      Return query_copy
+    Endif
+    with_string = "WITH query("
+    For i = 0 To original.Max
+      with_string &= "a" & Str(i) & ", "
+    Next
+    with_string = Left$(with_string, -2) & ") AS (" & query_copy & ") SELECT * FROM query"
+    Return with_string
+  Else
+    Return query
+  Endif
+End
+
+Public Sub rename_table(old_name As String, new_name As String)
+  ' rename a table in the database
+  execute("ALTER TABLE \"" & FMain.pg_escape(old_name) & "\" RENAME TO \"" & FMain.pg_escape(new_name) & "\"")
 End
 
 

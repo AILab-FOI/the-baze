@@ -1,0 +1,30 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub ButtonOK_Click()
+  ' store the table name
+  If TextBoxTableName.Text <> "" Then
+    caller.table_name = TextBoxTableName.Text
+    Me.Hide
+  Else
+    Message.Info("Please enter a table name!")
+  Endif
+End
+
+Public Sub ButtonCancel_Click()
+  caller.request_canceled = True
+  Me.hide
+End
+
+Public Sub TextBoxTableName_KeyPress()
+    ' if enter is pressed close the form
+  If Key.code = Key.Return Then
+    If TextBoxTableName.Text <> "" Then
+      caller.table_name = TextBoxTableName.Text
+      Me.Hide
+    Else
+      Message.Info("Please enter a table name!")
+    Endif
+  Endif
+End

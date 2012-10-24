@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,87,65)
+  MoveScaled(0,0,93,70)
   Arrangement = Arrange.Fill
   { MenuTableDesign Menu
     Text = ("Menu table design")
@@ -14,7 +14,7 @@
     }
   }
   { VSplitMain VSplit
-    MoveScaled(1,1,85,59)
+    MoveScaled(1,1,91,67)
     { VBoxDesign VBox
       MoveScaled(2,3,69,23)
       { PanelToolBox Panel
@@ -38,7 +38,7 @@
       }
     }
     { IconPanelConstraints IconPanel
-      MoveScaled(2,27,82,30)
+      MoveScaled(2,27,87,37)
       Expand = True
       Arrangement = Arrange.Fill
       Count = 4
@@ -106,7 +106,7 @@
       Text = ("Table constraints")
       Picture = Picture["icon:/32/text-fill"]
       { PanelTableConstraints Panel
-        MoveScaled(-1,1,56,28)
+        MoveScaled(-1,1,58,34)
         { CheckBoxTableUnique CheckBox
           MoveScaled(1,1,14,2)
           Text = ("Unique")
@@ -116,15 +116,15 @@
           Text = ("Primary key")
         }
         { CheckBoxTableCheck CheckBox
-          MoveScaled(25,20,14,2)
+          MoveScaled(24,16,14,2)
           Text = ("Check (")
         }
         { TextBoxTableCheck TextBox
-          MoveScaled(34,19,18,4)
+          MoveScaled(33,15,18,4)
           Enabled = False
         }
         { TextLabelTableBrace TextLabel
-          MoveScaled(52,20,2,3)
+          MoveScaled(51,16,2,3)
           Font = Font["+1"]
           Text = (")")
         }
@@ -149,6 +149,21 @@
         }
         { ToolButtonRemove ToolButton
           MoveScaled(17,13,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/remove"]
+        }
+        { ListBoxTableCheck ListBox
+          MoveScaled(28,20,23,8)
+          Enabled = False
+          Mode = Select.Multiple
+        }
+        { ToolButtonAddCheck ToolButton
+          MoveScaled(51,15,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/add"]
+        }
+        { ToolButtonRemoveCheck ToolButton
+          MoveScaled(51,25,4,4)
           Enabled = False
           Picture = Picture["icon:/16/remove"]
         }

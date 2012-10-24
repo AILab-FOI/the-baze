@@ -24,6 +24,8 @@ Public inherits_from As String
 Public pgtable As PostgreSQLTable
 ' main table view
 Public main_table_view As TableView
+' unique constraint attribute holder
+Public unique_attributes As New String[][]
 
 Public Sub Form_Open()
   Dim user_type As Object
@@ -36,10 +38,10 @@ Public Sub Form_Open()
   Next
   stop_event = False
   main_table_view = TableViewMain
-  pgtable = New PostgreSQLTable
+  pgtable = New PostgreSQLTable(FMain.db, PostgreSQLTable.ALTER)
   pgtable.table_name = Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - 8)
-  datatypes = ["bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
-  basic_datatypes = ["bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "xml"]
+  datatypes = ["oid", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+  basic_datatypes = ["oid", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "xml"]
   n_datatypes = ["char", "character", "character varying", "varchar"]
   p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone"]
   ps_datatypes = ["decimal", "numeric"]
@@ -60,7 +62,60 @@ Public Sub Form_Open()
   End With
   VSplitMain.Layout = [2, 1]
   IconPanelConstraints.Index = 1
+  ' load table from db
+  load_ui_from_db()
 End
+
+Public Sub load_ui_from_db()
+  ' load all table definitions from the db and paste it into the UI
+  Dim i As Integer
+  pgtable.load_from_db(Left(FMain.main_tabstrip.Text, - Len(" - Alter Table")))
+  
+  For i = 0 To pgtable.attributes.Max
+    With TableViewMain
+      .Row = i
+      .Column = 0
+      .Current.Text = pgtable.attributes[i]
+      .Column = 1
+      .Current.Text = pgtable.datatypes[i]
+      .Column = 2
+      .Current.Text = pgtable.descriptions[i]
+    End With
+  Next
+  
+  With pgtable
+    ListBoxPrimaryKey.List = .attributes
+    If .table_constraints["primary key"] Then
+      CheckBoxTablePrimaryKey.Value = True
+      For i = 0 To .table_constraints["primary keys"].Max
+        ListBoxPrimaryKey[ListBoxPrimaryKey.Find(.table_constraints["primary keys"][i])].Selected = True
+      Next
+    Endif
+    If .table_constraints["check"] Then
+      CheckBoxTableCheck.Value = True
+      For i = 0 To .table_constraints["check formulae"].Max
+        ListBoxTableCheck.Add(.table_constraints["check formulae"][i])
+      Next
+    Endif
+    ListBoxUnique.List = .attributes
+    If .table_constraints["unique"] Then
+      CheckBoxTableUnique.Value = True
+      For i = 0 To .table_constraints["unique tuples"].Max
+        ListBoxAdded.Add(.table_constraints["unique tuples"][i].join(", "))
+      Next
+    Endif
+    If .table_constraints["inherits"] Then
+      For i = 0 To .table_constraints["inherits tables"].Max
+        ListBoxInherits.Add(.table_constraints["inherits tables"][i])
+      Next
+      CheckBoxInherits.Value = True
+    Endif
+  End With
+  TableViewMain.Row = 0
+  TableViewMain.Column = 0
+  load_constraints(0)
+End
+
 
 Public Sub VSplitMain_Resize()
   ' get the table view to arrange its size according to the size of the VSplit
@@ -177,14 +232,13 @@ End
 
 Public Sub load_constraints(row As Integer)
   ' load all constraints for the given attribute
+  stop_event = True
   If pgtable.attributes.Count > 0 Then
     With pgtable
       If .constraints.Count - 1 < row Then
         CheckBoxNotNull.value = False
         CheckBoxUnique.value = False
         CheckBoxPrimaryKey.value = False
-        CheckBoxCheck.Value = False
-        TextBoxCheck.Text = False
         CheckBoxReferences.Value = False
         LabelReferencedTable.Text = ""
         CheckBoxDefault.Value = False
@@ -205,11 +259,6 @@ Public Sub load_constraints(row As Integer)
         If IsNull(.constraints[row]["check"]) Then
           .constraints[row]["check"] = False
         Endif
-        CheckBoxCheck.Value = .constraints[row]["check"]
-        If IsNull(.constraints[row]["check formula"]) Then
-          .constraints[row]["check formula"] = ""
-        Endif
-        TextBoxCheck.Text = .constraints[row]["check formula"]
         If IsNull(.constraints[row]["references"]) Then
           .constraints[row]["references"] = False
         Endif
@@ -230,6 +279,7 @@ Public Sub load_constraints(row As Integer)
       
     End With
   Endif
+  stop_event = False
 End
 
 
@@ -268,37 +318,27 @@ Public Sub ToolButtonExecute_Click()
   Endif
 End
 
-Public Sub ToolButtonCancel_Click()
+Public Sub ToolButtonClose_Click()
   ' ask the user if he/she is sure and then close the tab
   Dim child As Variant
-  If Message.Question("Do you want to discard your table design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
-    With FMain.main_tabstrip.Current
-      For Each child In .Children
-        child.Close
-      Next
-      .Delete
-    End With
-    FMain.main_tabstrip.index = 0
-  Endif
-End
-
-Public Sub CheckBoxCheck_Click()
-  ' toggle the textbox
-  If CheckBoxCheck.Value Then
-    TextBoxCheck.Enabled = True
-  Else
-    TextBoxCheck.Enabled = False
-    ' add a check constraint to the current attribute
-    pgtable.change_check_constraint(TableViewMain.Row, CheckBoxCheck.Value, TextBoxCheck.Text)
-  Endif
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+  FMain.main_tabstrip.index = 0
 End
 
 Public Sub CheckBoxTableCheck_Click()
-   ' toggle the textbox
-  If CheckBoxTableCheck.Value Then
-    TextBoxTableCheck.Enabled = True
-  Else
-    TextBoxTableCheck.Enabled = False
+  ' toggle the textbox, toolbutons and listbox
+  TextBoxTableCheck.Enabled = CheckBoxTableCheck.Value
+  ToolButtonAddCheck.Enabled = CheckBoxTableCheck.Value
+  ToolButtonRemoveCheck.Enabled = CheckBoxTableCheck.Value
+  ListBoxTableCheck.Enabled = CheckBoxTableCheck.Value
+  If CheckBoxTableCheck.Value = False Then
+    pgtable.change_table_check_constraint(CheckBoxTableCheck.Value, ListBoxTableCheck.List)
+    ListBoxTableCheck.List = []
   Endif
 End
 
@@ -321,10 +361,17 @@ Public Sub CheckBoxTablePrimaryKey_Click()
    ' toggle the listbox
   If CheckBoxTablePrimaryKey.Value Then
     ListBoxPrimaryKey.Enabled = True
+    stop_event = True
     CheckBoxPrimaryKey.Value = False
+    stop_event = False
     CheckBoxTablePrimaryKey.Value = True
+    ToolButtonPrimaryKeySave.Enabled = True
   Else
     ListBoxPrimaryKey.Enabled = False
+    ToolButtonPrimaryKeySave.Enabled = False
+    If Not stop_event Then
+      pgtable.change_table_primary_key_constraint(False, ListBoxPrimaryKey.List)
+    Endif
   Endif
 End
 
@@ -341,14 +388,15 @@ Public Sub ToolButtonAdd_Click()
   ' add the selected attributes to the unique constriants listbox
   Dim i As Integer
   Dim unique As String
-  Dim tuples As New String[]
+  Dim tbl_tuples As New String[]
   unique = ""
   For i = 0 To ListBoxUnique.Count - 1
     If ListBoxUnique[i].Selected Then
-      unique &= ListBoxUnique[i].Text & ", "
-    Endif
+      unique &= "\"" & pgtable.escape(ListBoxUnique[i].Text) & "\", "
+      tbl_tuples.Push(ListBoxUnique[i].Text)
+    End If
   Next
-  unique = Left(unique, Len(unique) - 2)
+  unique = Left$(unique, -2)
   If unique <> "" Then
     For i = 0 To ListBoxAdded.Count - 1
       If ListBoxAdded[i].Text = unique Then
@@ -356,30 +404,38 @@ Public Sub ToolButtonAdd_Click()
       Endif
     Next
     ListBoxAdded.Add(unique)
+    unique_attributes.Push(tbl_tuples)
     ListBoxUnique.UnselectAll
   Endif
   ' add the unique constraints to the current table
-  With pgtable
-    For i = 0 To ListBoxAdded.Count - 1
-      tuples.Add(ListBoxAdded[i].Text)
-    Next
-    .change_table_unique_constraint(CheckBoxTableUnique.Value, tuples)
-  End With
+  pgtable.change_table_unique_constraint(CheckBoxTableUnique.Value, unique_attributes)
 End
 
 Public Sub ToolButtonRemove_Click()
   ' remove the selected unique constraint
   ListBoxAdded.Remove(ListBoxAdded.Index)
-
+  unique_attributes.Remove(ListBoxAdded.Index)
 End
 
 Public Sub CheckBoxPrimaryKey_Click()
-  ' if the table has a simple primary key, it cannot have a composite one
-  ' thus disable the composite key control
-  CheckBoxTablePrimaryKey.Value = False
-  ListBoxPrimaryKey.Enabled = False
   ' add a primary key constraint to the current attribute
-  pgtable.change_primary_key_constraint(TableViewMain.Row, CheckBoxPrimaryKey.Value)
+  If Not stop_event Then
+    If Not pgtable.change_primary_key_constraint(TableViewMain.Row, CheckBoxPrimaryKey.Value) Then
+      If Not stop_event Then
+        stop_event = True
+        CheckBoxPrimaryKey.Value = Not CheckBoxPrimaryKey.Value
+        stop_event = False
+      Endif
+    Else
+      ' if the table has a simple primary key, it cannot have a composite one
+      ' thus disable the composite key control
+      stop_event = True
+      CheckBoxTablePrimaryKey.Value = False
+      ListBoxPrimaryKey.Enabled = False
+      ToolButtonPrimaryKeySave.Enabled = False
+      stop_event = False
+    Endif
+  Endif
   Catch
     Return
 End
@@ -397,7 +453,7 @@ End
 Public Sub TableViewMain_Menu()
   ' show the popup menu
   If all_previous(TableViewMain.Row) Then
-    MenuTableDesign.Popup()
+    'MenuTableDesign.Popup()
   Endif
 End
 
@@ -433,29 +489,31 @@ Public Sub MenuPrimaryKey_Click()
   
 End
 
-
-
-
 Public Sub CheckBoxNotNull_Click()
   ' add a not null constraint to the current attribute
-  pgtable.change_not_null_constraint(TableViewMain.Row, CheckBoxNotNull.Value)
+  If Not pgtable.change_not_null_constraint(TableViewMain.Row, CheckBoxNotNull.Value) And Not stop_event Then
+    stop_event = True
+    CheckBoxNotNull.Value = Not CheckBoxNotNull.Value
+    stop_event = False
+  Endif
 End
 
 Public Sub CheckBoxUnique_Click()
   ' add a unique constraint to the current attribute
-  pgtable.change_unique_constraint(TableViewMain.Row, CheckBoxUnique.Value)
+  Dim can_change As Boolean
+  If Not stop_event Then
+    can_change = pgtable.change_unique_constraint(TableViewMain.Row, CheckBoxUnique.Value)
+    If Not can_change And Not stop_event Then
+      stop_event = True
+      CheckBoxUnique.Value = Not CheckBoxUnique.Value
+      stop_event = False
+    Endif
+  Endif
 End
 
 Public Sub ListBoxPrimaryKey_Select()
-  ' add multiple primary key constraint to the current table
-  Dim i As Integer
-  Dim keys As New String[]
-  For i = 0 To ListBoxPrimaryKey.Count - 1
-    If ListBoxPrimaryKey[i].Selected Then
-      keys.Add(ListBoxPrimaryKey[i].Text)
-    Endif
-  Next
-  pgtable.change_table_primary_key_constraint(CheckBoxTablePrimaryKey.value, keys)
+  ' toggle the primary key save button
+  ToolButtonPrimaryKeySave.Enabled = True
 End
 
 Public Sub TableViewMain_LostFocus()
@@ -463,31 +521,24 @@ Public Sub TableViewMain_LostFocus()
   Try TableViewMain_Save(TableViewMain.Row, TableViewMain.Column, TableViewMain.Current.Text)
 End
 
-Public Sub TextBoxCheck_KeyRelease()
-  ' add a check constraint to the current row
-  pgtable.change_check_constraint(TableViewMain.Row, CheckBoxCheck.Value, TextBoxCheck.Text)
-End
-
-Public Sub TextBoxTableCheck_KeyRelease()
-  ' add a multiple chek constraint to the current table
-  pgtable.change_table_check_constraint(CheckBoxTableCheck.Value, TextBoxTableCheck.Text)
-End
-
-
 Public Sub TextBoxDefault_KeyRelease()
   ' add a default constraint to the current attribute
-  pgtable.change_default_constraint(TableViewMain.Row, CheckBoxDefault.Value, TextBoxDefault.Text)
+  ToolButtonDefaultSave.Enabled = True
 End
 
 Public Sub CheckBoxDefault_Click()
   ' toggle the textbox
   If CheckBoxDefault.value Then
     TextBoxDefault.Enabled = True
-    CheckBoxDefault.Value = True
+    ToolButtonDefaultSave.Enabled = True
   Else
-    TextBoxDefault.Enabled = False
+    If Not stop_event Then
+      TextBoxDefault.Text = ""
+      pgtable.change_default_constraint(TableViewMain.Row, CheckBoxDefault.Value, TextBoxDefault.Text)
+      TextBoxDefault.Enabled = False
+      ToolButtonDefaultSave.Enabled = False
+    Endif
   Endif
-
 End
 
 Public Sub CheckBoxInherits_Click()
@@ -521,5 +572,59 @@ Public Sub ToolButtonAddLike_Click()
   If ListBoxLike.Find(ComboboxLike.Text) = -1 Then
     ListBoxLike.Add(ComboboxLike.Text)
     pgtable.change_table_like_constraint(CheckBoxLike.Value, ListBoxLike.List)
+  Endif
+End
+
+Public Sub ToolButtonRemoveInherits_Click()
+ ' remove the current inherits constraint from the listbox
+  ListBoxInherits.Remove(ListBoxInherits.Index)
+End
+
+Public Sub ToolButtonRemoveLike_Click()
+  ' remove the current like constraint from the listbox
+  ListBoxLike.Remove(ListBoxLike.Index)
+End
+
+Public Sub ToolButtonAddCheck_Click()
+  ' add the check expression from the textbox to the listbox
+  Dim can_change As Boolean
+  Dim checks As String[]
+  checks = ListBoxTableCheck.List
+  checks.Add(TextBoxTableCheck.Text)
+  can_change = pgtable.change_table_check_constraint(CheckBoxTableCheck.Value, checks)
+  If can_change Then
+    ListBoxTableCheck.Add(TextBoxTableCheck.Text)
+    TextBoxTableCheck.text = ""
+  Endif
+End
+
+Public Sub ToolButtonRemoveCheck_Click()
+  ' remove the selected check expression from the listbox 
+  ListBoxTableCheck.Remove(ListBoxTableCheck.Index)
+  pgtable.change_table_check_constraint(CheckBoxTableCheck.Value, ListBoxTableCheck.List)
+End
+
+
+Public Sub ToolButtonPrimaryKeySave_Click()
+  ' save the selected primary keys
+  Dim can_change As Boolean
+  Dim i As Integer
+  Dim keys As New String[]
+  For i = 0 To ListBoxPrimaryKey.Count - 1
+    If ListBoxPrimaryKey[i].Selected Then
+      keys.Add(ListBoxPrimaryKey[i].Text)
+    Endif
+  Next
+  can_change = pgtable.change_table_primary_key_constraint(CheckBoxTablePrimaryKey.value, keys)
+  If can_change Then
+    ToolButtonPrimaryKeySave.Enabled = False
+  Endif
+End
+
+Public Sub ToolButtonDefaultSave_Click()
+  ' save the new default value
+  If Not stop_event Then
+    pgtable.change_default_constraint(TableViewMain.Row, CheckBoxDefault.Value, TextBoxDefault.Text)
+    ToolButtonDefaultSave.Enabled = False
   Endif
 End

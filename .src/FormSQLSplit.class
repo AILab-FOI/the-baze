@@ -54,7 +54,11 @@ Public Sub ToolButtonExecute_Click()
           counter_col = 0
           For Each value In one_line
             If first Then
-              TableViewResults.Columns[counter_col].Title = one_line.Key
+              If FMain.db.original.Count > 0 Then
+                TableViewResults.Columns[counter_col].Title = FMain.db.original[counter_col]
+              Else
+                TableViewResults.Columns[counter_col].Title = one_line.Key
+              Endif
             Endif
             TableViewResults.Row = counter_row
             TableViewResults.Column = counter_col

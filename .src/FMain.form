@@ -12,6 +12,10 @@
       Text = ("Update data")
       Picture = Picture["icon:/32/edit"]
     }
+    { MenuAlterTable Menu
+      Text = ("Alter table")
+      Picture = Picture["icon:/32/options"]
+    }
     { MenuDropTable Menu
       Text = ("Drop table")
       Picture = Picture["icon:/32/halt"]

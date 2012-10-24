@@ -21,13 +21,16 @@ Public main_tabstrip As TabStrip
 Public main_treeview As TreeView
 ' main tool panel
 Public main_toolpanel As ToolPanel
+' inbox for a canceled request
+Public request_canceled As Boolean
+' inbox for a changed table name
+Public table_name As String
   
 Public Sub _new()
   ' make components visible to DB classes
   Me.main_tabstrip = TabStripMain
   Me.main_treeview = TreeViewMain
   Me.main_toolpanel = ToolPanelMain
-  
   ' open the wizard first
   FormOpenWizard.ShowModal
   If wizard_return = "canceled" Then ' wizard cancelled, close app
@@ -137,8 +140,28 @@ Public Sub MenuDropTable_Click()
     Endif
     db.refresh_db_tree()
   Endif
-  
 End
+
+Public Sub MenuAlterTable_Click()
+  ' open the alter table form
+  ' open table designer
+  Dim ask As New FormRenameTable
+  Dim table_designer As FormPostgreSQLAlterTable
+  ask.caller = Me
+  request_canceled = False
+  ask.TextBoxTableName.Text = main_treeview.Current.Text
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    table_designer = New FormPostgreSQLAlterTable(FMain.main_tabstrip)
+    If main_treeview.Current.Text <> table_name Then
+      db.rename_table(main_treeview.Current.Text, table_name)
+      db.refresh_db_tree()
+    Endif
+    FMain.main_tabstrip.Text = table_name & " - Alter table"
+  Endif
+End
+
 
 Public Sub MenuDropView_Click()
   ' drop the view
@@ -337,3 +360,4 @@ Public Sub TreeViewMain_DblClick()
     main_tabstrip.Text = tbl & " - Table"
   Endif
 End
+
