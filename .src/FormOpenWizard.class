@@ -9,7 +9,7 @@ Public dbtype As String
 ' path to XSB
 Public xsb_exe As String
 
-Public Sub _new()
+Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
   ' set return value to canceled in case the user clicks the x button
@@ -57,6 +57,7 @@ Public Sub _new()
   Endif
   load_odbc_dsn()
 End
+
 
 Private Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
         ' findall matches of a given regex in a given string
@@ -193,7 +194,6 @@ Public Sub WizardIntro_Cancel()
   ' to prevent showing the main frame
   FMain.wizard_return = "canceled"
   Me.Close
-  
 End
 
 
@@ -201,14 +201,12 @@ Public Sub ToolButtonOpen_Click()
   ' open the file chooser 
   FormOpenFile.ShowModal
   LabelChosenFile.Text = openfile
-
 End
 
 Public Sub RadioButtonNew_Click()
   ' if new radio is clicked disable the other two
   toggle_open(False)
   toggle_connect(False)
-
 End
 
 Private Sub toggle_open(value As Boolean)

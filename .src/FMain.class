@@ -31,7 +31,6 @@ Public Sub _new()
   Me.main_tabstrip = TabStripMain
   Me.main_treeview = TreeViewMain
   Me.main_toolpanel = ToolPanelMain
-  handle_user_request()
 End
 
 Public Sub handle_user_request()
@@ -40,10 +39,12 @@ Public Sub handle_user_request()
   FormOpenWizard.ShowModal
   If wizard_return = "canceled" Then ' wizard cancelled, close app
     Me.close
-    Else
+    Return
+  Else
       If wizard_return = "connection" Then ' create a new connection
         If connection_settings = Null Then ' no connection settings supplied (X button), close app
           Me.close
+          Return
         End If
         save_file_as()
         db = connection_settings["connection"]
@@ -55,10 +56,14 @@ Public Sub handle_user_request()
       Else
         If wizard_return = "new" Then ' create a new (internal) baze file
           save_file_as()
-          db = New SQLiteDBInternal("", "", "", False)
-          db.baze_file = current_file
-          db.new_file()
-          shift_recent_files(current_file)
+          If current_file Then
+            db = New SQLiteDBInternal("", "", "", False)
+            db.baze_file = current_file
+            db.new_file()
+            shift_recent_files(current_file)
+          Else
+            Return
+          Endif
           Else
             ' open an existing file
             db = New DBaze
@@ -74,9 +79,8 @@ End
 
 Public Sub Form_Open()
   ' setup the main window horizontal split
-  ' Dim sql_split As New FormSQLSplit(TabStripMain)
   HSplitMain.Settings = [1, 4, 1]
-  
+  handle_user_request()
 End
 
 Public Sub save_file_as()
@@ -129,8 +133,6 @@ Public Sub TreeViewMain_Menu()
     Case "Types"
       MenuTreeType.Popup()
   End Select
-  
-
 End
 
 Public Sub pg_escape(repl_string As String) As String
@@ -185,7 +187,6 @@ Public Sub MenuDropView_Click()
     Endif
     db.refresh_db_tree()
   Endif
-  
 End
 
 Public Sub MenuDropIndex_Click()
@@ -200,7 +201,6 @@ Public Sub MenuDropIndex_Click()
     Endif
     db.refresh_db_tree()
   Endif
-  
 End
 
 Public Sub MenuDropSequence_Click()
