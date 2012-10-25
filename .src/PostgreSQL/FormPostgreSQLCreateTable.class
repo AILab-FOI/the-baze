@@ -93,8 +93,8 @@ Public Sub TableViewMain_Click()
         .Edit(datatypes, True)
         show_datatype_options(TableViewMain[.Row, 1].text)
       Endif
+      load_constraints(.Row)
     Endif
-    load_constraints(.Row)
   End With
 End
 
