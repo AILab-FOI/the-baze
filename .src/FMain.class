@@ -365,8 +365,8 @@ Public Sub TreeViewMain_DblClick()
     con.Name = FMain.db.con.Name
     con.Open
     table_updater = New FormPostgreSQLEditTableData(FMain.main_tabstrip)
-    table_updater.data_source.Table = tbl
     table_updater.data_source.Connection = con
+    table_updater.data_source.Table = tbl
     main_tabstrip.Text = tbl & " - Table"
   Endif
 End
