@@ -50,6 +50,7 @@ Public Sub ComboBoxFunction_Click()
   LabelArguments.Visible = has_params
   ListViewArguments.Visible = has_params
   If has_params Then
+    ListViewArguments.Clear()
     params = Split(params[0], ",")
     i = 0
     For Each par In params
