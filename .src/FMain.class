@@ -90,11 +90,11 @@ Public Sub save_file_as()
   Dialog.Filter = ["*.baze", "Baze file"]
   
   If Dialog.SaveFile() Then 
-    handle_user_request() 'Goto again
+    handle_user_request()
     Return
   Endif
   current_file = Dialog.Path
-  If String.Right(current_file, 5) <> ".baze" Then current_file &= ".baze"
+  If String.Right(current_file, 5) <> ".baze" And Not Exist(current_file) Then current_file &= ".baze"
   Catch
     Message.Info(Error.Text)
     save_file_as()
