@@ -2,7 +2,8 @@
 PostgreSQLDB=[9]
 
 [Breakpoints]
-Count=0
+Breakpoint[1]="PostgreSQLTable.785"
+Count=1
 
 [DebugWindow]
 Count=0
@@ -16,6 +17,9 @@ Geometry=[59,24,240,240]
 [DebugWindow/[1, 1]]
 Geometry=[95,60,301,475]
 
+[DebugWindow/att_names]
+Geometry=[59,24,240,240]
+
 [DebugWindow/attributes]
 Geometry=[59,24,240,240]
 
@@ -23,6 +27,9 @@ Geometry=[59,24,240,240]
 Geometry=[62,295,240,240]
 
 [DebugWindow/checks]
+Geometry=[59,24,240,240]
+
+[DebugWindow/con_names]
 Geometry=[59,24,240,240]
 
 [DebugWindow/constraints]
@@ -89,7 +96,7 @@ Geometry=[77,56,347,240]
 Geometry=[77,56,347,240]
 
 [DebugWindow/pgtable]
-Geometry=[29,131,385,240]
+Geometry=[11,109,385,240]
 
 [DebugWindow/pgtable.attributes]
 Geometry=[59,167,385,240]
@@ -116,13 +123,19 @@ Geometry=[68,40,385,240]
 Geometry=[68,40,385,240]
 
 [DebugWindow/pgtable.table_constraints]
-Geometry=[124,149,385,240]
+Geometry=[21,123,385,240]
 
 [DebugWindow/pgtable.table_constraints["check formulae"]]
 Geometry=[133,165,385,240]
 
 [DebugWindow/pgtable.table_constraints["inherits tables"]]
 Geometry=[800,287,385,240]
+
+[DebugWindow/pgtable.table_constraints["unique tuples"]]
+Geometry=[59,139,385,240]
+
+[DebugWindow/pgtable.table_constraints["unique tuples"][0]]
+Geometry=[68,155,385,240]
 
 [DebugWindow/pkeys]
 Geometry=[59,24,240,240]
@@ -172,6 +185,27 @@ Geometry=[59,24,240,240]
 [DebugWindow/to_delete]
 Geometry=[59,24,240,240]
 
+[DebugWindow/tuples]
+Geometry=[59,24,240,240]
+
+[DebugWindow/tuples[0]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/tuples[1]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/tuples[2]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/tuples[3]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/tuples[4]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/unique_attributes]
+Geometry=[59,24,240,240]
+
 [FFind]
 SearchIn="Module"
 CaseSensitive=False
@@ -181,11 +215,11 @@ SearchString=True
 
 [OpenFile]
 File[1]=".src/FormOpenWizard.form"
-File[2]=".src/FormOpenWizard.class:11.22"
+File[2]=".src/FormOpenWizard.class:158.30"
 File[3]=".src/FormOpenFile.form"
 File[4]=".src/FormOpenFile.class:4.0"
 File[5]=".src/DBaze.class:102.33"
-File[6]=".src/CouchDB.class:8.16"
+File[6]=".src/CouchDB.class:7.16"
 File[7]=".src/FormFindXSB.form"
 File[8]=".src/FormAskPasword.form"
 File[9]=".src/FormFindXSB.class:17.24"
@@ -195,7 +229,7 @@ File[12]=".src/DatalogConnection.class:29.24"
 File[13]=".src/ZODBFileStorage.class:0.0"
 File[14]=".src/FormSQLSplit.form"
 File[15]=".src/FormSQLSplit.class:60.19"
-File[16]=".src/PostgreSQLDB.class:89.6"
+File[16]=".src/PostgreSQLDB.class:11.27"
 File[17]=".src/PostgreSQL/FormPostgreSQLDataDefinition.form"
 File[18]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
 File[19]=".src/PostgreSQL/FormPostgreSQLDataQuerying.form"
@@ -204,14 +238,14 @@ File[21]=".src/FormAskQueryName.form"
 File[22]=".src/FormAskQueryName.class:18.6"
 File[23]=".src/FormAskPasword.class:12.7"
 File[24]=".src/PostgreSQL/FormPostgreSQLCreateTable.form"
-File[25]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:40.41"
+File[25]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:95.28"
 File[26]=".src/PostgreSQL/FormPostgreSQLDataDefinition.class:23.7"
 File[27]=".src/FormAskTableName.form"
 File[28]=".src/FormAskTableName.class:30.0"
 Active=29
-File[29]=".src/PostgreSQL/PostgreSQLTable.class:88.13"
+File[29]=".src/PostgreSQL/PostgreSQLTable.class:802.9"
 File[30]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.form"
-File[31]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.class:44.57"
+File[31]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.class:10.12"
 File[32]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsN.form"
 File[33]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsP.form"
 File[34]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsP.class:32.2"
@@ -237,7 +271,7 @@ File[53]=".src/PostgreSQL/FormPostgreSQLCreateIndex.class:53.0"
 File[54]=".src/FormAskIndexName.form"
 File[55]=".src/FormAskIndexName.class:30.0"
 File[56]=".src/PostgreSQL/FormPostgreSQLCreateTrigger.form"
-File[57]=".src/PostgreSQL/FormPostgreSQLCreateTrigger.class:73.53"
+File[57]=".src/PostgreSQL/FormPostgreSQLCreateTrigger.class:52.29"
 File[58]=".src/FormAskTriggerName.form"
 File[59]=".src/FormAskTriggerName.class:10.40"
 File[60]=".src/PostgreSQL/FormPostgreSQLCreateFunction.form"
@@ -264,10 +298,10 @@ File[80]=".src/FormAskEnumName.class:23.17"
 File[81]=".src/PostgreSQL/FormPostgreSQLGetTable.form"
 File[82]=".src/PostgreSQL/FormPostgreSQLGetTable.class:18.11"
 File[83]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
-File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:533.6"
+File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:431.5"
 File[85]=".src/FormRenameTable.form"
 File[86]=".src/FormRenameTable.class:2.23"
-File[87]=".src/FMain.class:57.14"
+File[87]=".src/FMain.class:365.0"
 Count=87
 
 [Watches]

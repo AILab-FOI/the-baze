@@ -58,7 +58,9 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
   Dim field_name As String
   Dim counter As Collection
   original = New String[]
-  Try con.Exec("ROLLBACK")
+  If query <> "SET client_min_messages TO WARNING;" Then
+    Try con.Exec("ROLLBACK")
+  Endif
   Try res = con.Exec(rewrite_query(query))
   If Error Then 
     If Not no_messages Then

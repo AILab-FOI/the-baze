@@ -18,6 +18,8 @@ Public options As New Collection[]
 Public db As PostgreSQLDB
 ' mode of operation (if set to ALTER then the table is existing and each change results in an ALTER TABLE statement)
 Public mode As Integer
+' PostgreSQL version
+Public version As String
 
 Public Const NEW_TABLE As Integer = 27
 Public Const ALTER As Integer = 1981
@@ -125,17 +127,24 @@ Public Sub change_check_constraint(a_index As Integer, check As Boolean, Optiona
   Endif
 End
 
-Public Sub change_references_constraint(a_index As Integer, references As Boolean, Optional reference As String, Optional onDelete As String, Optional onUpdate As String, Optional constraint_name As String)
+Public Sub change_references_constraint(a_index As Integer, references As Boolean, Optional reference As String = "", Optional onDelete As String = "", Optional onUpdate As String = "", Optional constraint_name As String) As Boolean
   ' change check constraint on a given attribute index
-  constraints[a_index]["references"] = references
-  If references Then
-    constraints[a_index]["referenced table"] = reference
-    constraints[a_index]["on delete"] = onDelete
-    constraints[a_index]["on update"] = onUpdate
+  Dim can_change As Boolean = True
+  If mode = ALTER Then
+    can_change = alter_reference(a_index, reference, onDelete, onUpdate, references)
   Endif
-  If constraint_name Then
-    constraints[a_index]["reference constraint name"] = constraint_name
+  If can_change Then
+    constraints[a_index]["references"] = references
+    If references Then
+      constraints[a_index]["referenced table"] = reference
+      constraints[a_index]["on delete"] = onDelete
+      constraints[a_index]["on update"] = onUpdate
+    Endif
+    If constraint_name Then
+      constraints[a_index]["reference constraint name"] = constraint_name
+    Endif
   Endif
+  Return can_change
 End
 
 Public Sub change_default_constraint(a_index As Integer, default_ As Boolean, Optional default_value As String) As Boolean
@@ -220,12 +229,21 @@ Public Sub change_table_check_constraint(check As Boolean, formulae As String[],
   Return can_change
 End
 
-Public Sub change_table_unique_constraint(unique As Boolean, tuples As String[][])
+Public Sub change_table_unique_constraint(unique As Boolean, tuples As String[][]) As Boolean
   ' change the multiple unique constraint
-  table_constraints["unique"] = unique
-  If unique Then
-    table_constraints["unique tuples"] = tuples
-  Endif  
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    reload_unique_and_primary_key_constraints()
+    can_change = alter_table_unique(tuples, unique)
+  Endif
+  If can_change Then
+    table_constraints["unique"] = unique
+    If unique Then
+      table_constraints["unique tuples"] = tuples
+    Endif  
+  Endif
+  Return can_change
 End
 
 Public Sub change_table_inherits_constraint(inherit As Boolean, tables As String[])
@@ -387,10 +405,24 @@ Public Sub load_from_db(tblname As String)
   mode = NEW_TABLE
   ' set the table name
   table_name = tblname
+  ' get postgresql version
+  query = "SELECT version()"
+  result_set = db.execute(query)
+  version = result_set[0]["version"]
+  version = XSBEngine.FindAll(version, "PostgreSQL ([0-9]+)[.]", 1)[0]
   ' get the table oid
   oid = get_table_oid()
   ' get the attributes, default expressions and not null constraints
-  query = "SELECT a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod), (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) FROM pg_catalog.pg_attrdef d WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) AS def_expr, a.attnotnull, a.attnum, (SELECT c.collname FROM pg_catalog.pg_collation c, pg_catalog.pg_type t WHERE c.oid = a.attcollation AND t.oid = a.atttypid AND a.attcollation <> t.typcollation) AS attcollation, a.attstorage, pg_catalog.col_description(a.attrelid, a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid = '" & oid & "' AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum;"
+  Select version
+    Case "8"
+      query = "SELECT a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod), (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) FROM pg_catalog.pg_attrdef d WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) AS def_expr, a.attnotnull, a.attnum, pg_catalog.col_description(a.attrelid, a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid = '" & oid & "' AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum;"
+    Case "9"
+      query = "SELECT a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod), (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) FROM pg_catalog.pg_attrdef d WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) AS def_expr, a.attnotnull, a.attnum, (SELECT c.collname FROM pg_catalog.pg_collation c, pg_catalog.pg_type t WHERE c.oid = a.attcollation AND t.oid = a.atttypid AND a.attcollation <> t.typcollation) AS attcollation, a.attstorage, pg_catalog.col_description(a.attrelid, a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid = '" & oid & "' AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum;"
+    Default
+      Message.Error("Version " & version & " of PostgreSQL is not supported!")
+      Quit
+  End Select
+
   result_set = db.execute(query)
   For Each res In result_set
     add_attribute(res["attname"], res["format_type"], res["col_description"])
@@ -459,7 +491,15 @@ Public Sub reload_unique_and_primary_key_constraints()
   oid = get_table_oid()
   save_mode = mode
   mode = NEW_TABLE
-  query = "SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true),   pg_catalog.pg_get_constraintdef(con.oid, true), contype, condeferrable, condeferred, c2.reltablespace FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i LEFT JOIN pg_catalog.pg_constraint con ON (conrelid = i.indrelid AND conindid = i.indexrelid AND contype IN ('p','u','x')) WHERE c.oid = '" & oid & "' AND c.oid = i.indrelid AND i.indexrelid = c2.oid ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname;"
+  Select version
+    Case "8"
+      query = "SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true), c2.reltablespace FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i WHERE c.oid = '8864957' AND c.oid = i.indrelid AND i.indexrelid = c2.oid ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname;"
+    Case "9"
+      query = "SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true),   pg_catalog.pg_get_constraintdef(con.oid, true), contype, condeferrable, condeferred, c2.reltablespace FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i LEFT JOIN pg_catalog.pg_constraint con ON (conrelid = i.indrelid AND conindid = i.indexrelid AND contype IN ('p','u','x')) WHERE c.oid = '" & oid & "' AND c.oid = i.indrelid AND i.indexrelid = c2.oid ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname;"
+    Default
+      Message.Error("Version " & version & " of PostgreSQL is not supported!")
+      Quit
+  End Select
   result_set = db.execute(query)
   For Each res In result_set
     If res["contype"] = "p" Then
@@ -679,6 +719,17 @@ Public Sub alter_check_constraint(check As Boolean, check_formula As String) As 
   Return Not IsNull(ret)
 End
 
+Public Sub alter_default(att_name As String, default_ As Boolean, default_value As String) As Boolean
+  ' alter the default value of an attribute
+  Dim query As String
+  If default_ Then
+    query = "ALTER TABLE \"" & escape(table_name) & "\" ALTER COLUMN \"" & escape(att_name) & "\" SET DEFAULT " & default_value
+  Else
+    query = "ALTER TABLE \"" & escape(table_name) & "\" ALTER COLUMN \"" & escape(att_name) & "\" DROP DEFAULT"
+  Endif
+  Return Not IsNull(db.execute(query))  
+End
+
 Public Sub alter_table_primary_key(att_names As String[], primary_key As Boolean) As Boolean
   ' set or drop a primary key constraint on an attribute
   Dim query, constraint_name, escaped_keys As String
@@ -735,14 +786,44 @@ Public Sub alter_table_primary_key(att_names As String[], primary_key As Boolean
   Endif  
 End
 
-Public Sub alter_default(att_name As String, default_ As Boolean, default_value As String) As Boolean
-  ' alter the default value of an attribute
-  Dim query As String
-  If default_ Then
-    query = "ALTER TABLE \"" & escape(table_name) & "\" ALTER COLUMN \"" & escape(att_name) & "\" SET DEFAULT " & default_value
-  Else
-    query = "ALTER TABLE \"" & escape(table_name) & "\" ALTER COLUMN \"" & escape(att_name) & "\" DROP DEFAULT"
+Public Sub alter_table_unique(att_names As String[][], unique As Boolean) As Boolean
+  ' alter tablewide unique constraints
+  Dim query, att_list As String
+  Dim ret As Object
+  Dim i, j As Integer
+  query = "BEGIN;"
+  For i = 0 To table_constraints["unique constraint names"].Max
+    query &= "ALTER TABLE \"" & escape(table_name) & "\" DROP CONSTRAINT \"" & escape(table_constraints["unique constraint names"][i]) & "\";"
+  Next
+  If unique Then
+    For i = 0 To att_names.Max
+      att_list = ""
+      For j = 0 To att_names[i].Max
+        att_list &= "\"" & escape(att_names[i][j]) & "\", "
+      Next
+      att_list = Left$(att_list, -2)
+      query &= "ALTER TABLE \"" & escape(table_name) & "\" ADD UNIQUE(" & att_list & ");"
+    Next
   Endif
-  Return Not IsNull(db.execute(query))  
+  query &= "COMMIT;"
+  ret = db.execute(query)
+  reload_unique_and_primary_key_constraints()
+  Return Not IsNull(ret)
+End
+
+Public Sub alter_reference(att_index As Integer, reference As String, onDelete As String, onUpdate As String, references As Boolean) As Boolean
+  ' alter a foreign key constraint
+  Dim query As String
+  Dim res As Object
+  query = "BEGIN;"
+  If constraints[att_index]["reference constraint name"] Then
+    query &= "ALTER TABLE \"" & escape(table_name) & "\" DROP CONSTRAINT \"" & escape(constraints[att_index]["reference constraint name"]) & "\";"
+  Endif
+  If references Then
+    query &= "ALTER TABLE  \"" & escape(table_name) & "\" ADD FOREIGN KEY (\"" & escape(attributes[att_index]) & "\") REFERENCES " & reference & " ON DELETE " & onDelete & " ON UPDATE " & onUpdate & ";"
+  Endif
+  query &= "COMMIT;"
+  res = db.execute(query)
+  Return Not IsNull(res)
 End
 

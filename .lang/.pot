@@ -363,80 +363,68 @@ msgstr ""
 msgid "Connection settings - SQLite"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:63 FormSQLSplit.form:37
+#: FormPostgreSQLAlterTable.form:52 FormSQLSplit.form:37
 msgid "Close"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:82 FormPostgreSQLCreateTable.form:106
+#: FormPostgreSQLAlterTable.form:71 FormPostgreSQLCreateTable.form:106
 #: FormPostgreSQLCreateType.form:54
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:88 FormPostgreSQLCreateTable.form:112
+#: FormPostgreSQLAlterTable.form:77 FormPostgreSQLCreateTable.form:112
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:91 FormPostgreSQLCreateTable.form:115
+#: FormPostgreSQLAlterTable.form:80 FormPostgreSQLCreateTable.form:115
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:99 FormPostgreSQLCreateTable.form:123
+#: FormPostgreSQLAlterTable.form:88 FormPostgreSQLCreateTable.form:123
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:104 FormPostgreSQLCreateIndex.form:73
+#: FormPostgreSQLAlterTable.form:93 FormPostgreSQLCreateIndex.form:73
 #: FormPostgreSQLCreateTable.form:128
 msgid "Unique"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:109 FormPostgreSQLCreateTable.form:133
+#: FormPostgreSQLAlterTable.form:98 FormPostgreSQLCreateTable.form:133
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:114 FormPostgreSQLCreateTable.form:143
+#: FormPostgreSQLAlterTable.form:103 FormPostgreSQLCreateTable.form:143
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:120 FormPostgreSQLCreateTable.form:154
+#: FormPostgreSQLAlterTable.form:109 FormPostgreSQLCreateTable.form:154
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:121 FormPostgreSQLCreateSequence.form:97
+#: FormPostgreSQLAlterTable.form:110 FormPostgreSQLCreateSequence.form:97
 #: FormPostgreSQLCreateTable.form:155
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:130 FormPostgreSQLCreateFunction.form:108
+#: FormPostgreSQLAlterTable.form:119 FormPostgreSQLCreateFunction.form:108
 #: FormPostgreSQLCreateTable.form:170
 msgid "Default"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:141
+#: FormPostgreSQLAlterTable.form:130
 msgid "Save"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:146 FormPostgreSQLCreateTable.form:179
+#: FormPostgreSQLAlterTable.form:135 FormPostgreSQLCreateTable.form:179
 msgid "Table constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:164 FormPostgreSQLCreateTable.form:138
+#: FormPostgreSQLAlterTable.form:153 FormPostgreSQLCreateTable.form:138
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:175 FormPostgreSQLCreateTable.form:161
+#: FormPostgreSQLAlterTable.form:164 FormPostgreSQLCreateTable.form:161
 msgid ")"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:233 FormPostgreSQLCreateTable.form:259
-msgid "Structure & inheritance"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:241 FormPostgreSQLCreateTable.form:267
-msgid "Inherits"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:269 FormPostgreSQLCreateTable.form:295
-msgid "Like"
 msgstr ""
 
 #: FormPostgreSQLChooseTable.form:20
@@ -712,6 +700,18 @@ msgstr ""
 #: FormPostgreSQLCreateTable.form:81 FormPostgreSQLCreateType.form:34
 #: FormPostgreSQLDataDefinition.form:20
 msgid "Create table"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:259
+msgid "Structure & inheritance"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:267
+msgid "Inherits"
+msgstr ""
+
+#: FormPostgreSQLCreateTable.form:295
+msgid "Like"
 msgstr ""
 
 #: FormPostgreSQLCreateTrigger.form:28

@@ -30,12 +30,7 @@ Public unique_attributes As New String[][]
 Public Sub Form_Open()
   Dim user_type As Object
   Dim dbobjects As Collection
-  Dim tbl As Object
   dbobjects = FMain.db.get_db_objects()
-  For Each tbl In dbobjects["tables"]
-    ComboboxInherits.Add(tbl["table"])
-    ComboboxLike.Add(tbl["table"])
-  Next
   stop_event = False
   main_table_view = TableViewMain
   pgtable = New PostgreSQLTable(FMain.db, PostgreSQLTable.ALTER)
@@ -102,13 +97,8 @@ Public Sub load_ui_from_db()
       CheckBoxTableUnique.Value = True
       For i = 0 To .table_constraints["unique tuples"].Max
         ListBoxAdded.Add(.table_constraints["unique tuples"][i].join(", "))
+        unique_attributes.Add(.table_constraints["unique tuples"][i])
       Next
-    Endif
-    If .table_constraints["inherits"] Then
-      For i = 0 To .table_constraints["inherits tables"].Max
-        ListBoxInherits.Add(.table_constraints["inherits tables"][i])
-      Next
-      CheckBoxInherits.Value = True
     Endif
   End With
   TableViewMain.Row = 0
@@ -354,6 +344,10 @@ Public Sub CheckBoxTableUnique_Click()
     ListBoxAdded.Enabled = False
     ToolButtonAdd.Enabled = False
     ToolButtonRemove.Enabled = False
+    If pgtable.change_table_unique_constraint(CheckBoxTableUnique.Value, Null) Then
+      ListBoxAdded.List = []
+      unique_attributes = New String[][]
+    Endif
   Endif
 End
 
@@ -380,7 +374,16 @@ Public Sub CheckBoxReferences_Click()
   If CheckBoxReferences.Value Then
     ButtonFindReferencedTable.Enabled = True
   Else
-    ButtonFindReferencedTable.Enabled = False
+    If Not stop_event Then
+      If pgtable.change_references_constraint(main_table_view.Row, False) Then
+        ButtonFindReferencedTable.Enabled = False
+        LabelReferencedTable.Text = ""
+      Else
+        stop_event = True
+        CheckBoxReferences.Value = True
+        stop_event = False
+      Endif
+    Endif
   Endif
 End
 
@@ -396,6 +399,10 @@ Public Sub ToolButtonAdd_Click()
       tbl_tuples.Push(ListBoxUnique[i].Text)
     End If
   Next
+  If tbl_tuples.Count = 1 Then
+    Message.Warning("Please select at least two attributes for the unique constraint!")
+    Return
+  Endif
   unique = Left$(unique, -2)
   If unique <> "" Then
     For i = 0 To ListBoxAdded.Count - 1
@@ -408,13 +415,42 @@ Public Sub ToolButtonAdd_Click()
     ListBoxUnique.UnselectAll
   Endif
   ' add the unique constraints to the current table
-  pgtable.change_table_unique_constraint(CheckBoxTableUnique.Value, unique_attributes)
+  stop_event = True
+  With pgtable
+    .change_table_unique_constraint(CheckBoxTableUnique.Value, unique_attributes)
+    ListBoxUnique.List = .attributes
+    If .table_constraints["unique"] Then
+      CheckBoxTableUnique.Value = True
+      ListBoxAdded.List = []
+      For i = 0 To .table_constraints["unique tuples"].Max
+        ListBoxAdded.Add(.table_constraints["unique tuples"][i].join(", "))
+      Next
+    Endif
+    stop_event = False
+  End With
 End
 
 Public Sub ToolButtonRemove_Click()
   ' remove the selected unique constraint
-  ListBoxAdded.Remove(ListBoxAdded.Index)
-  unique_attributes.Remove(ListBoxAdded.Index)
+  Dim i As Integer
+  If ListBoxAdded.Index <> -1 Then
+    unique_attributes.Remove(ListBoxAdded.Index)
+    ListBoxAdded.Remove(ListBoxAdded.Index)
+    stop_event = True
+    With pgtable
+      .change_table_unique_constraint(CheckBoxTableUnique.Value, unique_attributes)
+      ListBoxUnique.List = .attributes
+      If .table_constraints["unique"] Then
+        CheckBoxTableUnique.Value = True
+        ListBoxAdded.List = []
+        For i = 0 To .table_constraints["unique tuples"].Max
+          ListBoxAdded.Add(.table_constraints["unique tuples"][i].join(", "))
+        Next
+        unique_attributes = .table_constraints["unique tuples"]
+      Endif
+      stop_event = False
+    End With
+  Endif
 End
 
 Public Sub CheckBoxPrimaryKey_Click()
@@ -445,9 +481,10 @@ Public Sub ButtonFindReferencedTable_Click()
   Dim ref As New FormPostgreSQLGetReference
   ref.caller = Me
   ref.ShowModal
-  LabelReferencedTable.Text = reference
   ' add a references constraint to the current attribute
-  pgtable.change_references_constraint(TableViewMain.Row, CheckBoxReferences.Value, reference, onDelete, onUpdate)
+  If pgtable.change_references_constraint(TableViewMain.Row, CheckBoxReferences.Value, reference, onDelete, onUpdate) Then
+    LabelReferencedTable.Text = reference
+  Endif
 End
 
 Public Sub TableViewMain_Menu()
@@ -539,50 +576,6 @@ Public Sub CheckBoxDefault_Click()
       ToolButtonDefaultSave.Enabled = False
     Endif
   Endif
-End
-
-Public Sub CheckBoxInherits_Click()
-  ' toggle inherits controls
-  ComboboxInherits.Enabled = CheckBoxInherits.Value
-  ToolButtonAddInherits.Enabled = CheckBoxInherits.Value
-  ListBoxInherits.Enabled = CheckBoxInherits.Value
-  ToolButtonRemoveInherits.Enabled = CheckBoxInherits.Value
-  pgtable.change_table_inherits_constraint(CheckBoxInherits.Value, ListBoxInherits.List)
-End
-
-Public Sub CheckBoxLike_Click()
-  ' toggle like controls
-  ComboboxLike.Enabled = CheckBoxLike.Value
-  ToolButtonAddLike.Enabled = CheckBoxLike.Value
-  ListBoxLike.Enabled = CheckBoxLike.Value
-  ToolButtonRemoveLike.Enabled = CheckBoxLike.Value
-  pgtable.change_table_like_constraint(CheckBoxLike.Value, ListBoxLike.List)
-End
-
-Public Sub ToolButtonAddInherits_Click()
-  ' update the inheritance constraint and add the table to the listbox
-  If ListBoxInherits.Find(ComboboxInherits.Text) = -1 Then
-    ListBoxInherits.Add(ComboboxInherits.Text)
-    pgtable.change_table_inherits_constraint(CheckBoxInherits.Value, ListBoxInherits.List)
-  Endif
-End
-
-Public Sub ToolButtonAddLike_Click()
-  ' update the like constraint and add the table to the listbox
-  If ListBoxLike.Find(ComboboxLike.Text) = -1 Then
-    ListBoxLike.Add(ComboboxLike.Text)
-    pgtable.change_table_like_constraint(CheckBoxLike.Value, ListBoxLike.List)
-  Endif
-End
-
-Public Sub ToolButtonRemoveInherits_Click()
- ' remove the current inherits constraint from the listbox
-  ListBoxInherits.Remove(ListBoxInherits.Index)
-End
-
-Public Sub ToolButtonRemoveLike_Click()
-  ' remove the current like constraint from the listbox
-  ListBoxLike.Remove(ListBoxLike.Index)
 End
 
 Public Sub ToolButtonAddCheck_Click()

@@ -14,75 +14,63 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FormPostgreSQLAlterTable.form:63
+#: FormPostgreSQLAlterTable.form:52
 msgid "Close"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:82
+#: FormPostgreSQLAlterTable.form:71
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:88
+#: FormPostgreSQLAlterTable.form:77
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:91
+#: FormPostgreSQLAlterTable.form:80
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:99
+#: FormPostgreSQLAlterTable.form:88
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:104
+#: FormPostgreSQLAlterTable.form:93
 msgid "Unique"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:109
+#: FormPostgreSQLAlterTable.form:98
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:114
+#: FormPostgreSQLAlterTable.form:103
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:120
+#: FormPostgreSQLAlterTable.form:109
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:121
+#: FormPostgreSQLAlterTable.form:110
 msgid "..."
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:130
+#: FormPostgreSQLAlterTable.form:119
 msgid "Default"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:141
+#: FormPostgreSQLAlterTable.form:130
 msgid "Save"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:146
+#: FormPostgreSQLAlterTable.form:135
 msgid "Table constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:164
+#: FormPostgreSQLAlterTable.form:153
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:175
+#: FormPostgreSQLAlterTable.form:164
 msgid ")"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:233
-msgid "Structure & inheritance"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:241
-msgid "Inherits"
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:269
-msgid "Like"
 msgstr ""
 
