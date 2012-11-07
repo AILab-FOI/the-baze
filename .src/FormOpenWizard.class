@@ -111,6 +111,7 @@ Public Sub WizardIntro_BeforeChange()
   ' else show the appropriate connection settings wizard
   Dim selected As String
   Dim db As Variant
+  Dim please_wait As FormPleaseWait
   Stop Event
   If RadioButtonNew.Value Then ' create a new baze
     FMain.wizard_return = "new"
@@ -143,8 +144,9 @@ Public Sub WizardIntro_BeforeChange()
               FMain.connection_settings["password"] = TextBoxXPassword.Text
               FMain.connection_settings["xsb"] = TextBoxXXSB.Text
               FMain.connection_settings["store password"] = CheckBoxXStoreP.Value
-              db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
+              db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text)
               FMain.connection_settings["connection"] = db
+              Me.Close
             Case "Flora2"
               WizardIntro[3].show
             Case "ZODB"
@@ -156,8 +158,15 @@ Public Sub WizardIntro_BeforeChange()
             Case "SQLite"
               WizardIntro[7].show
           End Select
-          If db.connect() Then
-            Me.Close
+          If dbtype = "XSB" Then
+            please_wait = New FormPleaseWait
+            please_wait.db = db
+            please_wait.silent = True
+            please_wait.ShowModal
+          Else
+            If db.connect() Then
+              Me.Close
+            Endif
           Endif
         Endif
         FMain.wizard_return = "connection"
@@ -294,16 +303,13 @@ End
 Public Sub ButtonXTest_Click()
   ' test the XSB connection
   Dim db As New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
-  
-  If db.connect() Then
-    Message.Info("Connection succesfull!")
-  Endif
-
+  Dim please_wait As New FormPleaseWait
+  please_wait.db = db
+  please_wait.ShowModal
 End
 
 Public Sub ToolButtonFindXSB_Click()
   ' show form to find XSB executable
   FormFindXSB.ShowModal()
   TextBoxXXSB.Text = xsb_exe
-
 End

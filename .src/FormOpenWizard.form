@@ -130,7 +130,7 @@
       }
     }
     Index = 2
-    Text = ("Connection settings - PostgreSQL + XSB")
+    Text = ("Connection settings - XSB")
     { PictureBox3 PictureBox
       MoveScaled(-5,1,55,49)
       Background = &HFFFFFF&
@@ -190,7 +190,7 @@
       }
     }
     Index = 3
-    Text = ("Connection settings - PostgreSQL + Flora2")
+    Text = ("Connection settings - Flora2")
     { PictureBox4 PictureBox
       MoveScaled(-5,1,55,49)
       Background = &HFFFFFF&

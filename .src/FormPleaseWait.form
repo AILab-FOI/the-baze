@@ -1,0 +1,11 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,41,11)
+  Text = ("Please wait while trying to connect ...")
+  Resizable = False
+  { !ProgressBarLoading ProgressBar
+    MoveScaled(5,3,32,4)
+    #Public = True
+  }
+}

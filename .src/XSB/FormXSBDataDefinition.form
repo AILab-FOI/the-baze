@@ -1,0 +1,60 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,63,96)
+  Arrangement = Arrange.Column
+  { ToolButtonNewTable ToolButton
+    MoveScaled(0,2,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create table")
+    Picture = Picture["icon:/32/grid"]
+  }
+  { ToolButtonNewView ToolButton
+    MoveScaled(1,9,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create view")
+    Picture = Picture["icon:/32/filter"]
+  }
+  { ToolButtonNewIndex ToolButton
+    MoveScaled(3,17,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create index")
+    Picture = Picture["icon:/32/indent"]
+  }
+  { ToolButtonNewFunction ToolButton
+    MoveScaled(4,25,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create function")
+    Picture = Picture["icon:/32/exec"]
+  }
+  { ToolButtonNewTrigger ToolButton
+    MoveScaled(6,33,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create trigger")
+    Picture = Picture["icon:/32/wizard"]
+  }
+  { ToolButtonNewSequence ToolButton
+    MoveScaled(8,41,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create sequence")
+    Picture = Picture["icon:/32/calendar"]
+  }
+  { ToolButtonNewType ToolButton
+    MoveScaled(10,47,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create type")
+    Picture = Picture["icon:/32/menu"]
+  }
+  { ToolButtonNewEnum ToolButton
+    MoveScaled(13,55,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create enum")
+    Picture = Picture["icon:/32/view-detail"]
+  }
+  { ToolButtonNewModule ToolButton
+    MoveScaled(16,63,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create Datalog Module")
+    Picture = Picture["icon:/32/program"]
+  }
+}

@@ -15,7 +15,7 @@ Public table_constraints As New Collection
 ' ordered array of datatype dependent options of each attribute (e.g. 1D array, 2D array, precision, scale etc.)
 Public options As New Collection[]
 ' connection to the database
-Public db As PostgreSQLDB
+Public db As Variant ' don't ask me why, it should be DBaze which is a superclass of both PostgreSQLDB and XSBDB...
 ' mode of operation (if set to ALTER then the table is existing and each change results in an ALTER TABLE statement)
 Public mode As Integer
 ' PostgreSQL version
@@ -25,7 +25,7 @@ Public Const NEW_TABLE As Integer = 27
 Public Const ALTER As Integer = 1981
 
 
-Public Sub _new(dbase As PostgreSQLDB, Optional mode_of_operation As Integer = NEW_TABLE)
+Public Sub _new(dbase As DBaze, Optional mode_of_operation As Integer = NEW_TABLE)
   ' initialize the PostgreSQL db connection
   db = dbase
   mode = mode_of_operation
@@ -406,7 +406,7 @@ Public Sub load_from_db(tblname As String)
   ' set the table name
   table_name = tblname
   ' get postgresql version
-  query = "SELECT version()"
+  query = "SELECT version()::VARCHAR"
   result_set = db.execute(query)
   version = result_set[0]["version"]
   version = XSBEngine.FindAll(version, "PostgreSQL ([0-9]+)[.]", 1)[0]

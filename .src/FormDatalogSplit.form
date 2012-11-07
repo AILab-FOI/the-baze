@@ -1,0 +1,45 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(0,0,62,62)
+    Expand = True
+    { VBox1 VBox
+      MoveScaled(2,2,57,30)
+      { PanelToolbar Panel
+        MoveScaled(1,1,55,5)
+        Arrangement = Arrange.Row
+        AutoResize = True
+        { ToolButtonExecute ToolButton
+          MoveScaled(1,0,5,4)
+          ToolTip = ("Execute query")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonClose ToolButton
+          MoveScaled(6,0,5,4)
+          ToolTip = ("Close")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/close"]
+        }
+        { CheckBoxDistinct CheckBox
+          MoveScaled(11,0,17,4)
+          Text = ("Distinct results")
+        }
+      }
+      { EditorDatalog Editor
+        MoveScaled(1,6,55,24)
+        Mouse = Mouse.Text
+        Expand = True
+        Highlight = Highlight.Diff
+      }
+    }
+    { TableViewResults TableView
+      MoveScaled(2,33,58,27)
+      Enabled = False
+      Header = GridView.Horizontal
+    }
+  }
+}

@@ -2,20 +2,65 @@
 PostgreSQLDB=[9]
 
 [Breakpoints]
-Breakpoint[1]="PostgreSQLTable.785"
+Breakpoint[1]="PostgreSQLTable.425"
 Count=1
 
 [DebugWindow]
-Count=0
+Count=3
+DebugWindow[1]="returnVars"
+DebugWindow[2]="newRes"
+DebugWindow[3]="newReturn"
 
 [DebugWindow/CheckBoxCheck]
 Geometry=[59,24,240,240]
 
+[DebugWindow/CheckBoxDistinct]
+Geometry=[59,24,240,240]
+
+[DebugWindow/Datalog_con]
+Geometry=[59,24,240,240]
+
+[DebugWindow/Datalog_con.result]
+Geometry=[68,40,240,240]
+
+[DebugWindow/Datalog_con.resultSet]
+Geometry=[68,40,240,240]
+
+[DebugWindow/Datalog_con.resultSet[0]]
+Geometry=[77,56,240,240]
+
 [DebugWindow/Me]
 Geometry=[59,24,240,240]
 
+[DebugWindow/Me.dbobjects]
+Geometry=[68,40,240,240]
+
+[DebugWindow/Me.dbobjects["queries"]]
+Geometry=[77,56,240,240]
+
+[DebugWindow/Me.dbobjects["queries"]["sql queries"]]
+Geometry=[86,72,240,240]
+
+[DebugWindow/PostgreSQLTable]
+Geometry=[59,24,240,240]
+
+[DebugWindow/ProgressBarLoading]
+Geometry=[59,24,240,240]
+
+[DebugWindow/Settings]
+Geometry=[59,24,240,240]
+
+[DebugWindow/Settings.Keys]
+Geometry=[68,40,240,240]
+
 [DebugWindow/[1, 1]]
 Geometry=[95,60,301,475]
+
+[DebugWindow/allVars]
+Geometry=[59,24,240,240]
+
+[DebugWindow/answers]
+Geometry=[59,24,240,240]
 
 [DebugWindow/att_names]
 Geometry=[59,24,240,240]
@@ -29,11 +74,17 @@ Geometry=[62,295,240,240]
 [DebugWindow/checks]
 Geometry=[59,24,240,240]
 
+[DebugWindow/columns]
+Geometry=[59,24,240,240]
+
+[DebugWindow/con]
+Geometry=[0,24,240,240]
+
 [DebugWindow/con_names]
 Geometry=[59,24,240,240]
 
 [DebugWindow/constraints]
-Geometry=[11,24,376,379]
+Geometry=[59,24,376,379]
 
 [DebugWindow/constraints[0]]
 Geometry=[68,40,376,379]
@@ -74,17 +125,53 @@ Geometry=[68,40,376,379]
 [DebugWindow/constraints[9]]
 Geometry=[68,40,376,379]
 
+[DebugWindow/dbobjects]
+Geometry=[59,24,240,240]
+
+[DebugWindow/dbobjects["queries"]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/dbobjects["queries"]["datalog queries"]]
+Geometry=[77,56,240,240]
+
+[DebugWindow/dbobjects["queries"]["sql queries"]]
+Geometry=[77,56,240,240]
+
 [DebugWindow/engine]
 Geometry=[59,24,240,240]
 
 [DebugWindow/formulae]
 Geometry=[301,24,240,240]
 
+[DebugWindow/matches]
+Geometry=[59,314,442,240]
+
+[DebugWindow/newRes]
+Geometry=[59,24,240,240]
+
+[DebugWindow/newReturn]
+Geometry=[59,24,240,240]
+
 [DebugWindow/new_atts]
 Geometry=[59,24,240,240]
 
 [DebugWindow/objects]
 Geometry=[59,24,347,240]
+
+[DebugWindow/objects["attributes"]]
+Geometry=[68,40,347,240]
+
+[DebugWindow/objects["sequences"]]
+Geometry=[68,40,347,240]
+
+[DebugWindow/objects["sequences"][1]]
+Geometry=[77,56,347,240]
+
+[DebugWindow/objects["tables"]]
+Geometry=[68,40,347,240]
+
+[DebugWindow/objects["tables"][0]]
+Geometry=[77,56,347,240]
 
 [DebugWindow/objects["triggers"]]
 Geometry=[68,40,347,240]
@@ -93,6 +180,12 @@ Geometry=[68,40,347,240]
 Geometry=[77,56,347,240]
 
 [DebugWindow/objects["triggers"][1]]
+Geometry=[77,56,347,240]
+
+[DebugWindow/objects["views"]]
+Geometry=[68,40,347,240]
+
+[DebugWindow/objects["views"][0]]
 Geometry=[77,56,347,240]
 
 [DebugWindow/pgtable]
@@ -140,7 +233,34 @@ Geometry=[68,155,385,240]
 [DebugWindow/pkeys]
 Geometry=[59,24,240,240]
 
+[DebugWindow/re]
+Geometry=[59,24,240,240]
+
+[DebugWindow/re.SubMatches]
+Geometry=[68,40,240,240]
+
+[DebugWindow/re.SubMatches[0]]
+Geometry=[77,56,240,240]
+
+[DebugWindow/re.SubMatches[1]]
+Geometry=[77,56,240,240]
+
 [DebugWindow/res]
+Geometry=[59,24,240,240]
+
+[DebugWindow/res.Connection]
+Geometry=[68,40,240,240]
+
+[DebugWindow/res.Fields]
+Geometry=[68,40,240,240]
+
+[DebugWindow/res[0]]
+Geometry=[68,40,240,240]
+
+[DebugWindow/resultArray]
+Geometry=[59,24,240,240]
+
+[DebugWindow/resultSet]
 Geometry=[59,24,240,240]
 
 [DebugWindow/result_set]
@@ -152,7 +272,25 @@ Geometry=[68,40,439,350]
 [DebugWindow/result_set[1]]
 Geometry=[68,40,364,287]
 
+[DebugWindow/results]
+Geometry=[59,24,240,240]
+
 [DebugWindow/ret]
+Geometry=[59,24,240,240]
+
+[DebugWindow/returnVars]
+Geometry=[59,24,240,240]
+
+[DebugWindow/rezult]
+Geometry=[59,24,240,240]
+
+[DebugWindow/row]
+Geometry=[59,24,240,240]
+
+[DebugWindow/tab]
+Geometry=[59,24,240,240]
+
+[DebugWindow/table]
 Geometry=[59,24,240,240]
 
 [DebugWindow/table_constraints]
@@ -206,6 +344,9 @@ Geometry=[68,40,240,240]
 [DebugWindow/unique_attributes]
 Geometry=[59,24,240,240]
 
+[DebugWindow/vars]
+Geometry=[59,24,240,240]
+
 [FFind]
 SearchIn="Module"
 CaseSensitive=False
@@ -215,35 +356,35 @@ SearchString=True
 
 [OpenFile]
 File[1]=".src/FormOpenWizard.form"
-File[2]=".src/FormOpenWizard.class:158.30"
+File[2]=".src/FormOpenWizard.class:164.33"
 File[3]=".src/FormOpenFile.form"
 File[4]=".src/FormOpenFile.class:4.0"
-File[5]=".src/DBaze.class:102.33"
+File[5]=".src/DBaze.class:181.5"
 File[6]=".src/CouchDB.class:7.16"
 File[7]=".src/FormFindXSB.form"
 File[8]=".src/FormAskPasword.form"
 File[9]=".src/FormFindXSB.class:17.24"
-File[10]=".src/XSBDB.class:9.29"
-File[11]=".src/XSBEngine.class:48.12"
-File[12]=".src/DatalogConnection.class:29.24"
+Active=10
+File[10]=".src/XSBDB.class:57.5"
+File[11]=".src/XSB/XSBEngine.class:232.31"
+File[12]=".src/XSB/DatalogConnection.class:32.36"
 File[13]=".src/ZODBFileStorage.class:0.0"
 File[14]=".src/FormSQLSplit.form"
-File[15]=".src/FormSQLSplit.class:60.19"
-File[16]=".src/PostgreSQLDB.class:11.27"
+File[15]=".src/FormSQLSplit.class:110.0"
+File[16]=".src/PostgreSQLDB.class:284.0"
 File[17]=".src/PostgreSQL/FormPostgreSQLDataDefinition.form"
 File[18]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
 File[19]=".src/PostgreSQL/FormPostgreSQLDataQuerying.form"
-File[20]=".src/PostgreSQL/FormPostgreSQLDataQuerying.class:34.0"
+File[20]=".src/PostgreSQL/FormPostgreSQLDataQuerying.class:36.0"
 File[21]=".src/FormAskQueryName.form"
 File[22]=".src/FormAskQueryName.class:18.6"
 File[23]=".src/FormAskPasword.class:12.7"
 File[24]=".src/PostgreSQL/FormPostgreSQLCreateTable.form"
-File[25]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:95.28"
-File[26]=".src/PostgreSQL/FormPostgreSQLDataDefinition.class:23.7"
+File[25]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:40.31"
+File[26]=".src/PostgreSQL/FormPostgreSQLDataDefinition.class:123.0"
 File[27]=".src/FormAskTableName.form"
 File[28]=".src/FormAskTableName.class:30.0"
-Active=29
-File[29]=".src/PostgreSQL/PostgreSQLTable.class:802.9"
+File[29]=".src/PostgreSQL/PostgreSQLTable.class:425.32"
 File[30]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.form"
 File[31]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.class:10.12"
 File[32]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsN.form"
@@ -257,7 +398,7 @@ File[39]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsPS.class:4.0"
 File[40]=".src/PostgreSQL/FormPostgreSQLGetReference.form"
 File[41]=".src/PostgreSQL/FormPostgreSQLGetReference.class:15.2"
 File[42]=".src/PostgreSQL/FormPostgreSQLEditTableData.form"
-File[43]=".src/PostgreSQL/FormPostgreSQLDataManipulation.class:106.62"
+File[43]=".src/PostgreSQL/FormPostgreSQLDataManipulation.class:115.0"
 File[44]=".src/PostgreSQL/FormPostgreSQLChooseTable.form"
 File[45]=".src/PostgreSQL/FormPostgreSQLChooseTable.class:6.2"
 File[46]=".src/PostgreSQL/FormPostgreSQLEditTableData.class:26.34"
@@ -294,16 +435,33 @@ File[76]=".src/FormAskSequenceName.class:26.26"
 File[77]=".src/PostgreSQL/FormPostgreSQLCreateEnum.form"
 File[78]=".src/PostgreSQL/FormPostgreSQLCreateEnum.class:55.32"
 File[79]=".src/FormAskEnumName.form"
-File[80]=".src/FormAskEnumName.class:23.17"
+File[80]=".src/FormAskEnumName.class:30.0"
 File[81]=".src/PostgreSQL/FormPostgreSQLGetTable.form"
 File[82]=".src/PostgreSQL/FormPostgreSQLGetTable.class:18.11"
 File[83]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
-File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:431.5"
+File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:31.29"
 File[85]=".src/FormRenameTable.form"
 File[86]=".src/FormRenameTable.class:2.23"
-File[87]=".src/FMain.class:365.0"
-Count=87
+File[87]=".src/FMain.class:75.9"
+File[88]=".src/FormPleaseWait.form"
+File[89]=".src/FormPleaseWait.class:26.4"
+File[90]=".src/FMain.form"
+File[91]=".src/XSB/FormXSBDataManipulation.form"
+File[92]=".src/XSB/FormXSBDataManipulation.class:42.0"
+File[93]=".src/FormDatalogSplit.form"
+File[94]=".src/FormDatalogSplit.class:22.2"
+File[95]=".src/XSB/FormXSBDataQuerying.form"
+File[96]=".src/XSB/FormXSBDataQuerying.class:47.47"
+File[97]=".src/XSB/FormXSBDataDefinition.form"
+File[98]=".src/XSB/FormXSBDataDefinition.class:127.41"
+File[99]=".src/XSB/FormXSBCreateModule.form"
+File[100]=".src/FormAskDatalogModuleName.form"
+File[101]=".src/FormAskDatalogModuleName.class:23.32"
+File[102]=".src/XSB/FormXSBCreateModule.class:16.10"
+Count=102
 
 [Watches]
-Count=0
+Count=2
+Watch[1]="Me"
+Watch[2]="Settings"
 

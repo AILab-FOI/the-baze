@@ -119,7 +119,7 @@ msgid "Store password"
 msgstr ""
 
 #: FormOpenWizard.form:275
-msgid "Connection settings - PostgreSQL + XSB"
+msgid "Connection settings - XSB"
 msgstr ""
 
 #: FormOpenWizard.form:290
@@ -139,7 +139,7 @@ msgid "Path to XSB executable"
 msgstr ""
 
 #: FormOpenWizard.form:349
-msgid "Connection settings - PostgreSQL + Flora2"
+msgid "Connection settings - Flora2"
 msgstr ""
 
 #: FormOpenWizard.form:403

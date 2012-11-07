@@ -69,7 +69,7 @@ Public Sub handle_user_request()
             db = New DBaze
             current_file = wizard_return
             db = db.load_file(wizard_return)
-            Try db.initialize_gui()
+            db.initialize_gui()
             shift_recent_files(current_file)
         End If
       End If
@@ -108,6 +108,7 @@ Public Sub shift_recent_files(next_file As String)
     Settings["FormOpenWizard/third"] = Settings["FormOpenWizard/second"]
     Settings["FormOpenWizard/second"] = Settings["FormOpenWizard/first"]
     Settings["FormOpenWizard/first"] = next_file
+    Settings.Save()
   Endif
 End
 
@@ -128,6 +129,21 @@ Public Sub TreeViewMain_Menu()
       MenuTreeSequence.Popup()
     Case "Types"
       MenuTreeType.Popup()
+    Case "Datalog modules"
+      MenuDatalogModules.Popup()
+    ' TODO: implement query deletion
+    Case "Update queries"
+      MenuQuery.Popup()
+    Case "Insert queries"
+      MenuQuery.Popup()
+    Case "Delete queries"
+      MenuQuery.Popup()
+    Case "SQL queries"
+      MenuQuery.Popup()
+    Case "QBE queries"
+      MenuQuery.Popup()
+    Case "Datalog queries"
+      MenuQuery.Popup()
   End Select
 End
 
@@ -170,6 +186,13 @@ Public Sub MenuAlterTable_Click()
   Endif
 End
 
+Public Sub MenuDeleteModule_Click()
+  ' drop the type
+  If Message.Question("Are you sure that you want to delete module " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    db.delete_datalog_module(TreeViewMain.Current.Text)
+    db.refresh_db_tree()
+  Endif
+End
 
 Public Sub MenuDropView_Click()
   ' drop the view
@@ -281,6 +304,14 @@ Public Sub MenuUpdateData_Click()
   Endif
 End
 
+Public Sub MenuDeleteQuery_Click()
+  ' drop the type
+  If Message.Question("Are you sure that you want to delete query " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    db.delete_query(TreeViewMain.Current.Text)
+    db.refresh_db_tree()
+  Endif
+End
+
 Public Sub TreeViewMain_DblClick()
   ' on double click open the given object
   Dim tbl As String
@@ -288,6 +319,34 @@ Public Sub TreeViewMain_DblClick()
   Dim con As Connection
   Dim i As Integer
   Dim sql_view As FormSQLSplit
+  Dim datalog_view As FormDatalogSplit
+  Dim datalog_module As FormXSBCreateModule
+  If TreeViewMain.Current.ParentKey = "Datalog queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Datalog query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    datalog_view = New FormDatalogSplit(TabStripMain)
+    datalog_view.datalog_editor.Text = db.dbobjects["queries"]["datalog queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Datalog query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Datalog modules" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Datalog module" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    datalog_module = New FormXSBCreateModule(TabStripMain)
+    datalog_module.datalog_editor.Text = db.dbobjects["datalog modules"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Datalog module"
+  Endif
   If TreeViewMain.Current.ParentKey = "SQL queries" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - SQL query" Then 
@@ -363,3 +422,4 @@ Public Sub TreeViewMain_DblClick()
     main_tabstrip.Text = tbl & " - Table"
   Endif
 End
+

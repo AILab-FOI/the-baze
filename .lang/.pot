@@ -14,125 +14,150 @@ msgstr ""
 msgid "Baze Database Environment"
 msgstr ""
 
-#: FMain.form:34
+#: FMain.form:39
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:38
+#: FMain.form:43
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:43
+#: FMain.form:48
 msgid "Alter table"
 msgstr ""
 
-#: FMain.form:48
+#: FMain.form:53
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:54
+#: FMain.form:59
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:58
+#: FMain.form:63
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:64
+#: FMain.form:69
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:68
+#: FMain.form:73
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:74
+#: FMain.form:79
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:78
+#: FMain.form:83
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:84
+#: FMain.form:89
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:88
+#: FMain.form:93
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:94
+#: FMain.form:99
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:98
+#: FMain.form:103
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:104
+#: FMain.form:109
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:108
+#: FMain.form:113
 msgid "Drop type"
 msgstr ""
 
+#: FMain.form:119
+msgid "Query menu"
+msgstr ""
+
 #: FMain.form:123
-msgid "Data definition"
-msgstr ""
-
-#: FMain.form:125
-msgid "Data manipulation"
-msgstr ""
-
-#: FMain.form:127
-msgid "Data querying"
+msgid "Delete query"
 msgstr ""
 
 #: FMain.form:129
+msgid "Datalog modules menu"
+msgstr ""
+
+#: FMain.form:133
+msgid "Delete module"
+msgstr ""
+
+#: FMain.form:148
+msgid "Data definition"
+msgstr ""
+
+#: FMain.form:150
+msgid "Data manipulation"
+msgstr ""
+
+#: FMain.form:152
+msgid "Data querying"
+msgstr ""
+
+#: FMain.form:154
 msgid "Application"
 msgstr ""
 
-#: FMain.form:134
+#: FMain.form:159
 msgid "New form"
 msgstr ""
 
-#: FMain.form:141
+#: FMain.form:166
 msgid "New script"
 msgstr ""
 
-#: FMain.form:153
+#: FMain.form:173
+msgid "New report"
+msgstr ""
+
+#: FMain.form:185
 msgid "Tab 0"
+msgstr ""
+
+#: FormAskDatalogModuleName.form:15
+msgid "Please enter a name for the Datalog module:"
+msgstr ""
+
+#: FormAskDatalogModuleName.form:24 FormAskEnumName.form:24
+#: FormAskFunctionName.form:24 FormAskIndexName.form:24 FormAskPasword.form:25
+#: FormAskQueryName.form:25 FormAskSequenceName.form:24
+#: FormAskTableName.form:24 FormAskTriggerName.form:24 FormAskTypeName.form:24
+#: FormAskViewName.form:24 FormFindXSB.form:23 FormOpenFile.form:18
+#: FormPostgreSQLChooseTable.form:30 FormPostgreSQLGetReference.form:43
+#: FormPostgreSQLGetTable.form:25 FormPostgreSQLGetTableAttribute.form:38
+#: FormRenameTable.form:23
+msgid "OK"
+msgstr ""
+
+#: FormAskDatalogModuleName.form:29 FormAskEnumName.form:29
+#: FormAskFunctionName.form:29 FormAskIndexName.form:29
+#: FormAskQueryName.form:30 FormAskSequenceName.form:29
+#: FormAskTableName.form:29 FormAskTriggerName.form:29 FormAskTypeName.form:29
+#: FormAskViewName.form:29 FormFindXSB.form:18 FormOpenFile.form:23
+#: FormPostgreSQLChooseTable.form:25 FormPostgreSQLCreateEnum.form:50
+#: FormPostgreSQLCreateFunction.form:64 FormPostgreSQLCreateIndex.form:57
+#: FormPostgreSQLCreateSequence.form:111 FormPostgreSQLCreateTable.form:87
+#: FormPostgreSQLCreateTrigger.form:106 FormPostgreSQLCreateType.form:40
+#: FormPostgreSQLCreateView.form:48 FormPostgreSQLEditTableData.form:34
+#: FormPostgreSQLGetReference.form:48 FormPostgreSQLGetTable.form:30
+#: FormPostgreSQLGetTableAttribute.form:43 FormRenameTable.form:28
+msgid "Cancel"
 msgstr ""
 
 #: FormAskEnumName.form:15
 msgid "Please enter a name for the enum type:"
-msgstr ""
-
-#: FormAskEnumName.form:24 FormAskFunctionName.form:24
-#: FormAskIndexName.form:24 FormAskPasword.form:25 FormAskQueryName.form:25
-#: FormAskSequenceName.form:24 FormAskTableName.form:24
-#: FormAskTriggerName.form:24 FormAskTypeName.form:24 FormAskViewName.form:24
-#: FormFindXSB.form:23 FormOpenFile.form:18 FormPostgreSQLChooseTable.form:30
-#: FormPostgreSQLGetReference.form:43 FormPostgreSQLGetTable.form:25
-#: FormPostgreSQLGetTableAttribute.form:38 FormRenameTable.form:23
-msgid "OK"
-msgstr ""
-
-#: FormAskEnumName.form:29 FormAskFunctionName.form:29
-#: FormAskIndexName.form:29 FormAskQueryName.form:30
-#: FormAskSequenceName.form:29 FormAskTableName.form:29
-#: FormAskTriggerName.form:29 FormAskTypeName.form:29 FormAskViewName.form:29
-#: FormFindXSB.form:18 FormOpenFile.form:23 FormPostgreSQLChooseTable.form:25
-#: FormPostgreSQLCreateEnum.form:50 FormPostgreSQLCreateFunction.form:64
-#: FormPostgreSQLCreateIndex.form:57 FormPostgreSQLCreateSequence.form:111
-#: FormPostgreSQLCreateTable.form:87 FormPostgreSQLCreateTrigger.form:106
-#: FormPostgreSQLCreateType.form:40 FormPostgreSQLCreateView.form:48
-#: FormPostgreSQLEditTableData.form:34 FormPostgreSQLGetReference.form:48
-#: FormPostgreSQLGetTable.form:30 FormPostgreSQLGetTableAttribute.form:43
-#: FormRenameTable.form:28
-msgid "Cancel"
 msgstr ""
 
 #: FormAskFunctionName.form:15
@@ -177,6 +202,23 @@ msgstr ""
 
 #: FormAskViewName.form:15
 msgid "Please enter a name for the view:"
+msgstr ""
+
+#: FormDatalogSplit.form:31 FormSQLSplit.form:30
+msgid "Execute query"
+msgstr ""
+
+#: FormDatalogSplit.form:32 FormSQLSplit.form:31 FormXSBCreateModule.form:25
+msgid "ToolButton1"
+msgstr ""
+
+#: FormDatalogSplit.form:38 FormPostgreSQLAlterTable.form:52
+#: FormSQLSplit.form:37
+msgid "Close"
+msgstr ""
+
+#: FormDatalogSplit.form:45
+msgid "Distinct results"
 msgstr ""
 
 #: FormFindXSB.form:13
@@ -296,7 +338,7 @@ msgid "Store password"
 msgstr ""
 
 #: FormOpenWizard.form:275
-msgid "Connection settings - PostgreSQL + XSB"
+msgid "Connection settings - XSB"
 msgstr ""
 
 #: FormOpenWizard.form:290
@@ -316,7 +358,7 @@ msgid "Path to XSB executable"
 msgstr ""
 
 #: FormOpenWizard.form:349
-msgid "Connection settings - PostgreSQL + Flora2"
+msgid "Connection settings - Flora2"
 msgstr ""
 
 #: FormOpenWizard.form:403
@@ -363,8 +405,8 @@ msgstr ""
 msgid "Connection settings - SQLite"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:52 FormSQLSplit.form:37
-msgid "Close"
+#: FormPleaseWait.form:8
+msgid "Please wait while trying to connect ..."
 msgstr ""
 
 #: FormPostgreSQLAlterTable.form:71 FormPostgreSQLCreateTable.form:106
@@ -437,11 +479,12 @@ msgstr ""
 
 #: FormPostgreSQLCreateEnum.form:44 FormPostgreSQLCreateIndex.form:51
 #: FormPostgreSQLCreateSequence.form:105 FormPostgreSQLCreateTrigger.form:100
-#: FormPostgreSQLDataDefinition.form:34
+#: FormPostgreSQLDataDefinition.form:34 FormXSBDataDefinition.form:35
 msgid "Create index"
 msgstr ""
 
 #: FormPostgreSQLCreateFunction.form:58 FormPostgreSQLDataDefinition.form:41
+#: FormXSBDataDefinition.form:42
 msgid "Create function"
 msgstr ""
 
@@ -698,7 +741,7 @@ msgid "Make primary key"
 msgstr ""
 
 #: FormPostgreSQLCreateTable.form:81 FormPostgreSQLCreateType.form:34
-#: FormPostgreSQLDataDefinition.form:20
+#: FormPostgreSQLDataDefinition.form:20 FormXSBDataDefinition.form:21
 msgid "Create table"
 msgstr ""
 
@@ -785,6 +828,7 @@ msgid "Run query"
 msgstr ""
 
 #: FormPostgreSQLCreateView.form:42 FormPostgreSQLDataDefinition.form:27
+#: FormXSBDataDefinition.form:28
 msgid "Create view"
 msgstr ""
 
@@ -800,23 +844,23 @@ msgstr ""
 msgid "Replace existing view if it exists"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:48
+#: FormPostgreSQLDataDefinition.form:48 FormXSBDataDefinition.form:49
 msgid "Create trigger"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:55
+#: FormPostgreSQLDataDefinition.form:55 FormXSBDataDefinition.form:56
 msgid "Create sequence"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:62
+#: FormPostgreSQLDataDefinition.form:62 FormXSBDataDefinition.form:63
 msgid "Create type"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:69
+#: FormPostgreSQLDataDefinition.form:69 FormXSBDataDefinition.form:70
 msgid "Create enum"
 msgstr ""
 
-#: FormPostgreSQLDataManipulation.form:16
+#: FormPostgreSQLDataManipulation.form:16 FormXSBDataManipulation.form:15
 msgid "Update table directly"
 msgstr ""
 
@@ -824,15 +868,15 @@ msgstr ""
 msgid "Create update query"
 msgstr ""
 
-#: FormPostgreSQLDataManipulation.form:30
+#: FormPostgreSQLDataManipulation.form:30 FormXSBDataManipulation.form:22
 msgid "Create insert query"
 msgstr ""
 
-#: FormPostgreSQLDataManipulation.form:37
+#: FormPostgreSQLDataManipulation.form:37 FormXSBDataManipulation.form:29
 msgid "Create delete query"
 msgstr ""
 
-#: FormPostgreSQLDataQuerying.form:14
+#: FormPostgreSQLDataQuerying.form:14 FormXSBDataQuerying.form:21
 msgid "New SQL query"
 msgstr ""
 
@@ -979,10 +1023,18 @@ msgstr ""
 msgid "Please provide a name for the altered table:"
 msgstr ""
 
-#: FormSQLSplit.form:30
-msgid "Execute query"
+#: FormXSBCreateModule.form:24
+msgid "Compile & load"
 msgstr ""
 
-#: FormSQLSplit.form:31
-msgid "ToolButton1"
+#: FormXSBCreateModule.form:31
+msgid "Compile, load & close"
+msgstr ""
+
+#: FormXSBDataDefinition.form:77
+msgid "Create Datalog Module"
+msgstr ""
+
+#: FormXSBDataQuerying.form:14
+msgid "New Datalog query"
 msgstr ""

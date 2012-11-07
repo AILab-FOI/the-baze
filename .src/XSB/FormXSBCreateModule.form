@@ -1,0 +1,32 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,61,33)
+  Arrangement = Arrange.Fill
+  { VBox1 VBox
+    MoveScaled(0,0,57,30)
+    { PanelToolbar Panel
+      MoveScaled(1,1,55,5)
+      Arrangement = Arrange.Row
+      AutoResize = True
+      { ToolButtonExecute ToolButton
+        MoveScaled(1,0,5,4)
+        ToolTip = ("Compile & load")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make"]
+      }
+      { ToolButtonClose ToolButton
+        MoveScaled(6,0,5,4)
+        ToolTip = ("Compile, load & close")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make-all"]
+      }
+    }
+    { EditorDatalog Editor
+      MoveScaled(1,6,55,24)
+      Mouse = Mouse.Text
+      Expand = True
+      Highlight = Highlight.Diff
+    }
+  }
+}

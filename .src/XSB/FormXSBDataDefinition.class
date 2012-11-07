@@ -1,0 +1,138 @@
+' Gambas class file
+
+Public table_name As String
+Public view_name As String
+Public index_name As String
+Public trigger_name As String
+Public function_name As String
+Public type_name As String
+Public sequence_name As String
+Public enum_name As String
+Public datalog_module_name As String
+Public request_canceled As Boolean
+
+Public Sub ToolButtonNewTable_Click()
+  ' open table designer
+  Dim ask As New FormAskTableName
+  Dim table_designer As FormPostgreSQLCreateTable
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    table_designer = New FormPostgreSQLCreateTable(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = table_name & " - Table"
+  Endif
+End
+
+Public Sub ToolButtonNewView_Click()
+  ' open the view designer
+  Dim ask As New FormAskViewName
+  Dim view_designer As FormPostgreSQLCreateView
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    view_designer = New FormPostgreSQLCreateView(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = view_name & " - View"
+  Endif
+End
+
+Public Sub ToolButtonNewIndex_Click()
+' open the index designer
+  Dim ask As New FormAskIndexName
+  Dim index_designer As FormPostgreSQLCreateIndex
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    index_designer = New FormPostgreSQLCreateIndex(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = index_name & " - Index"
+  Endif
+End
+
+Public Sub ToolButtonNewTrigger_Click()
+' open the trigger designer
+  Dim ask As New FormAskTriggerName
+  Dim trigger_designer As FormPostgreSQLCreateTrigger
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    trigger_designer = New FormPostgreSQLCreateTrigger(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = trigger_name & " - Trigger"
+  Endif
+End
+
+Public Sub ToolButtonNewFunction_Click()
+' open the function designer
+  Dim ask As New FormAskFunctionName
+  Dim function_designer As FormPostgreSQLCreateFunction
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    function_designer = New FormPostgreSQLCreateFunction(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = function_name & " - Function"
+  Endif
+End
+
+Public Sub ToolButtonNewType_Click()
+' open the type designer
+  Dim ask As New FormAskTypeName
+  Dim type_designer As FormPostgreSQLCreateType
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    type_designer = New FormPostgreSQLCreateType(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = type_name & " - Type"
+  Endif
+End
+
+Public Sub ToolButtonNewSequence_Click()
+' open the sequence designer
+  Dim ask As New FormAskSequenceName
+  Dim sequence_designer As FormPostgreSQLCreateSequence
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    sequence_designer = New FormPostgreSQLCreateSequence(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = sequence_name & " - Sequence"
+  Endif
+End
+
+Public Sub ToolButtonNewEnum_Click()
+' open the enum designer
+  Dim ask As New FormAskEnumName
+  Dim enum_designer As FormPostgreSQLCreateEnum
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    enum_designer = New FormPostgreSQLCreateEnum(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = enum_name & " - Enum"
+  Endif
+End
+
+Public Sub ToolButtonNewModule_Click()
+  ' open the module editor
+  Dim ask As New FormAskDatalogModuleName
+  Dim module_editor As FormXSBCreateModule
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.Count += 1
+    module_editor = New FormXSBCreateModule(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = datalog_module_name & " - Datalog module"
+  Endif
+End

@@ -1,0 +1,31 @@
+' Gambas class file
+
+Public db As XSBDB
+Public done As Boolean
+Public silent As Boolean
+
+Public Sub _new()
+ done = False
+ silent = False
+End
+
+
+Public Sub Form_activate()
+  '  try to connect to the db
+  If ProgressBarLoading.Value <> 1 And Not done Then
+    connect()
+  Else
+    Me.Close()
+  Endif
+End
+
+Public Sub connect()
+  If db.connect(Me) Then
+    If Not silent Then
+      Message.Info("Connection successfull!")
+    Endif
+    Me.Close
+  Endif
+  done = True
+End
+

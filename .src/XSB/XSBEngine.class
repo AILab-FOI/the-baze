@@ -50,29 +50,29 @@ Static Public Function FindAll(subj As String, pattern As String, Optional subma
 End
 
 Private Function renameDontCare(query As String) As String
-  
+  ' rename don't care variables
   Dim re As Regexp
   Dim counter As Integer
-  Dim result As String
+  Dim result_ As String
   
   counter = 0
-  result = ""
+  result_ = ""
   
   re = New Regexp(query, "(^|[^_A-Za-z0-9])([_])[^_A-Za-z0-9]")
   Do While re.offset >= 0 And query <> ""
-    result = result & Left(query, re.SubMatches[2].Offset) & "_Gambas_Don_T_Care_Variable_" & Str(counter)
+    result_ = result_ & Left(query, re.SubMatches[2].Offset) & "_Gambas_Don_T_Care_Variable_" & Str(counter)
     counter += 1
     If Len(query) > Len(re.SubMatches[2].text) Then
       query = Mid(query, re.SubMatches[2].offset + Len(re.SubMatches[2].text) + 1)
     Else 
-      result = result & query
+      result_ = result_ & query
       query = ""
     End If
     If query <> "" Then re.exec(query)
-    If Not re.offset >= 0 Then result = result & query
+    If Not (re.offset >= 0) Then result_ = result_ & query
   Loop 
-  If result = "" Then result = query
-  Return result
+  If result_ = "" Then result_ = query
+  Return result_
 End
 
 
@@ -110,7 +110,11 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   Dim returnVars, returnResults, newRes, newReturn, newVars As New String[]
   Dim k, dontcareCount As Integer
   Dim results As Collection
+  query = Trim$(query)
   
+  If Right$(query, 1) <> "." Then
+    query &= "."
+  Endif
   query = renameDontCare(query)
   vars = FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z][a-zA-Z0-9_]*)", 2)
   vars = removeDups(vars)
@@ -133,26 +137,29 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     Else 
       predicate = "findall"
     Endif 
-    predicate = predicate & "(["
+    predicate = predicate & "(result(["
     For Each i In vars
       predicate = predicate & i & ", "
     Next
-    predicate = Left(predicate, -2)
-    predicate = predicate & "], ("
+    If Right$(predicate, 1) <> "[" Then
+      predicate = Left(predicate, -2)
+    Endif
+
+    predicate = predicate & "]), ("
     For Each i In allVars
-      predicate = predicate & i & " ^ "      
-    Next 
+      predicate = predicate & i & " ^ "
+    Next
     predicate = predicate & "( " & Left(query, -1) & " ) ), GambasXSBResultListVariable )."
     query = predicate
   Endif 
   
   oldResult = result
   Print #proc, query & "\n"
-  Sleep 0.5
+  Sleep 0.1
   Read #proc, result, buff_size
   Do While oldResult <> result And result <> "" And Lof(proc) > 0
     oldResult = result
-    Sleep 0.1
+    'Sleep 0.1
     Read #proc, result, buff_size
   Loop 
   If result = "" Then 
@@ -161,7 +168,6 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   answers = Split(result, "\n")
   For Each i In answers
     If Left(i, 7) = "++Error"
-      Print result
       success = False
       Error.Raise(result)
     Endif
@@ -176,9 +182,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
         Default 
           If vars.count > 0 Then 
             Try returnVars.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
-            If Error Then Print "error" 
             Try returnResults.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
-            If Error Then Print "error" 
           Endif 
       End Select 
     Endif 
@@ -189,7 +193,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   If allResults Then 
     For k = 0 To returnVars.count - 1
       If returnVars[k] = "GambasXSBResultListVariable" Then 
-        newRes = FindAll(returnResults[k], "\\[([^\\]\\[]+)\\]", 1)
+        newRes = FindAll(returnResults[k], "result\\(\\[([^\\]\\[]+)\\]\\)", 1)
         Break 
       Endif 
     Next 
@@ -222,11 +226,9 @@ End
 
 Public Sub _new(Optional home As String = "/usr/bin/xsb", Optional params As String = "--nobanner --quietload --noprompt 2>&1")
   xsb_home = home  
-  buff_size = -20000 ' should be an argument that will be increased dynamically if queries get big!
+  buff_size = -20000 'TODO: should be an argument that will be increased dynamically if queries get big!
   xsb_command = home & " " & params
   proc = Shell xsb_command For Read Write
   Write #proc, "[odbc_call].\n"
   Read #proc, result, buff_size
-  Print result
-  
 End

@@ -1,0 +1,193 @@
+' Gambas class file
+
+' Gambas class file DatalogConnection
+' by Markus Schatten <markus_dot_schatten_at_foi_dot_hr>
+' Faculty of Organization and Informatics,
+' Varazdin, Croatia, 2007
+
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+Export
+
+Public engine As XSBEngine
+Public resultSet As Object[]
+Public result As Collection
+Public username As String
+Public password As String
+Public dsn As String
+
+Public Function execute(query As String, Optional allResults As Boolean = True, Optional distinct As Boolean = False) As Object[]
+  ' execute a query and return the results
+  resultSet = engine.execute(query, allResults, distinct)
+  Return resultSet
+End
+
+Public Sub load(module As String)
+  ' load a module
+  engine.load(module)
+End
+
+Public Function constructUpdateQuery(type As String, relation As String, numArgs As String) As String
+  Dim query As String
+  Dim i As Integer
+  query = "odbc_" & type & "( '" & type & "_" & relation & "'("
+  For i = 1 To Val(numArgs)
+    query = query & "__X" & Str(i) & ", "
+  Next 
+  query = Left(query, -2) & "), ( '" & relation & "'("
+  For i = 1 To numArgs
+    query = query & "__X" & Str(i) & ", "
+  Next 
+  query = Left(query, -2) & ") ) )."
+  Return query
+End
+
+Public Sub execute_sql(query As String, Optional nomessages As Boolean = False) As Object[]
+  ' execute an SQL query and return the results
+  Dim stmt, vars, view_name As String
+  Dim columns As New String[]
+  Dim res As Object[]
+  Dim final As New Object[]
+  Dim tuple, rezult As Collection
+  If String.UCase(Left$(Trim$(query), 6)) = "SELECT" Then
+    view_name = "xsb_temp_view" & Str$(Int(Rnd(0, 16082012)))
+    stmt = "odbc_sql( [], 'CREATE VIEW " & view_name & " AS " & escape(query) & "', [] )."
+    Try execute(stmt)
+    If Error Then
+      If Not nomessages Then
+        Message.Error(Error.Text)
+        Return Null
+      Endif
+    Endif
+    stmt = "odbc_get_schema( columns(  " & view_name & " ), _L ), member( Column, _L )."
+    Try res = execute(stmt)
+    If Error Then
+      If Not nomessages Then
+        Message.Error(Error.Text)
+        Return Null
+      Endif
+    Endif
+    vars = "[ "
+    For Each rezult In res
+      vars &= String.UCase(rezult["Column"]) & ", "
+      columns.Push(rezult["Column"])
+    Next
+    vars = Left$(vars, -2) & "]"
+    If vars <> "]" Then
+      stmt = "odbc_sql( [], '" & escape(query) & "', " & vars & " )."
+      res = execute(stmt)
+      For Each rezult In res
+        tuple = New Collection
+        For Each vars In columns
+          tuple[vars] = rezult[String.UCase(vars)]
+        Next
+        final.Add(tuple)
+      Next
+    Endif
+    stmt = "odbc_delete_view('" & view_name & "')."
+    Try execute(stmt)
+    Return final
+  Else
+    stmt = "odbc_sql( [], '" & escape(query) & "', [] )."
+    Try execute(stmt)
+    If Error Then
+      Message.Error(Error.Text)
+      Return Null
+    Else
+      Return []
+    Endif 
+  Endif
+End
+
+Public Sub escape(repl_string As String) As String
+  ' escape "-characters in a string
+  Return Replace(repl_string, "'", "''")  
+End
+
+Public Sub _new(xsb As XSBEngine, dsn_ As String, username_ As String, password_ As String)
+  engine = xsb
+  dsn = dsn_
+  username = username_
+  password = password_
+End
+
+Public Sub connect(Optional caller As Object = Null)
+  ' connect to the database and import the realtions
+  Dim query As String
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.0
+  Endif
+  engine.load("odbc_call")
+  Sleep 0.5
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.1
+  Endif
+  engine.execute("odbc_open( \'" & dsn & "\', \'" & username & "\', \'" & password & "\').")  
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.15
+  Endif
+  engine.load("lists")  
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.2
+  Endif
+  engine.execute("setof(_R, (_R ^ odbc_sql([],'select tablename from pg_tables " & 
+    "where tablename not like ''pg_%'' and tablename not like ''sql_%''',_R)), _L), flatten(_L,__L), " &
+    "setof( _X, ( _X ^ ( member( _X, __L ), odbc_attach( _X, table( _X ) ) ) ), _L1 ).")
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif 
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.25
+  Endif
+  query = "setof(_R, (_R ^ odbc_sql([],'SELECT COUNT(*), tb.tablename " &
+    "FROM pg_attribute att, pg_type tp, pg_tables tb " &
+    "WHERE att.attrelid = tp.typrelid " &
+    "AND tp.typname = tb.tablename " &
+    "AND tb.tablename NOT LIKE ''pg_%'' " &
+    "AND tb.tablename NOT LIKE ''sql_%'' " &
+    "AND att.attstattarget <> 0 " &
+    "GROUP BY 2' " &
+    ",_R)), _L), " &
+    "member( [NumArgs, Relation], _L )."
+  resultSet = engine.execute(query, True, True)
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 0.3
+  Endif
+  query = ""
+  For Each result In resultSet
+    query = query & Left(constructUpdateQuery("insert", result["Relation"], result["NumArgs"]), -1) & ", "
+    query = query & Left(constructUpdateQuery("delete", result["Relation"], result["NumArgs"]), -1) & ", "
+    If Not IsNull(caller) Then
+      caller.ProgressBarLoading.Value += 0.7 / resultSet.Count
+    Endif
+  Next 
+  query = query & Left(query, -2) & "."
+  engine.execute(query)
+  If Not engine.success Then 
+    Error.Raise(engine.result)
+  Endif
+  If Not IsNull(caller) Then
+    caller.ProgressBarLoading.Value = 1.0
+  Endif
+End

@@ -1,15 +1,15 @@
 ' Gambas class file
 
-Public sql_editor As Editor
+Public datalog_editor As Editor
 
 Public Sub _new()
   ' make editor visible
-  sql_editor = EditorSQL
+  datalog_editor = EditorDatalog
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  EditorSQL.Flags[EditorSQL.ShowLineNumbers] = True
+  EditorDatalog.Flags[EditorDatalog.ShowLineNumbers] = True
 End
 
 Public Sub ToolButtonExecute_Click()
@@ -20,29 +20,13 @@ Public Sub ToolButtonExecute_Click()
   Dim first As Boolean
   Dim counter_row As Integer
   Dim counter_col As Integer
-  Dim query_type As String
-  Dim length As Integer
-  Try results = FMain.db.execute(EditorSQL.Text)
+  Try results = FMain.db.executeDatalog(EditorDatalog.Text, CheckBoxDistinct.Value)
   If Error Then 
     Message.Error(Error.Text)
     Stop Event
     Return
   Else
-    Select Right$(FMain.main_tabstrip.Text, 12)
-      Case "Insert query"
-        query_type = "insert queries"
-        length = -15
-      Case "Delete query"
-        query_type = "delete queries"
-        length = -15
-      Case "Update query"
-        query_type = "update queries"
-        length = -15
-      Default
-        query_type = "sql queries"
-        length = -12
-    End Select
-    FMain.db.new_sql_query(Left(FMain.main_tabstrip.Text, length), EditorSQL.Text, query_type) 
+    FMain.db.new_datalog_query(Left(FMain.main_tabstrip.Text, -16), EditorDatalog.Text, "datalog queries") 
     If results Then 
       first = True
       counter_row = 0
@@ -90,19 +74,19 @@ Public Sub ToolButtonClose_Click()
   End With
 End
 
-Public Sub EditorSQL_KeyPress_()
+Public Sub EditorDatalog_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorSQL.Copy()
+    EditorDatalog.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorSQL.Paste()
+      EditorDatalog.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorSQL.Cut()
+        EditorDatalog.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorSQL.SelectAll()
+          EditorDatalog.SelectAll()
         Endif
       Endif
     Endif

@@ -1,0 +1,32 @@
+' Gambas class file
+
+Public datalog_editor As Editor
+
+Public Sub _new()
+  ' make editor public
+  datalog_editor = EditorDatalog  
+End
+
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  With FMain.db
+    .new_datalog_module(Left(FMain.main_tabstrip.Current.Text, - Len(" - Datalog module")), EditorDatalog.Text)
+    .refresh_db_tree()
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new module and load it
+  With FMain.db
+    .new_datalog_module(Left(FMain.main_tabstrip.Current.Text, - Len(" - Datalog module")), EditorDatalog.Text)
+    .refresh_db_tree()
+  End With
+End

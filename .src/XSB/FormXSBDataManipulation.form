@@ -1,0 +1,24 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Column
+  { ToolButtonUpdateTable ToolButton
+    MoveScaled(6,3,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Update table directly")
+    Picture = Picture["icon:/32/menu"]
+  }
+  { ToolButtonNewInsertQuery ToolButton
+    MoveScaled(6,10,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create insert query")
+    Picture = Picture["icon:/32/insert-text"]
+  }
+  { ToolButtonNewDeleteQuery ToolButton
+    MoveScaled(6,18,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create delete query")
+    Picture = Picture["icon:/32/erase"]
+  }
+}

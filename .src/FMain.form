@@ -69,6 +69,22 @@
       Picture = Picture["icon:/32/halt"]
     }
   }
+  { MenuQuery Menu
+    Text = ("Query menu")
+    Visible = False
+    { MenuDeleteQuery Menu
+      Text = ("Delete query")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuDatalogModules Menu
+    Text = ("Datalog modules menu")
+    Visible = False
+    { MenuDeleteModule Menu
+      Text = ("Delete module")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
   { HSplitMain HSplit
     MoveScaled(0,0,99,73)
     { ToolPanelMain ToolPanel
@@ -96,6 +112,12 @@
         Mouse = Mouse.Pointing
         Text = ("New script")
         Picture = Picture["icon:/32/exec"]
+      }
+      { ToolButtonNewReport ToolButton
+        MoveScaled(4,17,14,8)
+        Mouse = Mouse.Pointing
+        Text = ("New report")
+        Picture = Picture["icon:/32/text"]
       }
       Index = 0
     }

@@ -63,6 +63,7 @@ Public Sub load_file(dbfile As String) As Variant
   Dim js_file As File
   Dim save_password As Boolean
   Dim db As Variant
+  Dim please_wait As FormPleaseWait
   temporary_folder = Temp()
   Mkdir temporary_folder
   Exec ["tar", "xf", dbfile, "-C", temporary_folder] Wait
@@ -123,22 +124,72 @@ Public Sub load_file(dbfile As String) As Variant
       db.baze_file = dbfile
       db.Save()
       Return db
+    Case "XSB"
+      xsbnoconnect:
+      If Not connection_settings.Exist("password") Then
+        FormAskPasword.ShowModal
+        password = FMain.password
+        save_password = False
+      Else
+        password = connection_settings["password"]
+        save_password = True
+      Endif
+      db = New XSBDB(
+        connection_settings["dsn"],
+        connection_settings["username"], 
+        password, 
+        save_password,
+        connection_settings["xsb"])
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      please_wait = New FormPleaseWait
+      please_wait.db = db
+      please_wait.silent = True
+      please_wait.ShowModal
+      If Not db.con.opened Then
+        Goto xsbnoconnect
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
     End Select
 End
 
 Public Sub initialize_dbobjects()
   ' initialize dbobjects
   Me.dbobjects["queries"] = New Collection
-  Me.dbobjects["queries"]["sql queries"] = New Collection
-  Me.dbobjects["queries"]["qbe queries"] = New Collection
-  Me.dbobjects["queries"]["update queries"] = New Collection
   Me.dbobjects["queries"]["insert queries"] = New Collection
   Me.dbobjects["queries"]["delete queries"] = New Collection
   
   Me.dbobjects["forms"] = New Collection
   Me.dbobjects["scripts"] = New Collection
-  
+  Select Case connection_settings["connection type"]
+    Case "PostgreSQL"
+      Me.dbobjects["queries"]["sql queries"] = New Collection
+      Me.dbobjects["queries"]["qbe queries"] = New Collection
+      Me.dbobjects["queries"]["update queries"] = New Collection
+    Case "XSB"
+      Me.dbobjects["queries"]["sql queries"] = New Collection
+      Me.dbobjects["queries"]["datalog queries"] = New Collection
+      Me.dbobjects["datalog modules"] = New Collection
+    End Select
 End
 
+Public Sub delete_query(query As String)
+  ' delete the query and refresh
+  Dim a As String
+  Dim o As Collection
+  For Each o In Me.dbobjects["queries"]
+    For Each a In o
+      If o.key = query Then
+        o[o.key] = Null
+        Me.Save
+        Return
+      Endif
+    Next
+  Next
+End
 
 

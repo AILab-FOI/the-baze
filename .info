@@ -1,6 +1,30 @@
 #DatalogConnection
 
 C
+engine
+v
+XSBEngine
+
+resultSet
+v
+Object[]
+
+result
+v
+Collection
+
+username
+v
+s
+
+password
+v
+s
+
+dsn
+v
+s
+
 execute
 m
 Object[]
@@ -9,10 +33,26 @@ load
 m
 
 (module)s
+constructUpdateQuery
+m
+s
+(type)s(relation)s(numArgs)s
+execute_sql
+m
+Object[]
+(query)s[(nomessages)b]
+escape
+m
+s
+(repl_string)s
 _new
 m
 
-(xsb)XSBEngine;(dsn)s(username)s(password)s
+(xsb)XSBEngine;(dsn_)s(username_)s(password_)s
+connect
+m
+
+[(caller)o]
 #XSBEngine
 
 C

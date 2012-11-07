@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Column
+  { ToolButtonNewDatalogQuery ToolButton
+    MoveScaled(8,14,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New Datalog query")
+    Picture = Picture["icon:/32/find"]
+  }
+  { ToolButtonNewSQLQuery ToolButton
+    MoveScaled(8,21,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New SQL query")
+    Picture = Picture["icon:/32/find"]
+  }
+}
