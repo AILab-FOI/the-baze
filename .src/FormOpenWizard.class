@@ -8,15 +8,29 @@ Public hasrecent As Boolean
 Public dbtype As String
 ' path to XSB
 Public xsb_exe As String
+' semaphore for events
+Public stop_event As Boolean
+' last shown index
+Public last_index As Integer
 
 Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
+  Dim xsb, save_shell As String
+  stop_event = False
+  last_index = 0
   ' set return value to canceled in case the user clicks the x button
   FMain.wizard_return = "canceled"
   ' check if there are recent files in stored settings and get the last six
   hasrecent = True
   dbtype = ""
+  save_shell = System.Shell
+  System.Shell = "bash"
+  Shell "which xsb" To xsb 
+  If xsb Then
+    TextBoxXXSB.Text = Left$(xsb, -1)
+  Endif
+  System.Shell = save_shell
   setting = Settings["FormOpenWizard/first"]
   helper = Split(setting, "/")
   Try setting = helper[helper.Count - 1] & " (" & setting & ")"
@@ -58,28 +72,6 @@ Public Sub Form_Open()
   load_odbc_dsn()
 End
 
-
-Private Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
-        ' findall matches of a given regex in a given string
-        Dim re As Regexp
-        Dim matches As New String[]
-        re = New Regexp(subj, pattern)
-        Do While re.offset >= 0 And subj <> ""
-                If submatchindex = 0 Then
-                        matches.push(re.Text)
-                Else
-                        matches.push(re.SubMatches[submatchindex].Text)
-                End If
-                If Len(subj) > Len(re.text) Then
-                        subj = Mid(subj, re.offset + Len(re.text) + 1)
-                Else
-                        subj = ""
-                End If
-                If subj <> "" Then re.exec(subj)
-        Loop
-        Return matches
-End
-
 Private Sub load_odbc_dsn()
   ' parse /etc/odbc.ini and put the DSNs into the appropriate comboboxes
   Dim odbc_ini As File
@@ -96,7 +88,7 @@ Private Sub load_odbc_dsn()
     Line Input #odbc_ini, tLine
     txt &= tLine
   Wend
-  DSNs = FindAll(txt, "\\[([^\\]]+)\\]", 1) 
+  DSNs = XSBEngine.FindAll(txt, "\\[([^\\]]+)\\]", 1) 
   DSNs = DSNs.Sort(gb.IgnoreCase)
   For Each dsn In DSNs
     ComboBoxXDSN.Add(dsn, ComboBoxXDSN.Count)
@@ -105,14 +97,15 @@ Private Sub load_odbc_dsn()
 End
 
 
-Public Sub WizardIntro_BeforeChange()
+Public Sub WizardIntro_Change()
   ' check which option was selected (new, open, connection)
   ' if new or open show the main frame
   ' else show the appropriate connection settings wizard
   Dim selected As String
   Dim db As Variant
   Dim please_wait As FormPleaseWait
-  Stop Event
+  Dim i As Integer
+  'Stop Event
   If RadioButtonNew.Value Then ' create a new baze
     FMain.wizard_return = "new"
     Me.Close
@@ -126,7 +119,7 @@ Public Sub WizardIntro_BeforeChange()
       Endif
     Else ' connect to a database
       If RadioButtonConnect.Value Then
-        If dbtype <> "" Then ' a database type has already been selected, connect to it
+        If dbtype <> "" And last_index < WizardIntro.Index Then ' a database type has already been selected, connect to it
           FMain.connection_settings = New Collection
           Select Case dbtype
             Case "PostgreSQL"
@@ -148,15 +141,48 @@ Public Sub WizardIntro_BeforeChange()
               FMain.connection_settings["connection"] = db
               Me.Close
             Case "Flora2"
-              WizardIntro[3].show
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[3].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
             Case "ZODB"
-              WizardIntro[4].show
+              Select Case ComboBoxZStorageType.Text
+                Case "Embedded"
+                  Print "e"
+                Case "Client storage"
+                  Print "c"
+                Case "File storage"
+                  Print "f"
+              End Select
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[4].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
             Case "eXist"
-              WizardIntro[5].show
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[5].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
             Case "CouchDB"
-              WizardIntro[6].show
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[6].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
             Case "SQLite"
-              WizardIntro[7].show
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[7].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
           End Select
           If dbtype = "XSB" Then
             please_wait = New FormPleaseWait
@@ -168,34 +194,82 @@ Public Sub WizardIntro_BeforeChange()
               Me.Close
             Endif
           Endif
+        Else
+          dbtype = ""
+          selected = ""
         Endif
-        FMain.wizard_return = "connection"
-        selected = ComboBoxDBTypes.Current.Text
-        dbtype = selected
-        WizardIntro[WizardIntro.Index].hide
-        Select Case selected ' show the appropriate menu
-          Case ""
-            WizardIntro[0].show
-            Message.Error("Please select a database type!", "OK")
-          Case "PostgreSQL"
-            WizardIntro[1].show
-          Case "XSB"
-            WizardIntro[2].show
-          Case "Flora2"
-            WizardIntro[3].show
-          Case "ZODB"
-            WizardIntro[4].show
-          Case "eXist"
-            WizardIntro[5].show
-          Case "CouchDB"
-            WizardIntro[6].show
-          Case "SQLite"
-            WizardIntro[7].show
-        End Select
+        If last_index > WizardIntro.Index Then
+          WizardIntro[0].show
+        Else
+          FMain.wizard_return = "connection"
+          selected = ComboBoxDBTypes.Current.Text
+          dbtype = selected
+          For i = 0 To WizardIntro.Count - 1 
+            WizardIntro[i].Hide
+          Next
+          Select Case selected ' show the appropriate menu
+            Case ""
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[0].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+              Message.Error("Please select a database type!", "OK")
+            Case "PostgreSQL"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[1].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "XSB"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[2].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "Flora2"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[3].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "ZODB"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[4].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "eXist"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[5].show
+                last_index = WizardIntro.Index
+                stop_event = False             
+              Endif
+            Case "CouchDB"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[6].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "SQLite"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[7].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+          End Select
+        Endif
       Endif
     Endif
   Endif
-    
 End
 
 Public Sub WizardIntro_Cancel()
@@ -231,8 +305,6 @@ Private Sub toggle_open(value As Boolean)
     ListViewRecent.Enabled = hasrecent
   Endif
   ToolButtonOpen.Enabled = value
-  
-  
 End
 
 Private Sub toggle_connect(value As Boolean)
@@ -262,7 +334,7 @@ Public Sub ListViewRecent_Click()
   ' if recent file is selected update the file to be opened variable
   Dim s As String
   s = ListViewRecent.Current.Text
-  openfile = FindAll(s, "\\((.*)\\)", 1)[0]
+  openfile = XSBEngine.FindAll(s, "\\((.*)\\)", 1)[0]
 End
 
 
@@ -279,13 +351,22 @@ Public Sub ComboBoxZStorageType_Click()
     LabelZDBFile.Enabled = False
     TextBoxZDBFile.Enabled = False
   Else
-    LabelZHost.Enabled = False
-    LabelZPort.Enabled = False
-    TextBoxZHost.Enabled = False
-    TextBoxZPort.Enabled = False
-    LabelZDBFile.Enabled = True
-    TextBoxZDBFile.Enabled = True
-  Endif
+    If ComboBoxZStorageType.Text = "File storage" Then
+      LabelZHost.Enabled = False
+      LabelZPort.Enabled = False
+      TextBoxZHost.Enabled = False
+      TextBoxZPort.Enabled = False
+      LabelZDBFile.Enabled = True
+      TextBoxZDBFile.Enabled = True
+    Else
+      LabelZHost.Enabled = False
+      LabelZPort.Enabled = False
+      TextBoxZHost.Enabled = False
+      TextBoxZPort.Enabled = False
+      LabelZDBFile.Enabled = False
+      TextBoxZDBFile.Enabled = False
+    Endif
+    Endif
 
 End
 

@@ -2,14 +2,10 @@
 PostgreSQLDB=[9]
 
 [Breakpoints]
-Breakpoint[1]="PostgreSQLTable.425"
-Count=1
+Count=0
 
 [DebugWindow]
-Count=3
-DebugWindow[1]="returnVars"
-DebugWindow[2]="newRes"
-DebugWindow[3]="newReturn"
+Count=0
 
 [DebugWindow/CheckBoxCheck]
 Geometry=[59,24,240,240]
@@ -147,7 +143,7 @@ Geometry=[301,24,240,240]
 Geometry=[59,314,442,240]
 
 [DebugWindow/newRes]
-Geometry=[59,24,240,240]
+Geometry=[59,24,1053,240]
 
 [DebugWindow/newReturn]
 Geometry=[59,24,240,240]
@@ -278,6 +274,9 @@ Geometry=[59,24,240,240]
 [DebugWindow/ret]
 Geometry=[59,24,240,240]
 
+[DebugWindow/returnResults]
+Geometry=[59,24,1118,240]
+
 [DebugWindow/returnVars]
 Geometry=[59,24,240,240]
 
@@ -356,18 +355,18 @@ SearchString=True
 
 [OpenFile]
 File[1]=".src/FormOpenWizard.form"
-File[2]=".src/FormOpenWizard.class:164.33"
+Active=2
+File[2]=".src/FormOpenWizard.class:152.32"
 File[3]=".src/FormOpenFile.form"
 File[4]=".src/FormOpenFile.class:4.0"
-File[5]=".src/DBaze.class:181.5"
-File[6]=".src/CouchDB.class:7.16"
+File[5]=".src/DBaze.class:153.6"
+File[6]=".src/CouchDB.class:7.24"
 File[7]=".src/FormFindXSB.form"
 File[8]=".src/FormAskPasword.form"
 File[9]=".src/FormFindXSB.class:17.24"
-Active=10
-File[10]=".src/XSBDB.class:57.5"
-File[11]=".src/XSB/XSBEngine.class:232.31"
-File[12]=".src/XSB/DatalogConnection.class:32.36"
+File[10]=".src/XSBDB.class:36.15"
+File[11]=".src/XSB/XSBEngine.class:207.20"
+File[12]=".src/XSB/DatalogConnection.class:156.11"
 File[13]=".src/ZODBFileStorage.class:0.0"
 File[14]=".src/FormSQLSplit.form"
 File[15]=".src/FormSQLSplit.class:110.0"
@@ -442,9 +441,9 @@ File[83]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
 File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:31.29"
 File[85]=".src/FormRenameTable.form"
 File[86]=".src/FormRenameTable.class:2.23"
-File[87]=".src/FMain.class:75.9"
+File[87]=".src/FMain.class:427.5"
 File[88]=".src/FormPleaseWait.form"
-File[89]=".src/FormPleaseWait.class:26.4"
+File[89]=".src/FormPleaseWait.class:28.3"
 File[90]=".src/FMain.form"
 File[91]=".src/XSB/FormXSBDataManipulation.form"
 File[92]=".src/XSB/FormXSBDataManipulation.class:42.0"
@@ -456,7 +455,7 @@ File[97]=".src/XSB/FormXSBDataDefinition.form"
 File[98]=".src/XSB/FormXSBDataDefinition.class:127.41"
 File[99]=".src/XSB/FormXSBCreateModule.form"
 File[100]=".src/FormAskDatalogModuleName.form"
-File[101]=".src/FormAskDatalogModuleName.class:23.32"
+File[101]=".src/FormAskDatalogModuleName.class:27.9"
 File[102]=".src/XSB/FormXSBCreateModule.class:16.10"
 Count=102
 

@@ -131,7 +131,6 @@ Public Sub TreeViewMain_Menu()
       MenuTreeType.Popup()
     Case "Datalog modules"
       MenuDatalogModules.Popup()
-    ' TODO: implement query deletion
     Case "Update queries"
       MenuQuery.Popup()
     Case "Insert queries"
@@ -423,3 +422,7 @@ Public Sub TreeViewMain_DblClick()
   Endif
 End
 
+' TODO: Implement close button on tabstrip
+' Public Sub TabStripMain_Close(Index As Integer)
+'   Print "Hello" & Str(Index)
+' End

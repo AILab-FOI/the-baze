@@ -14,175 +14,207 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FormOpenWizard.form:126
+#: FormOpenWizard.form:119
+msgid "Baze Database Environment - Connection Wizard"
+msgstr ""
+
+#: FormOpenWizard.form:127
 msgid "Database connection wizard"
 msgstr ""
 
-#: FormOpenWizard.form:141
+#: FormOpenWizard.form:142
 msgid "New database"
 msgstr ""
 
-#: FormOpenWizard.form:147
+#: FormOpenWizard.form:148
 msgid "Open database"
 msgstr ""
 
-#: FormOpenWizard.form:152
+#: FormOpenWizard.form:153
 msgid "Connect to existing database"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "SQLite"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "PostgreSQL"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "XSB"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "Flora2"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "ZODB"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "eXist"
 msgstr ""
 
-#: FormOpenWizard.form:159
+#: FormOpenWizard.form:160
 msgid "CouchDB"
 msgstr ""
 
-#: FormOpenWizard.form:160
+#: FormOpenWizard.form:161
 msgid "Choose ..."
 msgstr ""
 
-#: FormOpenWizard.form:166
+#: FormOpenWizard.form:167
 msgid "Database type"
 msgstr ""
 
-#: FormOpenWizard.form:183
+#: FormOpenWizard.form:184
 msgid "Recent databases"
 msgstr ""
 
-#: FormOpenWizard.form:189
+#: FormOpenWizard.form:190
 msgid "Open other"
 msgstr ""
 
-#: FormOpenWizard.form:198
-msgid "Connection settings - PostgreSQL"
+#: FormOpenWizard.form:199
+msgid "Connection settings"
 msgstr ""
 
-#: FormOpenWizard.form:213
+#: FormOpenWizard.form:214
 msgid "Host"
 msgstr ""
 
-#: FormOpenWizard.form:218
+#: FormOpenWizard.form:219
 msgid "Port"
 msgstr ""
 
-#: FormOpenWizard.form:223
+#: FormOpenWizard.form:224
 msgid "Database name"
 msgstr ""
 
-#: FormOpenWizard.form:228
+#: FormOpenWizard.form:229
 msgid "Username"
 msgstr ""
 
-#: FormOpenWizard.form:233
+#: FormOpenWizard.form:234
 msgid "Password"
 msgstr ""
 
-#: FormOpenWizard.form:238
+#: FormOpenWizard.form:239
 msgid "localhost"
 msgstr ""
 
-#: FormOpenWizard.form:243
+#: FormOpenWizard.form:244
 msgid "5432"
 msgstr ""
 
-#: FormOpenWizard.form:261
-msgid "Please enter the connection data:"
+#: FormOpenWizard.form:262
+msgid "Please enter the PostgreSQL connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:266
+#: FormOpenWizard.form:267
 msgid "Test settings"
 msgstr ""
 
-#: FormOpenWizard.form:271
+#: FormOpenWizard.form:272
 msgid "Store password"
 msgstr ""
 
-#: FormOpenWizard.form:275
+#: FormOpenWizard.form:276
 msgid "Connection settings - XSB"
 msgstr ""
 
-#: FormOpenWizard.form:290
+#: FormOpenWizard.form:291
 msgid "From /etc/odbc.ini"
 msgstr ""
 
-#: FormOpenWizard.form:291
+#: FormOpenWizard.form:292
 msgid "DSN"
 msgstr ""
 
-#: FormOpenWizard.form:325
-msgid "/home/markus/myPackages/XSB/bin/xsb"
+#: FormOpenWizard.form:316
+msgid "Please enter the XSB connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:330
+#: FormOpenWizard.form:326
+msgid "/usr/local/bin/xsb"
+msgstr ""
+
+#: FormOpenWizard.form:331
 msgid "Path to XSB executable"
 msgstr ""
 
-#: FormOpenWizard.form:349
+#: FormOpenWizard.form:350
 msgid "Connection settings - Flora2"
 msgstr ""
 
-#: FormOpenWizard.form:403
+#: FormOpenWizard.form:390
+msgid "Please enter the Flora2 connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:404
 msgid "Path to Flora2 executable"
 msgstr ""
 
-#: FormOpenWizard.form:422
+#: FormOpenWizard.form:423
 msgid "Connection settings - ZODB"
 msgstr ""
 
-#: FormOpenWizard.form:494
+#: FormOpenWizard.form:480
+msgid "Please enter the ZODB connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:495
 msgid "Database file"
 msgstr ""
 
-#: FormOpenWizard.form:510
+#: FormOpenWizard.form:511
 msgid "File storage"
 msgstr ""
 
-#: FormOpenWizard.form:510
+#: FormOpenWizard.form:511
 msgid "Client storage"
 msgstr ""
 
 #: FormOpenWizard.form:511
+msgid "Embedded"
+msgstr ""
+
+#: FormOpenWizard.form:512
 msgid "Choose..."
 msgstr ""
 
-#: FormOpenWizard.form:516
+#: FormOpenWizard.form:517
 msgid "Storage type"
 msgstr ""
 
-#: FormOpenWizard.form:520
+#: FormOpenWizard.form:521
 msgid "Connection settings - eXist"
 msgstr ""
 
-#: FormOpenWizard.form:560
+#: FormOpenWizard.form:561
 msgid "80"
 msgstr ""
 
-#: FormOpenWizard.form:588
+#: FormOpenWizard.form:575
+msgid "Please enter the eXist connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:589
 msgid "Connection settings - CouchDB"
 msgstr ""
 
-#: FormOpenWizard.form:656
+#: FormOpenWizard.form:643
+msgid "Please enter the CouchDB connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:657
 msgid "Connection settings - SQLite"
+msgstr ""
+
+#: FormOpenWizard.form:691
+msgid "Please enter the SQLite connection data:"
 msgstr ""
 

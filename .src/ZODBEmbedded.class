@@ -1,0 +1,17 @@
+' Gambas class file
+
+Inherits ZODBFileStorage
+
+Public Sub _new(username As String, password As String, store_password As Boolean)
+  Me.dbfile = "baze.fs"
+  Me.username = username
+  Me.password = password
+  Me.store_password = store_password
+  
+  Me.connection_settings["connection type"] = "ZODBEmbedded"
+  Me.connection_settings["dbfile"] = "baze.fs"
+  Me.connection_settings["username"] = username
+  If Me.store_password Then
+    Me.connection_settings["password"] = password
+  Endif
+End

@@ -2,6 +2,7 @@
 
 { Form Form
   MoveScaled(0,0,88,64)
+  Text = ("Baze Database Environment - Connection Wizard")
   Icon = Picture["images/majin-bu.png"]
   Resizable = False
   { WizardIntro Wizard
@@ -68,7 +69,7 @@
       }
     }
     Index = 1
-    Text = ("Connection settings - PostgreSQL")
+    Text = ("Connection settings")
     { PictureBox2 PictureBox
       MoveScaled(-5,1,55,49)
       Background = &HFFFFFF&
@@ -117,8 +118,8 @@
         Password = True
       }
       { LabelPGPlease Label
-        MoveScaled(4,1,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,1,40,4)
+        Text = ("Please enter the PostgreSQL connection data:")
       }
       { ButtonPGTest Button
         MoveScaled(32,42,15,4)
@@ -161,8 +162,8 @@
         Password = True
       }
       { LabelXPlease Label
-        MoveScaled(4,1,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,1,33,4)
+        Text = ("Please enter the XSB connection data:")
       }
       { ButtonXTest Button
         MoveScaled(32,43,15,4)
@@ -170,7 +171,7 @@
       }
       { TextBoxXXSB TextBox
         MoveScaled(26,35,15,4)
-        Text = ("/home/markus/myPackages/XSB/bin/xsb")
+        Text = ("/usr/local/bin/xsb")
       }
       { LabelXXSB Label
         MoveScaled(4,35,21,4)
@@ -221,8 +222,8 @@
         Password = True
       }
       { LabelXPlease2 Label
-        MoveScaled(4,1,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,1,35,4)
+        Text = ("Please enter the Flora2 connection data:")
       }
       { ButtonfTest Button
         MoveScaled(32,43,15,4)
@@ -294,8 +295,8 @@
         Password = True
       }
       { LabelPGfPlease2 Label
-        MoveScaled(3,2,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(3,2,34,4)
+        Text = ("Please enter the ZODB connection data:")
       }
       { ButtonZTest Button
         MoveScaled(30,43,15,4)
@@ -320,7 +321,7 @@
       { ComboBoxZStorageType ComboBox
         MoveScaled(26,8,19,4)
         ReadOnly = True
-        List = [("File storage"), ("Client storage")]
+        List = [("File storage"), ("Client storage"), ("Embedded")]
         Text = ("Choose...")
       }
       { LabelZStorageType Label
@@ -371,8 +372,8 @@
         Password = True
       }
       { LabelEPlease Label
-        MoveScaled(4,3,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,3,34,4)
+        Text = ("Please enter the eXist connection data:")
       }
       { ButtonETest Button
         MoveScaled(32,42,15,4)
@@ -426,8 +427,8 @@
         Password = True
       }
       { LabelCPlease Label
-        MoveScaled(4,3,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,3,37,4)
+        Text = ("Please enter the CouchDB connection data:")
       }
       { ButtonCTest Button
         MoveScaled(32,42,15,4)
@@ -465,8 +466,8 @@
         Password = True
       }
       { LabelSPlease Label
-        MoveScaled(4,4,31,4)
-        Text = ("Please enter the connection data:")
+        MoveScaled(4,4,35,4)
+        Text = ("Please enter the SQLite connection data:")
       }
       { ButtonSTest Button
         MoveScaled(32,42,15,4)

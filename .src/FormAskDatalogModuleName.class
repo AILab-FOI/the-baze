@@ -6,7 +6,7 @@ Public Sub ButtonOK_Click()
   ' store the table name
   If TextBoxModuleName.Text <> "" Then
     caller.datalog_module_name = TextBoxModuleName.Text
-    Me.Hide
+    Me.Close
   Else
     Message.Info("Please enter a module name!")
   Endif
@@ -14,7 +14,7 @@ End
 
 Public Sub ButtonCancel_Click()
   caller.request_canceled = True
-  Me.hide
+  Me.Close
 End
 
 Public Sub TextBoxModuleName_KeyPress()
@@ -22,7 +22,7 @@ Public Sub TextBoxModuleName_KeyPress()
   If Key.code = Key.Return Then
     If TextBoxModuleName.Text <> "" Then
       caller.datalog_module_name = TextBoxModuleName.Text
-      Me.Hide
+      Me.Close
     Else
       Message.Info("Please enter a module name!")
     Endif

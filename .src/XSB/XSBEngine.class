@@ -139,7 +139,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     Endif 
     predicate = predicate & "(result(["
     For Each i In vars
-      predicate = predicate & i & ", "
+      predicate = predicate & "gambas_res( $$, " & i & ", $$), "
     Next
     If Right$(predicate, 1) <> "[" Then
       predicate = Left(predicate, -2)
@@ -193,7 +193,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   If allResults Then 
     For k = 0 To returnVars.count - 1
       If returnVars[k] = "GambasXSBResultListVariable" Then 
-        newRes = FindAll(returnResults[k], "result\\(\\[([^\\]\\[]+)\\]\\)", 1)
+        newRes = FindAll(returnResults[k], "result\\(\\[gambas_res\\(\\$\\$,(.+?),\\$\\$\\)\\]\\)", 1)
         Break 
       Endif 
     Next 
@@ -205,7 +205,8 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     returnVars = newVars
     returnResults = New String[]
     For Each i In newRes
-      newReturn = Split(i, ",")
+      i = Replace$(i, ",$$),gambas_res($$,", "$$$$$$$$$$$$$$$$$$$$")
+      newReturn = Split(i, "$", "", True)
       results = New Collection
       For k = 0 To returnVars.count - 1
         results[returnVars[k]] = newReturn[k]
