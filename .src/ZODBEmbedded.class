@@ -1,17 +1,30 @@
 ' Gambas class file
 
-Inherits ZODBFileStorage
+Inherits ZODB
 
-Public Sub _new(username As String, password As String, store_password As Boolean)
-  Me.dbfile = "baze.fs"
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
+Public dbfile As String
+
+Public Sub _new(dbfile_ As String)
+  Me.dbfile = dbfile_
+  Me.type = "ZODBEmbedded"
   
   Me.connection_settings["connection type"] = "ZODBEmbedded"
-  Me.connection_settings["dbfile"] = "baze.fs"
-  Me.connection_settings["username"] = username
-  If Me.store_password Then
-    Me.connection_settings["password"] = password
-  Endif
+  Me.connection_settings["dbfile"] = dbfile_
 End
+
+Public Sub connect() As Boolean
+  ' connect to the ZODB database
+  Me.init_folder()
+  Me.engine = New ZODBEngine(Me.temporary_folder &/ Me.connection_settings["dbfile"])
+  Return Me.engine.connect()
+End
+
+Public Sub query(query_ As String) As Variant
+  ' execute a query and return the results
+  If Not Me.engine.is_open Then
+    Try Me.engine.close()
+    Me.engine.connect()
+  Endif
+  Return Me.engine.query(query_)  
+End
+

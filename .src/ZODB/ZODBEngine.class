@@ -1,0 +1,209 @@
+' Gambas class file
+
+' Python executable
+Public executable As String
+' buffer size
+Public buff_size As Integer
+' command to execute
+Public python_command As String
+' Python process
+Public hproc As Process
+' result string
+Public result As String
+' connection indicator
+Public is_open As Boolean
+' json reader
+Public json As New JSON
+' dbtype (FileStorage or ClientStorage
+Public type As String
+' dbfile if FileStorage
+Public dbfile As String
+' server and port if ClientStorage
+Public server As String
+Public port As String
+' username and password
+' TODO: implement their actual usage
+Public username As String
+Public password As String
+
+
+Public Sub _new(dbfile_or_server As String, Optional dbtype As String = "FileStorage", Optional port_ As String, Optional username_ As String = "", Optional password_ As String = "", Optional executable_ As String = "python", Optional params As String = "")
+  ' initialize the ZODB connection
+  'Dim bla As String
+  'Dim rez As Variant[]
+  is_open = False
+  executable = executable_
+  buff_size = -256 * 256 * 256 * 4
+  python_command = Trim$(executable & " " & params)
+  username = username_
+  password = password_
+  type = dbtype
+  Select Case type
+    Case "FileStorage"
+      dbfile = dbfile_or_server
+    Case "ClientStorage"
+      server = dbfile_or_server
+      port = port_
+  End Select
+End
+
+Public Sub open()
+  hproc = Shell python_command For Input Output 
+End
+
+
+Public Sub load_modules()
+  ' load ZODB related modules
+  Dim storage_import As String
+  Select Case type
+    Case "FileStorage"
+      storage_import = "from ZODB import FileStorage"
+    Case "ClientStorage"
+      storage_import = "from ZEO import ClientStorage"
+  End Select
+  Print #hproc, "from json import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load json\n\n" & result)
+  Endif
+  Print #hproc, "from jsonpickle import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load jsonpickle\n\n" & result)
+  Endif
+  Print #hproc, "from ZODB import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load ZODB\n\n" & result)
+  Endif
+  Print #hproc, storage_import
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load storage type\n\n" & result)
+  Endif
+  Print #hproc, "from persistent import Persistent"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load persistent\n\n" & result)
+  Endif
+  Print #hproc, "from persistent.list import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load persistent.list\n\n" & result)
+  Endif
+  Print #hproc, "import transaction"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load transaction\n\n" & result)
+  Endif
+  Print #hproc, "from BTrees import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load BTrees\n\n" & result)
+  Endif
+  Print #hproc, "import sys"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load sys\n\n" & result)
+  Endif
+  execute("from jsonpickle import Pickler\nimport json\nclass BazePickler( Pickler ):\n\tdef _mkref(self, obj):\n\t\tif self.unpicklable is False:\n\t\t\treturn True\n\t\tobjid = id(obj)\n\t\tif objid not in self._objs:\n\t\t\tnew_id = len(self._objs)\n\t\t\tself._objs[objid] = new_id\n\t\t\ttry: \n\t\t\t\tnot self.baze_objects\n\t\t\texcept:\n\t\t\t\tself.baze_objects = {}\n\t\t\tself.baze_objects[ new_id ] = obj\n\t\t\treturn True\n\t\treturn False\n\npicklers = []\n\ndef baze_encode( value, unpicklable=True, max_depth=None ):\n\tb = BazePickler( unpicklable=unpicklable, max_depth=max_depth )\n\tpicklers.append( b )\n\treturn json.dumps( b.flatten( value ) )\n")
+End
+
+Public Sub read() As String
+  ' read the result and return it
+  result = Read #hproc, buff_size
+  Return result
+End
+
+Public Sub close()
+  ' close the connection to Python and ZODB
+  Try exec("transaction.commit()")
+  Try exec("con.close()")
+  hproc.Kill()
+  is_open = False
+End
+
+Public Sub exec(cmd As String) As String
+  ' execute a command and return the results
+  Dim oldResult As String
+  oldResult = result
+  Print #hproc, cmd
+  Sleep 0.1
+  read()
+  Do While oldResult <> result And result <> "" And Lof(hproc) > 0
+    oldResult = result
+    'Sleep 0.1
+    read()
+  Loop 
+  Do While Right$(result, 4) = ">>> " 
+    result = Left$(result, -4)
+  Loop
+  Do While Left$(result, 4) = ">>> " 
+    result = Right$(result, -4)
+  Loop
+  Do While Right$(result, 4) = "... " 
+    result = Left$(result, -4)
+  Loop
+  Do While Left$(result, 4) = "... " 
+    result = Right$(result, -4)
+  Loop
+  If result Then
+    If XSBEngine.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
+      Error.Raise(result)
+    Endif
+  Endif
+  Return result
+End
+
+Public Sub execute(cmd As String) As String[]
+  ' execute a number of commands separated by newlines
+  ' caution blocks have to be appended by an additional newline
+  Dim commands, results As String[]
+  Dim one As String
+  commands = Split(cmd, "\n")
+  results = New String[]
+  For Each one In commands
+    results.Add(exec(one))
+  Next
+  Return results
+End
+
+
+Public Sub query(query_ As String) As Variant
+  ' execute a query and return the parsed results
+  Dim res As String
+  If is_open Then
+    res = exec("print baze_encode(" & query_ & ")")
+    Return json.Decode(res)
+  Else
+    Error.Raise("Connection to ZODB closed!")
+  Endif
+  
+End
+
+Public Sub load(folder As String, module As String)
+  ' load a user module from a given folder
+  Print #hproc, "sys.path.append( '" & folder & "' )"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't append folder '" & folder & "' to path\n\n" & result)
+  Endif
+  Print #hproc, "from " & module & " import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't import module '" & module & "'\n\n" & result)
+  Endif
+End
+
+Public Sub connect() As Boolean
+  ' connect to file or server
+  Dim con_string As String
+  open()
+  read()
+  load_modules()
+  Select Case type
+    Case "FileStorage"
+      If Exist(dbfile & ".lock") Then 'this is nasty, maybe it would be better to notify the user that someone else might be using the db
+        Kill dbfile & ".lock"
+        Kill dbfile & ".index"
+        Kill dbfile & ".tmp"
+      Endif
+      con_string = "storage = FileStorage.FileStorage('" & dbfile & "')\n"
+    Case "ClientStorage"
+      con_string = "storage = ClientStorage.ClientStorage(('" & server & "'," & port & "), username='" & username & "', password='" & password & "')\n"
+  End Select
+  con_string &= "db = DB(storage)\ncon = db.open()\nroot = con.root()"
+  execute(con_string)
+  is_open = True
+  Return True
+End
+

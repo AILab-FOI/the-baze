@@ -1,0 +1,17 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,91,44)
+  { FileChooserMain FileChooser
+    MoveScaled(1,1,89,35)
+    Filter = [("*.fs"), ("ZODB File storage")]
+  }
+  { ButtonCancel Button
+    MoveScaled(62,38,13,4)
+    Text = ("Cancel")
+  }
+  { ButtonOK Button
+    MoveScaled(77,38,13,4)
+    Text = ("OK")
+  }
+}

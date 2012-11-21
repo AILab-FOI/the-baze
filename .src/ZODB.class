@@ -2,9 +2,297 @@
 
 Inherits DBaze
 
+' the Python ZODB engine
+Public engine As ZODBEngine
+' the DB type (Embedded, FileStorage or ClientStorage)
+Public type As String
+' auxilliary variable for unique key in the object tree
+Public key As Integer
+' auxilliary indicator if the last parent in the recursion was an object or dictionary
+Public was_object As Boolean
+
+Public Sub close()
+  ' close the connection
+  engine.close()
+End
+
+Public Sub get_db_objects() As Collection
+  ' get the database objects (root, class definitions)
+  Dim objects As New Collection
+  Dim root As String
+  
+  root = "root"
+  
+  objects["root"] = Me.query(root)
+  objects["root"]["__pickler_id__"] = Me.query("len(picklers) - 1")
+  
+  
+  objects["object types"] = [ 
+    "root": "directory.png"]
+
+  Return objects
+End
+
+Public Sub get_unique_key() As String
+  ' get a unique key for the tree of objects
+  If IsNull(key) Then
+    key = 0
+  Endif
+  key += 1
+  Return "key_" & Str$(key)  
+End
 
 
 
+Public Sub construct_object_tree(objects As Variant, parent As String, tree_view As TreeView)
+  ' construct a tree from the given object under the given parent in the given tree_view
+  ' TODO: deal with recursion in the object tree (e.g. one object points to another which points back)
+  ' this can be done with a global list of objects already processed, and if such an object occurs
+  ' the function returns with only a reference to the object similiar to py/id in jsonpickle
+  Dim iter As Variant
+  Dim i As Integer
+  Dim key As String
+  If IsNull(objects) Then
+    Return
+  Endif
+  Try iter = objects["py/object"]
+  If Error Then
+    If TypeOf(objects) = gb.Object Then
+      If objects Is Variant[] Then
+        key = get_unique_key()
+        tree_view.Add(key, "list", Picture.Load("directory.png"), parent)
+        For i = 0 To objects.count - 1
+          construct_object_tree(objects[i], key, tree_view)
+        Next
+        Return
+      Endif
+    Endif
+    key = get_unique_key()
+    tree_view.Add(key, Str(objects), Picture.Load("class.png"), parent)
+    Return
+  Endif
+  Select Case objects["py/object"]
+    Case "persistent.mapping.PersistentMapping"
+      'it's a dictionary
+      For Each iter In objects["py/state"]["data"]
+        key = get_unique_key()
+        tree_view.Add(key, objects["py/state"]["data"].Key, Picture.Load("directory.png"), parent)
+        construct_object_tree(iter, key, tree_view)
+      Next
+    Case "persistent.list.PersistentList"
+      ' it's a list
+      key = get_unique_key()
+      tree_view.Add(key, objects["py/object"], Picture.Load("directory.png"), parent)
+      For i = 0 To objects["py/state"]["data"].count - 1
+        construct_object_tree(objects["py/state"]["data"][i], key, tree_view)
+      Next
+    Default
+      If objects Is Collection Then
+        If objects.Exist("py/object") Then 
+          key = get_unique_key()
+          tree_view.Add(key, objects["py/object"], Picture.Load("directory.png"), parent)
+          was_object = True
+          construct_object_tree(objects["py/state"], key, tree_view)
+          was_object = False
+        Else
+          If objects.Exist("py/tuple") Then
+            key = get_unique_key()
+            tree_view.Add(key, "tuple", Picture.Load("directory.png"), parent)
+            For i = 0 To objects["py/tuple"].count - 1
+              construct_object_tree(objects["py/tuple"][i], key, tree_view)
+            Next
+            Return
+          Endif
+          If Not was_object Then
+            key = get_unique_key()
+            tree_view.Add(key, "dict", Picture.Load("directory.png"), parent)
+            parent = key
+          Endif
+          For Each iter In objects
+            key = get_unique_key()
+            tree_view.Add(key, objects.key, Picture.Load("directory.png"), parent)
+            construct_object_tree(iter, key, tree_view)
+          Next
+        Endif
+      Endif
+  End Select
+  
+End
 
 
+Public Sub initialize_gui()
+  ' initialize the GUI for PostgreSQL database
+  'Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormZODBDataDefinition
+  Dim data_manipulation As FormZODBDataManipulation
+  Dim data_querying As FormZODBDataQuerying
+  
+  ' create a dummy tab 
+  If Me.type = "ZODBEmbedded" Or Me.type = "ZODBFileStorage" Then
+    FMain.main_tabstrip.Text = "ZODB - " & Me.connection_settings["dbfile"]
+  Else
+    FMain.main_tabstrip.Text = "ZODB - " & Me.connection_settings["host"] & ":" & Me.connection_settings["port"]
+  Endif
+  
+  'documentation.Frame.Url = "test.html" '"http://autopoiesis.foi.hr/wiki.php?name=Baze+Podataka+-+FOI#Teorija baza podataka"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree(True)
+  
+  ' create the tool panel
+  data_definition = New FormZODBDataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormZODBDataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormZODBDataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+  
+End
+
+Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
+  ' refresh the main tree view
+  Dim objects As Collection
+  'Dim tab As Collection
+  Dim o, temp_file As String
+  FMain.main_treeview.Clear
+  
+  FMain.main_treeview.Add("Class definitions", "Class definitions", Picture.Load("directory.png"))
+  For Each o In Me.dbobjects["class definitions"]
+    FMain.main_treeview.Add("cla_" & Me.dbobjects["class definitions"].key, Me.dbobjects["class definitions"].key, Picture.Load("class.png"), "Class definitions")
+    If load_modules Then
+      temp_file = Me.temporary_folder & "/" & Me.dbobjects["class definitions"].key & ".py"
+      File.Save(temp_file, Me.dbobjects["class definitions"][Me.dbobjects["class definitions"].key])
+      Try engine.load(Me.temporary_folder, Me.dbobjects["class definitions"].key)
+      If Error Then
+        Message.Error(Error.Text)
+        Return
+      Endif
+    Endif
+  Next
+  
+  
+  objects = get_db_objects()
+  FMain.main_treeview.Add("Root", "Root", Picture.Load("directory.png"))
+  FMain.main_treeview.Tag = objects["root"]["__pickler_id__"]
+  construct_object_tree(objects["root"], "Root", FMain.main_treeview)
+  
+  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("directory.png"))
+  For Each o In Me.dbobjects["modules"]
+    FMain.main_treeview.Add("mod_" & Me.dbobjects["modules"].key, Me.dbobjects["modules"].key, Picture.Load("module.png"), "Modules")
+    If load_modules Then
+      temp_file = Me.temporary_folder & "/" & Me.dbobjects["modules"].key & ".py"
+      File.Save(temp_file, Me.dbobjects["modules"][Me.dbobjects["modules"].key])
+      Try engine.load(Me.temporary_folder, Me.dbobjects["modules"].key)
+      If Error Then
+        Message.Error(Error.Text)
+        Return
+      Endif
+    Endif
+  Next
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+    Next
+    .Add("PyMapReduce queries", "PyMapReduce queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["pymapreduce queries"]
+      .Add(Me.dbobjects["queries"]["pymapreduce queries"].key, Me.dbobjects["queries"]["pymapreduce queries"].key, Picture.Load("query.png"), "PyMapReduce queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add("frm_" & o, o, Picture.Load("query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add("scr_" & o, o, Picture.Load("query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add("rep_" & o, o, Picture.Load("query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub query(q As String) As Variant
+  ' dummy interface
+  If False Then
+    Print q
+  Endif
+  Return Null
+End
+
+Public Sub new_class(name As String, code As String)
+  ' create a new class and load it
+  Dim temp_file As String
+  temp_file = Me.temporary_folder & "/" & name & ".py"
+  File.Save(temp_file, code)
+  Try Me.engine.load(Me.temporary_folder, name)
+  If Error Then
+    Message.Error(Error.Text)
+    Return
+  Endif
+  Me.dbobjects["class definitions"][name] = code
+  Me.Save()
+  Message.Info("Class compiled and loaded successfully!")
+End
+
+Public Sub new_module(name As String, code As String)
+  ' create a new class and load it
+  Dim temp_file As String
+  temp_file = Me.temporary_folder & "/" & name & ".py"
+  File.Save(temp_file, code)
+  Try Me.engine.load(Me.temporary_folder, name)
+  If Error Then
+    Message.Error(Error.Text)
+    Return
+  Endif
+  Me.dbobjects["modules"][name] = code
+  Me.Save()
+  Message.Info("Module compiled and loaded successfully!")
+End
+
+Public Sub new_pymapreduce_query(ttitle As String, tquery As String)
+  ' create new pymapreduce query and store it in dbobjects
+  Me.dbobjects["queries"]["pymapreduce queries"][ttitle] = tquery
+  Me.Save()
+End
+
+Public Sub new_insert_query(ttitle As String, tquery As String, Optional verbose As Boolean = False) As Boolean
+  ' create new insert query and store it in dbobjects
+  Try Me.engine.execute(tquery)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  If verbose Then
+    Message.Info("Query successfully executed!")
+  Endif
+  Me.dbobjects["queries"]["insert queries"][ttitle] = tquery
+  Me.Save()
+  Return True
+End
+
+Public Sub new_delete_query(ttitle As String, tquery As String, Optional verbose As Boolean = False) As Boolean
+  ' create new delete query and store it in dbobjects
+  Try Me.engine.execute(tquery)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  If verbose Then
+    Message.Info("Query successfully executed!")
+  Endif
+  Me.dbobjects["queries"]["delete queries"][ttitle] = tquery
+  Me.Save()
+  Return True
+End
 

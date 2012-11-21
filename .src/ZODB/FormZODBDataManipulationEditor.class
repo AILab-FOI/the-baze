@@ -1,0 +1,51 @@
+' Gambas class file
+
+Public pyeditor As Editor
+' context
+Public context As String
+
+Public Sub _new()
+  ' make editor public
+  pyeditor = EditorPython
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  With FMain.db
+    Select Case context
+      Case " - Insert query"
+        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+          Return
+        Endif
+      Case " - Delete query"
+        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+          Return
+        Endif
+    End Select
+    .refresh_db_tree()
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new module and load it
+ With FMain.db
+    Select Case context
+      Case " - Insert query"
+        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+          Return
+        Endif
+      Case " - Delete query"
+        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+          Return
+        Endif
+    End Select
+    .refresh_db_tree()
+  End With
+End

@@ -20,8 +20,8 @@
       MoveScaled(35,1,49,49)
       Background = Color.Background
       { RadioButtonNew RadioButton
-        MoveScaled(2,2,17,3)
-        Text = ("New database")
+        MoveScaled(2,2,20,3)
+        Text = ("New file database")
         Value = True
       }
       { RadioButtonOpen RadioButton
@@ -66,6 +66,12 @@
       { LabelChosenFile Label
         MoveScaled(5,30,41,5)
         Enabled = False
+      }
+      { ComboBoxNewDatabase ComboBox
+        MoveScaled(23,2,20,4)
+        ReadOnly = True
+        List = [("SQLite"), ("ZODB")]
+        Text = ("SQLIte")
       }
     }
     Index = 1
@@ -272,10 +278,12 @@
       }
       { LabelZUsername Label
         MoveScaled(3,28,10,4)
+        Enabled = False
         Text = ("Username")
       }
       { LabelZPassword Label
         MoveScaled(3,33,9,4)
+        Enabled = False
         Text = ("Password")
       }
       { TextBoxZHost TextBox
@@ -289,9 +297,11 @@
       }
       { TextBoxZUsername TextBox
         MoveScaled(26,28,19,4)
+        Enabled = False
       }
       { TextBoxZPassword TextBox
         MoveScaled(26,33,19,4)
+        Enabled = False
         Password = True
       }
       { LabelPGfPlease2 Label
@@ -304,25 +314,28 @@
       }
       { TextBoxZDBFile TextBox
         MoveScaled(26,23,15,4)
-        Password = True
+        Enabled = False
       }
       { LabelZDBFile Label
         MoveScaled(3,23,12,4)
+        Enabled = False
         Text = ("Database file")
       }
       { ToolButtonFindZDBFile ToolButton
         MoveScaled(42,23,5,4)
+        Enabled = False
         Picture = Picture["icon:/32/open"]
       }
       { CheckBoxZStoreP CheckBox
         MoveScaled(26,38,18,4)
+        Enabled = False
         Text = ("Store password")
       }
       { ComboBoxZStorageType ComboBox
         MoveScaled(26,8,19,4)
         ReadOnly = True
         List = [("File storage"), ("Client storage"), ("Embedded")]
-        Text = ("Choose...")
+        Text = ("Embedded")
       }
       { LabelZStorageType Label
         MoveScaled(3,8,13,4)

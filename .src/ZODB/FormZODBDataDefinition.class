@@ -1,0 +1,40 @@
+' Gambas class file
+
+' canceled request inbox
+Public request_canceled As Boolean
+' class name inbox
+Public class_name As String
+' module name inbox
+Public module_name As String
+
+
+Public Sub ToolButtonNewClassDescriptor_Click()
+  ' open the python editor
+  Dim ask As New FormAskClassName
+  Dim module_editor As FormZODBPythonEditor
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.Count += 1
+    module_editor = New FormZODBPythonEditor(FMain.main_tabstrip)
+    module_editor.context = " - Class"
+    FMain.main_tabstrip.Text = class_name & " - Class"
+    module_editor.pyeditor.Text = "from persistent import Persistent\n\nclass " & class_name & "(Persistent):\n\tdef __init__(self): \n\t\t"
+  Endif
+End
+
+Public Sub ToolButtonNewPythonModule_Click()
+  ' open the python editor
+  Dim ask As New FormAskPythonModuleName
+  Dim module_editor As FormZODBPythonEditor
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.Count += 1
+    module_editor = New FormZODBPythonEditor(FMain.main_tabstrip)
+    module_editor.context = " - Python Module"
+    FMain.main_tabstrip.Text = module_name & " - Python Module"
+  Endif
+End

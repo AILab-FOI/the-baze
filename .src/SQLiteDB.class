@@ -4,8 +4,8 @@ Inherits DBaze
 
 Public dbfile As String
 
-Public Sub _new(dbfile As String, username As String, password As String, store_password As Boolean)
-  Me.dbfile = dbfile
+Public Sub _new(dbfile_ As String, username As String, password As String, store_password As Boolean)
+  Me.dbfile = dbfile_
   Me.username = username
   Me.password = password
   Me.store_password = store_password

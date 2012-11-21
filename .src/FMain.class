@@ -25,6 +25,8 @@ Public main_toolpanel As ToolPanel
 Public request_canceled As Boolean
 ' inbox for a changed table name
 Public table_name As String
+' open wizard
+Public wiz As FormOpenWizard
   
 Public Sub _new()
   ' make components visible to DB classes
@@ -33,17 +35,38 @@ Public Sub _new()
   Me.main_toolpanel = ToolPanelMain
 End
 
+Public Sub save_close() As Boolean
+  ' close database connections if any
+  Try db.close()
+  Quit
+End
+
+Public Sub Close(Optional ret As Integer) As Boolean
+  ' close all database connections if any
+  If False Then
+    Print ret
+  Endif
+  save_close()
+End
+
+Public Sub Form_Hide()
+  ' close all database connections if any
+  save_close()
+End
+
 Public Sub handle_user_request()
   ' handle the users request
   ' open the wizard first
-  FormOpenWizard.ShowModal
+  wiz = New FormOpenWizard
+  wiz.ShowModal()
+  Try wiz.Delete
   If wizard_return = "canceled" Then ' wizard cancelled, close app
-    Me.close
+    Me.save_close
     Return
   Else
       If wizard_return = "connection" Then ' create a new connection
         If connection_settings = Null Then ' no connection settings supplied (X button), close app
-          Me.close
+          Me.save_close
           Return
         End If
         save_file_as()
@@ -73,7 +96,7 @@ Public Sub handle_user_request()
             shift_recent_files(current_file)
         End If
       End If
-  Endif  
+  Endif 
 End
 
 Public Sub Form_Open()
@@ -320,6 +343,50 @@ Public Sub TreeViewMain_DblClick()
   Dim sql_view As FormSQLSplit
   Dim datalog_view As FormDatalogSplit
   Dim datalog_module As FormXSBCreateModule
+  Dim pymapreduce_split As FormPyMapReduceSplit
+  Dim py_edit As FormZODBPythonEditor
+  Dim py_mani As FormZODBDataManipulationEditor
+  If TreeViewMain.Current.ParentKey = "Modules" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Python Module" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    py_edit = New FormZODBPythonEditor(TabStripMain)
+    py_edit.pyeditor.Text = db.dbobjects["modules"][TreeViewMain.Current.Text]
+    py_edit.context = " - Python Module"
+    TabStripMain.Text = TreeViewMain.Current.Text & " - Python Module"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Class definitions" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Class" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    py_edit = New FormZODBPythonEditor(TabStripMain)
+    py_edit.pyeditor.Text = db.dbobjects["class definitions"][TreeViewMain.Current.Text]
+    py_edit.context = " - Class"
+    TabStripMain.Text = TreeViewMain.Current.Text & " - Class"
+  Endif
+  If TreeViewMain.Current.ParentKey = "PyMapReduce queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - PyMapReduce query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    pymapreduce_split = New FormPyMapReduceSplit(TabStripMain)
+    pymapreduce_split.pymapreduce_editor.Text = db.dbobjects["queries"]["pymapreduce queries"][TreeViewMain.Current.Text]
+    TabStripMain.Text = TreeViewMain.Current.Text & " - PyMapReduce query"
+  Endif
   If TreeViewMain.Current.ParentKey = "Datalog queries" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Datalog query" Then 
@@ -381,8 +448,13 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    sql_view = New FormSQLSplit(TabStripMain)
-    sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+    If db Is ZODB Then
+      py_mani = New FormZODBDataManipulationEditor(TabStripMain)
+      py_mani.pyeditor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+    Else
+      sql_view = New FormSQLSplit(TabStripMain)
+      sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+    Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Insert query"
   Endif
   If TreeViewMain.Current.ParentKey = "Delete queries" Then
@@ -394,8 +466,13 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    sql_view = New FormSQLSplit(TabStripMain)
-    sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+    If db Is ZODB Then
+      py_mani = New FormZODBDataManipulationEditor(TabStripMain)
+      py_mani.pyeditor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+    Else
+      sql_view = New FormSQLSplit(TabStripMain)
+      sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+    Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Delete query"
   Endif
   If TreeViewMain.Current.ParentKey = "Tables" Then
@@ -426,3 +503,30 @@ End
 ' Public Sub TabStripMain_Close(Index As Integer)
 '   Print "Hello" & Str(Index)
 ' End
+
+
+Public Sub TreeViewMain_Expand()
+  ' when expanding if the db is a ZODB, change the py/id into a real object
+  ' FIXME: u drugoj razini korisnika blog ponovno pokazuje na root!?!?
+  Dim object As Variant
+  Dim save_key, save_dict_key As String
+  If db Is ZODB Then
+    save_key = TreeViewMain.Item.Key
+    TreeViewMain.MoveFirst()
+    Repeat
+      If TreeViewMain.Item.ParentKey = save_key Then
+        save_dict_key = TreeViewMain.Item.Key
+        TreeViewMain.MoveChild()
+        If Not IsNull(TreeViewMain.Item) Then
+          If TreeViewMain.Item.Text = "py/id" Then
+            TreeViewMain.MoveChild()
+            object = db.query("picklers[" & TreeViewMain.Tag & "].baze_objects[" & TreeViewMain.Item.Text & "]")
+            db.construct_object_tree(object, save_key, TreeViewMain)
+            TreeViewMain.Remove(save_dict_key)
+            TreeViewMain.MoveFirst()
+          Endif
+        Endif
+      Endif
+    Until TreeViewMain.MoveBelow()
+  Endif
+End

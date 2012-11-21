@@ -5,18 +5,18 @@ Inherits DBaze
 Public dsn As String
 Public flora2 As String
 
-Public Sub _new(dsn As String, username As String, password As String, store_password As Boolean, flora2 As String)
-  Me.dsn = dsn
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
-  Me.flora2 = flora2
+Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_password_ As Boolean, flora2_ As String)
+  Me.dsn = dsn_
+  Me.username = username_
+  Me.password = password_
+  Me.store_password = store_password_
+  Me.flora2 = flora2_
   
   Me.connection_settings["connection type"] = "Flora2"
-  Me.connection_settings["dsn"] = dsn
-  Me.connection_settings["username"] = username
-  Me.connection_settings["flora2"] = flora2
+  Me.connection_settings["dsn"] = dsn_
+  Me.connection_settings["username"] = username_
+  Me.connection_settings["flora2"] = flora2_
   If Me.store_password Then
-    Me.connection_settings["password"] = password
+    Me.connection_settings["password"] = password_
   Endif
 End

@@ -88,6 +88,10 @@ execute
 m
 Object[]
 (query)s[(allResults)b(distinct)b]
+close
+m
+
+
 _new
 m
 

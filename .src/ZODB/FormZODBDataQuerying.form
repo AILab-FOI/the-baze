@@ -1,0 +1,12 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,44,16)
+  Arrangement = Arrange.Column
+  { ToolButtonNewMapReduceQuery ToolButton
+    MoveScaled(6,3,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("New PyMapReduce Query")
+    Picture = Picture["icon:/32/find"]
+  }
+}

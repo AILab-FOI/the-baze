@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,67,67)
+  MoveScaled(0,0,65,64)
   Arrangement = Arrange.Fill
   { VSplitMain VSplit
     MoveScaled(0,0,62,62)
@@ -24,22 +24,16 @@
           Text = ("ToolButton1")
           Picture = Picture["icon:/32/close"]
         }
-        { CheckBoxDistinct CheckBox
-          MoveScaled(11,0,17,4)
-          Text = ("Distinct results")
-        }
       }
-      { EditorDatalog Editor
+      { EditorPyMapReduce Editor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
         Highlight = Highlight.Diff
       }
     }
-    { TableViewResults TableView
-      MoveScaled(2,33,58,27)
-      Enabled = False
-      Header = GridView.Horizontal
+    { TreeViewResult TreeView
+      MoveScaled(3,33,55,26)
     }
   }
 }

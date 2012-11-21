@@ -5,19 +5,19 @@ Inherits DBaze
 Public host As String
 Public port As String
 
-Public Sub _new(host As String, port As String, username As String, password As String, store_password As Boolean)
-  Me.host = host
-  Me.port = port
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
+Public Sub _new(host_ As String, port_ As String, username_ As String, password_ As String, store_password_ As Boolean)
+  Me.host = host_
+  Me.port = port_
+  Me.username = username_
+  Me.password = password_
+  Me.store_password = store_password_
   
   Me.connection_settings["connection type"] = "CouchDB"
-  Me.connection_settings["host"] = host
-  Me.connection_settings["port"] = port
-  Me.connection_settings["username"] = username
+  Me.connection_settings["host"] = host_
+  Me.connection_settings["port"] = port_
+  Me.connection_settings["username"] = username_
   If Me.store_password Then
-    Me.connection_settings["password"] = password
+    Me.connection_settings["password"] = password_
   Endif
 End
 

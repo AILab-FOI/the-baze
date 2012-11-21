@@ -220,10 +220,15 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     Next   
     resultsArray.Add(results)
   Endif 
-  
   Return resultsArray
-  
 End
+
+Public Sub close()
+  ' stop XSB
+  Print #proc, "halt.\n"
+  Close #proc
+End
+
 
 Public Sub _new(Optional home As String = "/usr/bin/xsb", Optional params As String = "--nobanner --quietload --noprompt 2>&1")
   xsb_home = home  

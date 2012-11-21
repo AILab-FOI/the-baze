@@ -4,16 +4,26 @@ Inherits ZODB
 
 Public dbfile As String
 
-Public Sub _new(dbfile As String, username As String, password As String, store_password As Boolean)
-  Me.dbfile = dbfile
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
+Public Sub _new(dbfile_ As String)
+  Me.dbfile = dbfile_
+  Me.type = "ZODBFileStorage"
   
   Me.connection_settings["connection type"] = "ZODBFileStorage"
-  Me.connection_settings["dbfile"] = dbfile
-  Me.connection_settings["username"] = username
-  If Me.store_password Then
-    Me.connection_settings["password"] = password
+  Me.connection_settings["dbfile"] = dbfile_
+End
+
+Public Sub connect() As Boolean
+  ' connect to the ZODB database
+  Me.init_folder()
+  Me.engine = New ZODBEngine(Me.connection_settings["dbfile"])
+  Return Me.engine.connect()
+End
+
+Public Sub query(query_ As String) As Variant
+  ' execute a query and return the results
+  If Not Me.engine.is_open Then
+    Try Me.engine.close()
+    Me.engine.connect()
   Endif
+  Return Me.engine.query(query_)  
 End

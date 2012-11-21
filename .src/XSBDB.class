@@ -25,6 +25,13 @@ Public Sub _new(dsn_ As String, username As String, password As String, store_pa
   Endif
 End
 
+Public Sub close()
+  ' close the connection
+  xsb_engine.close()
+  con.Close()
+End
+
+
 Public Function connect(Optional caller As Object = Null) As Boolean
   ' connect to the database
   xsb_engine = New XSBEngine(Me.xsb)
@@ -254,6 +261,10 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
     .Add("Scripts", "Scripts", Picture.Load("directory.png"))
     For Each o In Me.dbobjects["scripts"]
       .Add(o, o, Picture.Load("query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add(o, o, Picture.Load("query.png"), "Reports")
     Next
   End With
 End

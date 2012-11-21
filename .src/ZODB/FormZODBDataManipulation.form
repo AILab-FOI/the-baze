@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,37,24)
+  Arrangement = Arrange.Column
+  { ToolButtonInsertObject ToolButton
+    MoveScaled(2,3,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Insert objects")
+    Picture = Picture["icon:/32/new"]
+  }
+  { ToolButtonDeleteObjects ToolButton
+    MoveScaled(6,11,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Delete objects")
+    Picture = Picture["icon:/32/delete"]
+  }
+}

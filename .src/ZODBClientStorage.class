@@ -5,9 +5,9 @@ Inherits ZODB
 Public host As String
 Public port As String
 
-Public Sub _new(host As String, port As String, username As String, password As String, store_password As Boolean)
-  Me.host = host
-  Me.port = port
+Public Sub _new(host_ As String, port_ As String, username As String, password As String, store_password As Boolean)
+  Me.host = host_
+  Me.port = port_
   Me.username = username
   Me.password = password
   Me.store_password = store_password
@@ -19,4 +19,20 @@ Public Sub _new(host As String, port As String, username As String, password As 
   If Me.store_password Then
     Me.connection_settings["password"] = password
   Endif
+End
+
+Public Sub connect() As Boolean
+  ' connect to the ZODB database
+  Me.init_folder()
+  Me.engine = New ZODBEngine(Me.host, "ClientStorage", Me.port, Me.username, Me.password)
+  Return Me.engine.connect()
+End
+
+Public Sub query(query_ As String) As Variant
+  ' execute a query and return the results
+  If Not Me.engine.is_open Then
+    Try Me.engine.close()
+    Me.engine.connect()
+  Endif
+  Return Me.engine.query(query_)  
 End

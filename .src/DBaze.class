@@ -7,6 +7,7 @@ Public password As String
 Public baze_file As String
 Public temporary_folder As String
 Public $baze_sqlite As New Connection
+Public baze_zodb As ZODBEngine
 Public connection_settings As New Collection
 Public dbobjects As New Collection
 Public js As New JSON
@@ -17,8 +18,8 @@ Public Sub init_folder()
   ' and add a new SQLite file into baze.sqlite
   temporary_folder = Temp()
   Mkdir temporary_folder
-  File.Save(temporary_folder & "/baze.js", contoJSON())
-  File.Save(temporary_folder & "/dbobjects.js", "")
+  File.Save(temporary_folder &/ "baze.js", contoJSON())
+  File.Save(temporary_folder &/ "dbobjects.js", "")
   With $baze_sqlite
     .Type = "sqlite"
     .host = temporary_folder
@@ -27,7 +28,9 @@ Public Sub init_folder()
   $baze_sqlite.Open
   $baze_sqlite.Databases.add("baze.sqlite")
   $baze_sqlite.Close
- 
+  baze_zodb = New ZODBEngine(temporary_folder &/ "baze.fs")
+  baze_zodb.connect()
+  baze_zodb.close()
   Catch
     Message.Info(Error.Text)
 End
@@ -45,9 +48,9 @@ End
 
 Public Sub Save()
   ' zip the temporary files to the baze file
-  File.Save(temporary_folder & "/baze.js", contoJSON())
-  File.Save(temporary_folder & "/dbobjects.js", dbotoJSON())
-  Exec ["tar", "cf", baze_file, "-C", temporary_folder, "baze.sqlite", "baze.js", "dbobjects.js"] Wait
+  File.Save(temporary_folder &/ "baze.js", contoJSON())
+  File.Save(temporary_folder &/ "dbobjects.js", dbotoJSON())
+  Exec ["tar", "cf", baze_file, "-C", temporary_folder, "baze.sqlite", "baze.js", "dbobjects.js", "baze.fs"] Wait
 End
 
 Public Sub new_file()
@@ -67,7 +70,7 @@ Public Sub load_file(dbfile As String) As Variant
   temporary_folder = Temp()
   Mkdir temporary_folder
   Exec ["tar", "xf", dbfile, "-C", temporary_folder] Wait
-  Try js_file = Open temporary_folder & "/baze.js" For Input
+  Try js_file = Open temporary_folder &/ "baze.js" For Input
   If Error Then
     Message.Error("This is not a valid baze file!")
     FMain.Close
@@ -79,7 +82,7 @@ Public Sub load_file(dbfile As String) As Variant
     js_content &= js_line
   Wend
   connection_settings = js.Decode(js_content)
-  Try js_file = Open temporary_folder & "/dbobjects.js" For Input
+  Try js_file = Open temporary_folder &/ "dbobjects.js" For Input
   If Error Then
     Message.Error("This is not a valid baze file!")
     FMain.Close
@@ -154,6 +157,74 @@ Public Sub load_file(dbfile As String) As Variant
       db.baze_file = dbfile
       db.Save()
       Return db
+    Case "ZODBEmbedded"
+'       zodbembnoconnect:
+      ' If Not connection_settings.Exist("password") Then
+      '   FormAskPasword.ShowModal
+      '   password = FMain.password
+      '   save_password = False
+      ' Else
+      '   password = connection_settings["password"]
+      '   save_password = True
+      ' Endif
+      db = New ZODBEmbedded(connection_settings["dbfile"]) 
+      ',
+        ' connection_settings["username"], 
+        ' password, 
+        ' save_password
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      db.connect()
+      If Not db.engine.is_open Then
+        'Goto zodbembnoconnect
+        Error.Raise("Couldn't open dbfile!")
+        Quit
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
+    Case "ZODBFileStorage"
+      db = New ZODBFileStorage(connection_settings["dbfile"]) 
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      db.connect()
+      If Not db.engine.is_open Then
+        Error.Raise("Couldn't open dbfile!")
+        Quit
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
+    Case "ZODBClientStorage"
+      zodbnoconnect:
+      If Not connection_settings.Exist("password") Then
+        FormAskPasword.ShowModal
+        password = FMain.password
+        save_password = False
+      Else
+        password = connection_settings["password"]
+        save_password = True
+      Endif
+      db = New ZODBClientStorage(
+        connection_settings["host"],
+        connection_settings["port"],
+        connection_settings["username"], 
+        password, 
+        save_password)
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      db.connect()
+      If Not db.engine.is_open Then
+        Goto zodbnoconnect
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
     End Select
 End
 
@@ -165,6 +236,7 @@ Public Sub initialize_dbobjects()
   
   Me.dbobjects["forms"] = New Collection
   Me.dbobjects["scripts"] = New Collection
+  Me.dbobjects["reports"] = New Collection
   Select Case connection_settings["connection type"]
     Case "PostgreSQL"
       Me.dbobjects["queries"]["sql queries"] = New Collection
@@ -174,6 +246,10 @@ Public Sub initialize_dbobjects()
       Me.dbobjects["queries"]["sql queries"] = New Collection
       Me.dbobjects["queries"]["datalog queries"] = New Collection
       Me.dbobjects["datalog modules"] = New Collection
+    Case "ZODBEmbedded", "ZODBClientStorage", "ZODBFileStorage"
+      Me.dbobjects["queries"]["pymapreduce queries"] = New Collection
+      Me.dbobjects["class definitions"] = New Collection
+      Me.dbobjects["modules"] = New Collection
     End Select
 End
 

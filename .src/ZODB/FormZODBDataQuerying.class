@@ -1,0 +1,30 @@
+' Gambas class file
+
+' request canceled inbox
+Public request_canceled As Boolean
+' query name inbox
+Public query_name As String
+
+Public Sub ToolButtonNewMapReduceQuery_Click()
+  ' create a new tab in the tabview and add the Datalog querying interface
+  Dim ui As FormPyMapReduceSplit
+  Dim ask As FormAskQueryName
+  askagain:
+  ask = New FormAskQueryName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "PyMapReduce queries")
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = query_name & " - PyMapReduce query"
+      FMain.db.new_pymapreduce_query(query_name, " ")
+      ui = New FormPyMapReduceSplit(FMain.main_tabstrip)
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End

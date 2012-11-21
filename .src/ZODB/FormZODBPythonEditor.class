@@ -1,0 +1,43 @@
+' Gambas class file
+
+Public pyeditor As Editor
+' context
+Public context As String
+
+Public Sub _new()
+  ' make editor public
+  pyeditor = EditorPython
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  With FMain.db
+    Select Case context
+      Case " - Python Module"
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+      Case " - Class"
+        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+    End Select
+    .refresh_db_tree()
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new module and load it
+ With FMain.db
+    Select Case context
+      Case " - Python Module"
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+      Case " - Class"
+        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+    End Select
+    .refresh_db_tree()
+  End With
+End

@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,37,62)
+  Arrangement = Arrange.Column
+  { ToolButtonNewClassDescriptor ToolButton
+    MoveScaled(0,0,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create class")
+    Picture = Picture["icon:/32/sun"]
+  }
+  { ToolButtonNewPythonModule ToolButton
+    MoveScaled(0,9,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create Python Module")
+    Picture = Picture["icon:/32/program"]
+  }
+}

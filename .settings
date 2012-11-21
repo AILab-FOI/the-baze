@@ -13,6 +13,9 @@ Geometry=[59,24,240,240]
 [DebugWindow/CheckBoxDistinct]
 Geometry=[59,24,240,240]
 
+[DebugWindow/Collection]
+Geometry=[59,24,240,240]
+
 [DebugWindow/Datalog_con]
 Geometry=[59,24,240,240]
 
@@ -24,6 +27,9 @@ Geometry=[68,40,240,240]
 
 [DebugWindow/Datalog_con.resultSet[0]]
 Geometry=[77,56,240,240]
+
+[DebugWindow/FileChooserMain]
+Geometry=[59,24,240,240]
 
 [DebugWindow/Me]
 Geometry=[59,24,240,240]
@@ -48,6 +54,15 @@ Geometry=[59,24,240,240]
 
 [DebugWindow/Settings.Keys]
 Geometry=[68,40,240,240]
+
+[DebugWindow/Variant[]]
+Geometry=[59,24,240,240]
+
+[DebugWindow/WizardIntro]
+Geometry=[59,24,240,240]
+
+[DebugWindow/ZODBClientStorage]
+Geometry=[59,24,240,240]
 
 [DebugWindow/[1, 1]]
 Geometry=[95,60,301,475]
@@ -139,6 +154,9 @@ Geometry=[59,24,240,240]
 [DebugWindow/formulae]
 Geometry=[301,24,240,240]
 
+[DebugWindow/hproc]
+Geometry=[59,24,240,240]
+
 [DebugWindow/matches]
 Geometry=[59,314,442,240]
 
@@ -152,10 +170,103 @@ Geometry=[59,24,240,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/objects]
-Geometry=[59,24,347,240]
+Geometry=[59,41,347,240]
 
 [DebugWindow/objects["attributes"]]
 Geometry=[68,40,347,240]
+
+[DebugWindow/objects["object types"]]
+Geometry=[68,57,347,240]
+
+[DebugWindow/objects["py|state"]]
+Geometry=[68,57,347,240]
+
+[DebugWindow/objects["py|state"]["data"]]
+Geometry=[77,73,347,240]
+
+[DebugWindow/objects["py|state"]["data"][0]]
+Geometry=[77,130,347,240]
+
+[DebugWindow/objects["py|state"]["data"][0]["py|state"]]
+Geometry=[86,146,347,240]
+
+[DebugWindow/objects["root"]]
+Geometry=[68,57,347,240]
+
+[DebugWindow/objects["root"]["py|state"]]
+Geometry=[77,73,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]]
+Geometry=[86,89,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["ivek"]]
+Geometry=[95,88,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["ivek"]["py|state"]]
+Geometry=[104,104,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]]
+Geometry=[95,105,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]]
+Geometry=[104,121,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"]]
+Geometry=[113,137,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]]
+Geometry=[122,153,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]]
+Geometry=[131,169,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]]
+Geometry=[140,185,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]]
+Geometry=[149,201,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]["data"]]
+Geometry=[158,217,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]["data"][0]]
+Geometry=[167,233,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]["data"][0]["py|state"]]
+Geometry=[176,249,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]["data"][0]["py|state"]["autor"]]
+Geometry=[185,265,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["korisnici"]["py|state"]["data"][0]["py|state"]["blog"]["py|state"]["data"][0]["py|state"]["oznake"]]
+Geometry=[185,265,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["osobe"]]
+Geometry=[95,88,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["osobe"]["py|state"]]
+Geometry=[104,104,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["osobe"]["py|state"]["data"]]
+Geometry=[101,160,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["osobe"]["py|state"]["data"][0]]
+Geometry=[110,176,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["osobe"]["py|state"]["data"][0]["py|state"]]
+Geometry=[138,152,590,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["zapisi"]]
+Geometry=[95,105,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["zapisi"]["py|state"]]
+Geometry=[104,121,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["zapisi"]["py|state"]["data"]]
+Geometry=[113,137,347,240]
+
+[DebugWindow/objects["root"]["py|state"]["data"]["zapisi"]["py|state"]["data"][0]]
+Geometry=[122,153,347,240]
 
 [DebugWindow/objects["sequences"]]
 Geometry=[68,40,347,240]
@@ -229,6 +340,9 @@ Geometry=[68,155,385,240]
 [DebugWindow/pkeys]
 Geometry=[59,24,240,240]
 
+[DebugWindow/proc]
+Geometry=[59,24,240,240]
+
 [DebugWindow/re]
 Geometry=[59,24,240,240]
 
@@ -270,6 +384,9 @@ Geometry=[68,40,364,287]
 
 [DebugWindow/results]
 Geometry=[59,24,240,240]
+
+[DebugWindow/results[0]]
+Geometry=[68,40,240,240]
 
 [DebugWindow/ret]
 Geometry=[59,24,240,240]
@@ -355,22 +472,21 @@ SearchString=True
 
 [OpenFile]
 File[1]=".src/FormOpenWizard.form"
-Active=2
-File[2]=".src/FormOpenWizard.class:152.32"
+File[2]=".src/FormOpenWizard.class:162.77"
 File[3]=".src/FormOpenFile.form"
 File[4]=".src/FormOpenFile.class:4.0"
-File[5]=".src/DBaze.class:153.6"
-File[6]=".src/CouchDB.class:7.24"
+File[5]=".src/DBaze.class:214.18"
+File[6]=".src/CouchDB.class:19.50"
 File[7]=".src/FormFindXSB.form"
 File[8]=".src/FormAskPasword.form"
-File[9]=".src/FormFindXSB.class:17.24"
-File[10]=".src/XSBDB.class:36.15"
-File[11]=".src/XSB/XSBEngine.class:207.20"
+File[9]=".src/FormFindXSB.class:21.0"
+File[10]=".src/XSBDB.class:322.0"
+File[11]=".src/XSB/XSBEngine.class:156.8"
 File[12]=".src/XSB/DatalogConnection.class:156.11"
-File[13]=".src/ZODBFileStorage.class:0.0"
+File[13]=".src/ZODBFileStorage.class:27.28"
 File[14]=".src/FormSQLSplit.form"
 File[15]=".src/FormSQLSplit.class:110.0"
-File[16]=".src/PostgreSQLDB.class:284.0"
+File[16]=".src/PostgreSQLDB.class:230.8"
 File[17]=".src/PostgreSQL/FormPostgreSQLDataDefinition.form"
 File[18]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
 File[19]=".src/PostgreSQL/FormPostgreSQLDataQuerying.form"
@@ -441,23 +557,50 @@ File[83]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
 File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:31.29"
 File[85]=".src/FormRenameTable.form"
 File[86]=".src/FormRenameTable.class:2.23"
-File[87]=".src/FMain.class:427.5"
+File[87]=".src/FMain.class:82.56"
 File[88]=".src/FormPleaseWait.form"
 File[89]=".src/FormPleaseWait.class:28.3"
+Active=90
 File[90]=".src/FMain.form"
 File[91]=".src/XSB/FormXSBDataManipulation.form"
 File[92]=".src/XSB/FormXSBDataManipulation.class:42.0"
 File[93]=".src/FormDatalogSplit.form"
-File[94]=".src/FormDatalogSplit.class:22.2"
+File[94]=".src/FormDatalogSplit.class:94.0"
 File[95]=".src/XSB/FormXSBDataQuerying.form"
-File[96]=".src/XSB/FormXSBDataQuerying.class:47.47"
+File[96]=".src/XSB/FormXSBDataQuerying.class:33.0"
 File[97]=".src/XSB/FormXSBDataDefinition.form"
-File[98]=".src/XSB/FormXSBDataDefinition.class:127.41"
+File[98]=".src/XSB/FormXSBDataDefinition.class:126.0"
 File[99]=".src/XSB/FormXSBCreateModule.form"
 File[100]=".src/FormAskDatalogModuleName.form"
-File[101]=".src/FormAskDatalogModuleName.class:27.9"
-File[102]=".src/XSB/FormXSBCreateModule.class:16.10"
-Count=102
+File[101]=".src/FormAskDatalogModuleName.class:30.0"
+File[102]=".src/XSB/FormXSBCreateModule.class:31.3"
+File[103]=".src/ZODB.class:0.0"
+File[104]=".src/ZODBClientStorage.class:32.31"
+File[105]=".src/ZODBEmbedded.class:20.0"
+File[106]=".src/SQLiteDBEmbedded.class:7.3"
+File[107]=".src/SQLiteDB.class:7.21"
+File[108]=".src/ZODB/ZODBEngine.class:101.652"
+File[109]=".src/Flora2DB.class:12.21"
+File[110]=".src/eXistDB.class:16.40"
+File[111]=".src/ZODB/FormZODBDataDefinition.form"
+File[112]=".src/ZODB/FormZODBDataManipulation.form"
+File[113]=".src/ZODB/FormZODBDataManipulation.class:51.70"
+File[114]=".src/ZODB/FormZODBDataQuerying.form"
+File[115]=".src/ZODB/FormZODBPythonEditor.form"
+File[116]=".src/ZODB/FormZODBDataDefinition.class:22.73"
+File[117]=".src/FormAskClassName.form"
+File[118]=".src/FormAskClassName.class:30.0"
+File[119]=".src/ZODB/FormZODBPythonEditor.class:43.0"
+File[120]=".src/FormAskPythonModuleName.form"
+File[121]=".src/FormAskPythonModuleName.class:10.39"
+File[122]=".src/FormFindZODBFileStorage.form"
+File[123]=".src/FormFindZODBFileStorage.class:6.3"
+File[124]=".src/FormPyMapReduceSplit.form"
+File[125]=".src/FormPyMapReduceSplit.class:24.46"
+File[126]=".src/ZODB/FormZODBDataQuerying.class:9.0"
+File[127]=".src/ZODB/FormZODBDataManipulationEditor.form"
+File[128]=".src/ZODB/FormZODBDataManipulationEditor.class:46.13"
+Count=128
 
 [Watches]
 Count=2

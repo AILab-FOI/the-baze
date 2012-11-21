@@ -6,8 +6,10 @@ Public openfile As String
 Public hasrecent As Boolean
 ' store the database type
 Public dbtype As String
-' path to XSB
+' path to XSB inbox
 Public xsb_exe As String
+' path to ZODB file storage inbox
+Public zodb_fs As String
 ' semaphore for events
 Public stop_event As Boolean
 ' last shown index
@@ -21,6 +23,8 @@ Public Sub Form_Open()
   last_index = 0
   ' set return value to canceled in case the user clicks the x button
   FMain.wizard_return = "canceled"
+  ' default new DB is SQLite
+  ComboBoxNewDatabase.Index = 0
   ' check if there are recent files in stored settings and get the last six
   hasrecent = True
   dbtype = ""
@@ -82,6 +86,7 @@ Private Sub load_odbc_dsn()
   Try odbc_ini = Open "/etc/odbc.ini" For Input
   If Error Then
     Message.Error("Cannot find odbc.ini file in /etc! Please install unixODBC")
+    Return
   Endif
   txt = ""
   While Not Eof(odbc_ini)
@@ -107,7 +112,7 @@ Public Sub WizardIntro_Change()
   Dim i As Integer
   'Stop Event
   If RadioButtonNew.Value Then ' create a new baze
-    FMain.wizard_return = "new"
+    FMain.wizard_return = "new" 'TODO: add another return value with the new db type (SQLite or ZODB)
     Me.Close
   Else
     If RadioButtonOpen.Value Then ' open an existing baze
@@ -150,18 +155,26 @@ Public Sub WizardIntro_Change()
             Case "ZODB"
               Select Case ComboBoxZStorageType.Text
                 Case "Embedded"
-                  Print "e"
+                  FMain.connection_settings["connection type"] = "ZODBEmbedded"
+                  FMain.connection_settings["dbfile"] = "baze.fs"
+                  db = New ZODBEmbedded("baze.fs")
+                  FMain.connection_settings["connection"] = db
                 Case "Client storage"
-                  Print "c"
+                  FMain.connection_settings["connection type"] = "ZODBClientStorage"
+                  FMain.connection_settings["server"] = TextBoxZHost.Text
+                  FMain.connection_settings["port"] = TextBoxZPort.Text
+                  FMain.connection_settings["username"] = TextBoxZUsername.Text
+                  If CheckBoxZStoreP.Value Then
+                    FMain.connection_settings["password"] = TextBoxZPassword.Text
+                  Endif
+                  db = New ZODBClientStorage(TextBoxZHost.Text, TextBoxZPort.Text, TextBoxZUsername.Text, TextBoxZPassword.Text, CheckBoxZStoreP.Value)
+                  FMain.connection_settings["connection"] = db
                 Case "File storage"
-                  Print "f"
+                  FMain.connection_settings["connection type"] = "ZODBFileStorage"
+                  FMain.connection_settings["dbfile"] = TextBoxZDBFile.Text
+                  db = New ZODBFileStorage(TextBoxZDBFile.Text)
+                  FMain.connection_settings["connection"] = db
               End Select
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[4].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
             Case "eXist"
               If Not stop_event Then
                 stop_event = True
@@ -190,6 +203,7 @@ Public Sub WizardIntro_Change()
             please_wait.silent = True
             please_wait.ShowModal
           Else
+            FMain.db = db
             If db.connect() Then
               Me.Close
             Endif
@@ -279,7 +293,6 @@ Public Sub WizardIntro_Cancel()
   Me.Close
 End
 
-
 Public Sub ToolButtonOpen_Click()
   ' open the file chooser 
   FormOpenFile.ShowModal
@@ -290,6 +303,12 @@ Public Sub RadioButtonNew_Click()
   ' if new radio is clicked disable the other two
   toggle_open(False)
   toggle_connect(False)
+  toggle_new(True)
+End
+
+Public Sub toggle_new(value As Boolean)
+  ' toggle the new database combobox
+  ComboBoxNewDatabase.Enabled = value  
 End
 
 Private Sub toggle_open(value As Boolean)
@@ -320,14 +339,14 @@ Public Sub RadioButtonOpen_Click()
   ' toggle all controls in the open radio
   toggle_connect(False)
   toggle_open(True)
-
+  toggle_new(False)
 End
 
 Public Sub RadioButtonConnect_Click()
   ' if connect radio is clicked disable the other two
   toggle_open(False)
   toggle_connect(True)
-
+  toggle_new(False)
 End
 
 Public Sub ListViewRecent_Click()
@@ -336,10 +355,6 @@ Public Sub ListViewRecent_Click()
   s = ListViewRecent.Current.Text
   openfile = XSBEngine.FindAll(s, "\\((.*)\\)", 1)[0]
 End
-
-
-
-
 
 Public Sub ComboBoxZStorageType_Click()
 
@@ -350,6 +365,12 @@ Public Sub ComboBoxZStorageType_Click()
     TextBoxZPort.Enabled = True
     LabelZDBFile.Enabled = False
     TextBoxZDBFile.Enabled = False
+    TextBoxZUsername.Enabled = True
+    TextBoxZPassword.Enabled = True
+    LabelZUsername.Enabled = True
+    LabelZPassword.Enabled = True
+    CheckBoxZStoreP.Enabled = True
+    ToolButtonFindZDBFile.Enabled = False
   Else
     If ComboBoxZStorageType.Text = "File storage" Then
       LabelZHost.Enabled = False
@@ -358,6 +379,12 @@ Public Sub ComboBoxZStorageType_Click()
       TextBoxZPort.Enabled = False
       LabelZDBFile.Enabled = True
       TextBoxZDBFile.Enabled = True
+      TextBoxZUsername.Enabled = False
+      TextBoxZPassword.Enabled = False
+      LabelZUsername.Enabled = False
+      LabelZPassword.Enabled = False
+      CheckBoxZStoreP.Enabled = False
+      ToolButtonFindZDBFile.Enabled = True
     Else
       LabelZHost.Enabled = False
       LabelZPort.Enabled = False
@@ -365,11 +392,15 @@ Public Sub ComboBoxZStorageType_Click()
       TextBoxZPort.Enabled = False
       LabelZDBFile.Enabled = False
       TextBoxZDBFile.Enabled = False
+      TextBoxZUsername.Enabled = False
+      TextBoxZPassword.Enabled = False
+      LabelZUsername.Enabled = False
+      LabelZPassword.Enabled = False
+      CheckBoxZStoreP.Enabled = False
+      ToolButtonFindZDBFile.Enabled = False
     Endif
-    Endif
-
+  Endif
 End
-
 
 Public Sub ButtonPGTest_Click()
   ' test the PostreSQL connection
@@ -379,7 +410,6 @@ Public Sub ButtonPGTest_Click()
     Message.Info("Connection succesfull!")
   Endif
 End
-
 
 Public Sub ButtonXTest_Click()
   ' test the XSB connection
@@ -393,4 +423,12 @@ Public Sub ToolButtonFindXSB_Click()
   ' show form to find XSB executable
   FormFindXSB.ShowModal()
   TextBoxXXSB.Text = xsb_exe
+End
+
+Public Sub ToolButtonFindZDBFile_Click()
+  ' show form to find ZODB file storage
+  Dim find_fs As New FormFindZODBFileStorage
+  find_fs.caller = Me
+  find_fs.ShowModal()
+  TextBoxZDBFile.Text = zodb_fs
 End

@@ -1,0 +1,20 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub ButtonOK_Click()
+  ' return the chosen file storage
+  caller.zodb_fs = FileChooserMain.Value
+  Me.Close
+End
+
+Public Sub ButtonCancel_Click()
+  ' cancel request
+  Me.Hide
+End
+
+Public Sub FileChooserMain_DblClick()
+  ' return the chosen file storage
+  caller.zodb_fs = FileChooserMain.Value
+  Me.Close
+End
