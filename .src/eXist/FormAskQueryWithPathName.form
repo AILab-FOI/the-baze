@@ -1,0 +1,28 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,38,29)
+  Resizable = False
+  { LabelQueryName Label
+    MoveScaled(1,1,30,4)
+    Text = ("Please enter a name for the query:")
+  }
+  { TextBoxQueryName TextBox
+    MoveScaled(1,6,35,4)
+  }
+  { ButtonOK Button
+    MoveScaled(25,22,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(12,22,11,4)
+    Text = ("Cancel")
+  }
+  { LabelQueryPath Label
+    MoveScaled(1,11,30,4)
+    Text = ("Optionally add a path to query:")
+  }
+  { TextBoxQueryPath TextBox
+    MoveScaled(1,16,35,4)
+  }
+}

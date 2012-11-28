@@ -27,6 +27,8 @@ Public request_canceled As Boolean
 Public table_name As String
 ' open wizard
 Public wiz As FormOpenWizard
+' dbtype if new
+Public new_db_type As String
   
 Public Sub _new()
   ' make components visible to DB classes
@@ -80,10 +82,18 @@ Public Sub handle_user_request()
         If wizard_return = "new" Then ' create a new (internal) baze file
           save_file_as()
           If current_file Then
-            db = New SQLiteDBInternal("", "", "", False)
+            ' TODO: add an if combobox in wiz selection for ZODB database here 
+            If new_db_type = "ZODB" Then
+              db = New ZODBEmbedded("baze.fs")
+            Else
+              db = New SQLiteDBInternal("", "", "", False)
+            Endif
             db.baze_file = current_file
             db.new_file()
             shift_recent_files(current_file)
+            If db.connect() Then
+              db.initialize_gui()
+            Endif
           Else
             Return
           Endif
@@ -166,6 +176,25 @@ Public Sub TreeViewMain_Menu()
       MenuQuery.Popup()
     Case "Datalog queries"
       MenuQuery.Popup()
+    Case "Rename queries"
+      MenuQuery.Popup()
+    Case "Replace queries"
+      MenuQuery.Popup()
+    Case "Value queries"
+      MenuQuery.Popup()
+    Case "xPath queries"
+      MenuQuery.Popup()
+    Case "xQueries"
+      MenuQuery.Popup()
+    Case "PyMapReduce queries"
+      MenuQuery.Popup()
+    Default
+      If Left$(TreeViewMain.Current.Key, 4) = "col_" Then
+        MenuCollection.Popup()
+      Endif
+      If Left$(TreeViewMain.Current.Key, 4) = "doc_" Then
+        MenuDocument.Popup()
+      Endif
   End Select
 End
 
@@ -334,6 +363,64 @@ Public Sub MenuDeleteQuery_Click()
   Endif
 End
 
+Public Sub MenuDeleteCollection_Click()
+  ' delete the collection
+  Dim col As String
+  Dim path As String[]
+  If Message.Question("Are you sure that you want to delete collection " & TreeViewMain.Current.Text & "?\nAll child collections and documents will be deleted as well!", "Yes", "No") = 1 Then
+    col = Mid$(TreeViewMain.Current.Key, 5)
+    path = Split(col, "/")
+    path.Remove(1)
+    col = path.Join("/")
+    If Not db.delete_object(col) Then
+      Message.Error("Error while deleting collection " & TreeViewMain.Current.Text & "!")
+    Endif
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuDeleteDocument_Click()
+  ' delete the collection
+  Dim doc As String
+  Dim path As String[]
+  If Message.Question("Are you sure that you want to delete document " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    doc = Mid$(TreeViewMain.Current.Key, 5)
+    path = Split(doc, "/")
+    path.Remove(1)
+    doc = path.Join("/")
+    If Not db.delete_object(doc) Then
+      Message.Error("Error while deleting document " & TreeViewMain.Current.Text & "!")
+    Endif
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuEditDocument_Click()
+  ' delete the collection
+  Dim doc As String
+  Dim path As String[]
+  Dim edit As FormeXistXMLEditor
+  Dim i As Integer
+  doc = Mid$(TreeViewMain.Current.Key, 5)
+  path = Split(doc, "/")
+  If path.Count > 2 Then
+    path.Remove(1)
+  Endif
+  doc = path.Join("/")
+  For i = 0 To main_tabstrip.Count - 1
+    If main_tabstrip[i].Text = doc & " - XML Document" Then 
+      main_tabstrip.Index = i
+      Return
+    Endif
+  Next
+  main_tabstrip.count += 1
+  edit = New FormeXistXMLEditor(FMain.main_tabstrip)
+  edit.path = doc
+  edit.xml_editor.Text = db.get_xml_doc(doc)
+  edit.but.Tooltip = "Update document"
+  main_tabstrip.Text = doc & " - XML Document"
+End
+
 Public Sub TreeViewMain_DblClick()
   ' on double click open the given object
   Dim tbl As String
@@ -346,6 +433,8 @@ Public Sub TreeViewMain_DblClick()
   Dim pymapreduce_split As FormPyMapReduceSplit
   Dim py_edit As FormZODBPythonEditor
   Dim py_mani As FormZODBDataManipulationEditor
+  Dim ex_edit As FormeXistXMLEditor
+  Dim ex_mani As FormXMLSplit
   If TreeViewMain.Current.ParentKey = "Modules" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Python Module" Then 
@@ -450,10 +539,17 @@ Public Sub TreeViewMain_DblClick()
     TabStripMain.Index = TabStripMain.count - 1
     If db Is ZODB Then
       py_mani = New FormZODBDataManipulationEditor(TabStripMain)
+      py_mani.context = " - Insert query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
     Else
-      sql_view = New FormSQLSplit(TabStripMain)
-      sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+      If db Is EXistDB Then
+        ex_edit = New FormeXistXMLEditor(TabStripMain)
+        ex_edit.query_type = "insert"
+        ex_edit.xml_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+      Else
+        sql_view = New FormSQLSplit(TabStripMain)
+        sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+      Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Insert query"
   Endif
@@ -468,10 +564,17 @@ Public Sub TreeViewMain_DblClick()
     TabStripMain.Index = TabStripMain.count - 1
     If db Is ZODB Then
       py_mani = New FormZODBDataManipulationEditor(TabStripMain)
+      py_mani.context = " - Delete query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
     Else
-      sql_view = New FormSQLSplit(TabStripMain)
-      sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+      If db Is EXistDB Then
+        ex_edit = New FormeXistXMLEditor(TabStripMain)
+        ex_edit.query_type = "delete"
+        ex_edit.xml_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+      Else
+       sql_view = New FormSQLSplit(TabStripMain)
+       sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+      Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Delete query"
   Endif
@@ -496,6 +599,80 @@ Public Sub TreeViewMain_DblClick()
     table_updater.data_source.Connection = con
     table_updater.data_source.Table = tbl
     main_tabstrip.Text = tbl & " - Table"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Replace queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Replace query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    ex_edit = New FormeXistXMLEditor(TabStripMain)
+    ex_edit.xml_editor.Text = db.dbobjects["queries"]["replace queries"][TreeViewMain.Current.Key]
+    ex_edit.query_type = "replace"
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Replace query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Rename queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Rename query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    ex_edit = New FormeXistXMLEditor(TabStripMain)
+    ex_edit.xml_editor.Text = db.dbobjects["queries"]["rename queries"][TreeViewMain.Current.Key]
+    ex_edit.query_type = "rename"
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Rename query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Value queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Value query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    ex_edit = New FormeXistXMLEditor(TabStripMain)
+    ex_edit.xml_editor.Text = db.dbobjects["queries"]["value queries"][TreeViewMain.Current.Key]
+    ex_edit.query_type = "value"
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Value query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "xPath queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - xPath query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    ex_mani = New FormXMLSplit(TabStripMain)
+    ex_mani.xml_editor.Text = db.dbobjects["queries"]["xpath queries"][TreeViewMain.Current.Key]
+    ex_mani.query_type = "xpath"
+    ex_mani.path = db.dbobjects["queries"]["xpath queries paths"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - xPath query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "xQueries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - xQuery" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    ex_mani = New FormXMLSplit(TabStripMain)
+    ex_mani.xml_editor.Text = db.dbobjects["queries"]["xquery queries"][TreeViewMain.Current.Key]
+    ex_mani.query_type = "xquery"
+    TabStripMain.Text = TreeViewMain.Current.Key & " - xQuery"
+  Endif
+  If Left$(TreeViewMain.Current.Key, 4) = "doc_" Then
+    MenuEditDocument_Click()
   Endif
 End
 

@@ -14,115 +14,135 @@ msgstr ""
 msgid "Baze Database Environment"
 msgstr ""
 
-#: FMain.form:39
+#: FMain.form:44
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:43
+#: FMain.form:48
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:48
+#: FMain.form:53
 msgid "Alter table"
 msgstr ""
 
-#: FMain.form:53
+#: FMain.form:58
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:59
+#: FMain.form:64
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:63
+#: FMain.form:68
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:69
+#: FMain.form:74
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:73
+#: FMain.form:78
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:79
+#: FMain.form:84
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:83
+#: FMain.form:88
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:89
+#: FMain.form:94
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:93
+#: FMain.form:98
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:99
+#: FMain.form:104
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:103
+#: FMain.form:108
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:109
+#: FMain.form:114
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:113
+#: FMain.form:118
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:119
+#: FMain.form:124
 msgid "Query menu"
 msgstr ""
 
-#: FMain.form:123
+#: FMain.form:128
 msgid "Delete query"
 msgstr ""
 
-#: FMain.form:129
+#: FMain.form:134
 msgid "Datalog modules menu"
 msgstr ""
 
-#: FMain.form:133
+#: FMain.form:138
 msgid "Delete module"
 msgstr ""
 
+#: FMain.form:144
+msgid "Collection menu"
+msgstr ""
+
 #: FMain.form:148
-msgid "Data definition"
-msgstr ""
-
-#: FMain.form:150
-msgid "Data manipulation"
-msgstr ""
-
-#: FMain.form:152
-msgid "Data querying"
+msgid "Delete collection"
 msgstr ""
 
 #: FMain.form:154
+msgid "Document menu"
+msgstr ""
+
+#: FMain.form:158
+msgid "Delete document"
+msgstr ""
+
+#: FMain.form:163
+msgid "Edit document"
+msgstr ""
+
+#: FMain.form:178
+msgid "Data definition"
+msgstr ""
+
+#: FMain.form:180
+msgid "Data manipulation"
+msgstr ""
+
+#: FMain.form:182
+msgid "Data querying"
+msgstr ""
+
+#: FMain.form:184
 msgid "Application"
 msgstr ""
 
-#: FMain.form:159
+#: FMain.form:189
 msgid "New form"
 msgstr ""
 
-#: FMain.form:166
+#: FMain.form:196
 msgid "New script"
 msgstr ""
 
-#: FMain.form:173
+#: FMain.form:203
 msgid "New report"
 msgstr ""
 
-#: FMain.form:185
+#: FMain.form:215
 msgid "Tab 0"
 msgstr ""
 
@@ -130,38 +150,53 @@ msgstr ""
 msgid "Please enter a name for the class:"
 msgstr ""
 
-#: FormAskClassName.form:24 FormAskDatalogModuleName.form:24
+#: FormAskClassName.form:24 FormAskCollectionPath.form:25
+#: FormAskDatalogModuleName.form:24 FormAskDocumentName.form:24
 #: FormAskEnumName.form:24 FormAskFunctionName.form:24
 #: FormAskIndexName.form:24 FormAskPasword.form:25
 #: FormAskPythonModuleName.form:23 FormAskQueryName.form:25
-#: FormAskSequenceName.form:24 FormAskTableName.form:24
-#: FormAskTriggerName.form:24 FormAskTypeName.form:24 FormAskViewName.form:24
-#: FormFindXSB.form:23 FormFindZODBFileStorage.form:23 FormOpenFile.form:18
-#: FormPostgreSQLChooseTable.form:30 FormPostgreSQLGetReference.form:43
-#: FormPostgreSQLGetTable.form:25 FormPostgreSQLGetTableAttribute.form:38
-#: FormRenameTable.form:23
+#: FormAskQueryWithPathName.form:26 FormAskSequenceName.form:24
+#: FormAskTableName.form:24 FormAskTriggerName.form:24 FormAskTypeName.form:24
+#: FormAskViewName.form:24 FormFindXSB.form:23 FormFindZODBFileStorage.form:23
+#: FormOpenFile.form:18 FormPostgreSQLChooseTable.form:30
+#: FormPostgreSQLGetReference.form:43 FormPostgreSQLGetTable.form:25
+#: FormPostgreSQLGetTableAttribute.form:38 FormRenameTable.form:23
 msgid "OK"
 msgstr ""
 
-#: FormAskClassName.form:29 FormAskDatalogModuleName.form:29
+#: FormAskClassName.form:29 FormAskCollectionPath.form:30
+#: FormAskDatalogModuleName.form:29 FormAskDocumentName.form:29
 #: FormAskEnumName.form:29 FormAskFunctionName.form:29
 #: FormAskIndexName.form:29 FormAskPythonModuleName.form:28
-#: FormAskQueryName.form:30 FormAskSequenceName.form:29
-#: FormAskTableName.form:29 FormAskTriggerName.form:29 FormAskTypeName.form:29
-#: FormAskViewName.form:29 FormFindXSB.form:18 FormFindZODBFileStorage.form:18
-#: FormOpenFile.form:23 FormPostgreSQLChooseTable.form:25
-#: FormPostgreSQLCreateEnum.form:50 FormPostgreSQLCreateFunction.form:64
-#: FormPostgreSQLCreateIndex.form:57 FormPostgreSQLCreateSequence.form:111
-#: FormPostgreSQLCreateTable.form:87 FormPostgreSQLCreateTrigger.form:106
-#: FormPostgreSQLCreateType.form:40 FormPostgreSQLCreateView.form:48
-#: FormPostgreSQLEditTableData.form:34 FormPostgreSQLGetReference.form:48
-#: FormPostgreSQLGetTable.form:30 FormPostgreSQLGetTableAttribute.form:43
-#: FormRenameTable.form:28
+#: FormAskQueryName.form:30 FormAskQueryWithPathName.form:31
+#: FormAskSequenceName.form:29 FormAskTableName.form:29
+#: FormAskTriggerName.form:29 FormAskTypeName.form:29 FormAskViewName.form:29
+#: FormFindXSB.form:18 FormFindZODBFileStorage.form:18 FormOpenFile.form:23
+#: FormPostgreSQLChooseTable.form:25 FormPostgreSQLCreateEnum.form:50
+#: FormPostgreSQLCreateFunction.form:64 FormPostgreSQLCreateIndex.form:57
+#: FormPostgreSQLCreateSequence.form:111 FormPostgreSQLCreateTable.form:87
+#: FormPostgreSQLCreateTrigger.form:106 FormPostgreSQLCreateType.form:40
+#: FormPostgreSQLCreateView.form:48 FormPostgreSQLEditTableData.form:34
+#: FormPostgreSQLGetReference.form:48 FormPostgreSQLGetTable.form:30
+#: FormPostgreSQLGetTableAttribute.form:43 FormRenameTable.form:28
+#: FormeXistCreateDocument.form:51
 msgid "Cancel"
+msgstr ""
+
+#: FormAskCollectionPath.form:15
+msgid "Please enter a collection path:"
+msgstr ""
+
+#: FormAskCollectionPath.form:20 FormeXistCreateDocument.form:37
+msgid "/"
 msgstr ""
 
 #: FormAskDatalogModuleName.form:15
 msgid "Please enter a name for the Datalog module:"
+msgstr ""
+
+#: FormAskDocumentName.form:15
+msgid "Please enter a name for the document:"
 msgstr ""
 
 #: FormAskEnumName.form:15
@@ -192,8 +227,12 @@ msgstr ""
 msgid "New query"
 msgstr ""
 
-#: FormAskQueryName.form:16
+#: FormAskQueryName.form:16 FormAskQueryWithPathName.form:17
 msgid "Please enter a name for the query:"
+msgstr ""
+
+#: FormAskQueryWithPathName.form:36
+msgid "Optionally add a path to query:"
 msgstr ""
 
 #: FormAskSequenceName.form:15
@@ -217,17 +256,20 @@ msgid "Please enter a name for the view:"
 msgstr ""
 
 #: FormDatalogSplit.form:31 FormPyMapReduceSplit.form:30 FormSQLSplit.form:30
+#: FormXMLSplit.form:31 FormeXistXMLEditor.form:28
 msgid "Execute query"
 msgstr ""
 
 #: FormDatalogSplit.form:32 FormPyMapReduceSplit.form:31 FormSQLSplit.form:31
-#: FormXSBCreateModule.form:25 FormZODBDataManipulationEditor.form:25
-#: FormZODBPythonEditor.form:25
+#: FormXMLSplit.form:32 FormXSBCreateModule.form:25
+#: FormZODBDataManipulationEditor.form:25 FormZODBPythonEditor.form:25
+#: FormeXistXMLEditor.form:29
 msgid "ToolButton1"
 msgstr ""
 
 #: FormDatalogSplit.form:38 FormPostgreSQLAlterTable.form:52
-#: FormPyMapReduceSplit.form:37 FormSQLSplit.form:37
+#: FormPyMapReduceSplit.form:37 FormSQLSplit.form:37 FormXMLSplit.form:38
+#: FormeXistXMLEditor.form:35
 msgid "Close"
 msgstr ""
 
@@ -436,7 +478,7 @@ msgid "Connection settings - eXist"
 msgstr ""
 
 #: FormOpenWizard.form:576
-msgid "80"
+msgid "8080"
 msgstr ""
 
 #: FormOpenWizard.form:590
@@ -445,6 +487,10 @@ msgstr ""
 
 #: FormOpenWizard.form:604
 msgid "Connection settings - CouchDB"
+msgstr ""
+
+#: FormOpenWizard.form:644
+msgid "80"
 msgstr ""
 
 #: FormOpenWizard.form:658
@@ -923,10 +969,12 @@ msgid "Create update query"
 msgstr ""
 
 #: FormPostgreSQLDataManipulation.form:30 FormXSBDataManipulation.form:22
+#: FormeXistDataManipulation.form:17
 msgid "Create insert query"
 msgstr ""
 
 #: FormPostgreSQLDataManipulation.form:37 FormXSBDataManipulation.form:29
+#: FormeXistDataManipulation.form:38
 msgid "Create delete query"
 msgstr ""
 
@@ -1077,6 +1125,14 @@ msgstr ""
 msgid "Please provide a name for the altered table:"
 msgstr ""
 
+#: FormXMLSplit.form:57
+msgid "Tree"
+msgstr ""
+
+#: FormXMLSplit.form:63
+msgid "XML"
+msgstr ""
+
 #: FormXSBCreateModule.form:24 FormZODBPythonEditor.form:24
 msgid "Compile & load"
 msgstr ""
@@ -1119,4 +1175,56 @@ msgstr ""
 
 #: FormZODBDataQuerying.form:13
 msgid "New PyMapReduce Query"
+msgstr ""
+
+#: FormeXistCreateDocument.form:32
+msgid "Document path:"
+msgstr ""
+
+#: FormeXistCreateDocument.form:45 FormeXistDataDefinition.form:14
+msgid "Create document"
+msgstr ""
+
+#: FormeXistCreateDocument.form:58
+msgid "Load document from Web address"
+msgstr ""
+
+#: FormeXistCreateDocument.form:64
+msgid "Load document from file system"
+msgstr ""
+
+#: FormeXistCreateDocument.form:69
+msgid "Edit document directly"
+msgstr ""
+
+#: FormeXistCreateDocument.form:74
+msgid "http://"
+msgstr ""
+
+#: FormeXistCreateDocument.form:90
+msgid "Load"
+msgstr ""
+
+#: FormeXistDataDefinition.form:21
+msgid "Create collection"
+msgstr ""
+
+#: FormeXistDataManipulation.form:24
+msgid "Create replace query"
+msgstr ""
+
+#: FormeXistDataManipulation.form:31
+msgid "Create value query"
+msgstr ""
+
+#: FormeXistDataManipulation.form:45
+msgid "Create rename query"
+msgstr ""
+
+#: FormeXistDataQuerying.form:14
+msgid "New xPath query"
+msgstr ""
+
+#: FormeXistDataQuerying.form:21
+msgid "New xQuery"
 msgstr ""

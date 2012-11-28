@@ -1,0 +1,109 @@
+' Gambas class file
+
+' xml editor
+Public xml_editor As Editor
+' path to document/collection being queried
+Public path As String
+' type of query
+Public query_type As String
+' unique key
+Public key As Integer
+
+Public Sub _new()
+  ' make editor visible
+  xml_editor = EditorXML
+  VSplitMain.Layout = [1, 3]
+  EditorXML.Flags[EditorXML.ShowLineNumbers] = True
+End
+
+
+Public Sub ToolButtonExecute_Click()
+  ' if query then execute it and show the results
+  ' else (XML editor) update the document on the given path
+  Dim res, obj As Variant
+  If query_type = "xpath" Then
+    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, - Len(" - xPath query")), EditorXML.Text, path)
+  Else
+    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, - Len(" - xQuery")), EditorXML.Text)
+  Endif
+  EditorResult.Text = res["xml"]
+  TreeViewResult.Clear()
+  
+  For Each obj In res["collection"]["children"]
+    If TypeOf(obj) = gb.String Then
+      TreeViewResult.Add(Str(get_unique_key()), obj, Picture.Load("class.png"))
+    Else
+      create_xml_treeview(obj, Null)
+    Endif
+  Next
+End
+
+Public Sub create_xml_treeview(objects As Collection, parent As String)
+  ' construct the xml treeview out of the result collection
+  Dim attr As Variant
+  Dim ukey, pkey, skey As String
+  Dim child As Variant
+  With TreeViewResult
+    pkey = Str(get_unique_key())
+    .Add(pkey, objects["__node_name__"], Picture.Load("directory.png"), parent)
+    
+    For Each attr In objects
+      If objects.key <> "children" And objects.Key <> "__node_name__" Then
+        ukey = Str(get_unique_key())
+        .Add(ukey, objects.key, Picture.Load("directory.png"), pkey)
+        skey = Str(get_unique_key())
+        .Add(skey, attr, Picture.Load("class.png"), ukey)
+      Endif
+    Next
+    For Each child In objects["children"]
+      If TypeOf(child) = gb.String Then
+        ukey = Str(get_unique_key())
+        .Add(ukey, child, Picture.Load("class.png"), pkey)
+      Else
+        create_xml_treeview(child, pkey)
+      Endif
+    Next
+  End With
+End
+
+Public Sub get_unique_key() As Integer
+  ' get a unique key
+  If Not key Then
+    key = 0
+  Endif
+  key += 1
+  Return key
+End
+
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  If Message.Question("Are you sure that you want to abandon all changes?", "Yes", "No") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+  Endif
+End
+
+Public Sub EditorXML_KeyPress_()
+  ' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    EditorXML.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      EditorXML.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        EditorXML.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          EditorXML.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End

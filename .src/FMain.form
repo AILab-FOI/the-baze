@@ -85,6 +85,26 @@
       Picture = Picture["icon:/32/halt"]
     }
   }
+  { MenuCollection Menu
+    Text = ("Collection menu")
+    Visible = False
+    { MenuDeleteCollection Menu
+      Text = ("Delete collection")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuDocument Menu
+    Text = ("Document menu")
+    Visible = False
+    { MenuDeleteDocument Menu
+      Text = ("Delete document")
+      Picture = Picture["icon:/32/halt"]
+    }
+    { MenuEditDocument Menu
+      Text = ("Edit document")
+      Picture = Picture["icon:/32/edit"]
+    }
+  }
   { HSplitMain HSplit
     MoveScaled(0,0,99,73)
     { ToolPanelMain ToolPanel

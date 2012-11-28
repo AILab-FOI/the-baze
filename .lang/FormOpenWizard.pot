@@ -195,7 +195,7 @@ msgid "Connection settings - eXist"
 msgstr ""
 
 #: FormOpenWizard.form:576
-msgid "80"
+msgid "8080"
 msgstr ""
 
 #: FormOpenWizard.form:590
@@ -204,6 +204,10 @@ msgstr ""
 
 #: FormOpenWizard.form:604
 msgid "Connection settings - CouchDB"
+msgstr ""
+
+#: FormOpenWizard.form:644
+msgid "80"
 msgstr ""
 
 #: FormOpenWizard.form:658

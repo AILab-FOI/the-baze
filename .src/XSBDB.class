@@ -157,14 +157,14 @@ End
 
 Public Sub initialize_gui()
   ' initialize the GUI for PostgreSQL database
-  'Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim documentation As New WebView(FMain.main_tabstrip)
   Dim data_definition As FormXSBDataDefinition
   Dim data_manipulation As FormXSBDataManipulation
   Dim data_querying As FormXSBDataQuerying
   
   ' create a dummy tab 
   FMain.main_tabstrip.Text = "XSB Database - " & Me.dsn
-  'documentation.Frame.Url = "test.html" '"http://autopoiesis.foi.hr/wiki.php?name=Baze+Podataka+-+FOI#Teorija baza podataka"
+  documentation.Frame.Url = "http://www.cs.sunysb.edu/~sbprolog/manual1/index.html"
   
   ' create the treeview
   ' first get objects from the database

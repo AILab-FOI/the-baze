@@ -5,6 +5,12 @@ Inherits DBaze
 Public host As String
 Public port As String
 
+' http connection to the eXist server
+Public con As New HttpClient
+
+' unique id
+Public uid As Integer
+
 Public Sub _new(host_ As String, port_ As String, username As String, password As String, store_password As Boolean)
   Me.host = host_
   Me.port = port_
@@ -21,3 +27,440 @@ Public Sub _new(host_ As String, port_ As String, username As String, password A
   Endif
 End
 
+Public Sub connect() As Boolean
+  ' connect to eXist server
+  Dim res As String
+  con.Auth = Net.AuthBasic
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  con.User = Me.username
+  con.Password = Me.password
+  con.Async = False
+  con.Timeout = 60
+  con.Get
+  If con.Status < 0 Then
+    Return False
+  Else
+    For Each res In con.Headers
+      If res = "Content-Length: 0" Or res = "HTTP/1.1 401 Unauthorized" Then
+        Message.Error(res)
+        Return False
+      Endif
+    Next
+    If Lof(con) Then res = Read #con, Lof(con)
+    Return True
+  Endif
+End
+
+Public Sub query(query_ As String, Optional path As String) As Collection
+  ' query the db (optional path is a path to a collection or document)
+  Dim res As String
+  Dim result As New XmlDocument
+
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  If path Then
+    If Left$(path, 1) = "/" Then
+      path = Mid$(path, 2)
+    Endif
+    con.URL &= path
+  Endif
+  If query_ Then
+    con.URL &= "?_query=" & query_
+  Endif
+  con.Get
+  If con.Status < 0 Then
+    Return Null
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+    result.FromString(res)
+    Return create_xml_tree(result.Root)
+  Endif
+End
+
+Public Sub query_xml(query_ As String, Optional path As String = "") As String
+  ' query the db (optional path is a path to a collection or document)
+  Dim res As String
+
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  If path Then
+    If Left$(path, 1) = "/" Then
+      path = Mid$(path, 2)
+    Endif
+    con.URL &= path
+  Endif
+  If query_ Then
+    con.URL &= "?_query=" & query_
+  Endif
+  con.Get
+  If con.Status < 0 Then
+    Return Null
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+    Return res
+  Endif
+End
+
+Public Sub query_both(query_ As String, Optional path As String = "") As Collection
+  ' query the db (optional path is a path to a collection or document)
+  Dim res As String
+  Dim result As New XmlDocument
+  Dim both As New Collection
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  If path Then
+    If Left$(path, 1) = "/" Then
+      path = Mid$(path, 2)
+    Endif
+    con.URL &= path
+  Endif
+  If query_ Then
+    con.URL &= "?_query=" & query_
+  Endif
+  con.Get
+  If con.Status < 0 Then
+    Return Null
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+    both["xml"] = res
+    result.FromString(res)
+    both["collection"] = create_xml_tree(result.Root)
+    Return both
+  Endif
+End
+
+Public Sub create_xml_tree(node As XmlNode) As Collection
+  ' create a collection from an XML tree
+  Dim child As XmlNode
+  Dim ret, ch As New Collection
+  If node.Attributes Then
+    For Each child In node.Attributes
+      ret["@" & child.Name] = child.Value
+    Next
+  Endif
+  ret["children"] = New Variant[]
+  For Each child In node.Children
+    If child Is XmlTextNode Then
+      ret["children"].add(child.TextContent)
+    Else
+      ch = create_xml_tree(child)
+      ch["__node_name__"] = child.Name
+      ret["children"].add(ch)
+    Endif
+  Next
+  Return ret
+End
+
+Public Sub get_collections(Optional root As String = "") As Collection
+  ' get all collections recursively
+  Dim res As Collection
+  Dim i As Integer
+  Dim objects As New Collection
+  Dim path As String
+  Try res = Me.query("", root)
+  If Error Then
+    Message.Error(Error.Text)
+    Return
+  Endif
+  objects["collection name"] = res["children"][0]["@name"]
+  objects["collections"] = New Variant[]
+  objects["documents"] = New Variant[]
+  For i = 0 To res["children"][0]["children"].count - 1
+    If TypeOf(res["children"][0]["children"][i]) = gb.Object Then
+      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection" Then
+        path = root & "/" & res["children"][0]["children"][i]["@name"]
+        objects["collections"].Add(get_collections(path))
+      Endif
+      If res["children"][0]["children"][i]["__node_name__"] = "exist:resource" Then
+        objects["documents"].Add(res["children"][0]["children"][i]["@name"])
+      Endif
+    Endif
+  Next
+  Return objects
+End
+
+
+Public Sub get_db_objects() As Collection
+  ' get the database objects (collections and documents)
+  Dim objects As New Collection
+  Try objects["collections"] = get_collections()
+  If Error Then
+    Message.Error(Error.Text)
+    Quit
+  Endif
+  
+  objects["object types"] = [ 
+    "collections": "directory.png",
+    "documents": "document.png"]
+
+  Return objects
+End
+
+Public Sub initialize_gui()
+  ' initialize the GUI for PostgreSQL database
+  Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormeXistDataDefinition
+  Dim data_manipulation As FormeXistDataManipulation
+  Dim data_querying As FormeXistDataQuerying
+  
+  ' create a dummy tab 
+  FMain.main_tabstrip.Text = "eXist Database - " & Me.host & ":" & Me.port
+  documentation.Frame.Url = "http://exist-db.org/exist/documentation.xml"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree()
+  
+  ' create the tool panel
+  data_definition = New FormeXistDataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormeXistDataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormeXistDataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+  
+End
+
+Public Sub populate_tree(tree As TreeView, parent As String, objects As Collection)
+  ' populate the tree view recursively
+  Dim col As Collection
+  Dim doc, colname As String
+  Dim un_id As String
+  Dim obj As Variant
+  For Each col In objects["collections"]
+    colname = Split(col["collection name"], "/").Pop()
+    un_id = "col_" & col["collection name"]
+    obj = tree.Add(un_id, colname, Picture.Load("directory.png"), parent)
+    populate_tree(tree, un_id, col)
+  Next
+  For Each doc In objects["documents"]
+    If parent = "Collections" Then
+      un_id = "doc_/" & doc
+    Else
+      un_id = "doc_" & Mid$(parent, 5) & "/" & doc
+    Endif
+    obj = tree.Add(un_id, doc, Picture.Load("document.png"), parent)
+  Next
+End
+
+Public Sub get_unique_id() As Integer
+  ' get a unique id
+  If Not uid Then
+    uid = 0
+  Endif
+  uid += 1
+  Return uid
+End
+
+
+Public Sub refresh_db_tree()
+  ' refresh the database tree
+  ' refresh the main tree view
+  Dim objects As Collection
+  Dim o As String
+  FMain.main_treeview.Clear
+  objects = get_db_objects()
+  FMain.main_treeview.Add("Collections", "Collections", Picture.Load("directory.png"))
+  populate_tree(FMain.main_treeview, "Collections", objects["collections"])
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+    Next
+    .Add("Replace queries", "Replace queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["replace queries"]
+      .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("query.png"), "Replace queries")
+    Next
+    .Add("Value queries", "Value queries", Picture.Load("directory.png"), "Queries")   
+    For Each o In Me.dbobjects["queries"]["value queries"]
+      .Add(Me.dbobjects["queries"]["value queries"].key, Me.dbobjects["queries"]["value queries"].key, Picture.Load("query.png"), "Value queries")
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+    Next
+    .Add("Rename queries", "Rename queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["rename queries"]
+      .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("query.png"), "Rename queries")
+    Next
+    .Add("xPath queries", "xPath queries", Picture.Load("directory.png"), "Queries")   
+    For Each o In Me.dbobjects["queries"]["xpath queries"]
+      .Add(Me.dbobjects["queries"]["xpath queries"].key, Me.dbobjects["queries"]["xpath queries"].key, Picture.Load("query.png"), "xPath queries")
+    Next
+    .Add("xQueries", "xQueries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["xquery queries"]
+      .Add(Me.dbobjects["queries"]["xquery queries"].key, Me.dbobjects["queries"]["xquery queries"].key, Picture.Load("query.png"), "xQueries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add(o, o, Picture.Load("query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add(o, o, Picture.Load("query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add(o, o, Picture.Load("query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub new_document(doc As String, path As String, content As String) As Boolean
+  ' create a new document on the given path with the given content
+  Dim res As String
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  If Left$(path, 1) = "/" Then
+    path = Mid$(path, 2)
+  Endif
+  If Right$(path, 1) <> "/" And Not path = "" Then
+    path &= "/"
+  Endif
+  con.URL &= path & doc
+  Try con.Put("application/xml", content, ["Content-Length: " & Str(Len(content))])
+  If con.Status < 0 Then
+    Return False
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+  Endif
+  Return True
+End
+
+Public Sub delete_object(path As String) As Boolean
+  ' delete an object (document or collection) in the database
+  ' for now over curl since DELETE request isn't implemented in HttpClient
+  Dim res As String
+  If Left$(path, 1) = "/" Then
+    path = Mid$(path, 2)
+  Endif
+  Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/db/" & path To res
+  If "HTTP/1.1 200 OK" = Left$(res, Len("HTTP/1.1 200 OK")) Then
+    Return True
+  Endif
+  Return False
+End
+
+Public Sub new_collection(path As String) As Boolean
+  ' create a new collection
+  If new_document("bogus.xml", path, "<bogus />") Then
+    If Right$(path, 1) <> "/" Then
+      path &= "/"
+    Endif
+    If delete_object(path & "bogus.xml") Then
+      Return True
+    Endif
+  Endif
+  Return False
+End
+
+Public Sub get_xml_doc(path As String) As String
+  ' get the XML document and return it's content
+  Dim res As String
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  If Left$(path, 1) = "/" Then
+    path = Mid$(path, 2)
+  Endif
+  If Right$(path, 1) <> "/" And Not path = "" Then
+    path &= "/"
+  Endif
+  con.URL &= path
+  con.Get
+  If con.Status < 0 Then
+    Return Null
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+    Return res
+  Endif
+End
+
+Public Sub new_insert_query(name As String, query_ As String) As Boolean
+  ' create a new insert query and execute it
+  Dim res As String
+  Me.dbobjects["queries"]["insert queries"][name] = query_
+  Me.Save()
+  res = query_xml(Replace$(query_, "\n", " "))
+  If Left$(res, Len("<?xml version=\"1.0\" ?><exception>")) = "<?xml version=\"1.0\" ?><exception>" Then
+    Message.Error(res)
+    Return False
+  Endif
+  refresh_db_tree()
+  Return True
+End
+
+Public Sub new_replace_query(name As String, query_ As String) As Boolean
+  ' create a new replace query and execute it
+  Dim res As String
+  Me.dbobjects["queries"]["replace queries"][name] = query_
+  Me.Save()
+  res = query_xml(Replace$(query_, "\n", " "))
+  If Left$(res, Len("<?xml version=\"1.0\" ?><exception>")) = "<?xml version=\"1.0\" ?><exception>" Then
+    Message.Error(res)
+    Return False
+  Endif
+  refresh_db_tree()
+  Return True
+End
+
+Public Sub new_value_query(name As String, query_ As String) As Boolean
+  ' create a new value query and execute it
+  Dim res As String
+  Me.dbobjects["queries"]["value queries"][name] = query_
+  Me.Save()
+  res = query_xml(Replace$(query_, "\n", " "))
+  If Left$(res, Len("<?xml version=\"1.0\" ?><exception>")) = "<?xml version=\"1.0\" ?><exception>" Then
+    Message.Error(res)
+    Return False
+  Endif
+  refresh_db_tree()
+  Return True
+End
+
+Public Sub new_delete_query(name As String, query_ As String) As Boolean
+  ' create a new delete query and execute it
+  Dim res As String
+  Me.dbobjects["queries"]["delete queries"][name] = query_
+  Me.Save()
+  res = query_xml(Replace$(query_, "\n", " "))
+  If Left$(res, Len("<?xml version=\"1.0\" ?><exception>")) = "<?xml version=\"1.0\" ?><exception>" Then
+    Message.Error(res)
+    Return False
+  Endif
+  refresh_db_tree()
+  Return True
+End
+
+Public Sub new_rename_query(name As String, query_ As String) As Boolean
+  ' create a new rename query and execute it
+  Dim res As String
+  Me.dbobjects["queries"]["rename queries"][name] = query_
+  Me.Save()
+  res = query_xml(Replace$(query_, "\n", " "))
+  If Left$(res, Len("<?xml version=\"1.0\" ?><exception>")) = "<?xml version=\"1.0\" ?><exception>" Then
+    Message.Error(res)
+    Return False
+  Endif
+  refresh_db_tree()
+  Return True
+End
+
+Public Sub new_xpath_query(name As String, query_ As String, Optional path As String) As Collection
+  ' create a new rename query and execute it
+  Dim res As Collection
+  Me.dbobjects["queries"]["xpath queries"][name] = query_
+  Me.dbobjects["queries"]["xpath queries paths"][name] = path
+  Me.Save()
+  res = query_both(Replace$(query_, "\n", " "), path)
+  refresh_db_tree()
+  Return res
+End
+
+Public Sub new_xquery(name As String, query_ As String) As Collection
+  ' create a new rename query and execute it
+  Dim res As Collection
+  Me.dbobjects["queries"]["xquery queries"][name] = query_
+  Me.Save()
+  res = query_both(Replace$(query_, "\n", " "))
+  refresh_db_tree()
+  Return res
+End

@@ -133,14 +133,14 @@ End
 
 Public Sub initialize_gui()
   ' initialize the GUI for PostgreSQL database
-  'Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim documentation As New WebView(FMain.main_tabstrip)
   Dim data_definition As FormPostgreSQLDataDefinition
   Dim data_manipulation As FormPostgreSQLDataManipulation
   Dim data_querying As FormPostgreSQLDataQuerying
   
   ' create a dummy tab 
   FMain.main_tabstrip.Text = "PostgreSQL Database - " & Me.dbname
-  'documentation.Frame.Url = "test.html" '"http://autopoiesis.foi.hr/wiki.php?name=Baze+Podataka+-+FOI#Teorija baza podataka"
+  documentation.Frame.Url = "http://www.postgresql.org/docs/"
   
   ' create the treeview
   ' first get objects from the database
@@ -230,8 +230,6 @@ Public Sub refresh_db_tree()
       .Add(o, o, Picture.Load("query.png"), "Reports")
     Next
   End With
- 
-  
 End
 
 

@@ -46,6 +46,6 @@ Public Sub ToolButtonExecute_Click()
           Return
         Endif
     End Select
-    .refresh_db_tree()
+    .refresh_db_tree(True)
   End With
 End

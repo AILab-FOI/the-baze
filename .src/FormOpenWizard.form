@@ -375,7 +375,7 @@
       }
       { TextBoxEPort TextBox
         MoveScaled(23,17,7,4)
-        Text = ("80")
+        Text = ("8080")
       }
       { TextBoxEUsername TextBox
         MoveScaled(23,24,19,4)

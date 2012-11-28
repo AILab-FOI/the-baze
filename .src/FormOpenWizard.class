@@ -112,6 +112,7 @@ Public Sub WizardIntro_Change()
   Dim i As Integer
   'Stop Event
   If RadioButtonNew.Value Then ' create a new baze
+    FMain.new_db_type = ComboBoxNewDatabase.Text
     FMain.wizard_return = "new" 'TODO: add another return value with the new db type (SQLite or ZODB)
     Me.Close
   Else
@@ -176,12 +177,14 @@ Public Sub WizardIntro_Change()
                   FMain.connection_settings["connection"] = db
               End Select
             Case "eXist"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[5].show
-                last_index = WizardIntro.Index
-                stop_event = False
+              FMain.connection_settings["host"] = TextBoxEHost.Text
+              FMain.connection_settings["port"] = TextBoxEPort.Text
+              FMain.connection_settings["username"] = TextBoxEUsername.Text
+              If CheckBoxEStoreP.Value Then
+                FMain.connection_settings["password"] = TextBoxEPassword.Text
               Endif
+              db = New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
+              FMain.connection_settings["connection"] = db
             Case "CouchDB"
               If Not stop_event Then
                 stop_event = True
@@ -295,7 +298,9 @@ End
 
 Public Sub ToolButtonOpen_Click()
   ' open the file chooser 
-  FormOpenFile.ShowModal
+  Dim op As New FormOpenFile
+  op.caller = Me
+  op.ShowModal
   LabelChosenFile.Text = openfile
 End
 
@@ -431,4 +436,13 @@ Public Sub ToolButtonFindZDBFile_Click()
   find_fs.caller = Me
   find_fs.ShowModal()
   TextBoxZDBFile.Text = zodb_fs
+End
+
+Public Sub ButtonETest_Click()
+  Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
+  If db.connect() Then
+    Message.Info("Connection successful!")
+  Else
+    Message.Error("Error connecting to eXist server!")
+  Endif
 End

@@ -57,6 +57,7 @@ Public Sub new_file()
   ' create a temporary folder to store the connection settings and zip it 
   ' into the specified file
   init_folder()
+  initialize_dbobjects()
   Save()
 End
 
@@ -158,21 +159,7 @@ Public Sub load_file(dbfile As String) As Variant
       db.Save()
       Return db
     Case "ZODBEmbedded"
-'       zodbembnoconnect:
-      ' If Not connection_settings.Exist("password") Then
-      '   FormAskPasword.ShowModal
-      '   password = FMain.password
-      '   save_password = False
-      ' Else
-      '   password = connection_settings["password"]
-      '   save_password = True
-      ' Endif
-      db = New ZODBEmbedded(connection_settings["dbfile"]) 
-      ',
-        ' connection_settings["username"], 
-        ' password, 
-        ' save_password
-      
+      db = New ZODBEmbedded(connection_settings["dbfile"])
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
@@ -225,6 +212,32 @@ Public Sub load_file(dbfile As String) As Variant
       db.baze_file = dbfile
       db.Save()
       Return db
+    Case "eXist"
+      exnoconnect:
+      If Not connection_settings.Exist("password") Then
+        FormAskPasword.ShowModal
+        password = FMain.password
+        save_password = False
+      Else
+        password = connection_settings["password"]
+        save_password = True
+      Endif
+      db = New EXistDB(
+        connection_settings["host"], 
+        connection_settings["port"],
+        connection_settings["username"], 
+        password, 
+        save_password)
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      If Not db.connect() Then
+        Goto exnoconnect
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
     End Select
 End
 
@@ -250,7 +263,14 @@ Public Sub initialize_dbobjects()
       Me.dbobjects["queries"]["pymapreduce queries"] = New Collection
       Me.dbobjects["class definitions"] = New Collection
       Me.dbobjects["modules"] = New Collection
-    End Select
+    Case "eXist"
+      Me.dbobjects["queries"]["replace queries"] = New Collection
+      Me.dbobjects["queries"]["value queries"] = New Collection
+      Me.dbobjects["queries"]["rename queries"] = New Collection
+      Me.dbobjects["queries"]["xpath queries"] = New Collection
+      Me.dbobjects["queries"]["xpath queries paths"] = New Collection
+      Me.dbobjects["queries"]["xquery queries"] = New Collection
+  End Select
 End
 
 Public Sub delete_query(query As String)

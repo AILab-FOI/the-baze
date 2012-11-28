@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,37,23)
+  Arrangement = Arrange.Column
+  { ToolButtonNewxPathQuery ToolButton
+    MoveScaled(4,4,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New xPath query")
+    Picture = Picture["icon:/32/find"]
+  }
+  { ToolButtonNewxQuery ToolButton
+    MoveScaled(4,13,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New xQuery")
+    Picture = Picture["icon:/32/find"]
+  }
+}

@@ -14,7 +14,6 @@ End
 
 Public Sub connect() As Boolean
   ' connect to the ZODB database
-  Me.init_folder()
   Me.engine = New ZODBEngine(Me.temporary_folder &/ Me.connection_settings["dbfile"])
   Return Me.engine.connect()
 End

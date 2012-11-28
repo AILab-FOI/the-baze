@@ -1,0 +1,36 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,45,48)
+  Arrangement = Arrange.Column
+  { ToolButtonNewInsertQuery ToolButton
+    MoveScaled(1,10,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create insert query")
+    Picture = Picture["icon:/32/insert-text"]
+  }
+  { ToolButtonNewReplaceQuery ToolButton
+    MoveScaled(2,17,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create replace query")
+    Picture = Picture["icon:/32/replace"]
+  }
+  { ToolButtonNewValueQuery ToolButton
+    MoveScaled(3,24,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create value query")
+    Picture = Picture["icon:/32/edit"]
+  }
+  { ToolButtonNewDeleteQuery ToolButton
+    MoveScaled(6,30,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create delete query")
+    Picture = Picture["icon:/32/erase"]
+  }
+  { ToolButtonNewRenameQuery ToolButton
+    MoveScaled(7,37,38,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create rename query")
+    Picture = Picture["icon:/32/pen"]
+  }
+}

@@ -17,13 +17,17 @@ Public Sub close()
 End
 
 Public Sub get_db_objects() As Collection
-  ' get the database objects (root, class definitions)
+  ' get the database objects (root) and initialize picklers for the dbtree
   Dim objects As New Collection
   Dim root As String
   
   root = "root"
   
-  objects["root"] = Me.query(root)
+  Try objects["root"] = Me.query(root)
+  If Error Then
+    Message.Error(Error.Text)
+    Quit
+  Endif
   objects["root"]["__pickler_id__"] = Me.query("len(picklers) - 1")
   
   
@@ -46,12 +50,9 @@ End
 
 Public Sub construct_object_tree(objects As Variant, parent As String, tree_view As TreeView)
   ' construct a tree from the given object under the given parent in the given tree_view
-  ' TODO: deal with recursion in the object tree (e.g. one object points to another which points back)
-  ' this can be done with a global list of objects already processed, and if such an object occurs
-  ' the function returns with only a reference to the object similiar to py/id in jsonpickle
   Dim iter As Variant
   Dim i As Integer
-  Dim key As String
+  Dim key_ As String
   If IsNull(objects) Then
     Return
   Endif
@@ -59,59 +60,59 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
   If Error Then
     If TypeOf(objects) = gb.Object Then
       If objects Is Variant[] Then
-        key = get_unique_key()
-        tree_view.Add(key, "list", Picture.Load("directory.png"), parent)
+        key_ = get_unique_key()
+        tree_view.Add(key_, "list", Picture.Load("directory.png"), parent)
         For i = 0 To objects.count - 1
-          construct_object_tree(objects[i], key, tree_view)
+          construct_object_tree(objects[i], key_, tree_view)
         Next
         Return
       Endif
     Endif
-    key = get_unique_key()
-    tree_view.Add(key, Str(objects), Picture.Load("class.png"), parent)
+    key_ = get_unique_key()
+    tree_view.Add(key_, Str(objects), Picture.Load("class.png"), parent)
     Return
   Endif
   Select Case objects["py/object"]
     Case "persistent.mapping.PersistentMapping"
       'it's a dictionary
       For Each iter In objects["py/state"]["data"]
-        key = get_unique_key()
-        tree_view.Add(key, objects["py/state"]["data"].Key, Picture.Load("directory.png"), parent)
-        construct_object_tree(iter, key, tree_view)
+        key_ = get_unique_key()
+        tree_view.Add(key_, objects["py/state"]["data"].Key, Picture.Load("directory.png"), parent)
+        construct_object_tree(iter, key_, tree_view)
       Next
     Case "persistent.list.PersistentList"
       ' it's a list
-      key = get_unique_key()
-      tree_view.Add(key, objects["py/object"], Picture.Load("directory.png"), parent)
+      key_ = get_unique_key()
+      tree_view.Add(key_, objects["py/object"], Picture.Load("directory.png"), parent)
       For i = 0 To objects["py/state"]["data"].count - 1
-        construct_object_tree(objects["py/state"]["data"][i], key, tree_view)
+        construct_object_tree(objects["py/state"]["data"][i], key_, tree_view)
       Next
     Default
       If objects Is Collection Then
         If objects.Exist("py/object") Then 
-          key = get_unique_key()
-          tree_view.Add(key, objects["py/object"], Picture.Load("directory.png"), parent)
+          key_ = get_unique_key()
+          tree_view.Add(key_, objects["py/object"], Picture.Load("directory.png"), parent)
           was_object = True
-          construct_object_tree(objects["py/state"], key, tree_view)
+          construct_object_tree(objects["py/state"], key_, tree_view)
           was_object = False
         Else
           If objects.Exist("py/tuple") Then
-            key = get_unique_key()
-            tree_view.Add(key, "tuple", Picture.Load("directory.png"), parent)
+            key_ = get_unique_key()
+            tree_view.Add(key_, "tuple", Picture.Load("directory.png"), parent)
             For i = 0 To objects["py/tuple"].count - 1
-              construct_object_tree(objects["py/tuple"][i], key, tree_view)
+              construct_object_tree(objects["py/tuple"][i], key_, tree_view)
             Next
             Return
           Endif
           If Not was_object Then
-            key = get_unique_key()
-            tree_view.Add(key, "dict", Picture.Load("directory.png"), parent)
-            parent = key
+            key_ = get_unique_key()
+            tree_view.Add(key_, "dict", Picture.Load("directory.png"), parent)
+            parent = key_
           Endif
           For Each iter In objects
-            key = get_unique_key()
-            tree_view.Add(key, objects.key, Picture.Load("directory.png"), parent)
-            construct_object_tree(iter, key, tree_view)
+            key_ = get_unique_key()
+            tree_view.Add(key_, objects.key, Picture.Load("directory.png"), parent)
+            construct_object_tree(iter, key_, tree_view)
           Next
         Endif
       Endif
@@ -122,7 +123,7 @@ End
 
 Public Sub initialize_gui()
   ' initialize the GUI for PostgreSQL database
-  'Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim documentation As New WebView(FMain.main_tabstrip)
   Dim data_definition As FormZODBDataDefinition
   Dim data_manipulation As FormZODBDataManipulation
   Dim data_querying As FormZODBDataQuerying
@@ -134,7 +135,7 @@ Public Sub initialize_gui()
     FMain.main_tabstrip.Text = "ZODB - " & Me.connection_settings["host"] & ":" & Me.connection_settings["port"]
   Endif
   
-  'documentation.Frame.Url = "test.html" '"http://autopoiesis.foi.hr/wiki.php?name=Baze+Podataka+-+FOI#Teorija baza podataka"
+  documentation.Frame.Url = "http://www.zodb.org/documentation/guide/index.html"
   
   ' create the treeview
   ' first get objects from the database

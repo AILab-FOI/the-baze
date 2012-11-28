@@ -3,7 +3,7 @@
 Title=Baze Database Environment
 Startup=FMain
 Icon=majin_buu.jpg
-Version=0.4.9
+Version=0.5.1
 Component=gb.image
 Component=gb.qt4
 Component=gb.form
@@ -15,6 +15,8 @@ Component=gb.eval
 Component=gb.eval.highlight
 Component=gb.settings
 Component=gb.image.effect
+Component=gb.net
+Component=gb.net.curl
 Component=gb.pcre
 Component=gb.qt4.ext
 Component=gb.qt4.webkit

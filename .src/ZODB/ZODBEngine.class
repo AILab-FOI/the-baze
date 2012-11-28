@@ -22,7 +22,6 @@ Public dbfile As String
 Public server As String
 Public port As String
 ' username and password
-' TODO: implement their actual usage
 Public username As String
 Public password As String
 
@@ -85,6 +84,10 @@ Public Sub load_modules()
   If Not read() = ">>> " Then
     Error.Raise("Couldn't load persistent.list\n\n" & result)
   Endif
+  Print #hproc, "from persistent.mapping import *"
+  If Not read() = ">>> " Then
+    Error.Raise("Couldn't load persistent.mapping\n\n" & result)
+  Endif
   Print #hproc, "import transaction"
   If Not read() = ">>> " Then
     Error.Raise("Couldn't load transaction\n\n" & result)
@@ -123,7 +126,7 @@ Public Sub exec(cmd As String) As String
   read()
   Do While oldResult <> result And result <> "" And Lof(hproc) > 0
     oldResult = result
-    'Sleep 0.1
+    Sleep 0.1
     read()
   Loop 
   Do While Right$(result, 4) = ">>> " 
@@ -174,14 +177,19 @@ End
 
 Public Sub load(folder As String, module As String)
   ' load a user module from a given folder
-  Print #hproc, "sys.path.append( '" & folder & "' )"
-  If Not read() = ">>> " Then
+  exec("sys.path.append( '" & folder & "' )")
+  If Not result = ">>> " Then
     Error.Raise("Couldn't append folder '" & folder & "' to path\n\n" & result)
   Endif
-  Print #hproc, "from " & module & " import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't import module '" & module & "'\n\n" & result)
+  exec("import " & module)
+  exec("reload(" & module & ")")
+  If result Then
+    If XSBEngine.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
+      Error.Raise(result)
+    Endif
   Endif
+  exec("del " & module & "")
+  exec("from " & module & " import *")
 End
 
 Public Sub connect() As Boolean

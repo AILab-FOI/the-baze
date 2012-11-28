@@ -19,7 +19,7 @@ Public Sub ToolButtonClose_Click()
       Case " - Class"
         .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
     End Select
-    .refresh_db_tree()
+    .refresh_db_tree(True)
   End With
   With FMain.main_tabstrip.Current
     For Each child In .Children
@@ -38,6 +38,6 @@ Public Sub ToolButtonExecute_Click()
       Case " - Class"
         .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
     End Select
-    .refresh_db_tree()
+    .refresh_db_tree(True)
   End With
 End
