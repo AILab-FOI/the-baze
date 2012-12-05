@@ -14,135 +14,151 @@ msgstr ""
 msgid "Baze Database Environment"
 msgstr ""
 
-#: FMain.form:44
+#: FMain.form:52
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:48
+#: FMain.form:56
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:53
+#: FMain.form:61
 msgid "Alter table"
 msgstr ""
 
-#: FMain.form:58
+#: FMain.form:66
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:64
+#: FMain.form:72
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:68
+#: FMain.form:76
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:74
+#: FMain.form:82
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:78
+#: FMain.form:86
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:84
+#: FMain.form:92
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:88
+#: FMain.form:96
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:94
+#: FMain.form:102
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:98
+#: FMain.form:106
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:104
+#: FMain.form:112
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:108
+#: FMain.form:116
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:114
+#: FMain.form:122
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:118
+#: FMain.form:126
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:124
+#: FMain.form:132
 msgid "Query menu"
 msgstr ""
 
-#: FMain.form:128
+#: FMain.form:136
 msgid "Delete query"
 msgstr ""
 
-#: FMain.form:134
+#: FMain.form:142
 msgid "Datalog modules menu"
 msgstr ""
 
-#: FMain.form:138
+#: FMain.form:146
 msgid "Delete module"
 msgstr ""
 
-#: FMain.form:144
+#: FMain.form:152
 msgid "Collection menu"
 msgstr ""
 
-#: FMain.form:148
+#: FMain.form:156
 msgid "Delete collection"
 msgstr ""
 
-#: FMain.form:154
+#: FMain.form:162
 msgid "Document menu"
 msgstr ""
 
-#: FMain.form:158
+#: FMain.form:166
 msgid "Delete document"
 msgstr ""
 
-#: FMain.form:163
+#: FMain.form:171
 msgid "Edit document"
 msgstr ""
 
-#: FMain.form:178
+#: FMain.form:177
+msgid "Insert rule query menu"
+msgstr ""
+
+#: FMain.form:187
+msgid "Delete rule query menu"
+msgstr ""
+
+#: FMain.form:197
+msgid "Delete Flora2 query menu"
+msgstr ""
+
+#: FMain.form:207
+msgid "Flora2 modules menu"
+msgstr ""
+
+#: FMain.form:226
 msgid "Data definition"
 msgstr ""
 
-#: FMain.form:180
+#: FMain.form:228
 msgid "Data manipulation"
 msgstr ""
 
-#: FMain.form:182
+#: FMain.form:230
 msgid "Data querying"
 msgstr ""
 
-#: FMain.form:184
+#: FMain.form:232
 msgid "Application"
 msgstr ""
 
-#: FMain.form:189
+#: FMain.form:237
 msgid "New form"
 msgstr ""
 
-#: FMain.form:196
+#: FMain.form:244
 msgid "New script"
 msgstr ""
 
-#: FMain.form:203
+#: FMain.form:251
 msgid "New report"
 msgstr ""
 
-#: FMain.form:215
+#: FMain.form:263
 msgid "Tab 0"
 msgstr ""
 
@@ -152,8 +168,8 @@ msgstr ""
 
 #: FormAskClassName.form:24 FormAskCollectionPath.form:25
 #: FormAskDatalogModuleName.form:24 FormAskDocumentName.form:24
-#: FormAskEnumName.form:24 FormAskFunctionName.form:24
-#: FormAskIndexName.form:24 FormAskPasword.form:25
+#: FormAskEnumName.form:24 FormAskFlora2ModuleName.form:24
+#: FormAskFunctionName.form:24 FormAskIndexName.form:24 FormAskPasword.form:25
 #: FormAskPythonModuleName.form:23 FormAskQueryName.form:25
 #: FormAskQueryWithPathName.form:26 FormAskSequenceName.form:24
 #: FormAskTableName.form:24 FormAskTriggerName.form:24 FormAskTypeName.form:24
@@ -166,12 +182,13 @@ msgstr ""
 
 #: FormAskClassName.form:29 FormAskCollectionPath.form:30
 #: FormAskDatalogModuleName.form:29 FormAskDocumentName.form:29
-#: FormAskEnumName.form:29 FormAskFunctionName.form:29
-#: FormAskIndexName.form:29 FormAskPythonModuleName.form:28
-#: FormAskQueryName.form:30 FormAskQueryWithPathName.form:31
-#: FormAskSequenceName.form:29 FormAskTableName.form:29
-#: FormAskTriggerName.form:29 FormAskTypeName.form:29 FormAskViewName.form:29
-#: FormFindXSB.form:18 FormFindZODBFileStorage.form:18 FormOpenFile.form:23
+#: FormAskEnumName.form:29 FormAskFlora2ModuleName.form:29
+#: FormAskFunctionName.form:29 FormAskIndexName.form:29
+#: FormAskPythonModuleName.form:28 FormAskQueryName.form:30
+#: FormAskQueryWithPathName.form:31 FormAskSequenceName.form:29
+#: FormAskTableName.form:29 FormAskTriggerName.form:29 FormAskTypeName.form:29
+#: FormAskViewName.form:29 FormFindXSB.form:18 FormFindZODBFileStorage.form:18
+#: FormFlora2CreateClass.form:59 FormOpenFile.form:23
 #: FormPostgreSQLChooseTable.form:25 FormPostgreSQLCreateEnum.form:50
 #: FormPostgreSQLCreateFunction.form:64 FormPostgreSQLCreateIndex.form:57
 #: FormPostgreSQLCreateSequence.form:111 FormPostgreSQLCreateTable.form:87
@@ -203,6 +220,10 @@ msgstr ""
 msgid "Please enter a name for the enum type:"
 msgstr ""
 
+#: FormAskFlora2ModuleName.form:15 FormAskPythonModuleName.form:14
+msgid "Please enter a name for the module:"
+msgstr ""
+
 #: FormAskFunctionName.form:15
 msgid "Please enter a name for the function:"
 msgstr ""
@@ -217,10 +238,6 @@ msgstr ""
 
 #: FormAskPasword.form:15 FormOpenWizard.form:242
 msgid "Password"
-msgstr ""
-
-#: FormAskPythonModuleName.form:14
-msgid "Please enter a name for the module:"
 msgstr ""
 
 #: FormAskQueryName.form:11
@@ -255,25 +272,28 @@ msgstr ""
 msgid "Please enter a name for the view:"
 msgstr ""
 
-#: FormDatalogSplit.form:31 FormPyMapReduceSplit.form:30 FormSQLSplit.form:30
-#: FormXMLSplit.form:31 FormeXistXMLEditor.form:28
+#: FormDatalogSplit.form:31 FormFlora2Split.form:31
+#: FormPyMapReduceSplit.form:30 FormSQLSplit.form:30 FormXMLSplit.form:31
+#: FormeXistXMLEditor.form:28
 msgid "Execute query"
 msgstr ""
 
-#: FormDatalogSplit.form:32 FormPyMapReduceSplit.form:31 FormSQLSplit.form:31
+#: FormDatalogSplit.form:32 FormFlora2DeleteEditor.form:39
+#: FormFlora2Editor.form:27 FormFlora2InsertEditor.form:37
+#: FormFlora2Split.form:32 FormPyMapReduceSplit.form:31 FormSQLSplit.form:31
 #: FormXMLSplit.form:32 FormXSBCreateModule.form:25
 #: FormZODBDataManipulationEditor.form:25 FormZODBPythonEditor.form:25
 #: FormeXistXMLEditor.form:29
 msgid "ToolButton1"
 msgstr ""
 
-#: FormDatalogSplit.form:38 FormPostgreSQLAlterTable.form:52
-#: FormPyMapReduceSplit.form:37 FormSQLSplit.form:37 FormXMLSplit.form:38
-#: FormeXistXMLEditor.form:35
+#: FormDatalogSplit.form:38 FormFlora2Split.form:38
+#: FormPostgreSQLAlterTable.form:52 FormPyMapReduceSplit.form:37
+#: FormSQLSplit.form:37 FormXMLSplit.form:38 FormeXistXMLEditor.form:35
 msgid "Close"
 msgstr ""
 
-#: FormDatalogSplit.form:45
+#: FormDatalogSplit.form:45 FormFlora2Split.form:45
 msgid "Distinct results"
 msgstr ""
 
@@ -291,6 +311,128 @@ msgstr ""
 
 #: FormFindZODBFileStorage.form:13
 msgid "ZODB File storage"
+msgstr ""
+
+#: FormFlora2CreateClass.form:33
+msgid "Class view main menu"
+msgstr ""
+
+#: FormFlora2CreateClass.form:37
+msgid "Delete attribute"
+msgstr ""
+
+#: FormFlora2CreateClass.form:53 FormPostgreSQLCreateTable.form:81
+#: FormPostgreSQLCreateType.form:34 FormPostgreSQLDataDefinition.form:20
+#: FormXSBDataDefinition.form:21
+msgid "Create table"
+msgstr ""
+
+#: FormFlora2CreateClass.form:77
+msgid "Method name:"
+msgstr ""
+
+#: FormFlora2CreateClass.form:107
+msgid "Return value:"
+msgstr ""
+
+#: FormFlora2CreateClass.form:117
+msgid "Arguments:"
+msgstr ""
+
+#: FormFlora2CreateClass.form:141
+msgid "Method type:"
+msgstr ""
+
+#: FormFlora2DataDefinition.form:14 FormZODBDataDefinition.form:14
+msgid "Create class"
+msgstr ""
+
+#: FormFlora2DataDefinition.form:21
+msgid "Create Flora-2 Module"
+msgstr ""
+
+#: FormFlora2DataManipulation.form:16 FormZODBDataManipulation.form:14
+msgid "Insert objects"
+msgstr ""
+
+#: FormFlora2DataManipulation.form:23 FormZODBDataManipulation.form:21
+msgid "Delete objects"
+msgstr ""
+
+#: FormFlora2DataManipulation.form:30
+msgid "Insert rules"
+msgstr ""
+
+#: FormFlora2DataManipulation.form:37
+msgid "Delete rules"
+msgstr ""
+
+#: FormFlora2DataQuerying.form:13
+msgid "New Flora2 Query"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:38 FormFlora2InsertEditor.form:36
+#: FormZODBDataManipulationEditor.form:24
+msgid "Execute"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:45 FormFlora2InsertEditor.form:43
+#: FormZODBDataManipulationEditor.form:31
+msgid "Execute & close"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:59
+msgid "Delete one"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:65
+msgid "Delete all"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:70
+msgid "Erase one"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:75
+msgid "Erase all"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:84 FormFlora2InsertEditor.form:72
+msgid "Transactional update"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:99 FormFlora2InsertEditor.form:87
+msgid "Literals"
+msgstr ""
+
+#: FormFlora2DeleteEditor.form:115 FormFlora2InsertEditor.form:103
+msgid "Query (optional)"
+msgstr ""
+
+#: FormFlora2Editor.form:26 FormXSBCreateModule.form:24
+#: FormZODBPythonEditor.form:24
+msgid "Compile & load"
+msgstr ""
+
+#: FormFlora2Editor.form:33 FormXSBCreateModule.form:31
+#: FormZODBPythonEditor.form:31
+msgid "Compile, load & close"
+msgstr ""
+
+#: FormFlora2Editor.form:40
+msgid "Insert as first rule"
+msgstr ""
+
+#: FormFlora2Editor.form:45
+msgid "Don't load on startup"
+msgstr ""
+
+#: FormFlora2InsertEditor.form:57
+msgid "Insert one"
+msgstr ""
+
+#: FormFlora2InsertEditor.form:63
+msgid "Insert all"
 msgstr ""
 
 #: FormOpenFile.form:13
@@ -840,11 +982,6 @@ msgstr ""
 msgid "Make primary key"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:81 FormPostgreSQLCreateType.form:34
-#: FormPostgreSQLDataDefinition.form:20 FormXSBDataDefinition.form:21
-msgid "Create table"
-msgstr ""
-
 #: FormPostgreSQLCreateTable.form:259
 msgid "Structure & inheritance"
 msgstr ""
@@ -1133,14 +1270,6 @@ msgstr ""
 msgid "XML"
 msgstr ""
 
-#: FormXSBCreateModule.form:24 FormZODBPythonEditor.form:24
-msgid "Compile & load"
-msgstr ""
-
-#: FormXSBCreateModule.form:31 FormZODBPythonEditor.form:31
-msgid "Compile, load & close"
-msgstr ""
-
 #: FormXSBDataDefinition.form:77
 msgid "Create Datalog Module"
 msgstr ""
@@ -1149,28 +1278,8 @@ msgstr ""
 msgid "New Datalog query"
 msgstr ""
 
-#: FormZODBDataDefinition.form:14
-msgid "Create class"
-msgstr ""
-
 #: FormZODBDataDefinition.form:21
 msgid "Create Python Module"
-msgstr ""
-
-#: FormZODBDataManipulation.form:14
-msgid "Insert objects"
-msgstr ""
-
-#: FormZODBDataManipulation.form:21
-msgid "Delete objects"
-msgstr ""
-
-#: FormZODBDataManipulationEditor.form:24
-msgid "Execute"
-msgstr ""
-
-#: FormZODBDataManipulationEditor.form:31
-msgid "Execute & close"
 msgstr ""
 
 #: FormZODBDataQuerying.form:13
@@ -1219,6 +1328,10 @@ msgstr ""
 
 #: FormeXistDataManipulation.form:45
 msgid "Create rename query"
+msgstr ""
+
+#: FormeXistDataManipulation.class:89
+msgid "Such a query name already exists! Please choose a different name."
 msgstr ""
 
 #: FormeXistDataQuerying.form:14

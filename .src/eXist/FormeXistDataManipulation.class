@@ -86,7 +86,7 @@ Public Sub ToolButtonNewValueQuery_Click()
       query_editor.query_type = "value"
       FMain.main_tabstrip.Text = query_name & " - Value query"
     Else
-      Message.Error("Such a query name already exists! Please choose a different name.")
+      Message.Error(("Such a query name already exists! Please choose a different name."))
       Goto askagain
     Endif
   Endif
@@ -115,7 +115,7 @@ Public Sub ToolButtonNewDeleteQuery_Click()
       query_editor.query_type = "delete"
       FMain.main_tabstrip.Text = query_name & " - Delete query"
     Else
-      Message.Error("Such a query name already exists! Please choose a different name.")
+      Message.Error(("Such a query name already exists! Please choose a different name."))
       Goto askagain
     Endif
   Endif
@@ -144,7 +144,7 @@ Public Sub ToolButtonNewRenameQuery_Click()
       query_editor.query_type = "rename"
       FMain.main_tabstrip.Text = query_name & " - Rename query"
     Else
-      Message.Error("Such a query name already exists! Please choose a different name.")
+      Message.Error(("Such a query name already exists! Please choose a different name."))
       Goto askagain
     Endif
   Endif

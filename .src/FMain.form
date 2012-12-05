@@ -105,6 +105,38 @@
       Picture = Picture["icon:/32/edit"]
     }
   }
+  { MenuInsertRuleQuery Menu
+    Text = ("Insert rule query menu")
+    Visible = False
+    { MenuDeleteInsertRuleQuery Menu
+      Text = ("Delete query")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuDeleteRuleQuery Menu
+    Text = ("Delete rule query menu")
+    Visible = False
+    { MenuDeleteDeleteRuleQuery Menu
+      Text = ("Delete query")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuFlora2Query Menu
+    Text = ("Delete Flora2 query menu")
+    Visible = False
+    { MenuDeleteFlora2Query Menu
+      Text = ("Delete query")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { MenuFlora2Modules Menu
+    Text = ("Flora2 modules menu")
+    Visible = False
+    { MenuDeleteFlora2Module Menu
+      Text = ("Delete module")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
   { HSplitMain HSplit
     MoveScaled(0,0,99,73)
     { ToolPanelMain ToolPanel

@@ -158,6 +158,32 @@ Public Sub load_file(dbfile As String) As Variant
       db.baze_file = dbfile
       db.Save()
       Return db
+    Case "Flora2"
+      fl2noconnect:
+      If Not connection_settings.Exist("password") Then
+        FormAskPasword.ShowModal
+        password = FMain.password
+        save_password = False
+      Else
+        password = connection_settings["password"]
+        save_password = True
+      Endif
+      db = New Flora2DB(
+        connection_settings["dsn"],
+        connection_settings["username"], 
+        password, 
+        save_password,
+        connection_settings["flora2"])
+      
+      db.connection_settings = connection_settings
+      db.dbobjects = dbobjects
+      db.temporary_folder = temporary_folder
+      If Not db.connect() Then
+        Goto fl2noconnect
+      Endif
+      db.baze_file = dbfile
+      db.Save()
+      Return db
     Case "ZODBEmbedded"
       db = New ZODBEmbedded(connection_settings["dbfile"])
       db.connection_settings = connection_settings
@@ -259,6 +285,11 @@ Public Sub initialize_dbobjects()
       Me.dbobjects["queries"]["sql queries"] = New Collection
       Me.dbobjects["queries"]["datalog queries"] = New Collection
       Me.dbobjects["datalog modules"] = New Collection
+    Case "Flora2"
+      Me.dbobjects["queries"]["flora2 queries"] = New Collection
+      Me.dbobjects["queries"]["insert rule queries"] = New Collection
+      Me.dbobjects["queries"]["delete rule queries"] = New Collection
+      Me.dbobjects["flora2 modules"] = New Collection
     Case "ZODBEmbedded", "ZODBClientStorage", "ZODBFileStorage"
       Me.dbobjects["queries"]["pymapreduce queries"] = New Collection
       Me.dbobjects["class definitions"] = New Collection
@@ -273,10 +304,13 @@ Public Sub initialize_dbobjects()
   End Select
 End
 
-Public Sub delete_query(query As String)
+Public Sub delete_query(query As String, Optional type As String)
   ' delete the query and refresh
   Dim a As String
   Dim o As Collection
+  If False Then
+    Print type
+  Endif
   For Each o In Me.dbobjects["queries"]
     For Each a In o
       If o.key = query Then
@@ -287,5 +321,3 @@ Public Sub delete_query(query As String)
     Next
   Next
 End
-
-

@@ -14,135 +14,151 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: FMain.form:44
+#: FMain.form:52
 msgid "Table menu"
 msgstr ""
 
-#: FMain.form:48
+#: FMain.form:56
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:53
+#: FMain.form:61
 msgid "Alter table"
 msgstr ""
 
-#: FMain.form:58
+#: FMain.form:66
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:64
+#: FMain.form:72
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:68
+#: FMain.form:76
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:74
+#: FMain.form:82
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:78
+#: FMain.form:86
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:84
+#: FMain.form:92
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:88
+#: FMain.form:96
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:94
+#: FMain.form:102
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:98
+#: FMain.form:106
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:104
+#: FMain.form:112
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:108
+#: FMain.form:116
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:114
+#: FMain.form:122
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:118
+#: FMain.form:126
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:124
+#: FMain.form:132
 msgid "Query menu"
 msgstr ""
 
-#: FMain.form:128
+#: FMain.form:136
 msgid "Delete query"
 msgstr ""
 
-#: FMain.form:134
+#: FMain.form:142
 msgid "Datalog modules menu"
 msgstr ""
 
-#: FMain.form:138
+#: FMain.form:146
 msgid "Delete module"
 msgstr ""
 
-#: FMain.form:144
+#: FMain.form:152
 msgid "Collection menu"
 msgstr ""
 
-#: FMain.form:148
+#: FMain.form:156
 msgid "Delete collection"
 msgstr ""
 
-#: FMain.form:154
+#: FMain.form:162
 msgid "Document menu"
 msgstr ""
 
-#: FMain.form:158
+#: FMain.form:166
 msgid "Delete document"
 msgstr ""
 
-#: FMain.form:163
+#: FMain.form:171
 msgid "Edit document"
 msgstr ""
 
-#: FMain.form:178
+#: FMain.form:177
+msgid "Insert rule query menu"
+msgstr ""
+
+#: FMain.form:187
+msgid "Delete rule query menu"
+msgstr ""
+
+#: FMain.form:197
+msgid "Delete Flora2 query menu"
+msgstr ""
+
+#: FMain.form:207
+msgid "Flora2 modules menu"
+msgstr ""
+
+#: FMain.form:226
 msgid "Data definition"
 msgstr ""
 
-#: FMain.form:180
+#: FMain.form:228
 msgid "Data manipulation"
 msgstr ""
 
-#: FMain.form:182
+#: FMain.form:230
 msgid "Data querying"
 msgstr ""
 
-#: FMain.form:184
+#: FMain.form:232
 msgid "Application"
 msgstr ""
 
-#: FMain.form:189
+#: FMain.form:237
 msgid "New form"
 msgstr ""
 
-#: FMain.form:196
+#: FMain.form:244
 msgid "New script"
 msgstr ""
 
-#: FMain.form:203
+#: FMain.form:251
 msgid "New report"
 msgstr ""
 
-#: FMain.form:215
+#: FMain.form:263
 msgid "Tab 0"
 msgstr ""
 

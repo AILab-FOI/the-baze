@@ -1,0 +1,90 @@
+' Gambas class file
+
+Public flora2_editor As Editor
+
+Public Sub _new()
+  ' make editor visible
+  flora2_editor = EditorFlora2
+End
+
+Public Sub Form_Open()
+  VSplitMain.Settings = [1, 1]
+  EditorFlora2.Flags[EditorFlora2.ShowLineNumbers] = True
+End
+
+Public Sub ToolButtonExecute_Click()
+' execute the query and show the results
+  Dim results As Object[] 
+  Dim one_line As Collection
+  Dim value As Variant
+  Dim first As Boolean
+  Dim counter_row As Integer
+  Dim counter_col As Integer
+  Try results = FMain.db.query(EditorFlora2.Text, CheckBoxDistinct.Value)
+  If Error Then 
+    Message.Error(Error.Text)
+    Stop Event
+    Return
+  Else
+    FMain.db.new_flora2_query(Left(FMain.main_tabstrip.Text, - Len(" - Flora2 query")), EditorFlora2.Text) 
+    If results Then 
+      first = True
+      counter_row = 0
+      TableViewResults.Rows.Count = results.Count
+      If results.Count > 0 Then
+        TableViewResults.Columns.Count = results[0].Count
+        For Each one_line In results
+          counter_col = 0
+          For Each value In one_line
+            If first Then
+              TableViewResults.Columns[counter_col].Title = one_line.Key
+            Endif
+            TableViewResults.Row = counter_row
+            TableViewResults.Column = counter_col
+            TableViewResults.Current.Text = value 
+            counter_col += 1
+          Next
+          counter_row += 1
+          first = False
+        Next
+        TableViewResults.Enabled = True
+        TableViewResults.Row = 0 
+        TableViewResults.Column = 0
+      Else
+        TableViewResults.Columns.Count = 0
+        Message.Info("Query successful, but no rows returned!")
+      Endif
+    Endif
+  Endif
+  FMain.db.refresh_db_tree()
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub EditorFlora2_KeyPress_()
+  ' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    EditorFlora2.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      EditorFlora2.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        EditorFlora2.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          EditorFlora2.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End

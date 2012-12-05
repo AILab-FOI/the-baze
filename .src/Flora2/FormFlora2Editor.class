@@ -1,0 +1,89 @@
+' Gambas class file
+
+Public flora2_editor As Editor
+Public load_chk As CheckBox
+Public first_chk As CheckBox
+' context
+Public context As String
+
+Public Sub _new()
+  ' make editor public
+  flora2_editor = EditorFlora2
+  load_chk = CheckBoxDontLoadOnStartup
+  first_chk = CheckBoxAtBeggining
+End
+
+Public Sub Form_Show()
+  ' edit the checkbox text
+  Select Case context
+    Case " - Flora2 Module"
+      CheckBoxAtBeggining.Hide
+      CheckBoxDontLoadOnStartup.Hide
+    Case " - Insert rule query"
+      CheckBoxAtBeggining.Text = "Insert as first rule"
+    Case " - Delete rule query"
+      CheckBoxAtBeggining.Text = "Delete first rule"
+      CheckBoxDontLoadOnStartup.Hide
+  End Select
+End
+
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  Dim up_type, rule As String
+  If CheckBoxAtBeggining.Value Then
+    up_type = "_a"
+  Else
+    up_type = ""
+  Endif
+  rule = Trim$(EditorFlora2.Text)
+  If Right$(rule, 1) = "." Then
+    rule = Left$(rule, -1)
+  Endif
+  With FMain.db
+    Select Case context
+      Case " - Flora2 Module"
+        If Not .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text) Then
+          Return 
+        Endif
+      Case " - Insert rule query"
+        If Not .new_insert_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), rule, up_type, CheckBoxDontLoadOnStartup.Value) Then
+          Return 
+        Endif
+      Case " - Delete rule query"
+        If Not .new_delete_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), rule, up_type) Then
+          Return 
+        Endif
+    End Select
+    .refresh_db_tree()
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new module and load it
+  Dim up_type As String
+  If CheckBoxAtBeggining.Value Then
+    up_type = "_a"
+  Else
+    up_type = ""
+  Endif
+  With FMain.db
+    Select Case context
+      Case " - Flora2 Module"
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text)
+      Case " - Insert rule query"
+        .new_insert_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text, up_type)
+      Case " - Delete rule query"
+        .new_delete_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text, up_type)
+    End Select
+    .refresh_db_tree()
+  End With
+End
+

@@ -34,3 +34,7 @@ msgstr ""
 msgid "Create rename query"
 msgstr ""
 
+#: FormeXistDataManipulation.class:89
+msgid "Such a query name already exists! Please choose a different name."
+msgstr ""
+

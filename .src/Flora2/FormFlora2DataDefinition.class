@@ -1,0 +1,38 @@
+' Gambas class file
+
+' canceled request inbox
+Public request_canceled As Boolean
+' class name inbox
+Public class_name As String
+' module name inbox
+Public module_name As String
+
+
+Public Sub ToolButtonNewClassDescriptor_Click()
+  ' open the python editor
+  Dim ask As New FormAskClassName
+  Dim module_editor As FormFlora2CreateClass
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.Count += 1
+    module_editor = New FormFlora2CreateClass(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = class_name & " - Class"
+  Endif
+End
+
+Public Sub ToolButtonNewFlora2Module_Click()
+  ' open the python editor
+  Dim ask As New FormAskFlora2ModuleName
+  Dim module_editor As FormFlora2Editor
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.Count += 1
+    module_editor = New FormFlora2Editor(FMain.main_tabstrip)
+    module_editor.context = " - Flora2 Module"
+    FMain.main_tabstrip.Text = module_name & " - Flora2 Module"
+  Endif
+End

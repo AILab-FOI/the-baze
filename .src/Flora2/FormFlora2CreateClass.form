@@ -1,0 +1,104 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,88,71)
+  Arrangement = Arrange.Fill
+  { MenuClassViewMain Menu
+    Text = ("Class view main menu")
+    Visible = False
+    { MenuDeleteAttribute Menu
+      Text = ("Delete attribute")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
+  { VSplitMain VSplit
+    MoveScaled(0,0,91,67)
+    { VBoxDesign VBox
+      MoveScaled(2,3,69,23)
+      { PanelToolBox Panel
+        MoveScaled(1,1,67,5)
+        { ToolButtonExecute ToolButton
+          MoveScaled(0,0,5,4)
+          ToolTip = ("Create table")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonCancel ToolButton
+          MoveScaled(5,0,5,4)
+          ToolTip = ("Cancel")
+          Picture = Picture["icon:/32/halt"]
+        }
+      }
+      { TableViewMain TableView
+        MoveScaled(0,7,68,15)
+        Expand = True
+        Mode = Select.Single
+        ShowCursor = True
+      }
+    }
+    { PanelMethods Panel
+      MoveScaled(2,27,69,27)
+      { LabelMethodName Label
+        MoveScaled(2,1,14,3)
+        Text = ("Method name:")
+      }
+      { TextBoxMethodName TextBox
+        MoveScaled(2,4,15,4)
+      }
+      { ListBoxMethods ListBox
+        MoveScaled(2,9,15,16)
+      }
+      { ToolButtonAdd ToolButton
+        MoveScaled(18,18,4,4)
+        Picture = Picture["icon:/16/add"]
+      }
+      { ToolButtonRemove ToolButton
+        MoveScaled(18,22,4,4)
+        Picture = Picture["icon:/16/remove"]
+      }
+      { ComboBoxReturnValue ComboBox
+        MoveScaled(18,4,15,4)
+        Enabled = False
+        ReadOnly = True
+        Sorted = True
+      }
+      { LabelReturnValue Label
+        MoveScaled(18,1,14,3)
+        Text = ("Return value:")
+      }
+      { ListBoxArguments ListBox
+        MoveScaled(42,9,15,16)
+        Enabled = False
+      }
+      { LabelArguments Label
+        MoveScaled(42,1,14,3)
+        Text = ("Arguments:")
+      }
+      { ComboBoxArguments ComboBox
+        MoveScaled(42,4,15,4)
+        Enabled = False
+        ReadOnly = True
+        Sorted = True
+      }
+      { ToolButtonAddArgument ToolButton
+        MoveScaled(57,9,4,4)
+        Enabled = False
+        Picture = Picture["icon:/16/add"]
+      }
+      { ToolButtonRemoveArgument ToolButton
+        MoveScaled(57,13,4,4)
+        Enabled = False
+        Picture = Picture["icon:/16/remove"]
+      }
+      { LabelMethodType Label
+        MoveScaled(18,9,14,3.125)
+        Text = ("Method type:")
+      }
+      { ComboBoxMethodType ComboBox
+        MoveScaled(18,12,15,4)
+        Enabled = False
+        ReadOnly = True
+        Sorted = True
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+' Gambas class file
+
+Public flora2_literals As Editor
+Public flora2_query As Editor
+Public insert_rb As RadioButton
+Public insertall_rb As RadioButton
+Public trans_chk As CheckBox
+
+Public Sub _new()
+  ' make controls public
+  flora2_literals = EditorFlora2Literals
+  flora2_query = EditorFlora2Query
+  insert_rb = RadioButtonInsert
+  insertall_rb = RadioButtonInsertAll
+  trans_chk = CheckBoxTransactional
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  Dim insop As String
+  If RadioButtonInsert.Value Then
+    insop = "insert"
+  Else
+    insop = "insertall"
+  Endif
+  If CheckBoxTransactional.Value Then
+    insop = "t_" & insop
+  Endif
+  With FMain.db
+    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+      Return
+    Endif
+    .refresh_db_tree(True)
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new module and load it
+  Dim insop As String
+  If RadioButtonInsert.Value Then
+    insop = "insert"
+  Else
+    insop = "insertall"
+  Endif
+  If CheckBoxTransactional.Value Then
+    insop = "t_" & insop
+  Endif
+  With FMain.db
+    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+      Return
+    Endif
+    .refresh_db_tree(True)
+  End With
+End

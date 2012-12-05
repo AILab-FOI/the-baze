@@ -1,0 +1,40 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,69,33)
+  Arrangement = Arrange.Fill
+  { VBox1 VBox
+    MoveScaled(0,0,67,31)
+    { PanelToolbar Panel
+      MoveScaled(0,1,61,5)
+      Arrangement = Arrange.Row
+      AutoResize = True
+      { ToolButtonExecute ToolButton
+        MoveScaled(1,0,5,4)
+        ToolTip = ("Compile & load")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make"]
+      }
+      { ToolButtonClose ToolButton
+        MoveScaled(6,0,5,4)
+        ToolTip = ("Compile, load & close")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make-all"]
+      }
+      { CheckBoxAtBeggining CheckBox
+        MoveScaled(18,1,20,4)
+        Text = ("Insert as first rule")
+      }
+      { CheckBoxDontLoadOnStartup CheckBox
+        MoveScaled(38,1,22,4)
+        Text = ("Don't load on startup")
+        Value = CheckBox.True
+      }
+    }
+    { EditorFlora2 Editor
+      MoveScaled(0,6,61,24)
+      Mouse = Mouse.Text
+      Expand = True
+    }
+  }
+}

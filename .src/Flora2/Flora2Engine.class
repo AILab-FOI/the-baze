@@ -1,0 +1,243 @@
+' Gambas class file
+
+Export
+
+Public flora2_home As String
+Public flora2_command As String
+Public result As String
+Public resultsArray As Object[]
+Public success As Boolean
+Private proc As Process
+Private buff_size As Integer
+
+
+Public Sub _new(Optional home As String = "/usr/bin/flora2", Optional params As String = "--nobanner --quietload --noprompt 2>&1")
+  flora2_home = home  
+  buff_size = -20000 'TODO: should be an argument that will be increased dynamically if queries get big!
+  flora2_command = home & " " & params
+  proc = Shell flora2_command For Read Write
+  Write #proc, "[persistentmodules>>pm].\n"
+  Read #proc, result, buff_size
+End
+
+Private Function renameDontCare(query As String) As String
+  ' rename don't care variables
+  Dim re As Regexp
+  Dim counter As Integer
+  Dim result_ As String
+  
+  counter = 0
+  result_ = ""
+  
+  re = New Regexp(query, "(^|[^_A-Za-z0-9])([\\?][_])[^_A-Za-z0-9]")
+  Do While re.offset >= 0 And query <> ""
+    result_ = result_ & Left(query, re.SubMatches[2].Offset) & "?_Gambas_Don_T_Care_Variable_" & Str(counter)
+    counter += 1
+    If Len(query) > Len(re.SubMatches[2].text) Then
+      query = Mid(query, re.SubMatches[2].offset + Len(re.SubMatches[2].text) + 1)
+    Else 
+      result_ = result_ & query
+      query = ""
+    End If
+    If query <> "" Then re.exec(query)
+    If Not (re.offset >= 0) Then result_ = result_ & query
+  Loop 
+  If result_ = "" Then result_ = query
+  Return result_
+End
+
+
+Private Function removeDups(listArray As String[]) As String[]
+  ' remove duplicate entries in the list
+  Dim i, j As String
+  Dim hasDup As Boolean
+  Dim list As New String[]
+  
+  For Each i In listArray
+    For Each j In list
+      If i = j Then 
+        hasDup = True
+      Endif 
+    Next 
+    If Not hasDup Then 
+      list.push(i)
+    Endif 
+    hasDup = False
+  Next 
+  
+  Return list
+End
+
+Public Sub load(module As String, Optional into As String)
+  ' load a given module, if into is supplied load the module into it
+  Dim cmd As String
+  If into Then
+    cmd = "['" & module & "'>>'" & into & "']."
+  Else
+    cmd = "['" & module & "']."
+  Endif
+  execute(cmd)
+End
+
+
+Public Function execute(query As String, Optional allResults As Boolean = False, Optional distinct As Boolean = False) As Object[]
+  Dim i, oldResult, predicate As String
+  Dim allVars, vars, answers As String[]
+  Dim returnVars, returnResults, newRes, newReturn, newVars As New String[]
+  Dim k, dontcareCount As Integer
+  Dim results, c As Collection
+  Dim ad As Boolean
+  query = Trim$(query)
+  
+  If Right$(query, 1) <> "." Then
+    query &= "."
+  Endif
+  query = renameDontCare(query)
+  vars = XSBEngine.Findall(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9][a-zA-Z0-9_]*)", 2)
+  vars = removeDups(vars)
+  
+  allVars = XSBEngine.Findall(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9_]*)", 2)
+  dontcareCount = 0
+  For k = 0 To allVars.count - 1
+    If allVars[k] = "?_" Then 
+      allVars[k] = "?_" & Str(dontcareCount)
+      dontcareCount = dontcareCount + 1
+    Endif 
+  Next
+  allVars = removeDups(allVars)
+  
+  
+    
+  If allResults Then 
+    If vars.Count > 0 Then
+      If distinct Then 
+        predicate = "collectset"
+      Else 
+        predicate = "collectbag"
+      Endif 
+      predicate = "?Gambas_Flora2_Result_List_Variable = " & predicate & "{ ?_Gambas_Flora2_Result_Variable | ?_Gambas_Flora2_Result_Variable = result(["
+      For Each i In vars
+        predicate = predicate & "gambas_res( $$, " & i & ", $$), "
+      Next
+      If Right$(predicate, 1) <> "[" Then
+        predicate = Left(predicate, -2)
+      Endif
+  
+      predicate = predicate & "]), "
+      predicate = predicate & "( " & Left(query, -1) & " ) }."
+      query = predicate
+    Endif
+  Endif 
+  
+  oldResult = result
+  Print #proc, query & "\n"
+  Sleep 0.3
+  Read #proc, result, buff_size
+  Do While oldResult <> result And result <> "" And Lof(proc) > 0
+    oldResult = result
+    Sleep 0.1
+    Read #proc, result, buff_size
+  Loop 
+  If result = "" Then 
+    result = oldResult
+  Endif
+  answers = Split(result, "\n")
+  For Each i In answers
+    If Left(i, 7) = "++Error"
+      If XSBEngine.FindAll(i, "after insertfact").Count = 0 Then
+        success = False
+        Error.Raise(result)
+      Endif
+    Endif
+    If Left(i, 7) = "++Abort"
+      If XSBEngine.FindAll(i, "after insertfact").Count = 0 Then
+        success = False
+        Error.Raise(result)
+      Endif
+    Endif
+    If Left(i, 1) <> " " And Left(i, 9) <> "++Warning" Then 
+      Select Case i
+        Case "Yes"
+          success = True
+        Case "No"
+          success = False
+        Default 
+          If vars.count > 0 Then 
+            Try returnVars.push(XSBEngine.Findall(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
+            Try returnResults.push(XSBEngine.Findall(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
+          Endif 
+      End Select 
+    Endif 
+  Next 
+  
+  resultsArray = New Object[]
+  
+  If allResults Then 
+    For k = 0 To returnVars.count - 1
+      If returnVars[k] = "?Gambas_Flora2_Result_List_Variable" Then 
+        newRes = XSBEngine.Findall(returnResults[k], "result\\(\\[gambas_res\\(\\$\\$,(.+?),\\$\\$\\)\\]\\)", 1)
+        Break 
+      Endif 
+    Next 
+    For Each i In returnVars
+      If i <> "?Gambas_Flora2_Result_List_Variable"
+        newVars.push(i)
+      Endif 
+    Next 
+    returnVars = newVars
+    returnResults = New String[]
+    For Each i In newRes
+      i = Replace$(i, ",$$), gambas_res($$,", "$$$$$$$$$$$$$$$$$$$$")
+      newReturn = Split(i, "$", "", True)
+      results = New Collection
+      For k = 0 To returnVars.count - 1
+        results[Mid$(returnVars[k], 2)] = newReturn[k]
+      Next 
+      If distinct Then
+        ad = True
+        For Each c In resultsArray
+          If collection_comp(c, results) Then
+            ad = False
+          Endif
+        Next
+        If ad Then
+          resultsArray.Add(results)
+        Endif
+      Else
+        resultsArray.Add(results)
+      Endif
+    Next 
+  Else 
+    results = New Collection
+    For k = 0 To returnVars.count - 1
+      results[Mid$(returnVars[k], 2)] = returnResults[k]
+    Next   
+    resultsArray.Add(results)
+  Endif 
+  Return resultsArray
+End
+
+Public Sub collection_comp(c1 As Collection, c2 As Collection) As Boolean
+  ' compare two collections
+  Dim c As String
+  For Each c In c1
+    If Not c2.Exist(c1.Key) Then
+      Return False
+    Else
+      If c2[c1.Key] <> c Then
+        Return False
+      Endif
+    Endif
+  Next
+  Return True
+End
+
+
+
+Public Sub close()
+  ' stop XSB
+  Print #proc, "_halt.\n"
+  Close #proc
+End
+
+

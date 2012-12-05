@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public db As XSBDB
+Public db As DBaze
 Public done As Boolean
 Public silent As Boolean
 

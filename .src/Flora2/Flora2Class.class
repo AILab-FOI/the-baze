@@ -1,0 +1,140 @@
+' Gambas class file
+
+' class name
+Public name As String
+' array of attribute names
+Public attributes As New String[]
+' array of method types
+Public method_types As New String[]
+' array of attribute types
+Public attribute_types As New String[]
+' array of cardinality lower bounds
+Public lower_bounds As New String[]
+' array of cardinality upper bounds
+Public upper_bounds As New String[]
+' array of method names
+Public methods As New String[]
+' array of method argument types
+Public arguments As New String[][]
+' array of method types for methods
+Public method_types_m As New String[]
+' array of method return value types
+Public return_values As New String[]
+
+Public Sub toFMolecule() As String
+  ' return a F-molecule that can be inserted into the knowledge base
+  Dim i, j As Integer
+  Dim fmolecule As String
+  fmolecule = name
+  If attributes.Count > 0 Or methods.Count > 0 Then
+    fmolecule &= "["
+  Else
+    Return fmolecule
+  Endif
+  For i = 0 To attributes.Max
+    Select Case method_types[i]
+      Case "=> (non-inheritable)"
+        fmolecule &= attributes[i]
+        fmolecule &= "{"
+        fmolecule &= lower_bounds[i] & ":"
+        fmolecule &= upper_bounds[i] & "}"
+        fmolecule &= "=>"
+        fmolecule &= attribute_types[i]
+      Case "*=> (inheritable)"
+        fmolecule &= attributes[i]
+        fmolecule &= "{"
+        fmolecule &= lower_bounds[i] & ":"
+        fmolecule &= upper_bounds[i] & "}"
+        fmolecule &= "*=>"
+        fmolecule &= attribute_types[i]
+      Case "(boolean)"
+        fmolecule &= attributes[i]
+      Case "*(boolean inheritable)"
+        fmolecule &= "*"
+        fmolecule &= attributes[i]
+    End Select
+    fmolecule &= ","
+  Next
+  For i = 0 To methods.Max
+    Select Case method_types_m[i]
+      Case "=> (non-inheritable)"
+        fmolecule &= methods[i] & "("
+        For j = 0 To arguments[i].Max
+          fmolecule &= arguments[i][j] & ","
+        Next
+        If Right$(fmolecule, 1) <> "(" Then
+          fmolecule = Left$(fmolecule, -1) 
+        Endif
+        fmolecule &= ")"
+        fmolecule &= "=>"
+        fmolecule &= return_values[i]
+      Case "*=> (inheritable)"
+        fmolecule &= methods[i] & "("
+        For j = 0 To arguments[i].Max
+          fmolecule &= arguments[i][j] & ","
+        Next
+        If Right$(fmolecule, 1) <> "(" Then
+          fmolecule = Left$(fmolecule, -1) 
+        Endif
+        fmolecule &= ")"
+        fmolecule &= "*=>"
+        fmolecule &= return_values[i]
+      Case "(boolean)"
+        fmolecule &= methods[i] & "("
+        For j = 0 To arguments[i].Max
+          fmolecule &= arguments[i][j] & ","
+        Next
+        If Right$(fmolecule, 1) <> "(" Then
+          fmolecule = Left$(fmolecule, -1) 
+        Endif
+        fmolecule &= ")"
+      Case "*(boolean inheritable)"
+        fmolecule &= "*"
+        fmolecule &= methods[i] & "("
+        For j = 0 To arguments[i].Max
+          fmolecule &= arguments[i][j] & ","
+        Next
+        If Right$(fmolecule, 1) <> "(" Then
+          fmolecule = Left$(fmolecule, -1) 
+        Endif
+        fmolecule &= ")"
+    End Select
+    fmolecule &= ","
+  Next
+  fmolecule = Left$(fmolecule, -1) & "]"
+  Return fmolecule
+End
+
+Public Sub change_attribute(a_index As Integer, a_name As String, a_lower As String, a_upper As String, a_method_type As String, a_data_type As String)
+  ' create a new attribute or change an existing one
+  If attributes.Count = a_index Then
+    attributes.Add(a_name)
+    method_types.Add(a_method_type)
+    attribute_types.Add(a_data_type)
+    lower_bounds.Add(a_lower)
+    upper_bounds.Add(a_upper)
+  Else
+    attributes[a_index] = a_name
+    method_types[a_index] = a_method_type
+    attribute_types[a_index] = a_data_type
+    lower_bounds[a_index] = a_lower
+    upper_bounds[a_index] = a_upper
+  Endif
+End
+
+Public Sub change_method(m_index As Integer, m_name As String, m_arguments As String[], m_method_type As String, m_return_type As String)
+  ' create a new method or change an existing one
+  If methods.Count = m_index Then
+    methods.Add(m_name)
+    arguments.Add(m_arguments)
+    method_types_m.Add(m_method_type)
+    return_values.Add(m_return_type)
+  Else
+    methods[m_index] = m_name
+    arguments[m_index] = m_arguments
+    method_types_m[m_index] = m_method_type
+    return_values[m_index] = m_return_type
+  Endif
+End
+
+

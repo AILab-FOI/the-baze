@@ -1,0 +1,78 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Fill
+  { VBox1 VBox
+    MoveScaled(0,0,62,63)
+    { PanelToolbar Panel
+      MoveScaled(1,1,55,5)
+      Arrangement = Arrange.Row
+      AutoResize = True
+      { ToolButtonExecute ToolButton
+        MoveScaled(1,0,5,4)
+        ToolTip = ("Execute")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make"]
+      }
+      { ToolButtonClose ToolButton
+        MoveScaled(6,0,5,4)
+        ToolTip = ("Execute & close")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make-all"]
+      }
+    }
+    { Panel1 Panel
+      MoveScaled(1,7,55,9)
+      { Panel2 Panel
+        MoveScaled(1,1,28,8)
+        { RadioButtonInsert RadioButton
+          MoveScaled(1,1,21,3)
+          Text = ("Insert one")
+          Value = True
+        }
+        { RadioButtonInsertAll RadioButton
+          MoveScaled(1,5,21,3)
+          Text = ("Insert all")
+        }
+      }
+      { Panel3 Panel
+        MoveScaled(29,1,28,8)
+        { CheckBoxTransactional CheckBox
+          MoveScaled(2,0,22,5)
+          Text = ("Transactional update")
+        }
+      }
+    }
+    { HSplit1 HSplit
+      MoveScaled(1,17,60,38)
+      Expand = True
+      { Panel4 Panel
+        MoveScaled(1,2,29,34)
+        Arrangement = Arrange.Vertical
+        { LabelLiterals Label
+          MoveScaled(1,2,25,4)
+          Text = ("Literals")
+        }
+        { EditorFlora2Literals Editor
+          MoveScaled(1,7,27,26)
+          Mouse = Mouse.Text
+          Expand = True
+        }
+      }
+      { Panel5 Panel
+        MoveScaled(30,2,29,34)
+        Arrangement = Arrange.Vertical
+        { LabelQuery Label
+          MoveScaled(1,2,25,4)
+          Text = ("Query (optional)")
+        }
+        { EditorFlora2Query Editor
+          MoveScaled(1,7,27,26)
+          Mouse = Mouse.Text
+          Expand = True
+        }
+      }
+    }
+  }
+}

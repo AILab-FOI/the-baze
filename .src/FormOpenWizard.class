@@ -18,7 +18,7 @@ Public last_index As Integer
 Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
-  Dim xsb, save_shell As String
+  Dim xsb, flora2, save_shell As String
   stop_event = False
   last_index = 0
   ' set return value to canceled in case the user clicks the x button
@@ -33,6 +33,14 @@ Public Sub Form_Open()
   Shell "which xsb" To xsb 
   If xsb Then
     TextBoxXXSB.Text = Left$(xsb, -1)
+  Endif
+  Shell "which flora2" To flora2 
+  If flora2 Then
+    TextBoxfflora2.Text = Left$(flora2, -1)
+  Endif
+  Shell "which runflora" To flora2 
+  If flora2 Then
+    TextBoxfflora2.Text = Left$(flora2, -1)
   Endif
   System.Shell = save_shell
   setting = Settings["FormOpenWizard/first"]
@@ -147,12 +155,13 @@ Public Sub WizardIntro_Change()
               FMain.connection_settings["connection"] = db
               Me.Close
             Case "Flora2"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[3].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
+              FMain.connection_settings["dsn"] = ComboBoxfDSN.Text
+              FMain.connection_settings["username"] = TextBoxfUsername.Text
+              FMain.connection_settings["password"] = TextBoxfPassword.Text
+              FMain.connection_settings["flora2"] = TextBoxfflora2.Text
+              FMain.connection_settings["store password"] = CheckBoxfStoreP.Value
+              db = New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
+              FMain.connection_settings["connection"] = db
             Case "ZODB"
               Select Case ComboBoxZStorageType.Text
                 Case "Embedded"
@@ -440,6 +449,26 @@ End
 
 Public Sub ButtonETest_Click()
   Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
+  If db.connect() Then
+    Message.Info("Connection successful!")
+  Else
+    Message.Error("Error connecting to eXist server!")
+  Endif
+End
+
+Public Sub ToolButtonFindFlora2_Click()
+  ' find the Flora2 executable (runflora or flora2)
+  Dialog.Title = "Please find the Flora2 executable (runflora or flora2)"
+  Dialog.Filter = ["runflora", "Flora executable", "flora2", "Flora executable"]
+  If Dialog.OpenFile() Then
+    Return
+  Endif
+  TextBoxfflora2.Text = Dialog.Path
+End
+
+Public Sub ButtonfTest_Click()
+  ' try to connect to Flora2
+  Dim db As New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
   If db.connect() Then
     Message.Info("Connection successful!")
   Else

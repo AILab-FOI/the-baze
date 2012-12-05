@@ -1,0 +1,12 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,40,17)
+  Arrangement = Arrange.Column
+  { ToolButtonNewFlora2Query ToolButton
+    MoveScaled(3,3,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("New Flora2 Query")
+    Picture = Picture["icon:/32/find"]
+  }
+}

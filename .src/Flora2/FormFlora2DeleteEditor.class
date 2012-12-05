@@ -1,0 +1,83 @@
+' Gambas class file
+
+Public flora2_literals As Editor
+Public flora2_query As Editor
+Public delete_rb As RadioButton
+Public deleteall_rb As RadioButton
+Public erase_rb As RadioButton
+Public eraseall_rb As RadioButton
+Public trans_chk As CheckBox
+
+Public Sub _new()
+  ' make controls public
+  flora2_literals = EditorFlora2Literals
+  flora2_query = EditorFlora2Query
+  delete_rb = RadioButtonDelete
+  deleteall_rb = RadioButtonDeleteAll
+  erase_rb = RadioButtonErase
+  eraseall_rb = RadioButtonEraseAll
+  trans_chk = CheckBoxTransactional
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  Dim delop As String
+  If RadioButtonDelete.Value Then
+    delop = "delete"
+  Else
+    If RadioButtonDeleteAll.Value Then
+      delop = "deleteall"
+    Else
+      If RadioButtonErase.Value Then
+        delop = "erase"
+      Else
+        delop = "eraseall"
+      Endif
+    Endif
+    
+  Endif
+  If CheckBoxTransactional.Value Then
+    delop = "t_" & delop
+  Endif
+  With FMain.db
+    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+      Return
+    Endif
+    .refresh_db_tree(True)
+  End With
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create a new delete query and execute it
+  Dim delop As String
+  If RadioButtonDelete.Value Then
+    delop = "delete"
+  Else
+    If RadioButtonDeleteAll.Value Then
+      delop = "deleteall"
+    Else
+      If RadioButtonErase.Value Then
+        delop = "erase"
+      Else
+        delop = "eraseall"
+      Endif
+    Endif
+    
+  Endif
+  If CheckBoxTransactional.Value Then
+    delop = "t_" & delop
+  Endif
+  With FMain.db
+    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+      Return
+    Endif
+    .refresh_db_tree(True)
+  End With
+End

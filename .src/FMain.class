@@ -1,6 +1,6 @@
 ' Gambas class file
 
-'return value from intro wizard
+' return value from intro wizard
 ' can be canceled (if canceled), 
 ' new (if new file has to be created)
 ' a filename (if the file should be opened)
@@ -188,6 +188,14 @@ Public Sub TreeViewMain_Menu()
       MenuQuery.Popup()
     Case "PyMapReduce queries"
       MenuQuery.Popup()
+    Case "Insert rule queries"
+      MenuInsertRuleQuery.Popup()
+    Case "Delete rule queries"
+      MenuDeleteRuleQuery.Popup()
+    Case "Flora2 queries"
+      MenuFlora2Query.Popup()
+    Case "Modules"
+      MenuFlora2Modules.Popup()
     Default
       If Left$(TreeViewMain.Current.Key, 4) = "col_" Then
         MenuCollection.Popup()
@@ -356,9 +364,18 @@ Public Sub MenuUpdateData_Click()
 End
 
 Public Sub MenuDeleteQuery_Click()
-  ' drop the type
+  ' delete the query
   If Message.Question("Are you sure that you want to delete query " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
-    db.delete_query(TreeViewMain.Current.Text)
+    If db Is Flora2DB Then
+      Select Case TreeViewMain.Current.ParentKey
+        Case "Insert queries"
+          db.delete_query(TreeViewMain.Current.Text, "insert")
+        Case "Delete queries"
+          db.delete_query(TreeViewMain.Current.Text, "delete")
+      End Select
+    Else
+      db.delete_query(TreeViewMain.Current.Text)
+    Endif
     db.refresh_db_tree()
   Endif
 End
@@ -421,6 +438,39 @@ Public Sub MenuEditDocument_Click()
   main_tabstrip.Text = doc & " - XML Document"
 End
 
+Public Sub MenuDeleteInsertRuleQuery_Click()
+  ' delete the insert rule query
+  If Message.Question("Are you sure that you want to delete query " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    db.delete_query(TreeViewMain.Current.Text, "insert rule")
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuDeleteDeleteRuleQuery_Click()
+  ' delete the delete rule query
+  If Message.Question("Are you sure that you want to delete query " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    db.delete_query(TreeViewMain.Current.Text, "delete rule")
+    db.refresh_db_tree()
+  Endif
+End
+
+Public Sub MenuDeleteFlora2Query_Click()
+  ' delete the flora2 query
+  If Message.Question("Are you sure that you want to delete query " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    db.delete_query(TreeViewMain.Current.Text, "flora2")
+    db.refresh_db_tree()
+  Endif 
+End
+
+Public Sub MenuDeleteFlora2Modules_Click()
+  ' delete the flora2 module
+  db.delete_module(TreeViewMain.Current.Text)
+  If Message.Question("Are you sure that you want to delete module " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+     db.delete_module(TreeViewMain.Current.Text)
+    db.refresh_db_tree()
+  Endif 
+End
+
 Public Sub TreeViewMain_DblClick()
   ' on double click open the given object
   Dim tbl As String
@@ -435,19 +485,38 @@ Public Sub TreeViewMain_DblClick()
   Dim py_mani As FormZODBDataManipulationEditor
   Dim ex_edit As FormeXistXMLEditor
   Dim ex_mani As FormXMLSplit
+  Dim fl_edit As FormFlora2Split
+  Dim fl_insert As FormFlora2InsertEditor
+  Dim fl_delete As FormFlora2DeleteEditor
+  Dim fl_mod As FormFlora2Editor
   If TreeViewMain.Current.ParentKey = "Modules" Then
-    For i = 0 To TabStripMain.Count - 1
-      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Python Module" Then 
-        FMain.main_tabstrip.Index = i
-        Return
-      Endif
-    Next
-    TabStripMain.Count += 1
-    TabStripMain.Index = TabStripMain.count - 1
-    py_edit = New FormZODBPythonEditor(TabStripMain)
-    py_edit.pyeditor.Text = db.dbobjects["modules"][TreeViewMain.Current.Text]
-    py_edit.context = " - Python Module"
-    TabStripMain.Text = TreeViewMain.Current.Text & " - Python Module"
+    If db Is ZODB Then
+      For i = 0 To TabStripMain.Count - 1
+        If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Python Module" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      TabStripMain.Count += 1
+      TabStripMain.Index = TabStripMain.count - 1
+      py_edit = New FormZODBPythonEditor(TabStripMain)
+      py_edit.pyeditor.Text = db.dbobjects["modules"][TreeViewMain.Current.Text]
+      py_edit.context = " - Python Module"
+      TabStripMain.Text = TreeViewMain.Current.Text & " - Python Module"
+    Else
+      For i = 0 To TabStripMain.Count - 1
+        If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Flora2 Module" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      TabStripMain.Count += 1
+      TabStripMain.Index = TabStripMain.count - 1
+      fl_mod = New FormFlora2Editor(TabStripMain)
+      fl_mod.flora2_editor.Text = db.dbobjects["flora2 modules"][TreeViewMain.Current.Text]
+      fl_mod.context = " - Flora2 Module"
+      TabStripMain.Text = TreeViewMain.Current.Text & " - Flora2 Module"
+    Endif
   Endif
   If TreeViewMain.Current.ParentKey = "Class definitions" Then
     For i = 0 To TabStripMain.Count - 1
@@ -547,8 +616,28 @@ Public Sub TreeViewMain_DblClick()
         ex_edit.query_type = "insert"
         ex_edit.xml_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
       Else
-        sql_view = New FormSQLSplit(TabStripMain)
-        sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+        If db Is Flora2DB Then
+          fl_insert = New FormFlora2InsertEditor(TabStripMain)
+          fl_insert.flora2_literals.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_literals"]
+          fl_insert.flora2_query.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_query"]
+          Select Case db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_insop"]
+            Case "insert"
+              fl_insert.insert_rb.Value = True
+              fl_insert.trans_chk.Value = False
+            Case "insertall"
+              fl_insert.insertall_rb.Value = True
+              fl_insert.trans_chk.Value = False
+            Case "t_insert"
+              fl_insert.insert_rb.Value = True
+              fl_insert.trans_chk.Value = True
+            Case "t_insertall"
+              fl_insert.insertall_rb.Value = True
+              fl_insert.trans_chk.Value = True
+          End Select
+        Else
+          sql_view = New FormSQLSplit(TabStripMain)
+          sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+        Endif
       Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Insert query"
@@ -572,8 +661,40 @@ Public Sub TreeViewMain_DblClick()
         ex_edit.query_type = "delete"
         ex_edit.xml_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
       Else
-       sql_view = New FormSQLSplit(TabStripMain)
-       sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+        If db Is Flora2DB Then
+          fl_delete = New FormFlora2DeleteEditor(TabStripMain)
+          fl_delete.flora2_literals.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_literals"]
+          fl_delete.flora2_query.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_query"]
+          Select Case db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_delop"]
+            Case "delete"
+              fl_delete.delete_rb.Value = True
+              fl_delete.trans_chk.Value = False
+            Case "deleteall"
+              fl_delete.deleteall_rb.Value = True
+              fl_delete.trans_chk.Value = False
+            Case "t_delete"
+              fl_delete.delete_rb.Value = True
+              fl_delete.trans_chk.Value = True
+            Case "t_deleteall"
+              fl_delete.deleteall_rb.Value = True
+              fl_delete.trans_chk.Value = True
+            Case "erase"
+              fl_delete.erase_rb.Value = True
+              fl_delete.trans_chk.Value = False
+            Case "eraseall"
+              fl_delete.eraseall_rb.Value = True
+              fl_delete.trans_chk.Value = False
+            Case "t_erase"
+              fl_delete.erase_rb.Value = True
+              fl_delete.trans_chk.Value = True
+            Case "t_eraseall"
+              fl_delete.eraseall_rb.Value = True
+              fl_delete.trans_chk.Value = True
+          End Select
+        Else
+          sql_view = New FormSQLSplit(TabStripMain)
+          sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+        Endif
       Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Delete query"
@@ -673,6 +794,56 @@ Public Sub TreeViewMain_DblClick()
   Endif
   If Left$(TreeViewMain.Current.Key, 4) = "doc_" Then
     MenuEditDocument_Click()
+  Endif
+  If TreeViewMain.Current.ParentKey = "Flora2 queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Flora2 query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    fl_edit = New FormFlora2Split(TabStripMain)
+    fl_edit.flora2_editor.Text = db.dbobjects["queries"]["flora2 queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Flora2 query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Insert rule queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Insert rule query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    fl_mod = New FormFlora2Editor(TabStripMain)
+    fl_mod.context = " - Insert rule query"
+    fl_mod.flora2_editor.Text = db.dbobjects["queries"]["insert rule queries"][TreeViewMain.Current.Key & "_rule"]
+    If db.dbobjects["queries"]["insert rule queries"][TreeViewMain.Current.Key & "_where"] Then
+      fl_mod.first_chk.Value = True
+    Endif
+    If db.dbobjects["queries"]["insert rule queries"][TreeViewMain.Current.Key & "_load"] Then
+      fl_mod.load_chk.Value = True
+    Endif
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Insert rule query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Delete rule queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Delete rule query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    fl_mod = New FormFlora2Editor(TabStripMain)
+    fl_mod.context = " - Delete rule query"
+    fl_mod.flora2_editor.Text = db.dbobjects["queries"]["delete rule queries"][TreeViewMain.Current.Key & "_rule"]
+    If db.dbobjects["queries"]["insert rule queries"][TreeViewMain.Current.Key & "_where"] Then
+      fl_mod.first_chk.Value = True
+    Endif
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Delete rule query"
   Endif
 End
 

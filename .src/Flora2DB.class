@@ -2,8 +2,14 @@
 
 Inherits DBaze
 
+' data source name of unixODBC
 Public dsn As String
+' path to flora2 executable
 Public flora2 As String
+' flora2 engine
+Public con As Flora2Engine
+' unique key
+Public key As Integer
 
 Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_password_ As Boolean, flora2_ As String)
   Me.dsn = dsn_
@@ -19,4 +25,308 @@ Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_
   If Me.store_password Then
     Me.connection_settings["password"] = password_
   Endif
+End
+
+Public Sub connect() As Boolean
+  ' connect to Flora2 and initialize the ODBC connection
+  con = New Flora2Engine(Me.flora2)
+  Try con.execute("main[%attach(" & Me.dsn & ",?_," & Me.username & "," & Me.password & ")]@pm.")
+  If Error Then
+    Message.Error(Error.Text)
+  Endif
+  Return con.success
+End
+
+Public Sub close()
+  ' close the connection to flora2
+  con.close()  
+End
+
+Public Sub query(query_ As String, Optional distinct As Boolean = False) As Collection[]
+  ' execute the query and return the results
+  Dim result As Collection[]
+  result = con.execute(query_, True, distinct)
+  Return result
+End
+
+Public Sub initialize_gui()
+  ' initialize the GUI for PostgreSQL database
+  Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormFlora2DataDefinition
+  Dim data_manipulation As FormFlora2DataManipulation
+  Dim data_querying As FormFlora2DataQuerying
+  
+  ' create a dummy tab 
+  FMain.main_tabstrip.Text = "Flora-2 database - " & Me.connection_settings["dsn"] 
+  
+  documentation.UserAgent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+  documentation.Frame.Url = "https://docs.google.com/viewer?a=v&q=cache:x7rywmuuPpgJ:flora.sourceforge.net/docs/floraManual.pdf+&hl=en&pid=bl&srcid=ADGEESgGSG2LA6mpE62OBoIjTXEPbA8NxQsmVCu0bgxhEm0HfruMGXJeRuDZmEiUufB_A1PKZG-6NWxhQhnx119Qsw0Cai9_WrZ1FsfxiJnPiIlDn2oXqltxkSQnFS9wQ1IBnbeY1-IQ&sig=AHIEtbTBRhT9Emlo51CacVlqJcEiHzfcqw&toolbar=hide&embedded=true" '"http://flora.sourceforge.net/documentation.php"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree(True)
+  
+  ' create the tool panel
+  data_definition = New FormFlora2DataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormFlora2DataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormFlora2DataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+End
+
+Public Sub get_unique_key() As String
+  ' return a unique key
+  If Not key Then
+    key = 0
+  Endif
+  key += 1
+  Return Str(key)
+End
+
+Public Sub get_db_objects() As Collection
+  ' get the class definitions
+  Dim results As Collection[]
+  Dim classes As New Collection
+  Dim res As Collection
+  results = query("( ?class::?_ ; ?_::?class ; ?_:?class ; ?class[ ?_ => ?_ ] ; ?class[ ?_ *=> ?_ ] ), ?class \\= (?_; ?_), ?_s = [ _long, _integer, _double, _decimal, _float, _string, _symbol, _object, _iri, _time, _date, _dateTime, _duration, _list ], not( member( ?class, ?_s )@_plg(lists) ).", True)
+  classes["classes"] = New String[]
+  For Each res In results
+    classes["classes"].Add(res["class"])
+  Next
+  Return classes
+End
+
+Public Sub construct_object_tree(parent As String, tree As TreeView) As Collection
+  ' query the knowledge base for the class hierarchy and return it in form of a collection
+  Dim objects As Collection[]
+  Dim obj, results As Collection
+  Dim res As String
+  results = get_db_objects()
+  For Each res In results["classes"]
+    tree.Add("cla_" & res, res, Picture.Load("directory.png"), parent)
+    objects = query("?o:" & res)
+    For Each obj In objects
+      tree.Add("obj_" & get_unique_key() & "_" & obj["o"], obj["o"], Picture.Load("class.png"), "cla_" & res)
+    Next
+  Next
+  Return results
+End
+
+
+Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
+  ' refresh the main tree view
+  Dim o, temp_file, aux As String
+  FMain.main_treeview.Clear
+  
+  FMain.main_treeview.Add("Classes", "Classes", Picture.Load("directory.png"))
+  construct_object_tree("Classes", FMain.main_treeview)
+  
+  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("directory.png"))
+  For Each o In Me.dbobjects["flora2 modules"]
+    FMain.main_treeview.Add("mod_" & Me.dbobjects["flora2 modules"].key, Me.dbobjects["flora2 modules"].key, Picture.Load("module.png"), "Modules")
+    If load_modules Then
+      temp_file = Me.temporary_folder & "/" & Me.dbobjects["flora2 modules"].key & ".flr"
+      File.Save(temp_file, Me.dbobjects["flora2 modules"][Me.dbobjects["flora2 modules"].key])
+      Try con.load(temp_file, Me.dbobjects["flora2 modules"].key)
+      If Error Then
+        Message.Error(Error.Text)
+        Return
+      Endif
+    Endif
+  Next
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      aux = Me.dbobjects["queries"]["insert queries"].key
+      If Right$(aux, 6) <> "_insop" And Right$(aux, 9) <> "_literals" And Right$(aux, 6) <> "_query" Then
+        .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+      Endif
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      aux = Me.dbobjects["queries"]["delete queries"].key
+      If Right$(aux, 6) <> "_delop" And Right$(aux, 9) <> "_literals" And Right$(aux, 6) <> "_query" Then
+        .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+      Endif
+    Next
+    .Add("Insert rule queries", "Insert rule queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert rule queries"]
+      aux = Me.dbobjects["queries"]["insert rule queries"].key
+      If Right$(aux, 5) <> "_rule" And Right$(aux, 6) <> "_where" And Right$(aux, 5) <> "_load" Then
+        .Add(Me.dbobjects["queries"]["insert rule queries"].key, Me.dbobjects["queries"]["insert rule queries"].key, Picture.Load("query.png"), "Insert rule queries")
+        If load_modules And Me.dbobjects["queries"]["insert rule queries"][Me.dbobjects["queries"]["insert rule queries"].key & "_load"] = "yes" Then
+          Try con.execute(o)
+          If Error Then
+            Print "Error executing insert rule query " & Me.dbobjects["queries"]["insert rule queries"].key
+            Print Error.Text
+          Endif
+        Endif
+      Endif
+    Next
+    .Add("Delete rule queries", "Delete rule queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete rule queries"]
+      aux = Me.dbobjects["queries"]["delete rule queries"].key
+      If Right$(aux, 5) <> "_rule" And Right$(aux, 6) <> "_where" Then
+        .Add(Me.dbobjects["queries"]["delete rule queries"].key, Me.dbobjects["queries"]["delete rule queries"].key, Picture.Load("query.png"), "Delete rule queries")
+      Endif
+    Next
+    .Add("Flora2 queries", "Flora2 queries", Picture.Load("directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["flora2 queries"]
+      .Add(Me.dbobjects["queries"]["flora2 queries"].key, Me.dbobjects["queries"]["flora2 queries"].key, Picture.Load("query.png"), "Flora2 queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add("frm_" & o, o, Picture.Load("query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add("scr_" & o, o, Picture.Load("query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add("rep_" & o, o, Picture.Load("query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub new_flora2_query(ttitle As String, tquery As String)
+  ' create new flora2 query and store it in dbobjects
+  Me.dbobjects["queries"]["flora2 queries"][ttitle] = tquery
+  Me.Save()
+End
+
+Public Sub new_insert_query(title As String, insop As String, literals As String, Optional query_ As String) As Boolean
+  ' create a new flora2 query and store it in dbobjects
+  Dim q As String
+  q = insop & "{" & literals
+  If query_ Then
+    q &= "|" & query_
+  Endif
+  q &= "}"
+  Me.dbobjects["queries"]["insert queries"][title] = q
+  Me.dbobjects["queries"]["insert queries"][title & "_insop"] = insop
+  Me.dbobjects["queries"]["insert queries"][title & "_literals"] = literals
+  Me.dbobjects["queries"]["insert queries"][title & "_query"] = query_  
+  Me.Save()
+  If Not literals And Not query_ Then
+    Return True
+  Endif
+  Try con.execute(q)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+End
+
+Public Sub new_delete_query(title As String, delop As String, literals As String, Optional query_ As String) As Boolean
+  ' create a new flora2 query and store it in dbobjects
+  Dim q As String
+  q = delop & "{" & literals
+  If query_ Then
+    q &= "|" & query_
+  Endif
+  q &= "}"
+  Me.dbobjects["queries"]["delete queries"][title] = q
+  Me.dbobjects["queries"]["delete queries"][title & "_delop"] = delop
+  Me.dbobjects["queries"]["delete queries"][title & "_literals"] = literals
+  Me.dbobjects["queries"]["delete queries"][title & "_query"] = query_  
+  Me.Save()
+  If Not literals And Not query_ Then
+    Return True
+  Endif
+  Try con.execute(q)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+End
+
+Public Sub new_insert_rule_query(title As String, rule As String, Optional where As String = "", Optional dontLoad As Boolean) As Boolean
+  ' create a new insert rule query and store it in dbobjects
+  Dim q As String
+  q = "insertrule" & where & "{" & rule & "}"
+  Me.dbobjects["queries"]["insert rule queries"][title] = q
+  Me.dbobjects["queries"]["insert rule queries"][title & "_rule"] = rule
+  Me.dbobjects["queries"]["insert rule queries"][title & "_where"] = where
+  If dontLoad Then
+    Me.dbobjects["queries"]["insert rule queries"][title & "_load"] = "no"
+  Else
+    Me.dbobjects["queries"]["insert rule queries"][title & "_load"] = "yes"
+  Endif
+  
+  Me.Save()
+  If Not rule Then
+    Return True
+  Endif
+  Try con.execute(q)
+  Print con.result
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+End
+
+Public Sub new_delete_rule_query(title As String, rule As String, Optional where As String = "") As Boolean
+  ' create a new delete rule query and store it in dbobjects
+  Dim q As String
+  q = "deleterule" & where & "{" & rule & "}"
+  Me.dbobjects["queries"]["delete rule queries"][title] = q
+  Me.dbobjects["queries"]["delete rule queries"][title & "_rule"] = rule
+  Me.dbobjects["queries"]["delete rule queries"][title & "_where"] = where
+  Me.Save()
+  If Not rule Then
+    Return True
+  Endif
+  Try con.execute(q)
+  Print con.result
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+End
+
+Public Sub new_module(title As String, code As String) As Boolean
+  ' create new flora2 module and store it in dbobjects
+  Dim temp_file As String
+  Me.dbobjects["flora2 modules"][title] = code
+  Me.Save()
+  temp_file = Me.temporary_folder & "/" & title & ".flr"
+  File.Save(temp_file, code)
+  Try con.load(temp_file, title)
+  If Error Then
+    Message.Error(Error.Text)
+    Return False
+  Endif
+  Return True
+End
+
+Public Sub delete_query(name As String, type As String)
+  ' delete a given query of given type
+  Me.dbobjects["queries"][type & " queries"][name] = Null
+  Select Case type
+    Case "insert rule"
+      Me.dbobjects["queries"][type & " queries"][name & "_rule"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_where"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_load"] = Null
+    Case "delete rule"
+      Me.dbobjects["queries"][type & " queries"][name & "_rule"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_where"] = Null
+    Case "insert"
+      Me.dbobjects["queries"][type & " queries"][name & "_insop"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_literals"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_query"] = Null
+    Case "delete"
+      Me.dbobjects["queries"][type & " queries"][name & "_delop"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_literals"] = Null
+      Me.dbobjects["queries"][type & " queries"][name & "_query"] = Null      
+  End Select
 End
