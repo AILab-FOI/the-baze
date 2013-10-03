@@ -472,6 +472,16 @@ Public Sub ButtonfTest_Click()
   If db.connect() Then
     Message.Info("Connection successful!")
   Else
-    Message.Error("Error connecting to eXist server!")
+    Message.Error("Error connecting to Flora2 database!")
+  Endif
+End
+
+Public Sub ButtonCTest_Click()
+  ' try to connect to couch db
+  Dim db As New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
+  If db.connect() Then
+    Message.Info("Connection successful!")
+  Else
+    Message.Error("Error connecting to CouchDB!")
   Endif
 End

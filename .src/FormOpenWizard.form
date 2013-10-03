@@ -430,7 +430,7 @@
       }
       { TextBoxCPort TextBox
         MoveScaled(23,17,7,4)
-        Text = ("80")
+        Text = ("5984")
       }
       { TextBoxCUsername TextBox
         MoveScaled(23,24,19,4)

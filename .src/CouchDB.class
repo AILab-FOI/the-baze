@@ -4,6 +4,8 @@ Inherits DBaze
 
 Public host As String
 Public port As String
+' couch connection (cURL object)
+Public con As New HttpClient
 
 Public Sub _new(host_ As String, port_ As String, username_ As String, password_ As String, store_password_ As Boolean)
   Me.host = host_
@@ -20,4 +22,45 @@ Public Sub _new(host_ As String, port_ As String, username_ As String, password_
     Me.connection_settings["password"] = password_
   Endif
 End
+
+Public Sub connect(Optional caller As Object = Null) As Boolean
+  ' connect to the couch and see if authentication works
+  Dim res As String
+  Dim js As JSON
+  con.Auth = Net.AuthBasic
+  con.URL = Me.host & ":" & Me.port
+  con.User = Me.username
+  con.Password = Me.password
+  con.Async = False
+  con.Timeout = 60
+  con.Get
+  If con.Status < 0 Then
+    Return False
+  Else
+    For Each res In con.Headers
+      If res = "Content-Length: 0" Or res = "HTTP/1.1 401 Unauthorized" Then
+        Message.Error(res)
+        Return False
+      Endif
+    Next
+    If Lof(con) Then res = Read #con, Lof(con)
+    js = New JSON
+    If js.Decode(res)["couchdb"] = "Welcome" Then
+      con.URL = Me.host & ":" & Me.port & "/Gambas_Test_DB_From_Baze"
+      con.Put("application/json", "{\"test\":\"from gambas\"}") 'WTF: Here it dies!
+      ' If con.Status < 0 Then
+      '   Return False
+      ' Else
+      '   If Lof(con) Then res = Read #con, Lof(con)
+      '   Print res
+      '   'js.Decode(res)
+      ' Endif
+    Else
+      Message.Error("Authentication failure!")
+      Return False
+    Endif
+    Return True
+  Endif
+End
+
 

@@ -27,7 +27,7 @@ Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_
   Endif
 End
 
-Public Sub connect() As Boolean
+Public Sub connect(Optional caller As Object = Null) As Boolean
   ' connect to Flora2 and initialize the ODBC connection
   con = New Flora2Engine(Me.flora2)
   Try con.execute("main[%attach(" & Me.dsn & ",?_," & Me.username & "," & Me.password & ")]@pm.")

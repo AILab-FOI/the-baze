@@ -9,20 +9,25 @@ Public Sub _new()
   data_table = DataBrowserMain
 End
 
-Public Sub VSplitMain_Resize()
-  ' arange the table view and the toolbox
-  VSplitMain.Height = Me.Height
-  PanelToolBox.Width = VSplitMain.Width
-  DataBrowserMain.Width = VSplitMain.Width
-  DataBrowserMain.Height = VSplitMain.Children[0].Height - PanelToolBox.Height
-End
-
 
 Public Sub Form_Open()
-  ' arrange the VSplit
-  VSplitMain.Layout = [2, 0]
-
+  ' arrange the Panel
+  PanelDataTable.Height = Me.Height
+  PanelToolBox.Width = PanelDataTable.Width
+  DataBrowserMain.Width = PanelDataTable.Width
+  PanelDataTable.Height = PanelDataTable.Height
+  DataBrowserMain.Height = PanelDataTable.Height - PanelToolBox.Height
 End
+
+Public Sub form_Resize()
+  ' arrange the Panel
+  PanelDataTable.Height = Me.Height
+  PanelToolBox.Width = PanelDataTable.Width
+  DataBrowserMain.Width = PanelDataTable.Width
+  PanelDataTable.Height = PanelDataTable.Height
+  DataBrowserMain.Height = PanelDataTable.Height - PanelToolBox.Height
+End
+
 
 Public Sub ToolButtonClose_Click()
   ' close the current tab

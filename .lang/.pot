@@ -193,7 +193,7 @@ msgstr ""
 #: FormPostgreSQLCreateFunction.form:64 FormPostgreSQLCreateIndex.form:57
 #: FormPostgreSQLCreateSequence.form:111 FormPostgreSQLCreateTable.form:87
 #: FormPostgreSQLCreateTrigger.form:106 FormPostgreSQLCreateType.form:40
-#: FormPostgreSQLCreateView.form:48 FormPostgreSQLEditTableData.form:34
+#: FormPostgreSQLCreateView.form:48 FormPostgreSQLEditTableData.form:29
 #: FormPostgreSQLGetReference.form:48 FormPostgreSQLGetTable.form:30
 #: FormPostgreSQLGetTableAttribute.form:43 FormRenameTable.form:28
 #: FormeXistCreateDocument.form:51
@@ -632,7 +632,7 @@ msgid "Connection settings - CouchDB"
 msgstr ""
 
 #: FormOpenWizard.form:644
-msgid "80"
+msgid "5984"
 msgstr ""
 
 #: FormOpenWizard.form:658

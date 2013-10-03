@@ -120,7 +120,6 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
   
 End
 
-
 Public Sub initialize_gui()
   ' initialize the GUI for PostgreSQL database
   Dim documentation As New WebView(FMain.main_tabstrip)
@@ -135,7 +134,8 @@ Public Sub initialize_gui()
     FMain.main_tabstrip.Text = "ZODB - " & Me.connection_settings["host"] & ":" & Me.connection_settings["port"]
   Endif
   
-  documentation.Frame.Url = "http://www.zodb.org/documentation/guide/index.html"
+  documentation.Frame.Url = "http://www.zodb.org/en/latest/documentation/guide/index.html"
+ 
   
   ' create the treeview
   ' first get objects from the database

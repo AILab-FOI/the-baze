@@ -27,7 +27,7 @@ Public Sub _new(host_ As String, port_ As String, dbname_ As String, username_ A
   Endif 
 End
 
-Public Sub connect() As Boolean
+Public Sub connect(Optional caller As Object = Null) As Boolean
   ' connect to the database
   With con
     .Type = "postgresql"
@@ -253,7 +253,11 @@ Public Function rewrite_query(query As String) As String
   Dim rfield As ResultField
   Dim with_string As String
   Dim i As Integer
+  query = Replace(query, "\n", " ")
   has_asterisk = XSBEngine.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
+  ' FIXME: This is not a good solution, since queries like SELECT a.a, b.a FROM a, b still give wrong solutions
+  ' the SELECT clause has to be parsed for possible same entries (e.g. "a" in the above example) and then rewritten
+  ' with a WITH clause as for SELECT * queries
   If has_asterisk.Count > 0 Then
     query_copy = query
     defined_limit = XSBEngine.FindAll(query, "(?i)(limit +[0-9]+)", 1)

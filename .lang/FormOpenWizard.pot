@@ -207,7 +207,7 @@ msgid "Connection settings - CouchDB"
 msgstr ""
 
 #: FormOpenWizard.form:644
-msgid "80"
+msgid "5984"
 msgstr ""
 
 #: FormOpenWizard.form:658

@@ -321,3 +321,11 @@ Public Sub delete_query(query As String, Optional type As String)
     Next
   Next
 End
+
+Public Sub connect(Optional caller As Object = Null) As Boolean
+  ' Connect to database
+  ' NOP / Must be overriden in child class
+  
+  
+End
+

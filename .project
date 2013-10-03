@@ -1,9 +1,9 @@
 # Gambas Project File 3.0
-# Compiled with Gambas 3.3.3
+# Compiled with Gambas 3.4.0
 Title=Baze Database Environment
 Startup=FMain
 Icon=majin_buu.jpg
-Version=0.5.4
+Version=0.5.5
 Component=gb.image
 Component=gb.qt4
 Component=gb.form

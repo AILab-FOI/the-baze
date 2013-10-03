@@ -164,9 +164,21 @@ Public Sub TableViewMain_Save(row As Integer, col As Integer, value As String)
       TableViewMain.Row = save_row
       TableViewMain.Column = save_col
       TableViewMain[row, col].Text = value
-      Try ListBoxUnique[row].Text = value
-      If Error Then ListBoxUnique.Add(value)
-      Try ListBoxPrimaryKey[row].Text = value
+      
+      If ListBoxUnique.List.Count = row Then
+        ListBoxUnique.Add(value)
+      Else
+        ListBoxUnique[row].Text = value
+        ListBoxAdded.Clear()
+      Endif
+      
+      If ListBoxPrimaryKey.List.Count = row Then
+        ListBoxPrimaryKey.Add(value)
+      Else
+        ListBoxPrimaryKey[row].Text = value
+      Endif
+        
+      Try ListBoxPrimaryKey.List[row] = value
       If Error Then ListBoxPrimaryKey.Add(value)
     Else
       TableViewMain[row, col].Text = value

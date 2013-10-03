@@ -7,29 +7,23 @@
     MoveScaled(0,1,60,67)
     #Public = True
     Expand = True
-    Arrangement = Arrange.Vertical
-    { VSplitMain VSplit
-      MoveScaled(1,6,57,59)
-      { PanelDataTable Panel
-        MoveScaled(1,3,54,34)
-        Arrangement = Arrange.Vertical
-        { PanelToolBox Panel
-          MoveScaled(4,1,46,5)
-          Arrangement = Arrange.Horizontal
-          { ToolButtonClose ToolButton
-            MoveScaled(0,0,5,4)
-            ToolTip = ("Cancel")
-            Picture = Picture["icon:/32/close"]
-          }
-        }
-        { DataBrowserMain DataBrowser
-          MoveScaled(3,7,48,25)
-          Editable = True
-          Grid = True
+    Arrangement = Arrange.Fill
+    { PanelDataTable Panel
+      MoveScaled(2,6,54,54)
+      Arrangement = Arrange.Vertical
+      { PanelToolBox Panel
+        MoveScaled(4,1,46,5)
+        Arrangement = Arrange.Horizontal
+        { ToolButtonClose ToolButton
+          MoveScaled(0,0,5,4)
+          ToolTip = ("Cancel")
+          Picture = Picture["icon:/32/close"]
         }
       }
-      { PanelDataEntry Panel
-        MoveScaled(1,37,53,20)
+      { DataBrowserMain DataBrowser
+        MoveScaled(2,10,51,43)
+        Editable = True
+        Grid = True
       }
     }
   }

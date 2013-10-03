@@ -239,11 +239,14 @@ Geometry=[68,40,240,240]
 [DebugWindow/formulae]
 Geometry=[301,24,240,240]
 
+[DebugWindow/has_asterisk]
+Geometry=[65,24,240,240]
+
 [DebugWindow/hproc]
 Geometry=[59,24,240,240]
 
 [DebugWindow/matches]
-Geometry=[59,314,442,240]
+Geometry=[65,314,442,240]
 
 [DebugWindow/newRes]
 Geometry=[59,24,1053,240]
@@ -576,7 +579,7 @@ Geometry=[59,24,240,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/re]
-Geometry=[59,24,240,240]
+Geometry=[65,24,240,240]
 
 [DebugWindow/re.SubMatches]
 Geometry=[68,40,240,240]
@@ -870,17 +873,18 @@ File[2]=".src/FormOpenWizard.class:163.58"
 File[3]=".src/Shared/FormOpenFile.form"
 File[4]=".src/Shared/FormOpenFile.class:4.0"
 File[5]=".src/DBaze.class:314.6"
-File[6]=".src/CouchDB.class:19.50"
+File[6]=".src/CouchDB.class:19.48"
 File[7]=".src/XSB/FormFindXSB.form"
 File[8]=".src/Shared/FormAskPasword.form"
 File[9]=".src/XSB/FormFindXSB.class:21.0"
 File[10]=".src/XSBDB.class:295.16"
-File[11]=".src/XSB/XSBEngine.class:156.8"
+File[11]=".src/XSB/XSBEngine.class:33.8"
 File[12]=".src/XSB/DatalogConnection.class:156.11"
 File[13]=".src/ZODBFileStorage.class:15.32"
 File[14]=".src/Shared/FormSQLSplit.form"
 File[15]=".src/Shared/FormSQLSplit.class:110.0"
-File[16]=".src/PostgreSQLDB.class:231.10"
+Active=16
+File[16]=".src/PostgreSQLDB.class:263.33"
 File[17]=".src/PostgreSQL/FormPostgreSQLDataDefinition.form"
 File[18]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
 File[19]=".src/PostgreSQL/FormPostgreSQLDataQuerying.form"
@@ -974,7 +978,7 @@ File[106]=".src/SQLiteDBEmbedded.class:7.3"
 File[107]=".src/SQLiteDB.class:7.21"
 File[108]=".src/ZODB/ZODBEngine.class:169.21"
 File[109]=".src/Flora2DB.class:93.99"
-File[110]=".src/eXistDB.class:281.8"
+File[110]=".src/eXistDB.class:78.20"
 File[111]=".src/ZODB/FormZODBDataDefinition.form"
 File[112]=".src/ZODB/FormZODBDataManipulation.form"
 File[113]=".src/ZODB/FormZODBDataManipulation.class:58.0"
@@ -1006,12 +1010,12 @@ File[138]=".src/eXist/FormAskCollectionPath.form"
 File[139]=".src/eXist/FormAskCollectionPath.class:7.55"
 File[140]=".src/eXist/FormeXistXMLEditor.form"
 File[141]=".src/eXist/FormeXistXMLEditor.class:102.0"
-File[142]=".src/eXist/FormeXistDataManipulation.class:122.0"
+File[142]=".src/eXist/FormeXistDataManipulation.class:8.2"
 File[143]=".src/eXist/FormXMLSplit.form"
 File[144]=".src/eXist/FormXMLSplit.class:35.36"
 File[145]=".src/eXist/FormAskQueryWithPathName.form"
 File[146]=".src/eXist/FormAskQueryWithPathName.class:39.6"
-File[147]=".src/Flora2/Flora2Engine.class:153.23"
+File[147]=".src/Flora2/Flora2Engine.class:0.0"
 File[148]=".src/Flora2/FormFlora2DataDefinition.form"
 File[149]=".src/Flora2/FormFlora2DataDefinition.class:20.54"
 File[150]=".src/Flora2/FormFlora2DataManipulation.form"
@@ -1029,7 +1033,6 @@ File[161]=".src/Flora2/FormFlora2Editor.class:46.21"
 File[162]=".src/Flora2/FormAskFlora2ModuleName.form"
 File[163]=".src/Flora2/FormAskFlora2ModuleName.class:30.0"
 File[164]=".src/Flora2/FormFlora2CreateClass.form"
-Active=165
 File[165]=".src/Flora2/FormFlora2CreateClass.class:44.28"
 File[166]=".src/Flora2/Flora2Class.class:46.8"
 Count=166
