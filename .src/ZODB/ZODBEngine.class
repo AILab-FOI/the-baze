@@ -100,7 +100,7 @@ Public Sub load_modules()
   If Not read() = ">>> " Then
     Error.Raise("Couldn't load sys\n\n" & result)
   Endif
-  execute("from jsonpickle import Pickler\nimport json\nclass BazePickler( Pickler ):\n\tdef _mkref(self, obj):\n\t\tif self.unpicklable is False:\n\t\t\treturn True\n\t\tobjid = id(obj)\n\t\tif objid not in self._objs:\n\t\t\tnew_id = len(self._objs)\n\t\t\tself._objs[objid] = new_id\n\t\t\ttry: \n\t\t\t\tnot self.baze_objects\n\t\t\texcept:\n\t\t\t\tself.baze_objects = {}\n\t\t\tself.baze_objects[ new_id ] = obj\n\t\t\treturn True\n\t\treturn False\n\npicklers = []\n\ndef baze_encode( value, unpicklable=True, max_depth=None ):\n\tb = BazePickler( unpicklable=unpicklable, max_depth=max_depth )\n\tpicklers.append( b )\n\treturn json.dumps( b.flatten( value ) )\n")
+  execute("from jsonpickle.pickler import Pickler\nimport json\nclass BazePickler( Pickler ):\n\tdef _mkref(self, obj):\n\t\tif self.unpicklable is False:\n\t\t\treturn True\n\t\tobjid = id(obj)\n\t\tif objid not in self._objs:\n\t\t\tnew_id = len(self._objs)\n\t\t\tself._objs[objid] = new_id\n\t\t\ttry: \n\t\t\t\tnot self.baze_objects\n\t\t\texcept:\n\t\t\t\tself.baze_objects = {}\n\t\t\tself.baze_objects[ new_id ] = obj\n\t\t\treturn True\n\t\treturn False\n\npicklers = []\n\ndef baze_encode( value, unpicklable=True, max_depth=None ):\n\tb = BazePickler( unpicklable=unpicklable, max_depth=max_depth )\n\tpicklers.append( b )\n\treturn json.dumps( b.flatten( value ) )\n")
 End
 
 Public Sub read() As String

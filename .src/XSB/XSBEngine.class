@@ -32,12 +32,13 @@ Private buff_size As Integer
 Static Public Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
         Dim re As Regexp
         Dim matches As New String[]
-        re = New Regexp(subj, pattern)
-        Do While re.offset >= 0 And subj <> ""
+        If subj <> "" Then
+          re = New Regexp(subj, pattern)
+          Do While re.offset >= 0 And subj <> ""
                 If submatchindex = 0 Then 
                         matches.push(re.Text)
                 Else
-                        matches.push(re.SubMatches[submatchindex].Text)
+                        matches.push(re[submatchindex].Text)
                 End If
                 If Len(subj) > Len(re.text) Then
                         subj = Mid(subj, re.offset + Len(re.text) + 1)
@@ -45,7 +46,8 @@ Static Public Function FindAll(subj As String, pattern As String, Optional subma
                         subj = ""       
                 End If
                 If subj <> "" Then re.exec(subj)
-        Loop
+          Loop
+        Endif
         Return matches
 End
 
