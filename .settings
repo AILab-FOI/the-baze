@@ -860,6 +860,9 @@ Geometry=[95,88,691,487]
 [DebugWindow/wtf["exist:collection"][0]["exist:collection"][1]]
 Geometry=[95,88,691,487]
 
+[Executable]
+Path="/home/dv5/Downloads/the-baze.gambas"
+
 [FFind]
 SearchIn="Module"
 CaseSensitive=False

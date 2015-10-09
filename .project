@@ -1,13 +1,13 @@
 # Gambas Project File 3.0
-# Compiled with Gambas 3.5.4
+# Compiled with Gambas 3.8.2
 Title=Baze Database Environment
 Startup=FMain
 Icon=majin_buu.jpg
-Version=0.5.6
-Component=gb.db
+Version=0.5.7
 Component=gb.image
 Component=gb.qt4
 Component=gb.form
+Component=gb.db
 Component=gb.db.form
 Component=gb.db.postgresql
 Component=gb.db.sqlite3
@@ -27,5 +27,4 @@ Authors="Markus Schatten <markus_dot_schatten_at_foi_dot_hr>"
 TabSize=2
 Translate=1
 Language=en_US
-ExecPath=/home/markus/myPackages/thebaze/the-baze.gambas
 Packager=1

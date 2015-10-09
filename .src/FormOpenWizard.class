@@ -29,7 +29,7 @@ Public Sub Form_Open()
   hasrecent = True
   dbtype = ""
   save_shell = System.Shell
-  System.Shell = "bash"
+  System.Shell = "/bin/bash"
   Shell "which xsb" To xsb 
   If xsb Then
     TextBoxXXSB.Text = Left$(xsb, -1)
