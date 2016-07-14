@@ -1,22 +1,22 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,41,20)
+  MoveScaled(0,0,38.5714,18.5714)
   Text = ("New query")
   Resizable = False
   { LabelQueryName Label
-    MoveScaled(3,3,30,4)
+    MoveScaled(2,2,30,4)
     Text = ("Please enter a name for the query:")
   }
   { TextBoxQueryName TextBox
-    MoveScaled(3,8,35,4)
+    MoveScaled(2,7,35,4)
   }
   { ButtonOK Button
-    MoveScaled(27,14,11,4)
+    MoveScaled(26,13,11,4)
     Text = ("OK")
   }
   { ButtonCancel Button
-    MoveScaled(14,14,11,4)
+    MoveScaled(13,13,11,4)
     Text = ("Cancel")
   }
 }

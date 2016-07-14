@@ -1,3 +1,42 @@
+#DESEngine
+
+C
+des_home
+V
+s
+
+des_command
+V
+s
+
+result
+v
+s
+
+resultsArray
+v
+Object[]
+
+success
+v
+b
+
+load
+m
+
+(module)s
+execute
+m
+Object[]
+(query)s[(allResults)b(distinct)b]
+close
+m
+
+
+_new
+m
+
+
 #DatalogConnection
 
 C
@@ -119,10 +158,6 @@ success
 v
 b
 
-FindAll
-M
-String[]
-(subj)s(pattern)s[(submatchindex)i]
 load
 m
 

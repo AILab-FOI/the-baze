@@ -1,0 +1,26 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,38.5714,18)
+  { LabelScriptName Label
+    MoveScaled(1,1,38,4)
+    Text = ("Please enter a name and type for the script:")
+  }
+  { TextBoxScriptName TextBox
+    MoveScaled(1,6,23,4)
+  }
+  { ButtonOK Button
+    MoveScaled(26,12,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(13,12,11,4)
+    Text = ("Cancel")
+  }
+  { ComboBoxScriptType ComboBox
+    MoveScaled(25,6,12,4)
+    ReadOnly = True
+    List = [("Python"), ("R"), ("NodeJS")]
+    Text = ("Python")
+  }
+}

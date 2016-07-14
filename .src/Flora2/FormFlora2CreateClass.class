@@ -19,8 +19,8 @@ Public Sub Form_Open()
   main_table_view = TableViewMain
   flclass = New Flora2Class
   flclass.name = Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - Len(" - Class"))
-  datatypes = ["_long", "_integer", "_double", "_decimal", "_float", "_string", "_symbol", "_object", "_iri", "_time", "_date", "_dateTime", "_duration", "_list"]
-  methodtypes = ["=> (non-inheritable)", "*=> (inheritable)", "(boolean)", "*(boolean inheritable)"]
+  datatypes = ["\\long", "\\integer", "\\double", "\\decimal", "\\string", "\\symbol", "\\object", "\\iri", "\\time", "\\date", "\\dateTime", "\\duration", "\\list", "\\charlist"]
+  methodtypes = ["-> (behavioral inheritance)", "=> (structural inheritance)", "(behavioral boolean)", "=>(structural boolean)"]
   For Each user_type In FMain.db.get_db_objects()["classes"]
     datatypes.Push(user_type)
   Next
@@ -69,10 +69,10 @@ Public Sub TableViewMain_Click()
           TableViewMain[.Row, 2].text = "*"
         Endif
         If TableViewMain[.Row, 3].text = "" Then
-          TableViewMain[.Row, 3].text = "=> (non-inheritable)"
+          TableViewMain[.Row, 3].text = "=> (structural inheritance)"
         Endif
         If TableViewMain[.Row, 4].text = "" Then
-          TableViewMain[.Row, 4].text = "_string"
+          TableViewMain[.Row, 4].text = "\\string"
         Endif
       Endif
       If .Column = 3 Then

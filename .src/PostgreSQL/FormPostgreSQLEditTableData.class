@@ -39,3 +39,4 @@ Public Sub ToolButtonClose_Click()
     .Delete
   End With
 End
+

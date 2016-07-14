@@ -199,8 +199,8 @@
     }
     Index = 0
   }
-  { EditorCode Editor
+  { TextEditorCode TextEditor
     MoveScaled(1,38,79,32)
-    Highlight = Highlight.SQL
+    Highlight = "SQL"
   }
 }

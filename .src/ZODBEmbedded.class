@@ -20,10 +20,13 @@ End
 
 Public Sub query(query_ As String) As Variant
   ' execute a query and return the results
+  Dim result As Variant
   If Not Me.engine.is_open Then
     Try Me.engine.close()
     Me.engine.connect()
   Endif
-  Return Me.engine.query(query_)  
+  
+  result = Me.engine.query(query_)    
+  Return result
 End
 

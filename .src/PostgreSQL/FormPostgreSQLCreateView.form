@@ -51,7 +51,7 @@
           Value = CheckBox.True
         }
       }
-      { EditorViewQuery Editor
+      { TextEditorViewQuery TextEditor
         MoveScaled(2,21,65,19)
         Enabled = False
         Expand = True

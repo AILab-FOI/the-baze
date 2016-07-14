@@ -1,583 +1,716 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  #project.pot (the-baze 3.8.2)  #-#-#-#-#\n"
-"Project-Id-Version: the-baze 3.8.2\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"#-#-#-#-#  #project.pot (the-baze 3.8.90)  #-#-#-#-#\n"
+"Project-Id-Version: the-baze 3.8.90\n"
+"POT-Creation-Date: 2016-07-13 14:34 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  AUX.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  CouchDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  DBaze.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-21 23:29 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  DESEngine.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  DatalogConnection.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FMain.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-15 20:00 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FileObserver.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-13 22:36 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  Flora2Class.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  Flora2DB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-15 23:01 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  Flora2Engine.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-15 23:01 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskClassName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskCollectionPath.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskDatalogModuleName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskDocumentName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskEnumName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskFlora2ModuleName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormAskFormName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskFunctionName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskIndexName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskPasword.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskPythonModuleName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskQueryName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskQueryWithPathName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormAskRuleName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormAskScriptName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskSequenceName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskTableName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskTriggerName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskTypeName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormAskViewName.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormDatalogRule.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormDatalogSplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFindXSB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFindZODBFileStorage.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2CreateClass.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2DataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2DataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2DataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2DeleteEditor.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2Editor.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2InsertEditor.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormFlora2Split.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormFormDesigner.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormODBCDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormODBCDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormODBCDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormOpenFile.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormOpenWizard.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-21 22:42 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPleaseWait.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLAlterTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLChooseTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateEnum.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateFunction.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateIndex.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateSequence.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateTrigger.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateType.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLCreateView.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-"
 "#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataTypeOptionsFP.pot ($(PACKAGE) $(VERSION))  #-#-"
 "#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataTypeOptionsMinimal.pot ($(PACKAGE) $(VERSION))  "
 "#-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataTypeOptionsN.pot ($(PACKAGE) $(VERSION))  #-#-#-"
 "#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataTypeOptionsP.pot ($(PACKAGE) $(VERSION))  #-#-#-"
 "#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLDataTypeOptionsPS.pot ($(PACKAGE) $(VERSION))  #-#-"
 "#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLEditTableData.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLGetReference.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
 "#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLGetTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLGetTableAttribute.pot ($(PACKAGE) $(VERSION))  #-#-"
 "#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPostgreSQLQueryResult.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormPyMapReduceSplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-14 14:43 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormQBESplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormRenameTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormSQLSplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormSQLiteAlterTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormSQLiteCreateTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormSQLiteDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormSQLiteDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-"
+"#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormSQLiteDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  FormScriptSplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-17 22:30 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormXMLSplit.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:29 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormXSBCreateModule.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormXSBDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormXSBDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormXSBDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormZODBDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormZODBDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormZODBDataManipulationEditor.pot ($(PACKAGE) $(VERSION))  #-#-#-"
 "#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormZODBDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormZODBPythonEditor.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormeXistCreateDocument.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:29 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormeXistDataDefinition.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-15 20:27 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormeXistDataManipulation.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:29 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormeXistDataQuerying.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:29 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  FormeXistXMLEditor.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:29 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  MongoDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-21 23:34 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  MongoEngine.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-07-13 14:16 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  ODBCDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  PostgreSQLDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-18 08:45 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  PostgreSQLTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  PostgreSQLUserType.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  RelationalDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-17 22:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  SQLiteDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  SQLiteDBEmbedded.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  SQLiteTable.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
+"Project-Id-Version: $(PACKAGE) $(VERSION)\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  XSBDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  XSBEngine.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  ZODB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-14 22:13 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  ZODBClientStorage.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  ZODBEmbedded.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-14 22:26 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  ZODBEngine.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-14 22:30 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  ZODBFileStorage.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-12 23:24 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "#-#-#-#-#  eXistDB.pot ($(PACKAGE) $(VERSION))  #-#-#-#-#\n"
 "Project-Id-Version: $(PACKAGE) $(VERSION)\n"
-"POT-Creation-Date: 2015-10-09 16:40 UTC\n"
+"POT-Creation-Date: 2016-06-16 20:16 UTC\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -586,151 +719,171 @@ msgstr ""
 msgid "Baze Database Environment"
 msgstr ""
 
-#: FMain.form:52
-msgid "Table menu"
+#: .project:2
+msgid ""
+"The Baze is a database development environment similar to MS Access, "
+"LibreOffice Base or Query Anaylzer. It supports a number of SQL and NoSQL "
+"databases (ODBC, PostgreSQL, SQLite; eXist DB, XSB, Flora-2, ZODB, DES) and "
+"support for other systems is pending."
+msgstr ""
+
+#: FMain.form:51
+msgid "The-Baze - Database development environment"
 msgstr ""
 
 #: FMain.form:56
+msgid "Table menu"
+msgstr ""
+
+#: FMain.form:60
 msgid "Update data"
 msgstr ""
 
-#: FMain.form:61
+#: FMain.form:65
 msgid "Alter table"
 msgstr ""
 
-#: FMain.form:66
+#: FMain.form:70
 msgid "Drop table"
 msgstr ""
 
-#: FMain.form:72
+#: FMain.form:76
 msgid "View menu"
 msgstr ""
 
-#: FMain.form:76
+#: FMain.form:80
 msgid "Drop view"
 msgstr ""
 
-#: FMain.form:82
+#: FMain.form:86
 msgid "Index menu"
 msgstr ""
 
-#: FMain.form:86
+#: FMain.form:90
 msgid "Drop index"
 msgstr ""
 
-#: FMain.form:92
+#: FMain.form:96
 msgid "Function menu"
 msgstr ""
 
-#: FMain.form:96
+#: FMain.form:100
 msgid "Drop function"
 msgstr ""
 
-#: FMain.form:102
+#: FMain.form:106
 msgid "Trigger menu"
 msgstr ""
 
-#: FMain.form:106
+#: FMain.form:110
 msgid "Drop trigger"
 msgstr ""
 
-#: FMain.form:112
+#: FMain.form:116
 msgid "Sequence menu"
 msgstr ""
 
-#: FMain.form:116
+#: FMain.form:120
 msgid "Drop sequence"
 msgstr ""
 
-#: FMain.form:122
+#: FMain.form:126
 msgid "Type menu"
 msgstr ""
 
-#: FMain.form:126
+#: FMain.form:130
 msgid "Drop type"
 msgstr ""
 
-#: FMain.form:132
+#: FMain.form:136
 msgid "Query menu"
 msgstr ""
 
-#: FMain.form:136
+#: FMain.form:140
 msgid "Delete query"
 msgstr ""
 
-#: FMain.form:142
+#: FMain.form:146
 msgid "Datalog modules menu"
 msgstr ""
 
-#: FMain.form:146
+#: FMain.form:150
 msgid "Delete module"
 msgstr ""
 
-#: FMain.form:152
-msgid "Collection menu"
-msgstr ""
-
 #: FMain.form:156
-msgid "Delete collection"
+msgid "Datalog rules menu"
 msgstr ""
 
-#: FMain.form:162
-msgid "Document menu"
+#: FMain.form:160
+msgid "Delete Datalog rule"
 msgstr ""
 
 #: FMain.form:166
+msgid "Collection menu"
+msgstr ""
+
+#: FMain.form:170
+msgid "Delete collection"
+msgstr ""
+
+#: FMain.form:176
+msgid "Document menu"
+msgstr ""
+
+#: FMain.form:180
 msgid "Delete document"
 msgstr ""
 
-#: FMain.form:171
+#: FMain.form:185
 msgid "Edit document"
 msgstr ""
 
-#: FMain.form:177
+#: FMain.form:191
 msgid "Insert rule query menu"
 msgstr ""
 
-#: FMain.form:187
+#: FMain.form:201
 msgid "Delete rule query menu"
 msgstr ""
 
-#: FMain.form:197
+#: FMain.form:211
 msgid "Delete Flora2 query menu"
 msgstr ""
 
-#: FMain.form:207
+#: FMain.form:221
 msgid "Flora2 modules menu"
 msgstr ""
 
-#: FMain.form:226
+#: FMain.form:239
 msgid "Data definition"
 msgstr ""
 
-#: FMain.form:228
+#: FMain.form:241
 msgid "Data manipulation"
 msgstr ""
 
-#: FMain.form:230
+#: FMain.form:243
 msgid "Data querying"
 msgstr ""
 
-#: FMain.form:232
+#: FMain.form:245
 msgid "Application"
 msgstr ""
 
-#: FMain.form:237
+#: FMain.form:250
 msgid "New form"
 msgstr ""
 
-#: FMain.form:244
+#: FMain.form:257
 msgid "New script"
 msgstr ""
 
-#: FMain.form:251
+#: FMain.form:264
 msgid "New report"
 msgstr ""
 
-#: FMain.form:263
+#: FMain.form:284
 msgid "Tab 0"
 msgstr ""
 
@@ -741,23 +894,26 @@ msgstr ""
 #: FormAskClassName.form:24 FormAskCollectionPath.form:25
 #: FormAskDatalogModuleName.form:24 FormAskDocumentName.form:24
 #: FormAskEnumName.form:24 FormAskFlora2ModuleName.form:24
-#: FormAskFunctionName.form:24 FormAskIndexName.form:24 FormAskPasword.form:25
-#: FormAskPythonModuleName.form:23 FormAskQueryName.form:25
-#: FormAskQueryWithPathName.form:26 FormAskSequenceName.form:24
-#: FormAskTableName.form:24 FormAskTriggerName.form:24 FormAskTypeName.form:24
-#: FormAskViewName.form:24 FormFindXSB.form:23 FormFindZODBFileStorage.form:23
-#: FormOpenFile.form:18 FormPostgreSQLChooseTable.form:30
-#: FormPostgreSQLGetReference.form:43 FormPostgreSQLGetTable.form:25
-#: FormPostgreSQLGetTableAttribute.form:38 FormRenameTable.form:23
+#: FormAskFormName.form:24 FormAskFunctionName.form:24 FormAskIndexName.form:24
+#: FormAskPasword.form:25 FormAskPythonModuleName.form:23
+#: FormAskQueryName.form:25 FormAskQueryWithPathName.form:26
+#: FormAskRuleName.form:24 FormAskScriptName.form:24
+#: FormAskSequenceName.form:24 FormAskTableName.form:24
+#: FormAskTriggerName.form:24 FormAskTypeName.form:24 FormAskViewName.form:24
+#: FormFindXSB.form:23 FormFindZODBFileStorage.form:23 FormOpenFile.form:18
+#: FormPostgreSQLChooseTable.form:30 FormPostgreSQLGetReference.form:43
+#: FormPostgreSQLGetTable.form:25 FormPostgreSQLGetTableAttribute.form:38
+#: FormRenameTable.form:23
 msgid "OK"
 msgstr ""
 
 #: FormAskClassName.form:29 FormAskCollectionPath.form:30
 #: FormAskDatalogModuleName.form:29 FormAskDocumentName.form:29
 #: FormAskEnumName.form:29 FormAskFlora2ModuleName.form:29
-#: FormAskFunctionName.form:29 FormAskIndexName.form:29
+#: FormAskFormName.form:29 FormAskFunctionName.form:29 FormAskIndexName.form:29
 #: FormAskPythonModuleName.form:28 FormAskQueryName.form:30
-#: FormAskQueryWithPathName.form:31 FormAskSequenceName.form:29
+#: FormAskQueryWithPathName.form:31 FormAskRuleName.form:29
+#: FormAskScriptName.form:29 FormAskSequenceName.form:29
 #: FormAskTableName.form:29 FormAskTriggerName.form:29 FormAskTypeName.form:29
 #: FormAskViewName.form:29 FormFindXSB.form:18 FormFindZODBFileStorage.form:18
 #: FormFlora2CreateClass.form:59 FormOpenFile.form:23
@@ -768,7 +924,7 @@ msgstr ""
 #: FormPostgreSQLCreateView.form:48 FormPostgreSQLEditTableData.form:29
 #: FormPostgreSQLGetReference.form:48 FormPostgreSQLGetTable.form:30
 #: FormPostgreSQLGetTableAttribute.form:43 FormRenameTable.form:28
-#: FormeXistCreateDocument.form:51
+#: FormSQLiteCreateTable.form:75 FormeXistCreateDocument.form:51
 msgid "Cancel"
 msgstr ""
 
@@ -796,6 +952,10 @@ msgstr ""
 msgid "Please enter a name for the module:"
 msgstr ""
 
+#: FormAskFormName.form:15
+msgid "Please enter a name for the form:"
+msgstr ""
+
 #: FormAskFunctionName.form:15
 msgid "Please enter a name for the function:"
 msgstr ""
@@ -808,7 +968,7 @@ msgstr ""
 msgid "Please enter your password"
 msgstr ""
 
-#: FormAskPasword.form:15 FormOpenWizard.form:242
+#: FormAskPasword.form:15 FormOpenWizard.form:266
 msgid "Password"
 msgstr ""
 
@@ -822,6 +982,26 @@ msgstr ""
 
 #: FormAskQueryWithPathName.form:36
 msgid "Optionally add a path to query:"
+msgstr ""
+
+#: FormAskRuleName.form:15
+msgid "Please enter a name for the rule:"
+msgstr ""
+
+#: FormAskScriptName.form:15
+msgid "Please enter a name and type for the script:"
+msgstr ""
+
+#: FormAskScriptName.form:35
+msgid "Python"
+msgstr ""
+
+#: FormAskScriptName.form:35
+msgid "R"
+msgstr ""
+
+#: FormAskScriptName.form:35
+msgid "NodeJS"
 msgstr ""
 
 #: FormAskSequenceName.form:15
@@ -844,25 +1024,35 @@ msgstr ""
 msgid "Please enter a name for the view:"
 msgstr ""
 
-#: FormDatalogSplit.form:31 FormFlora2Split.form:31
+#: FormDatalogRule.form:31 FormDatalogSplit.form:31 FormFlora2Split.form:31
 #: FormPyMapReduceSplit.form:30 FormSQLSplit.form:30 FormXMLSplit.form:31
 #: FormeXistXMLEditor.form:28
 msgid "Execute query"
 msgstr ""
 
-#: FormDatalogSplit.form:32 FormFlora2DeleteEditor.form:39
-#: FormFlora2Editor.form:27 FormFlora2InsertEditor.form:37
-#: FormFlora2Split.form:32 FormPyMapReduceSplit.form:31 FormSQLSplit.form:31
+#: FormDatalogRule.form:32 FormDatalogSplit.form:32
+#: FormFlora2DeleteEditor.form:39 FormFlora2Editor.form:27
+#: FormFlora2InsertEditor.form:37 FormFlora2Split.form:32
+#: FormPyMapReduceSplit.form:31 FormSQLSplit.form:31 FormScriptSplit.form:32
 #: FormXMLSplit.form:32 FormXSBCreateModule.form:25
 #: FormZODBDataManipulationEditor.form:25 FormZODBPythonEditor.form:25
 #: FormeXistXMLEditor.form:29
 msgid "ToolButton1"
 msgstr ""
 
-#: FormDatalogSplit.form:38 FormFlora2Split.form:38
-#: FormPostgreSQLAlterTable.form:52 FormPyMapReduceSplit.form:37
-#: FormSQLSplit.form:37 FormXMLSplit.form:38 FormeXistXMLEditor.form:35
+#: FormDatalogRule.form:38 FormDatalogSplit.form:38 FormFlora2Split.form:38
+#: FormPostgreSQLAlterTable.form:63 FormPyMapReduceSplit.form:37
+#: FormSQLSplit.form:37 FormSQLiteAlterTable.form:52 FormScriptSplit.form:45
+#: FormXMLSplit.form:38 FormeXistXMLEditor.form:35
 msgid "Close"
+msgstr ""
+
+#: FormDatalogRule.form:54
+msgid "Add a rule to the knowledgebase:"
+msgstr ""
+
+#: FormDatalogRule.form:74
+msgid " :- "
 msgstr ""
 
 #: FormDatalogSplit.form:45 FormFlora2Split.form:45
@@ -893,9 +1083,10 @@ msgstr ""
 msgid "Delete attribute"
 msgstr ""
 
-#: FormFlora2CreateClass.form:53 FormPostgreSQLCreateTable.form:81
-#: FormPostgreSQLCreateType.form:34 FormPostgreSQLDataDefinition.form:20
-#: FormXSBDataDefinition.form:21
+#: FormFlora2CreateClass.form:53 FormODBCDataDefinition.form:22
+#: FormPostgreSQLCreateTable.form:81 FormPostgreSQLCreateType.form:34
+#: FormPostgreSQLDataDefinition.form:23 FormSQLiteCreateTable.form:69
+#: FormSQLiteDataDefinition.form:19 FormXSBDataDefinition.form:21
 msgid "Create table"
 msgstr ""
 
@@ -1007,6 +1198,123 @@ msgstr ""
 msgid "Insert all"
 msgstr ""
 
+#: FormFormDesigner.form:39
+msgid "Edit form"
+msgstr ""
+
+#: FormFormDesigner.form:45
+msgid "Preview form"
+msgstr ""
+
+#: FormFormDesigner.form:51
+msgid "Save form"
+msgstr ""
+
+#: FormFormDesigner.form:61
+msgid "Add button"
+msgstr ""
+
+#: FormFormDesigner.form:67
+msgid "Add textbox"
+msgstr ""
+
+#: FormFormDesigner.form:73
+msgid "Add textarea"
+msgstr ""
+
+#: FormFormDesigner.form:79
+msgid "Add combobox"
+msgstr ""
+
+#: FormFormDesigner.form:85
+msgid "Add header text"
+msgstr ""
+
+#: FormFormDesigner.form:91
+msgid "Add paragraph text"
+msgstr ""
+
+#: FormFormDesigner.form:97
+msgid "Add date picker"
+msgstr ""
+
+#: FormFormDesigner.form:103
+msgid "Add image"
+msgstr ""
+
+#: FormFormDesigner.form:109
+msgid "Add checkbox"
+msgstr ""
+
+#: FormFormDesigner.form:115
+msgid "Add radiobutton"
+msgstr ""
+
+#: FormFormDesigner.form:121
+msgid "Add custom HTML element"
+msgstr ""
+
+#: FormFormDesigner.form:127
+msgid "Add table"
+msgstr ""
+
+#: FormFormDesigner.form:133
+msgid "Add data source"
+msgstr ""
+
+#: FormODBCDataDefinition.form:15 FormPostgreSQLCreateView.form:42
+#: FormPostgreSQLDataDefinition.form:30 FormSQLiteDataDefinition.form:26
+#: FormXSBDataDefinition.form:28
+msgid "Create view"
+msgstr ""
+
+#: FormODBCDataDefinition.form:29 FormPostgreSQLDataDefinition.form:93
+#: FormSQLiteDataDefinition.form:61
+msgid "Create Datalog module"
+msgstr ""
+
+#: FormODBCDataDefinition.form:36 FormPostgreSQLDataDefinition.form:86
+#: FormSQLiteDataDefinition.form:54
+msgid "Create Datalog rule"
+msgstr ""
+
+#: FormODBCDataManipulation.form:15 FormPostgreSQLDataManipulation.form:16
+#: FormSQLiteDataManipulation.form:16 FormXSBDataManipulation.form:15
+msgid "Update table directly"
+msgstr ""
+
+#: FormODBCDataManipulation.form:22 FormPostgreSQLDataManipulation.form:23
+#: FormSQLiteDataManipulation.form:23
+msgid "Create update query"
+msgstr ""
+
+#: FormODBCDataManipulation.form:29 FormPostgreSQLDataManipulation.form:30
+#: FormSQLiteDataManipulation.form:30 FormXSBDataManipulation.form:22
+#: FormeXistDataManipulation.form:17
+msgid "Create insert query"
+msgstr ""
+
+#: FormODBCDataManipulation.form:36 FormPostgreSQLDataManipulation.form:37
+#: FormSQLiteDataManipulation.form:37 FormXSBDataManipulation.form:29
+#: FormeXistDataManipulation.form:38
+msgid "Create delete query"
+msgstr ""
+
+#: FormODBCDataQuerying.form:14 FormPostgreSQLDataQuerying.form:15
+#: FormSQLiteDataQuerying.form:15 FormXSBDataQuerying.form:21
+msgid "New SQL query"
+msgstr ""
+
+#: FormODBCDataQuerying.form:21 FormPostgreSQLDataQuerying.form:22
+#: FormSQLiteDataQuerying.form:22 FormXSBDataQuerying.form:14
+msgid "New Datalog query"
+msgstr ""
+
+#: FormODBCDataQuerying.form:28 FormPostgreSQLDataQuerying.form:29
+#: FormSQLiteDataQuerying.form:29
+msgid "New QBE query"
+msgstr ""
+
 #: FormOpenFile.form:13
 msgid "*.baze"
 msgstr ""
@@ -1015,271 +1323,347 @@ msgstr ""
 msgid "Baze file"
 msgstr ""
 
-#: FormOpenWizard.form:120
-msgid "Baze Database Environment - Connection Wizard"
+#: FormOpenWizard.form:144
+msgid "The-Baze Database development environment - Connection Wizard"
 msgstr ""
 
-#: FormOpenWizard.form:128
+#: FormOpenWizard.form:152
 msgid "Database connection wizard"
 msgstr ""
 
-#: FormOpenWizard.form:143
+#: FormOpenWizard.form:167
 msgid "New file database"
 msgstr ""
 
-#: FormOpenWizard.form:149
+#: FormOpenWizard.form:173
 msgid "Open database"
 msgstr ""
 
-#: FormOpenWizard.form:154
+#: FormOpenWizard.form:178
 msgid "Connect to existing database"
 msgstr ""
 
-#: FormOpenWizard.form:161
+#: FormOpenWizard.form:185
 msgid "SQLite"
 msgstr ""
 
-#: FormOpenWizard.form:161
+#: FormOpenWizard.form:185
 msgid "PostgreSQL"
 msgstr ""
 
-#: FormOpenWizard.form:161
-msgid "XSB"
-msgstr ""
-
-#: FormOpenWizard.form:161
-msgid "Flora2"
-msgstr ""
-
-#: FormOpenWizard.form:161
-msgid "ZODB"
-msgstr ""
-
-#: FormOpenWizard.form:161
-msgid "eXist"
-msgstr ""
-
-#: FormOpenWizard.form:161
-msgid "CouchDB"
-msgstr ""
-
-#: FormOpenWizard.form:162
-msgid "Choose ..."
-msgstr ""
-
-#: FormOpenWizard.form:168
-msgid "Database type"
+#: FormOpenWizard.form:185
+msgid "ODBC"
 msgstr ""
 
 #: FormOpenWizard.form:185
+msgid "XSB"
+msgstr ""
+
+#: FormOpenWizard.form:185
+msgid "Flora2"
+msgstr ""
+
+#: FormOpenWizard.form:185
+msgid "ZODB"
+msgstr ""
+
+#: FormOpenWizard.form:185
+msgid "eXist"
+msgstr ""
+
+#: FormOpenWizard.form:185
+msgid "CouchDB"
+msgstr ""
+
+#: FormOpenWizard.form:185
+msgid "MongoDB"
+msgstr ""
+
+#: FormOpenWizard.form:186
+msgid "Choose "
+msgstr ""
+
+#: FormOpenWizard.form:192
+msgid "Database type"
+msgstr ""
+
+#: FormOpenWizard.form:209
 msgid "Recent databases"
 msgstr ""
 
-#: FormOpenWizard.form:191
+#: FormOpenWizard.form:215
 msgid "Open other"
 msgstr ""
 
-#: FormOpenWizard.form:203
+#: FormOpenWizard.form:227
 msgid "SQLIte"
 msgstr ""
 
-#: FormOpenWizard.form:207
-msgid "Connection settings"
+#: FormOpenWizard.form:231
+msgid "Connection settings - PostgreSQL"
 msgstr ""
 
-#: FormOpenWizard.form:222
+#: FormOpenWizard.form:246
 msgid "Host"
 msgstr ""
 
-#: FormOpenWizard.form:227
+#: FormOpenWizard.form:251
 msgid "Port"
 msgstr ""
 
-#: FormOpenWizard.form:232
+#: FormOpenWizard.form:256
 msgid "Database name"
 msgstr ""
 
-#: FormOpenWizard.form:237
+#: FormOpenWizard.form:261
 msgid "Username"
 msgstr ""
 
-#: FormOpenWizard.form:247
+#: FormOpenWizard.form:271
 msgid "localhost"
 msgstr ""
 
-#: FormOpenWizard.form:252
+#: FormOpenWizard.form:276
 msgid "5432"
 msgstr ""
 
-#: FormOpenWizard.form:270
+#: FormOpenWizard.form:294
 msgid "Please enter the PostgreSQL connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:275
+#: FormOpenWizard.form:299
 msgid "Test settings"
 msgstr ""
 
-#: FormOpenWizard.form:280
+#: FormOpenWizard.form:304
 msgid "Store password"
 msgstr ""
 
-#: FormOpenWizard.form:284
+#: FormOpenWizard.form:308
 msgid "Connection settings - XSB"
 msgstr ""
 
-#: FormOpenWizard.form:299
+#: FormOpenWizard.form:323
 msgid "From /etc/odbc.ini"
 msgstr ""
 
-#: FormOpenWizard.form:300
+#: FormOpenWizard.form:324
 msgid "DSN"
 msgstr ""
 
-#: FormOpenWizard.form:324
+#: FormOpenWizard.form:348
 msgid "Please enter the XSB connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:334
+#: FormOpenWizard.form:358
 msgid "/usr/local/bin/xsb"
 msgstr ""
 
-#: FormOpenWizard.form:339
+#: FormOpenWizard.form:363
 msgid "Path to XSB executable"
 msgstr ""
 
-#: FormOpenWizard.form:358
+#: FormOpenWizard.form:382
 msgid "Connection settings - Flora2"
 msgstr ""
 
-#: FormOpenWizard.form:398
+#: FormOpenWizard.form:422
 msgid "Please enter the Flora2 connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:412
+#: FormOpenWizard.form:436
 msgid "Path to Flora2 executable"
 msgstr ""
 
-#: FormOpenWizard.form:431
+#: FormOpenWizard.form:455
 msgid "Connection settings - ZODB"
 msgstr ""
 
-#: FormOpenWizard.form:492
+#: FormOpenWizard.form:516
 msgid "Please enter the ZODB connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:508
+#: FormOpenWizard.form:532
 msgid "Database file"
 msgstr ""
 
-#: FormOpenWizard.form:526
+#: FormOpenWizard.form:550
 msgid "File storage"
 msgstr ""
 
-#: FormOpenWizard.form:526
+#: FormOpenWizard.form:550
 msgid "Client storage"
 msgstr ""
 
-#: FormOpenWizard.form:526
+#: FormOpenWizard.form:550
 msgid "Embedded"
 msgstr ""
 
-#: FormOpenWizard.form:532
+#: FormOpenWizard.form:556
 msgid "Storage type"
 msgstr ""
 
-#: FormOpenWizard.form:536
+#: FormOpenWizard.form:560
 msgid "Connection settings - eXist"
 msgstr ""
 
-#: FormOpenWizard.form:576
+#: FormOpenWizard.form:600
 msgid "8080"
 msgstr ""
 
-#: FormOpenWizard.form:590
+#: FormOpenWizard.form:614
 msgid "Please enter the eXist connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:604
+#: FormOpenWizard.form:628
 msgid "Connection settings - CouchDB"
 msgstr ""
 
-#: FormOpenWizard.form:644
+#: FormOpenWizard.form:668
 msgid "5984"
 msgstr ""
 
-#: FormOpenWizard.form:658
+#: FormOpenWizard.form:682
 msgid "Please enter the CouchDB connection data:"
 msgstr ""
 
-#: FormOpenWizard.form:672
+#: FormOpenWizard.form:696
 msgid "Connection settings - SQLite"
 msgstr ""
 
-#: FormOpenWizard.form:706
-msgid "Please enter the SQLite connection data:"
+#: FormOpenWizard.form:711
+msgid ""
+"Please enter the path to an SQLite database file\n"
+"or create a new one:"
+msgstr ""
+
+#: FormOpenWizard.form:716
+msgid "Test file"
+msgstr ""
+
+#: FormOpenWizard.form:721
+msgid "Locate existing DB file"
+msgstr ""
+
+#: FormOpenWizard.form:736
+msgid "Create new DB file"
+msgstr ""
+
+#: FormOpenWizard.form:741
+msgid "Connection settings - ODBC"
+msgstr ""
+
+#: FormOpenWizard.form:781
+msgid "Please enter the ODBC connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:800
+msgid "Connection settings - MongoDB"
+msgstr ""
+
+#: FormOpenWizard.form:815
+msgid "MongoDB host"
+msgstr ""
+
+#: FormOpenWizard.form:820
+msgid "MongoDB port"
+msgstr ""
+
+#: FormOpenWizard.form:840
+msgid "27017"
+msgstr ""
+
+#: FormOpenWizard.form:854
+msgid "Please enter the MongoDB connection data:"
+msgstr ""
+
+#: FormOpenWizard.form:874
+msgid "Sleepy Mongoose host"
+msgstr ""
+
+#: FormOpenWizard.form:879
+msgid "Sleepy Mongoose port"
+msgstr ""
+
+#: FormOpenWizard.form:884
+msgid "27080"
 msgstr ""
 
 #: FormPleaseWait.form:8
 msgid "Please wait while trying to connect ..."
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:71 FormPostgreSQLCreateTable.form:106
-#: FormPostgreSQLCreateType.form:54
+#: FormPostgreSQLAlterTable.form:44
+msgid "Menu Alter Table"
+msgstr ""
+
+#: FormPostgreSQLAlterTable.form:48
+msgid "Drop attribute"
+msgstr ""
+
+#: FormPostgreSQLAlterTable.form:82 FormPostgreSQLCreateTable.form:106
+#: FormPostgreSQLCreateType.form:54 FormSQLiteAlterTable.form:71
 msgid "Data type options"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:77 FormPostgreSQLCreateTable.form:112
+#: FormPostgreSQLAlterTable.form:88 FormPostgreSQLCreateTable.form:112
+#: FormSQLiteAlterTable.form:77
 msgid "No available options for this data type"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:80 FormPostgreSQLCreateTable.form:115
+#: FormPostgreSQLAlterTable.form:91 FormPostgreSQLCreateTable.form:115
+#: FormSQLiteAlterTable.form:80 FormSQLiteCreateTable.form:94
 msgid "Column constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:88 FormPostgreSQLCreateTable.form:123
+#: FormPostgreSQLAlterTable.form:99 FormPostgreSQLCreateTable.form:123
+#: FormSQLiteAlterTable.form:88 FormSQLiteCreateTable.form:102
 msgid "Not null"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:93 FormPostgreSQLCreateIndex.form:73
-#: FormPostgreSQLCreateTable.form:128
+#: FormPostgreSQLAlterTable.form:104 FormPostgreSQLCreateIndex.form:73
+#: FormPostgreSQLCreateTable.form:128 FormSQLiteAlterTable.form:93
+#: FormSQLiteCreateTable.form:107
 msgid "Unique"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:98 FormPostgreSQLCreateTable.form:133
+#: FormPostgreSQLAlterTable.form:109 FormPostgreSQLCreateTable.form:133
+#: FormSQLiteAlterTable.form:98 FormSQLiteCreateTable.form:112
 msgid "Primary key"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:103 FormPostgreSQLCreateTable.form:143
+#: FormPostgreSQLAlterTable.form:114 FormPostgreSQLCreateTable.form:143
+#: FormSQLiteAlterTable.form:103 FormSQLiteCreateTable.form:122
 msgid "References"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:109 FormPostgreSQLCreateTable.form:154
+#: FormPostgreSQLAlterTable.form:120 FormPostgreSQLCreateTable.form:154
+#: FormSQLiteAlterTable.form:109 FormSQLiteCreateTable.form:133
 msgid "Choose reference"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:110 FormPostgreSQLCreateSequence.form:97
-#: FormPostgreSQLCreateTable.form:155
-msgid "..."
-msgstr ""
-
-#: FormPostgreSQLAlterTable.form:119 FormPostgreSQLCreateFunction.form:108
-#: FormPostgreSQLCreateTable.form:170
+#: FormPostgreSQLAlterTable.form:130 FormPostgreSQLCreateFunction.form:108
+#: FormPostgreSQLCreateTable.form:170 FormSQLiteAlterTable.form:119
+#: FormSQLiteCreateTable.form:149
 msgid "Default"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:130
+#: FormPostgreSQLAlterTable.form:141 FormSQLiteAlterTable.form:130
 msgid "Save"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:135 FormPostgreSQLCreateTable.form:179
+#: FormPostgreSQLAlterTable.form:146 FormPostgreSQLCreateTable.form:179
+#: FormSQLiteAlterTable.form:135 FormSQLiteCreateTable.form:158
 msgid "Table constraints"
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:153 FormPostgreSQLCreateTable.form:138
+#: FormPostgreSQLAlterTable.form:164 FormPostgreSQLCreateTable.form:138
+#: FormSQLiteAlterTable.form:153 FormSQLiteCreateTable.form:117
 msgid "Check ("
 msgstr ""
 
-#: FormPostgreSQLAlterTable.form:164 FormPostgreSQLCreateTable.form:161
+#: FormPostgreSQLAlterTable.form:175 FormPostgreSQLCreateTable.form:161
+#: FormSQLiteAlterTable.form:164 FormSQLiteCreateTable.form:140
 msgid ")"
 msgstr ""
 
@@ -1293,11 +1677,12 @@ msgstr ""
 
 #: FormPostgreSQLCreateEnum.form:44 FormPostgreSQLCreateIndex.form:51
 #: FormPostgreSQLCreateSequence.form:105 FormPostgreSQLCreateTrigger.form:100
-#: FormPostgreSQLDataDefinition.form:34 FormXSBDataDefinition.form:35
+#: FormPostgreSQLDataDefinition.form:37 FormSQLiteDataDefinition.form:33
+#: FormXSBDataDefinition.form:35
 msgid "Create index"
 msgstr ""
 
-#: FormPostgreSQLCreateFunction.form:58 FormPostgreSQLDataDefinition.form:41
+#: FormPostgreSQLCreateFunction.form:58 FormPostgreSQLDataDefinition.form:44
 #: FormXSBDataDefinition.form:42
 msgid "Create function"
 msgstr ""
@@ -1542,15 +1927,19 @@ msgstr ""
 msgid "Owned by"
 msgstr ""
 
+#: FormPostgreSQLCreateSequence.form:97 FormPostgreSQLCreateTable.form:155
+msgid "..."
+msgstr ""
+
 #: FormPostgreSQLCreateTable.form:58
 msgid "Menu table design"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:62
+#: FormPostgreSQLCreateTable.form:62 FormSQLiteCreateTable.form:50
 msgid "Delete this row"
 msgstr ""
 
-#: FormPostgreSQLCreateTable.form:66
+#: FormPostgreSQLCreateTable.form:66 FormSQLiteCreateTable.form:54
 msgid "Make primary key"
 msgstr ""
 
@@ -1636,11 +2025,6 @@ msgstr ""
 msgid "Run query"
 msgstr ""
 
-#: FormPostgreSQLCreateView.form:42 FormPostgreSQLDataDefinition.form:27
-#: FormXSBDataDefinition.form:28
-msgid "Create view"
-msgstr ""
-
 #: FormPostgreSQLCreateView.form:59
 msgid "Create view from query"
 msgstr ""
@@ -1653,46 +2037,25 @@ msgstr ""
 msgid "Replace existing view if it exists"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:48 FormXSBDataDefinition.form:49
+#: FormPostgreSQLDataDefinition.form:51 FormSQLiteDataDefinition.form:40
+#: FormXSBDataDefinition.form:49
 msgid "Create trigger"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:55 FormXSBDataDefinition.form:56
+#: FormPostgreSQLDataDefinition.form:58 FormXSBDataDefinition.form:56
 msgid "Create sequence"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:62 FormXSBDataDefinition.form:63
+#: FormPostgreSQLDataDefinition.form:65 FormXSBDataDefinition.form:63
 msgid "Create type"
 msgstr ""
 
-#: FormPostgreSQLDataDefinition.form:69 FormXSBDataDefinition.form:70
+#: FormPostgreSQLDataDefinition.form:72 FormXSBDataDefinition.form:70
 msgid "Create enum"
 msgstr ""
 
-#: FormPostgreSQLDataManipulation.form:16 FormXSBDataManipulation.form:15
-msgid "Update table directly"
-msgstr ""
-
-#: FormPostgreSQLDataManipulation.form:23
-msgid "Create update query"
-msgstr ""
-
-#: FormPostgreSQLDataManipulation.form:30 FormXSBDataManipulation.form:22
-#: FormeXistDataManipulation.form:17
-msgid "Create insert query"
-msgstr ""
-
-#: FormPostgreSQLDataManipulation.form:37 FormXSBDataManipulation.form:29
-#: FormeXistDataManipulation.form:38
-msgid "Create delete query"
-msgstr ""
-
-#: FormPostgreSQLDataQuerying.form:14 FormXSBDataQuerying.form:21
-msgid "New SQL query"
-msgstr ""
-
-#: FormPostgreSQLDataQuerying.form:21
-msgid "New QBE query"
+#: FormPostgreSQLDataDefinition.form:79
+msgid "Create rule"
 msgstr ""
 
 #: FormPostgreSQLDataTypeOptionsFP.form:18
@@ -1834,6 +2197,22 @@ msgstr ""
 msgid "Please provide a name for the altered table:"
 msgstr ""
 
+#: FormSQLiteCreateTable.form:46
+msgid "Menu Table Design"
+msgstr ""
+
+#: FormSQLiteDataDefinition.form:47
+msgid "Create virtual table"
+msgstr ""
+
+#: FormScriptSplit.form:31
+msgid "Execute script"
+msgstr ""
+
+#: FormScriptSplit.form:38
+msgid "Import into terminal"
+msgstr ""
+
 #: FormXMLSplit.form:57
 msgid "Tree"
 msgstr ""
@@ -1844,10 +2223,6 @@ msgstr ""
 
 #: FormXSBDataDefinition.form:77
 msgid "Create Datalog Module"
-msgstr ""
-
-#: FormXSBDataQuerying.form:14
-msgid "New Datalog query"
 msgstr ""
 
 #: FormZODBDataDefinition.form:21

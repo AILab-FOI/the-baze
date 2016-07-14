@@ -1,0 +1,82 @@
+% BoM Application. Taken from [ZCF+97]:
+% C. Zaniolo, S. Ceri, C. Faloutsos, T.T. Snodgrass, V.S. Subrahmanian, and R. Zicari, 
+% "Advanced Database Systems", Morgan Kauffmann Publishers, 1997.
+% Reproduced with permission of the author
+
+% assembly(Part,Subpart,Qty)
+assembly(bike,frame,1).
+assembly(bike,wheel,2).
+assembly(frame,top_tube,1).
+assembly(frame,down_tube,1).
+assembly(frame,head_tube,1).
+assembly(frame,seat_mast,1).
+assembly(frame,seat_stay,2).
+assembly(frame,chain_stay,2).
+assembly(frame,fork,1).
+assembly(wheel,spoke,36).
+assembly(wheel,nipple,36).
+assembly(wheel,rim,1).
+assembly(wheel,hub,1).
+assembly(wheel,tire,1).
+
+% part_cost(BasicPart,Supplier,Cost,Time)
+part_cost(top_tube,cinelli,20.0,14).
+part_cost(top_tube,columbus,15.0,6).
+part_cost(down_tube,columbus,10.0,6).
+part_cost(head_tube,cinelli,20.0,14).
+part_cost(head_tube,columbus,15.0,6).
+part_cost(seat_mast,cinelli,20.0,6).
+part_cost(seat_mast,cinelli,15.0,14).
+part_cost(seat_stay,cinelli,15.0,14).
+part_cost(seat_stay,columbus,10.0,6).
+part_cost(chain_stay,columbus,10.0,6).
+part_cost(fork,cinelli,40.0,14).
+part_cost(fork,columbus,30.0,6).
+part_cost(spoke,campagnolo,0.6,15).
+part_cost(nipple,mavic,0.1,3).
+part_cost(hub,campagnolo,31.0,5).
+part_cost(hub,suntour,18.0,14).
+part_cost(rim,mavic,50.0,3).
+part_cost(rim,araya,70.0,1).
+
+% All subparts: a transitive closure query
+all_subparts(Part,Sub) :-
+  assembly(Part,Sub,_).
+all_subparts(Part,Sub2) :- 
+  all_subparts(Part,Sub1),
+  assembly(Sub1,Sub2,_).
+
+% For each part, basic or otherwise, find its basic subparts 
+% (a basic subpart is a subpart of itselt
+basic_subparts(BasicP,BasicP) :-
+  part_cost(BasicP,_,_,_).
+basic_subparts(Prt,BasicP) :- 
+  assembly(Prt,SubP,_),
+  basic_subparts(SubP,BasicP).
+
+% For each basic part, find the least time needed for delivery
+fastest(Part,Time) :- 
+  part_cost(Part,_Sup,_Cost,Time),
+  not(faster(Part,Time)).
+
+faster(Part,Time) :- 
+  part_cost(Part,_Sup,_Cost,Time),
+  part_cost(Part,_Sup1,_Cost1,Time1),
+  Time1 < Time.
+
+% Times required for basic subparts of the given assembly
+timeForbasic(AssPart,BasicSub,Time) :-
+  basic_subparts(AssPart,BasicSub),
+  fastest(BasicSub,Time).
+
+% The maximum time required for basic subparts of the given assembly
+howsoon(AssPart,Time) :-
+  timeForbasic(AssPart,_,Time),
+  not(larger(AssPart,Time)).
+
+larger(Part,Time) :- 
+  timeForbasic(Part,_,Time),
+  timeForbasic(Part,_,Time1),
+  Time1 > Time.
+
+

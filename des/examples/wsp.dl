@@ -1,0 +1,22 @@
+% Program: Shortests paths in a weighted graph
+% Author : Fernando Sáenz-Pérez
+% Date   : September, 2009
+
+edge(a,b,1).
+edge(a,c,2).
+edge(b,a,2).
+edge(b,d,3).
+
+path(X,Y,L) :- 
+  edge(X,Y,L).
+path(X,Y,L) :-
+  path(X,Z,L0),
+  edge(Z,Y,L1),
+  sum(edge(A,B,C),C,Max),
+  L2 is L0+L1,
+  L2<Max,
+  L is L0+L1.
+
+wsp(X,Y,L) :-
+   min(path(X,Y,Z),Z,L).
+   

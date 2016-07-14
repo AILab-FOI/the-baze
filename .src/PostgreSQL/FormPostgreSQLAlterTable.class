@@ -35,14 +35,16 @@ Public Sub Form_Open()
   main_table_view = TableViewMain
   pgtable = New PostgreSQLTable(FMain.db, PostgreSQLTable.ALTER)
   pgtable.table_name = Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - 8)
-  datatypes = ["oid", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
-  basic_datatypes = ["oid", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "xml"]
-  n_datatypes = ["char", "character", "character varying", "varchar"]
-  p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone"]
-  ps_datatypes = ["decimal", "numeric"]
-  fp_datatypes = ["interval"]
+  datatypes = FMain.db.datatypes
+  basic_datatypes = FMain.db.basic_datatypes
+  n_datatypes = FMain.db.n_datatypes
+  p_datatypes = FMain.db.p_datatypes
+  ps_datatypes = FMain.db.ps_datatypes
+  fp_datatypes = FMain.db.fp_datatypes
   For Each user_type In FMain.db.get_db_objects()["types"]
-    datatypes.Push(user_type["user_type"])
+    If Not datatypes.Exist(user_type["user_type"]) Then
+      datatypes.Push(user_type["user_type"])
+    Endif
   Next
   datatypes.Sort()
   With TableViewMain
@@ -206,13 +208,19 @@ Public Sub TableViewMain_Save(row As Integer, col As Integer, value As String)
       Next
       TableViewMain.Row = save_row
       TableViewMain.Column = save_col
-      TableViewMain[row, col].Text = value
-      Try ListBoxUnique[row].Text = value
-      If Error Then ListBoxUnique.Add(value)
-      Try ListBoxPrimaryKey[row].Text = value
-      If Error Then ListBoxPrimaryKey.Add(value)
     Else
       TableViewMain[row, col].Text = value
+    Endif
+    TableViewMain[row, col].Text = value
+    If col = 0 Then
+      ListBoxUnique[row].Text = value
+      If ListBoxUnique[row].Text <> value Then
+        ListBoxUnique.Add(value)
+      Endif
+      ListBoxPrimaryKey[row].Text = value
+      If ListBoxPrimaryKey[row].Text <> value Then
+        ListBoxPrimaryKey.Add(value)
+      Endif
     Endif
     pgtable.change_attribute(row, TableViewMain[row, 0].text, TableViewMain[row, 1].text, TableViewMain[row, 2].text)
     show_datatype_options(TableViewMain[row, 1].Text)
@@ -490,30 +498,46 @@ End
 Public Sub TableViewMain_Menu()
   ' show the popup menu
   If all_previous(TableViewMain.Row) Then
-    'MenuTableDesign.Popup()
+    MenuAlterTable.Popup()
   Endif
 End
 
-Public Sub MenuDeleteRow_Click()
-  ' delete the current row
+Public Sub MenuDropAttribute_Click()
+  ' delete the current row (e.g. drop an attribute)
   Dim i As Integer
+  Dim is_last As Boolean = True
   If all_previous(TableViewMain.Row) Then
-    With TableViewMain
-      For i = .Row To .Rows.Count - 2
-        TableViewMain[i, 0].Text = TableViewMain[i + 1, 0].Text
-        TableViewMain[i, 1].Text = TableViewMain[i + 1, 1].Text
-        TableViewMain[i, 2].Text = TableViewMain[i + 1, 2].Text
-      Next
-    End With
-    With pgtable
-      .attributes.Delete(TableViewMain.Row)
-      .constraints.Delete(TableViewMain.Row)
-      .datatypes.Delete(TableViewMain.Row)
-      .descriptions.Delete(TableViewMain.Row)
-    End With
-    TableViewMain.Column = 0
-    TableViewMain.Column = 1
-    TableViewMain.Column = 2
+    If pgtable.alter_drop_column(TableViewMain[TableViewMain.Row, 0].Text) Then
+      With TableViewMain
+        ListBoxUnique.Remove(.Row)
+        ListBoxPrimaryKey.Remove(.Row)
+        .Column = 2
+        TableViewMain[.Row, 0].Text = ""
+        TableViewMain[.Row, 1].Text = ""
+        TableViewMain[.Row, 2].Text = ""
+        For i = .Row To .Rows.Count - 2
+          is_last = False
+          TableViewMain[i, 0].Text = TableViewMain[i + 1, 0].Text
+          TableViewMain[i, 1].Text = TableViewMain[i + 1, 1].Text
+          TableViewMain[i, 2].Text = TableViewMain[i + 1, 2].Text
+        Next
+      End With
+      With pgtable
+        .attributes.Delete(TableViewMain.Row)
+        .constraints.Delete(TableViewMain.Row)
+        .datatypes.Delete(TableViewMain.Row)
+        .descriptions.Delete(TableViewMain.Row)
+      End With
+      With TableViewMain
+        .Column = 2
+        .Column = 1
+        .Column = 0
+        If is_last Then
+          ' stupid bug ...
+          TableViewMain[.Row, 0].Text = ""
+        Endif
+      End With
+    Endif
   Endif
   Catch
     Return
@@ -618,6 +642,9 @@ Public Sub ToolButtonDefaultSave_Click()
   ' save the new default value
   If Not stop_event Then
     pgtable.change_default_constraint(TableViewMain.Row, CheckBoxDefault.Value, TextBoxDefault.Text)
+    If Message.Question("The default constraint has been saved! Should I set all values in this column to the new default value?", "Yes, set it to default!", "No") = 1 Then
+      pgtable.alter_set_to_default(TableViewMain[TableViewMain.Row, 0].Text)
+    Endif
     ToolButtonDefaultSave.Enabled = False
   Endif
 End

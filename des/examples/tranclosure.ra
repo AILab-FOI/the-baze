@@ -1,0 +1,31 @@
+%
+% Transitive closure of relations p and q
+%
+% RA Formulation
+
+/multiline on
+/abolish
+
+create table p(x string,y string);
+create table q(x string,y string);
+
+insert into p values ('a','b');
+insert into p values ('c','d');
+
+insert into q values ('b','c');
+insert into q values ('d','e');
+
+pqs(x,y) :=
+   p
+  union
+   q
+  union
+   project pqs.x,p.y
+    (pqs zjoin pqs.y=p.x p)
+  union
+   project pqs.x,q.y
+    (pqs zjoin pqs.y=q.x q);
+  
+/ra select true (pqs)
+
+/multiline off

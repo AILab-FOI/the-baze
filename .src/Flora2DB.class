@@ -9,7 +9,7 @@ Public flora2 As String
 ' flora2 engine
 Public con As Flora2Engine
 ' unique key
-Public key As Integer
+Public unique_key As Integer
 
 Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_password_ As Boolean, flora2_ As String)
   Me.dsn = dsn_
@@ -30,7 +30,7 @@ End
 Public Sub connect(Optional caller As Object = Null) As Boolean
   ' connect to Flora2 and initialize the ODBC connection
   con = New Flora2Engine(Me.flora2)
-  Try con.execute("main[%attach(" & Me.dsn & ",?_," & Me.username & "," & Me.password & ")]@pm.")
+  Try con.execute("main[attach(" & Me.dsn & ",?_," & Me.username & "," & Me.password & ")]@pm.")
   If Error Then
     Message.Error(Error.Text)
   Endif
@@ -60,7 +60,7 @@ Public Sub initialize_gui()
   FMain.main_tabstrip.Text = "Flora-2 database - " & Me.connection_settings["dsn"] 
   
   documentation.UserAgent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1"
-  documentation.Frame.Url = "https://docs.google.com/viewer?a=v&q=cache:x7rywmuuPpgJ:flora.sourceforge.net/docs/floraManual.pdf+&hl=en&pid=bl&srcid=ADGEESgGSG2LA6mpE62OBoIjTXEPbA8NxQsmVCu0bgxhEm0HfruMGXJeRuDZmEiUufB_A1PKZG-6NWxhQhnx119Qsw0Cai9_WrZ1FsfxiJnPiIlDn2oXqltxkSQnFS9wQ1IBnbeY1-IQ&sig=AHIEtbTBRhT9Emlo51CacVlqJcEiHzfcqw&toolbar=hide&embedded=true" '"http://flora.sourceforge.net/documentation.php"
+  documentation.Frame.Url = "https://drive.google.com/file/d/0BwTaMiL6GjfIZ1VxSmdiZEJqREk/view?usp=sharing"
   
   ' create the treeview
   ' first get objects from the database
@@ -79,11 +79,11 @@ End
 
 Public Sub get_unique_key() As String
   ' return a unique key
-  If Not key Then
-    key = 0
+  If Not unique_key Then
+    unique_key = 0
   Endif
-  key += 1
-  Return Str(key)
+  unique_key += 1
+  Return Str(unique_key)
 End
 
 Public Sub get_db_objects() As Collection
@@ -91,7 +91,7 @@ Public Sub get_db_objects() As Collection
   Dim results As Collection[]
   Dim classes As New Collection
   Dim res As Collection
-  results = query("( ?class::?_ ; ?_::?class ; ?_:?class ; ?class[ ?_ => ?_ ] ; ?class[ ?_ *=> ?_ ] ), ?class \\= (?_; ?_), ?_s = [ _long, _integer, _double, _decimal, _float, _string, _symbol, _object, _iri, _time, _date, _dateTime, _duration, _list ], not( member( ?class, ?_s )@_plg(lists) ).", True)
+  results = query("( ?class::?_ ; ?_::?class ; ?_:?class ; ?class[| ?_ => ?_ |] ; ?class[| ?_ -> ?_ |] ; ?class[| => ?_ |] ; ?class[| ?_ |] ), ?class \\= (?_; ?_), ?_s = [ '\\\\float', \\long, \\integer, \\double, \\decimal, \\string, \\symbol, \\object, \\iri, \\time, \\date, \\dateTime, \\duration, \\list, \\charlist ], \\+ ?class \\in ?_s.", True)
   classes["classes"] = New String[]
   For Each res In results
     classes["classes"].Add(res["class"])
@@ -106,10 +106,10 @@ Public Sub construct_object_tree(parent As String, tree As TreeView) As Collecti
   Dim res As String
   results = get_db_objects()
   For Each res In results["classes"]
-    tree.Add("cla_" & res, res, Picture.Load("directory.png"), parent)
+    tree.Add("cla_" & res, res, Picture.Load("images/directory.png"), parent)
     objects = query("?o:" & res)
     For Each obj In objects
-      tree.Add("obj_" & get_unique_key() & "_" & obj["o"], obj["o"], Picture.Load("class.png"), "cla_" & res)
+      tree.Add("obj_" & get_unique_key() & "_" & obj["o"], obj["o"], Picture.Load("images/class.png"), "cla_" & res)
     Next
   Next
   Return results
@@ -121,12 +121,12 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   Dim o, temp_file, aux As String
   FMain.main_treeview.Clear
   
-  FMain.main_treeview.Add("Classes", "Classes", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Classes", "Classes", Picture.Load("images/directory.png"))
   construct_object_tree("Classes", FMain.main_treeview)
   
-  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("images/directory.png"))
   For Each o In Me.dbobjects["flora2 modules"]
-    FMain.main_treeview.Add("mod_" & Me.dbobjects["flora2 modules"].key, Me.dbobjects["flora2 modules"].key, Picture.Load("module.png"), "Modules")
+    FMain.main_treeview.Add("mod_" & Me.dbobjects["flora2 modules"].key, Me.dbobjects["flora2 modules"].key, Picture.Load("images/module.png"), "Modules")
     If load_modules Then
       temp_file = Me.temporary_folder & "/" & Me.dbobjects["flora2 modules"].key & ".flr"
       File.Save(temp_file, Me.dbobjects["flora2 modules"][Me.dbobjects["flora2 modules"].key])
@@ -139,26 +139,26 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   Next
   ' create Baze object containers
   With FMain.main_treeview
-    .Add("Queries", "Queries", Picture.Load("directory.png"))
-    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert queries"]
       aux = Me.dbobjects["queries"]["insert queries"].key
       If Right$(aux, 6) <> "_insop" And Right$(aux, 9) <> "_literals" And Right$(aux, 6) <> "_query" Then
-        .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+        .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
       Endif
     Next
-    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
       aux = Me.dbobjects["queries"]["delete queries"].key
       If Right$(aux, 6) <> "_delop" And Right$(aux, 9) <> "_literals" And Right$(aux, 6) <> "_query" Then
-        .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+        .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
       Endif
     Next
-    .Add("Insert rule queries", "Insert rule queries", Picture.Load("directory.png"), "Queries")
+    .Add("Insert rule queries", "Insert rule queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert rule queries"]
       aux = Me.dbobjects["queries"]["insert rule queries"].key
       If Right$(aux, 5) <> "_rule" And Right$(aux, 6) <> "_where" And Right$(aux, 5) <> "_load" Then
-        .Add(Me.dbobjects["queries"]["insert rule queries"].key, Me.dbobjects["queries"]["insert rule queries"].key, Picture.Load("query.png"), "Insert rule queries")
+        .Add(Me.dbobjects["queries"]["insert rule queries"].key, Me.dbobjects["queries"]["insert rule queries"].key, Picture.Load("images/query.png"), "Insert rule queries")
         If load_modules And Me.dbobjects["queries"]["insert rule queries"][Me.dbobjects["queries"]["insert rule queries"].key & "_load"] = "yes" Then
           Try con.execute(o)
           If Error Then
@@ -168,28 +168,28 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
         Endif
       Endif
     Next
-    .Add("Delete rule queries", "Delete rule queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete rule queries", "Delete rule queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete rule queries"]
       aux = Me.dbobjects["queries"]["delete rule queries"].key
       If Right$(aux, 5) <> "_rule" And Right$(aux, 6) <> "_where" Then
-        .Add(Me.dbobjects["queries"]["delete rule queries"].key, Me.dbobjects["queries"]["delete rule queries"].key, Picture.Load("query.png"), "Delete rule queries")
+        .Add(Me.dbobjects["queries"]["delete rule queries"].key, Me.dbobjects["queries"]["delete rule queries"].key, Picture.Load("images/query.png"), "Delete rule queries")
       Endif
     Next
-    .Add("Flora2 queries", "Flora2 queries", Picture.Load("directory.png"), "Queries")
+    .Add("Flora2 queries", "Flora2 queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["flora2 queries"]
-      .Add(Me.dbobjects["queries"]["flora2 queries"].key, Me.dbobjects["queries"]["flora2 queries"].key, Picture.Load("query.png"), "Flora2 queries")
+      .Add(Me.dbobjects["queries"]["flora2 queries"].key, Me.dbobjects["queries"]["flora2 queries"].key, Picture.Load("images/query.png"), "Flora2 queries")
     Next
-    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["forms"]
-      .Add("frm_" & o, o, Picture.Load("query.png"), "Forms")
+      .Add("frm_" & o, o, Picture.Load("images/query.png"), "Forms")
     Next
-    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["scripts"]
-      .Add("scr_" & o, o, Picture.Load("query.png"), "Scripts")
+      .Add("scr_" & o, o, Picture.Load("images/query.png"), "Scripts")
     Next
-    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]
-      .Add("rep_" & o, o, Picture.Load("query.png"), "Reports")
+      .Add("rep_" & o, o, Picture.Load("images/query.png"), "Reports")
     Next
   End With
 End

@@ -22,7 +22,7 @@
         Picture = Picture["icon:/32/make-all"]
       }
     }
-    { EditorPython Editor
+    { TextEditorPython TextEditor
       MoveScaled(1,6,55,24)
       Mouse = Mouse.Text
       Expand = True

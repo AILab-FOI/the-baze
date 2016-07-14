@@ -60,10 +60,10 @@
         Picture = Picture["icon:/32/internet"]
       }
     }
-    { EditorXML Editor
+    { TextEditorXML TextEditor
       MoveScaled(3,35,68,17)
       Enabled = False
-      Highlight = Highlight.HTML
+      Highlight = "HTML"
     }
   }
 }

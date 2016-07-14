@@ -1,15 +1,15 @@
 ' Gambas class file
 
-Public sql_editor As Editor
+Public sql_editor As TextEditor
 
 Public Sub _new()
-  ' make editor visible
-  sql_editor = EditorSQL
+  ' make TextEditor visible
+  sql_editor = TextEditorSQL
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  EditorSQL.Flags[EditorSQL.ShowLineNumbers] = True
+  TextEditorSQL.ShowLineNumber = True
 End
 
 Public Sub ToolButtonExecute_Click()
@@ -22,7 +22,7 @@ Public Sub ToolButtonExecute_Click()
   Dim counter_col As Integer
   Dim query_type As String
   Dim length As Integer
-  Try results = FMain.db.execute(EditorSQL.Text)
+  Try results = FMain.db.execute(TextEditorSQL.Text)
   If Error Then 
     Message.Error(Error.Text)
     Stop Event
@@ -42,7 +42,7 @@ Public Sub ToolButtonExecute_Click()
         query_type = "sql queries"
         length = -12
     End Select
-    FMain.db.new_sql_query(Left(FMain.main_tabstrip.Text, length), EditorSQL.Text, query_type) 
+    FMain.db.new_sql_query(Left(FMain.main_tabstrip.Text, length), TextEditorSQL.Text, query_type) 
     If results Then 
       first = True
       counter_row = 0
@@ -90,19 +90,19 @@ Public Sub ToolButtonClose_Click()
   End With
 End
 
-Public Sub EditorSQL_KeyPress_()
+Public Sub TextEditorSQL_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorSQL.Copy()
+    TextEditorSQL.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorSQL.Paste()
+      TextEditorSQL.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorSQL.Cut()
+        TextEditorSQL.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorSQL.SelectAll()
+          TextEditorSQL.SelectAll()
         Endif
       Endif
     Endif

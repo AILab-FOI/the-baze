@@ -1,19 +1,220 @@
 ' Gambas class file
 
-Inherits DBaze
+Inherits RelationalDB
 
 Public dbfile As String
+Public con As New Connection
+Public original As String[]
 
-Public Sub _new(dbfile_ As String, username As String, password As String, store_password As Boolean)
+
+Static Public tables As String = "SELECT name AS \"table\" FROM sqlite_master WHERE type='table' ORDER BY 1;"
+Static Public views As String = "SELECT name AS \"view\" FROM sqlite_master WHERE type='view' ORDER BY 1;"
+Static Public indices As String = "SELECT name AS \"index\" FROM sqlite_master WHERE type='index' ORDER BY 1;"
+Static Public triggers As String = "SELECT name AS \"trigger\" FROM sqlite_master WHERE type='trigger' ORDER BY 1;"
+
+Public Sub _new(dbfile_ As String)
   Me.dbfile = dbfile_
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
   
   Me.connection_settings["connection type"] = "SQLite"
   Me.connection_settings["dbfile"] = dbfile
-  Me.connection_settings["username"] = username
-  If Me.store_password Then
-    Me.connection_settings["password"] = password
+End
+
+Public Sub connect(Optional caller As Object = Null) As Boolean
+  ' connect to DB
+  With con
+    .Type = "sqlite"
+    .Host = Me.dbfile
+    .Name = Me.dbfile
+    Try .Open
+    If Error Then 
+      Message.Info(Error.Text)
+      Return False
+    End If  
+  End With 
+  ' TODO: add this to enable datalog queries 
+  
+  Me.init_des()
+  Return True
+End
+
+Public Sub initialize_gui()
+  ' initialize the GUI for SQLite database
+  Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormSQLiteDataDefinition
+  Dim data_manipulation As FormSQLiteDataManipulation
+  Dim data_querying As FormSQLiteDataQuerying
+  
+  ' create a dummy tab 
+  FMain.main_tabstrip.Text = "SQLite Database - " & Me.dbfile
+  documentation.Frame.Url = "https://www.sqlite.org/docs.html"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree()
+  
+  ' create the tool panel
+  data_definition = New FormSQLiteDataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormSQLiteDataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormSQLiteDataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+  
+End
+
+Public Function execute(query As String, Optional no_messages As Boolean) As Object[]
+  ' execute a query and return the results
+  Dim res As Result
+  Dim rfield As ResultField
+  Dim resultArray As New Object[]
+  Dim one_line As Collection
+  Dim cmd As String
+  Dim context As New Collection
+  Dim field_name, fname As String
+  Dim counter As Collection
+  original = New String[]
+  If query <> "SET client_min_messages TO WARNING;" Then
+    Try con.Exec("ROLLBACK")
   Endif
+  Try res = con.Exec(query) ' Should the query be rewritten like in PostgreSQL?
+  If Error Then 
+    If Not no_messages Then
+      Message.Info(Error.Text)
+    Endif
+    Return Null
+  Endif
+  
+  For Each res
+    one_line = New Collection
+    counter = New Collection
+    For Each rfield In res.Fields
+      If AUX.FindAll(rfield.Name, "sqlite_master").Length > 0 Then
+        fname = Split(rfield.Name, ".")[1]
+      Else
+        fname = rfield.Name
+      Endif
+      ' FIXME: here is a bug due to connection implementation
+      ' if there are more than one field with the same name
+      ' only the values of the first are displayed
+      If counter.Exist(fname) Then
+        counter[fname] += 1
+        field_name = fname & "_" & Str(counter[fname])
+      Else
+        field_name = fname
+        counter[fname] = 0
+      Endif
+      context["res"] = res
+      cmd = "res!" & fname
+      one_line.Add(Eval(cmd, context), field_name)
+    Next
+    resultArray.Add(one_line)
+  Next
+  Return resultArray
+End
+
+Static Public Sub filter_pragma_columns(pragma As Object[]) As Object[]
+  ' filter the PRAGMA table_info( 'table_name' ) result to only have two columns (atribute name and atribute number)
+  Dim i As Object
+  Dim res As New Object[]
+  Dim row As New Collection
+  For Each i In pragma
+    row["attribute"] = i["name"]
+    row["attnum"] = i["cid"]
+    res.Add(row)
+    row = New Collection
+  Next
+  Return res
+End
+
+
+Public Sub get_db_objects() As Collection
+  ' get the database objects (tables, views, indices, triggers)
+  Dim objects As New Collection
+  Dim row As Object
+  
+  objects["tables"] = execute(tables)
+  objects["views"] = execute(views)
+  objects["indices"] = execute(indices)
+  objects["triggers"] = execute(triggers)
+  
+  objects["attributes"] = New Collection
+  For Each row In objects["tables"] ' If the query below is to be changed, also change it in ODBCDB
+    objects["attributes"][row["table"]] = filter_pragma_columns(execute("PRAGMA table_info( '" & row["table"] & "' );"))
+  Next
+  
+  objects["object types"] = [ 
+    "tables": "table.png", 
+    "views": "view.png", 
+    "indices": "index.png", 
+    "triggers": "trigger.png"]
+  Return objects
+End
+
+Public Sub refresh_db_tree()
+  ' refresh the main tree view
+  Dim objects As Collection
+  Dim tab As Collection
+  Dim o As String
+  FMain.main_treeview.Clear
+  objects = get_db_objects()
+  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("images/directory.png"))
+  For Each tab In objects["tables"]
+    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load("images/" & objects["object types"]["tables"]), "Tables")
+  Next
+  FMain.main_treeview.Add("Views", "Views", Picture.Load("images/directory.png"))
+  For Each tab In objects["views"]
+    FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load("images/" & objects["object types"]["views"]), "Views")
+  Next
+  FMain.main_treeview.Add("Indices", "Indices", Picture.Load("images/directory.png"))
+  For Each tab In objects["indices"]
+    FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load("images/" & objects["object types"]["indices"]), "Indices")
+  Next
+  FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("images/directory.png"))
+  For Each tab In objects["triggers"]
+    FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load("images/" & objects["object types"]["triggers"]), "Triggers")
+  Next
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Update queries", "Update queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["update queries"]
+      .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
+    Next
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
+    Next
+    .Add("SQL queries", "SQL queries", Picture.Load("images/directory.png"), "Queries")
+   
+    For Each o In Me.dbobjects["queries"]["sql queries"]
+      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("images/query.png"), "SQL queries")
+    Next
+    .Add("QBE queries", "QBE queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["qbe queries"]
+      .Add(o, o, Picture.Load("images/query.png"), "QBE queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub rename_table(old_name As String, new_name As String)
+  ' rename a table in the database
+  execute("ALTER TABLE \"" & FMain.pg_escape(old_name) & "\" RENAME TO \"" & FMain.pg_escape(new_name) & "\"")
 End

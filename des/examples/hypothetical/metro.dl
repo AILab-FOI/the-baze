@@ -1,0 +1,48 @@
+% Program: Metro
+% Author: Fernando Sáenz-Pérez
+% Date: 05/08/2015
+
+% List of stations. A couple of stations with the same station name followed by _a and _b means that it refers to the same station but with a (long) pedestrian transfer between them. The edge _a connects with stations other than _b connects with.
+station(oxford_circus).
+station(warren_street).
+station(bond_street).
+station(green_park).
+station(baker_street_a).
+station(baker_street_b).
+station(regents_park).
+station(tottenham).
+station(great_portland_street).
+
+% List of direct connections
+connected(oxford_circus,regents_park).
+connected(oxford_circus,warren_street).
+connected(oxford_circus,tottenham).
+connected(regents_park,baker_street_a).
+connected(baker_street_a,bond_street).
+connected(bond_street,oxford_circus).
+connected(baker_street_b,great_portland_street).
+
+% List of pedestrian transfers
+transfer(baker_street_a,baker_street_b).
+
+% List of stations that must be closed sometime because workmanship
+closed(bond_street).
+
+% Bidirectional routes with no transfers
+route(X,Y) :-
+  connected(X,Y)
+  ;
+  connected(Y,X).
+route(X,Y) :-
+  route(X,Z),
+  route(Z,Y).
+  
+% Bidirectional routes with transfers
+transfer_route(X,Y) :-
+  (connected(A,B) :- transfer(A,B)) => route(X,Y).
+ 
+% Available routes assuming the list of closed stations
+restricted_route(X,Y) :-
+  (-connected(A,B) :- connected(A,B),closed(A)) /\
+  (-connected(A,B) :- connected(A,B),closed(B)) => route(X,Y).
+  

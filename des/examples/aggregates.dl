@@ -1,0 +1,97 @@
+%
+% Aggregates
+%
+% Datalog Formulation
+%
+
+% employee(Name,Department,Salary)
+employee(anderson,accounting,1200).
+employee(andrews,accounting,1200).
+employee(arlingon,accounting,1000).
+employee(nolan,null,null).
+employee(norton,null,null).
+employee(randall,resources,800).
+employee(sanders,sales,null).
+employee(silver,sales,1000).
+employee(smith,sales,1000).
+employee(steel,sales,1020).
+employee(sullivan,sales,null).
+
+
+% Number of employees
+total_employees(T) :- 
+  count(employee(_,_,_),T).
+
+% Employees with assigned salary
+active_employees(T) :-
+  count(employee(_,_,S),S,T).
+
+% Number of departments
+total_departments(T) :-
+  count_distinct(employee(_,D,_),D,T).
+
+% Sum of salaries
+sum_salary(Sum) :-
+  sum(employee(_,_,S),S,Sum).
+
+% Average salary
+avg_salary(AS) :-
+  avg(employee(_,_,S),S,AS).
+
+% Minimum salary
+min_salary(M) :-
+  min(employee(_,_,S),S,M).
+
+% Maximum salary
+max_salary(M) :-
+  max(employee(_,_,S),S,M).
+
+% Number of employees whose salary is greater than twice the average salary
+emp_sal_gt_avg(C) :-
+  count((employee(_,_,S),avg(employee(_,_,S1),S1,A),S>A),C).
+
+% Number of employees by department
+total_employees(D,T) :-
+  count(employee(_,D,_),T).
+
+% Employees with assigned salary by department
+active_employees(D,T) :-
+  count(employee(_,D,S),S,T).
+
+% Sum of salaries by department
+sum_salary(D,Sum) :-
+  sum(employee(_,D,S),S,Sum).
+
+% Average salary by department
+avg_salary(D,AS) :-
+  avg(employee(_,D,S),S,AS).
+
+% Minimum salary by department
+min_salary(D,M) :-
+  min(employee(_,D,S),S,M).
+
+% Maximum salary by department
+max_salary(D,M) :-
+  max(employee(_,D,S),S,M).
+
+% Number of employees whose salary is greater than the average salary
+emp_sal_gt_avg(D,C) :-
+  count((employee(_,D,S),avg(employee(_,_,S1),S1,A),S>A),C).
+
+% Test Queries:
+
+% total_employees(T)
+% active_employees(T)
+% total_departments(T)
+% sum_salary(Sum)
+% avg_salary(AS)
+% min_salary(M)
+% max_salary(M)
+% emp_sal_gt_avg(C)
+% total_employees(D,T)
+% active_employees(D,T)
+% sum_salary(D,Sum)
+% avg_salary(D,AS)
+% min_salary(D,M)
+% max_salary(D,M)
+% emp_sal_gt_avg(D,C)

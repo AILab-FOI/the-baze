@@ -1,0 +1,190 @@
+' Gambas class file
+
+Inherits DBaze
+
+' MongoDB host
+Public host As String
+' MongoDB port
+Public port As String
+' Sleepy Mongoose host (REST API)
+Public rest_host As String
+' Sleepy Mongoose port (REST API)
+Public rest_port As String
+' couch connection (cURL object)
+Public con As New HttpClient
+' Server name
+Public name As String
+' Base URL
+Public base_url As String
+' JSON object of encoding/decoding
+Public js As New JSON
+' URL object for encoding/decoding
+Public enc As New URL
+
+Public Sub _new(host_ As String, port_ As String, username_ As String, password_ As String, rest_host_ As String, rest_port_ As String, store_password_ As Boolean)
+  Me.host = host_
+  Me.port = port_
+  Me.username = username_
+  Me.password = password_
+  Me.rest_host = rest_host_
+  Me.rest_port = rest_port_
+  Me.store_password = store_password_
+  
+  base_url = Me.rest_host & ":" & Me.rest_port
+  
+  Me.connection_settings["connection type"] = "MongoDB"
+  Me.connection_settings["mongo host"] = host_
+  Me.connection_settings["mongo port"] = port_
+  Me.connection_settings["username"] = username_
+  If Me.store_password Then
+    Me.connection_settings["password"] = password_
+  Endif
+  Me.connection_settings["rest host"] = rest_host_
+  Me.connection_settings["rest port"] = rest_port_
+End
+
+Public Sub connect(Optional caller As Object = Null) As Boolean
+  ' connect to the MongoDB REST interface
+  Dim res As String
+  Dim result As Collection
+  con.URL = base_url & "/_hello"
+  con.Async = False
+  con.Timeout = 60
+  con.Get()
+  If con.Status < 0 Then
+    Return False
+  Else
+    If Lof(con) Then res = Read #con, Lof(con)
+    result = js.Decode(res)
+    If Result["ok"] = 1 Then
+      con.URL = base_url & "/_connect"
+      con.Post("application/x-www-form-urlencoded", "server=" & enc.Encode(host) & ":" & port)
+      If con.Status < 0 Then
+        Return False
+      Else
+        If Lof(con) Then res = Read #con, Lof(con)
+        result = js.Decode(res)
+        If result["ok"] = 1 Then
+          name = Result["name"]
+          If Me.username <> "" Or Me.password <> "" Then
+            con.URL = base_url & "/_authenticate"
+            con.Post("application/x-www-form-urlencoded", "username=" & enc.Encode(Me.username) & "&password=" & enc.Encode(Me.password))
+            If Lof(con) Then res = Read #con, Lof(con)
+            result = js.Decode(res)
+            If Result["ok"] = 1 Then
+              Return True
+            Else
+              Return False
+            Endif
+          Else
+            Return True
+          Endif
+        Else
+          Return False
+        Endif 
+      Endif
+    Else
+      Return False
+    Endif
+    Return True
+  Endif
+End
+
+Public Sub Close() As Boolean
+  ' Close the database
+  Return True
+End
+
+Public Sub initialize_gui()
+  ' initialize the GUI for PostgreSQL database
+  Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormeXistDataDefinition
+  Dim data_manipulation As FormeXistDataManipulation
+  Dim data_querying As FormeXistDataQuerying
+  
+  ' create a dummy tab 
+  FMain.main_tabstrip.Text = "MongoDB Database - " & Me.host & ":" & Me.port & " - " & Me.name
+  documentation.Frame.Url = "https://docs.mongodb.com/"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree()
+  
+  ' create the tool panel
+  data_definition = New FormeXistDataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormeXistDataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormeXistDataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+  
+End
+
+Public Sub refresh_db_tree()
+  ' refresh the database tree
+  ' refresh the main tree view
+  Dim objects As Collection
+  Dim o As String
+  FMain.main_treeview.Clear
+  objects = get_db_objects()
+  FMain.main_treeview.Add("Collections", "Collections", Picture.Load("images/directory.png"))
+  'populate_tree(FMain.main_treeview, "Collections", objects["collections"])
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
+    Next
+    .Add("Update queries", "Update queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["update queries"]
+      .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
+    Next
+    .Add("Find queries", "Find queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["find queries"]
+      .Add(Me.dbobjects["queries"]["find queries"].key, Me.dbobjects["queries"]["find queries"].key, Picture.Load("images/query.png"), "Find queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub cmd(command As String) As Collection
+  ' Use the _cmd command on Sleepy Mongoose
+  Dim result As Collection
+  Dim res As String
+  con.URL = base_url & "/_cmd"
+  con.Post("application/x-www-form-urlencoded", "cmd=" & enc.Encode(command))
+  If Lof(con) Then res = Read #con, Lof(con)
+  result = js.Decode(res)
+  If result["ok"] = 1 Then
+    Return result
+  Endif
+  Error.Raise(result["errmsg"])
+End
+
+Public Sub get_db_objects() As Collection
+  ' get all objects in MongoDB
+  Dim result As Collection
+  Try result = cmd("show dbs")
+  If Error Then Message.Error(Error.Text)
+  Print result
+  Return []
+End
+

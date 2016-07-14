@@ -90,7 +90,7 @@
         Picture = Picture["icon:/16/remove"]
       }
       { LabelMethodType Label
-        MoveScaled(18,9,14,3.125)
+        MoveScaled(18,9,14,3.1429)
         Text = ("Method type:")
       }
       { ComboBoxMethodType ComboBox

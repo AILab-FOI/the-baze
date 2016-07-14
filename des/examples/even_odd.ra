@@ -1,0 +1,13 @@
+--
+-- Mutual recursion in RA: even and odd numbers
+--
+-- 2014/10/24
+
+/multiline on
+
+odd(x)  := select true (odd); 
+even(x) := project 0 (dual) union project x+1 (odd);
+odd(x)  := project x+1 (even);
+
+select top 5 * from even;
+select top 5 * from odd;

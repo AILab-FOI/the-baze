@@ -16,7 +16,7 @@ Public Sub ToolButtonNewMapReduceQuery_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "PyMapReduce queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "PyMapReduce queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - PyMapReduce query"

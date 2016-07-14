@@ -1,0 +1,34 @@
+<acide.configuration.lexicon.AcideLexiconConfiguration>
+  <__name>default</__name>
+  <__path>./configuration/lexicon/default.xml</__path>
+  <__isCompiledOrInterpreted>false</__isCompiledOrInterpreted>
+  <__tokenTypeManager>
+    <__list>
+      <__list/>
+    </__list>
+  </__tokenTypeManager>
+  <__validExtensionsManager>
+    <__list>
+      <__list>
+        <string>cpp</string>
+        <string>h</string>
+      </__list>
+    </__list>
+  </__validExtensionsManager>
+  <__delimitersManager>
+    <__list>
+      <__list/>
+    </__list>
+  </__delimitersManager>
+  <__remarksManager>
+    <__symbol></__symbol>
+    <__isCaseSensitive>false</__isCaseSensitive>
+    <__color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+      <alpha>255</alpha>
+    </__color>
+    <__fontStyle>0</__fontStyle>
+  </__remarksManager>
+</acide.configuration.lexicon.AcideLexiconConfiguration>

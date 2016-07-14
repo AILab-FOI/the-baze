@@ -1,0 +1,41 @@
+% The parity query. Adapted from [ZCF+97]
+% C. Zaniolo, S. Ceri, C. Faloutsos, T.T. Snodgrass, V.S. Subrahmanian, and R. Zicari, 
+% "Advanced Database Systems", Morgan Kauffmann Publishers, 1997.
+% Reproduced with permission of the author
+
+
+% Pairs of non-consecutive elements in br
+between(X,Z) :-
+  br(X), br(Y), br(Z), X<Y, Y<Z.
+
+% Consecutive elements in the sequence, starting at nil
+next(X,Y) :-
+  br(X), br(Y), X<Y, not(between(X,Y)).
+next(nil,X) :-
+  br(X), not(has_preceding(X)).
+
+% Values having preceding values in the sequence
+has_preceding(X) :- 
+  br(X), br(Y), Y>X. %error: Y>X should be Y<X
+
+% Values in an even position of the sequence, including nil
+even(nil).
+even(Y) :-
+  odd(X), next(X,Y).
+
+% Values in an odd position of the sequence
+odd(Y) :-
+  even(X), next(X,Y).
+
+% Succeeds if the cardinality of the sequence is even
+br_is_even :-
+  even(X), not(next(X,Y)).
+
+% Succeeds if the cardinality of the sequence is odd
+br_is_odd :-
+  odd(X), not(next(X,Y)).
+
+% Base relation
+br(a). % Has no preceding (a previous value X s.t. X>a and X<>nil. nil is the implicit head of the chain). Odd position
+br(b). % Has preceding (a>b. So a is a preceding node in the chain). Even position
+

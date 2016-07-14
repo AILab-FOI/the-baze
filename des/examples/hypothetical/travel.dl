@@ -1,0 +1,49 @@
+travel(X,Y,C) :-
+  flight_travel(X,Y,C)
+  ;
+  train_travel(X,Y,C)
+  ;
+  bus_travel(X,Y,C).
+  
+flight_travel(X,Y,C) :-
+  flight(X,Y,C),
+  not(closed(X)),
+  not(closed(Y)).
+flight_travel(X,Y,C) :-
+  flight_travel(X,Z,C1),
+  flight_travel(Z,Y,C2),
+  C=C1+C2.
+  
+train_travel(X,Y,C) :-
+  train(X,Y,C),
+  not(closed(X)),
+  not(closed(Y)).
+train_travel(X,Y,C) :-
+  train_travel(X,Z,C1),
+  train_travel(Z,Y,C2),
+  C=C1+C2.
+  
+bus_travel(X,Y,C) :-
+  bus(X,Y,C),
+  not(closed(X)),
+  not(closed(Y)).
+bus_travel(X,Y,C) :-
+  bus_travel(X,Z,C1),
+  bus_travel(Z,Y,C2),
+  C=C1+C2.
+  
+flight(a,b,10).
+flight(b,c,10).
+flight(a,c,30).
+
+train(a,b,5).
+train(b,d,5).
+
+bus(b,c,2).
+bus(c,d,2).
+
+closed(e).
+
+% DES> travel(X,Y,C), not(flight_travel(X,Y,C))
+% DES> closed(b) => travel(X,Y,C)
+% DES> closed(c) /\ flight(c,d) => travel(X,Y,C), not(flight_travel(X,Y,C))

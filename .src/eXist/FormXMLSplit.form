@@ -24,11 +24,11 @@
           Picture = Picture["icon:/32/close"]
         }
       }
-      { EditorXML Editor
+      { TextEditorXML TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = Highlight.SQL
+        Highlight = "SQL"
       }
     }
     { TabStripResult TabStrip
@@ -42,9 +42,9 @@
       }
       Index = 1
       Text = ("XML")
-      { EditorResult Editor
+      { TextEditorResult TextEditor
         MoveScaled(1,1,50,20)
-        Highlight = Highlight.HTML
+        Highlight = "HTML"
         ReadOnly = True
       }
       Index = 0

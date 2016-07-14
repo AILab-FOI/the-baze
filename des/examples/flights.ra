@@ -1,0 +1,26 @@
+%
+% Flights
+%
+% RA formulation
+
+/abolish
+/show_compilations on
+/multiline on
+
+CREATE OR REPLACE TABLE flight(origin string, destination string, time real);
+CREATE OR REPLACE TABLE travel(origin string, destination string, time real);
+
+INSERT INTO flight VALUES('london','ny',9.0);
+INSERT INTO flight VALUES('mad','par',1.5);
+INSERT INTO flight VALUES('par','ny',10.0);
+
+/ra
+
+travel(origin,destination,time) :=
+   flight
+  union
+   project flight.origin,travel.destination,flight.time+travel.time
+   (flight zjoin flight.destination = travel.origin travel);
+
+/datalog
+/multiline off

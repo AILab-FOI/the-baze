@@ -1,0 +1,121 @@
+:-type(closed(string)).
+
+flight_travel(X,Y) :-
+  flight(X,Y),
+  not(closed(X)),
+  not(closed(Y)).
+flight_travel(X,Y) :-
+  flight_travel(X,Z),
+  flight_travel(Z,Y).
+
+flight(a,b).
+flight(b,c).
+flight(c,d).
+
+% airport(X) :-
+%   flight(X,_)
+%   ;
+%   flight(_,X).
+
+% DES> flight_travel(X,Y)                                                     
+
+% {                                           
+%   flight_travel(a,b),
+%   flight_travel(a,c),
+%   flight_travel(b,c)
+% }
+% Info: 3 tuples computed.          
+
+% DES> closed(b) => flight_travel(X,Y)
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     closed(b)=>flight_travel(X,Y).
+% {                                           
+%   answer(a,c)
+% }
+% Info: 1 tuple computed.          
+
+% DES> flight_travel(X,Y),(closed(b) => flight_travel(X,Y))
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     flight_travel(X,Y),
+%     closed(b)=>flight_travel(X,Y).
+% {                                           
+%   answer(a,c)
+% }
+% Info: 1 tuple computed.          
+
+% DES> flight_travel(X,Y),(closed(b) => not(flight_travel(X,Y)))
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     flight_travel(X,Y),
+%     closed(b)=>not(flight_travel(X,Y)).
+% {                                           
+%   answer(a,b),
+%   answer(b,c)
+% }
+% Info: 2 tuples computed.          
+
+% DES> closed(b) => airport(X),airport(Y),flight_travel(X,Y)  
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     closed(b)=>airport(X),airport(Y),flight_travel(X,Y).
+% {                                           
+%   answer(a,c)
+% }
+% Info: 1 tuple computed.          
+
+% DES> closed(b) => airport(X),airport(Y),not(flight_travel(X,Y))
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     closed(b)=>airport(X),airport(Y),not(flight_travel(X,Y)).
+% {                                           
+%   answer(a,a),
+%   answer(a,b),
+%   answer(b,a),
+%   answer(b,b),
+%   answer(b,c),
+%   answer(c,a),
+%   answer(c,b),
+%   answer(c,c)
+% }
+% Info: 8 tuples computed.          
+
+% DES> closed(b)/\flight(a,d) => airport(X),airport(Y),flight_travel(X,Y)
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     closed(b)/\flight(a,d)=>airport(X),airport(Y),flight_travel(X,Y).
+% {                                           
+%   answer(a,c),
+%   answer(a,d)
+% }
+% Info: 2 tuples computed.          
+
+% DES> closed(b)/\flight(a,d) => airport(X),airport(Y),not(flight_travel(X,Y))
+
+% Info: Processing:
+%   answer(X,Y) :-
+%     closed(b)/\flight(a,d)=>airport(X),airport(Y),not(flight_travel(X,Y)).
+% {                                           
+%   answer(a,a),
+%   answer(a,b),
+%   answer(b,a),
+%   answer(b,b),
+%   answer(b,c),
+%   answer(b,d),
+%   answer(c,a),
+%   answer(c,b),
+%   answer(c,c),
+%   answer(c,d),
+%   answer(d,a),
+%   answer(d,b),
+%   answer(d,c),
+%   answer(d,d)
+% }
+% Info: 14 tuples computed.          

@@ -1,0 +1,394 @@
+' Gambas class file
+
+Inherits RelationalDB
+
+
+' Low level ODBC connection
+Public con As New Connection
+Public original As New String[]
+' Home of ISQL command line tool, params, definde separator, buffer size, process object and command
+Public isql_home As String
+Static Public isql_params As String = "-d+ -c  2>&1" ' TODO: use -q for quoting strings, and change executeISQL accordingly
+Static Public isql_separator As String = "+"
+Public isql_proc As Process
+Public isql_command As String
+' Guessed DB type
+Public dbtype As String
+' Is the connection open
+Public is_open As Boolean = False
+
+Public Sub _new(dsn_ As String, username As String, password As String, store_password As Boolean)
+  Me.dsn = dsn_
+  Me.username = username
+  Me.password = password
+  Me.store_password = store_password
+  
+  Me.con = New Connection
+  Me.con.Type = "odbc"
+  Me.con.Host = dsn_
+  Me.con.User = username
+  Me.con.Password = password
+  
+  Me.connection_settings["connection type"] = "ODBC"
+  Me.connection_settings["dsn"] = Me.dsn
+  Me.connection_settings["username"] = username
+  ' Me.connection_settings["dbtype"] = ' maybe add here the guessed dbtype
+  If Me.store_password Then
+    Me.connection_settings["password"] = password
+  Endif
+  Shell "which isql" To isql_home
+  If isql_home Then
+    isql_home = Left$(isql_home, -1)
+  Else
+    Message.Error("Please install ISQL!")
+  Endif
+  init_isql()
+  Me.init_des()
+  is_open = connect()
+End
+
+Public Sub close()
+  ' close the connection
+  con.Close()
+  Try isql_proc.Kill()
+  Try Me.des_proc.Kill()
+End
+
+Public Sub init_isql()
+  ' Initialize the ISQL shell
+  Dim result As String
+  Try isql_proc.Kill()
+
+  isql_command = isql_home & " " & Me.dsn & " " & isql_params
+  isql_proc = Shell isql_command For Input Output
+  isql_proc.Blocking = False
+  result = AUX.get_answer_from_proc(isql_proc)
+End
+
+
+Public Function connect(Optional caller As Object = Null) As Boolean
+  ' connect to the database
+  With con
+    .Type = "odbc"
+    .Host = Me.dsn
+    .Login = Me.username
+    .Password = Me.password
+    .Name = ""
+    Try .Open
+    If Error Then
+      Message.Error(Error.Text)
+      Return False
+    Endif
+    If .Opened = False Then
+      Message.Error("ODBC connection won't open!")
+      Return False
+    Endif
+  End With
+  Return True
+End
+
+Public Sub initialize_gui()
+  ' initialize the GUI for SQLite database
+  Dim documentation As New WebView(FMain.main_tabstrip)
+  Dim data_definition As FormODBCDataDefinition
+  Dim data_manipulation As FormODBCDataManipulation
+  Dim data_querying As FormODBCDataQuerying
+  
+  ' create a dummy tab 
+  FMain.main_tabstrip.Text = "ODBC Database - " & Me.dsn
+  documentation.Frame.Url = "http://www.unixodbc.org/doc/"
+  
+  ' create the treeview
+  ' first get objects from the database
+  refresh_db_tree()
+  
+  ' create the tool panel
+  data_definition = New FormODBCDataDefinition(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 1
+  data_manipulation = New FormODBCDataManipulation(FMain.main_toolpanel)
+  FMain.main_toolpanel.Index = 2
+  data_querying = New FormODBCDataQuerying(FMain.main_toolpanel)
+  
+  ' show the data definition tab
+  FMain.main_toolpanel.Index = 0
+  
+End
+
+Public Function execute(query As String, Optional no_messages As Boolean) As Object[]
+  ' execute a query and return the results
+  Dim res As Result
+  Dim rfield As ResultField
+  Dim resultArray As New Object[]
+  Dim one_line As Collection
+  Dim cmd As String
+  Dim context As New Collection
+  Dim field_name, fname As String
+  Dim counter As Collection
+  original = New String[]
+  If query <> "SET client_min_messages TO WARNING;" Then
+    Try con.Exec("ROLLBACK")
+  Endif
+  Try res = con.Exec(query) ' Should the query be rewritten like in PostgreSQL?
+  If Error Then 
+    If Not no_messages Then
+      Message.Info(Error.Text)
+    Endif
+    Return Null
+  Endif
+  
+  For Each res
+    one_line = New Collection
+    counter = New Collection
+    For Each rfield In res.Fields
+      If AUX.FindAll(rfield.Name, "sqlite_master").Length > 0 Then
+        fname = Split(rfield.Name, ".")[1]
+      Else
+        fname = rfield.Name
+      Endif
+      ' FIXME: here is a bug due to connection implementation
+      ' if there are more than one field with the same name
+      ' only the values of the first are displayed
+      If counter.Exist(fname) Then
+        counter[fname] += 1
+        field_name = fname & "_" & Str(counter[fname])
+      Else
+        field_name = fname
+        counter[fname] = 0
+      Endif
+      context["res"] = res
+      cmd = "res!" & fname
+      one_line.Add(Eval(cmd, context), field_name)
+    Next
+    resultArray.Add(one_line)
+  Next
+  Return resultArray
+End
+
+Public Sub executeISQL(query As String, Optional no_messages As Boolean) As Object[]
+  ' same as execute, except that the isql command line tool is used for query execution
+  ' TODO: update to use AUX.get_answer_from_process function
+  Dim result, oldResult, ans_line, elem As String
+  Dim answers, elems, headers As String[]
+  Dim resultArray As New Object[]
+  Dim one_line As Collection
+  Dim counter As Integer = 0
+  init_isql()
+  
+  result = AUX.get_answer_from_proc(isql_proc, query & "\n")
+  
+  If result = "" Or AUX.FindAll(result, "ERROR").Length > 0 Then
+    Return Null
+  Endif
+  answers = Split(result, "\n")
+  headers = Split(answers[0], isql_separator)
+  answers = answers.Copy(1, answers.Count - 2)
+  counter = 0
+  For Each ans_line In answers
+    elems = Split(ans_line, isql_separator)
+    one_line = New Collection
+    For Each elem In elems
+      one_line.Add(elem, headers[counter])
+      counter += 1
+    Next
+    resultArray.Add(one_line)
+    counter = 0
+  Next
+  Return resultArray
+End
+
+
+Public Sub get_db_objects() As Collection
+  ' get the database objects (tables, views, indices, triggers)
+  Dim objects As New Collection
+  Dim row As Object
+  
+  dbtype = test_db_type()
+  dbtype = ""
+  
+  Select dbtype
+    Case "sqlite"
+      objects["tables"] = executeISQL(SQLiteDB.tables)
+      objects["views"] = executeISQL(SQLiteDB.views)
+      objects["indices"] = executeISQL(SQLiteDB.indices)
+      objects["triggers"] = executeISQL(SQLiteDB.triggers)
+      
+      objects["attributes"] = New Collection
+      For Each row In objects["tables"]
+        objects["attributes"][row["table"]] = SQLiteDB.filter_pragma_columns(executeISQL("PRAGMA table_info( '" & row["table"] & "' );"))
+      Next
+      
+      objects["object types"] = [ 
+        "tables": "table.png", 
+        "views": "view.png", 
+        "indices": "index.png", 
+        "triggers": "trigger.png"]
+    Case "postgresql"
+      objects["tables"] = executeISQL(PostgreSQLDB.tables)
+      objects["views"] = executeISQL(PostgreSQLDB.views)
+      objects["indices"] = executeISQL(PostgreSQLDB.indices)
+      objects["functions"] = executeISQL(PostgreSQLDB.functions)
+      objects["triggers"] = executeISQL(PostgreSQLDB.triggers)
+      objects["sequences"] = executeISQL(PostgreSQLDB.sequences)
+      objects["types"] = executeISQL(PostgreSQLDB.types)
+      objects["languages"] = executeISQL(PostgreSQLDB.languages)
+      
+      objects["attributes"] = New Collection
+      For Each row In objects["tables"]
+        objects["attributes"][row["table"]] = execute("SELECT a.attname as attribute, a.attnum FROM pg_catalog.pg_attribute a WHERE a.attrelid = (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & row["table"] & "' AND pg_catalog.pg_table_is_visible(c.oid)) AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum")
+      Next
+      
+      objects["object types"] = [ 
+        "tables": "table.png", 
+        "views": "view.png", 
+        "indices": "index.png", 
+        "functions": "function.png", 
+        "triggers": "trigger.png", 
+        "sequences": "sequence.png",
+        "types": "data_type.png"]
+    Default
+      objects = get_db_objects_from_connection()
+      objects["object types"] = [ 
+        "tables": "table.png", 
+        "indices": "index.png"]
+  End Select
+
+  Return objects
+End
+
+Public Sub get_db_objects_from_connection() As Collection
+  ' Parse a Database Template, and return it's structure
+  Dim objects As New Collection
+  Dim tbl As Table
+  Dim fld As Field
+  Dim ind As Index
+  Dim counter As Integer = 0
+  objects["tables"] = New Collection[]
+  objects["indices"] = New Collection[]
+  objects["attributes"] = New Collection
+  For Each tbl In con.Tables
+    objects["tables"].Add(["table": tbl.Name])
+    objects["attributes"][tbl.Name] = New Collection[]
+    For Each fld In tbl.Fields
+      objects["attributes"][tbl.Name].Add(["attribute": fld.Name])
+      objects["attributes"][tbl.Name].Add(["attnum": counter])
+      counter += 1
+    Next
+    For Each ind In tbl.Indexes
+      objects["indices"].Add(["index": ind.Name])
+    Next
+  Next
+  Return objects
+End
+
+
+Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
+  ' refresh the main tree view
+  Dim objects As Collection
+  Dim tab As Collection
+  Dim o As String
+  FMain.main_treeview.Clear
+  objects = get_db_objects()
+  
+  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("images/directory.png"))
+  For Each tab In objects["tables"]
+    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load("images/" & objects["object types"]["tables"]), "Tables")
+  Next
+  If dbtype <> Null Then
+    FMain.main_treeview.Add("Views", "Views", Picture.Load("images/directory.png"))
+    For Each tab In objects["views"]
+      FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load("images/" & objects["object types"]["views"]), "Views")
+    Next
+    FMain.main_treeview.Add("Indices", "Indices", Picture.Load("images/directory.png"))
+    For Each tab In objects["indices"]
+      FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load("images/" & objects["object types"]["indices"]), "Indices")
+    Next
+    FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("images/directory.png"))
+    For Each tab In objects["triggers"]
+      FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load("images/" & objects["object types"]["triggers"]), "Triggers")
+    Next
+    If dbtype = "postgresql" Then
+      FMain.main_treeview.Add("Functions", "Functions", Picture.Load("images/directory.png"))
+      For Each tab In objects["functions"]
+        FMain.main_treeview.Add("fun_" & tab["function"] & "(" & tab["arguments"] & ")", tab["function"] & "(" & tab["arguments"] & ")", picture.Load("images/" & objects["object types"]["functions"]), "Functions")
+      Next
+      FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("images/directory.png"))
+      For Each tab In objects["sequences"]
+        FMain.main_treeview.Add("seq_" & tab["sequence"], tab["sequence"], picture.Load("images/" & objects["object types"]["sequences"]), "Sequences")
+      Next
+      FMain.main_treeview.Add("Types", "Types", Picture.Load("images/directory.png"))
+      For Each tab In objects["types"]
+        FMain.main_treeview.Add("typ_" & tab["user_type"], tab["user_type"], picture.Load("images/" & objects["object types"]["types"]), "Types")
+      Next
+    Endif
+  Endif
+  
+  ' create Baze object containers
+  With FMain.main_treeview
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Update queries", "Update queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["update queries"]
+      .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
+    Next
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["insert queries"]
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
+    Next
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["delete queries"]
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
+    Next
+    .Add("SQL queries", "SQL queries", Picture.Load("images/directory.png"), "Queries")
+   
+    For Each o In Me.dbobjects["queries"]["sql queries"]
+      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("images/query.png"), "SQL queries")
+    Next
+    .Add("QBE queries", "QBE queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["qbe queries"]
+      .Add(o, o, Picture.Load("images/query.png"), "QBE queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["forms"]
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
+    Next
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["scripts"]
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
+    Next
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["reports"]
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
+    Next
+  End With
+End
+
+Public Sub rename_table(old_name As String, new_name As String)
+  ' rename a table in the database
+  execute("ALTER TABLE \"" & FMain.pg_escape(old_name) & "\" RENAME TO \"" & FMain.pg_escape(new_name) & "\"")
+End
+
+Public Sub test_db_type() As String
+  ' Test the type of the ODBC DB using various queries
+  Dim res As Object[]
+  res = Null
+  With Me.con
+    Try res = executeISQL("SELECT * FROM sqlite_master", True) ' If this works it is an SQLite DB
+    If res Then 
+      Return "sqlite"
+    Else
+      Try res = executeISQL("SELECT * FROM pg_tables", True)
+      If res Then
+        Return "postgresql"
+      Else
+        Try res = executeISQL("SELECT * FROM information_schema.tables", True)
+        If res Then
+          Return "mysql"
+        Endif
+      Endif
+    Endif
+  End With
+  Return Null
+End
+
+
+
+

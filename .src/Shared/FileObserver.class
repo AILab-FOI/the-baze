@@ -1,0 +1,33 @@
+' Gambas class file
+
+Inherits Task
+
+Public filename As String
+
+Event NewRequest(rdata As String)
+
+Public Sub Main()
+  ' A neverending task that reads a given file and raises an event if the file has new content. In every loop the file is cleared.
+  Dim data, sline As String
+  Dim fh As File
+  While True
+    tryagain:
+    Try fh = Open filename For Input
+    If Error Then
+      Sleep 0.1
+      Goto tryagain
+    Endif
+    data = ""
+    While Not Eof(fh)
+      Line Input #fh, sline
+      data &= sline
+    Wend
+    Close #fh
+    fh = Open filename For Create
+    Close #fh
+    If data <> "" Then
+      Raise NewRequest(data)
+    Endif
+    Sleep 0.1
+  Wend
+End

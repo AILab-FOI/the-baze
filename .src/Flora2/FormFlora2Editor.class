@@ -1,14 +1,14 @@
 ' Gambas class file
 
-Public flora2_editor As Editor
+Public flora2_editor As TextEditor
 Public load_chk As CheckBox
 Public first_chk As CheckBox
 ' context
 Public context As String
 
 Public Sub _new()
-  ' make editor public
-  flora2_editor = EditorFlora2
+  ' make TextEditor public
+  flora2_editor = TextEditorFlora2
   load_chk = CheckBoxDontLoadOnStartup
   first_chk = CheckBoxAtBeggining
 End
@@ -37,14 +37,14 @@ Public Sub ToolButtonClose_Click()
   Else
     up_type = ""
   Endif
-  rule = Trim$(EditorFlora2.Text)
+  rule = Trim$(TextEditorFlora2.Text)
   If Right$(rule, 1) = "." Then
     rule = Left$(rule, -1)
   Endif
   With FMain.db
     Select Case context
       Case " - Flora2 Module"
-        If Not .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text) Then
+        If Not .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorFlora2.Text) Then
           Return 
         Endif
       Case " - Insert rule query"
@@ -77,11 +77,11 @@ Public Sub ToolButtonExecute_Click()
   With FMain.db
     Select Case context
       Case " - Flora2 Module"
-        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text)
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorFlora2.Text)
       Case " - Insert rule query"
-        .new_insert_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text, up_type)
+        .new_insert_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorFlora2.Text, up_type)
       Case " - Delete rule query"
-        .new_delete_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorFlora2.Text, up_type)
+        .new_delete_rule_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorFlora2.Text, up_type)
     End Select
     .refresh_db_tree()
   End With

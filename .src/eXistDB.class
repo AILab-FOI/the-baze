@@ -61,10 +61,10 @@ Public Sub query(query_ As String, Optional path As String) As Collection
     If Left$(path, 1) = "/" Then
       path = Mid$(path, 2)
     Endif
-    con.URL &= path
+    con.URL &= URL.Encode(path)
   Endif
   If query_ Then
-    con.URL &= "?_query=" & query_
+    con.URL &= "?_query=" & URL.Encode(query_)
   Endif
   con.Get
   If con.Status < 0 Then
@@ -85,10 +85,10 @@ Public Sub query_xml(query_ As String, Optional path As String = "") As String
     If Left$(path, 1) = "/" Then
       path = Mid$(path, 2)
     Endif
-    con.URL &= path
+    con.URL &= URL.Encode(path)
   Endif
   If query_ Then
-    con.URL &= "?_query=" & query_
+    con.URL &= "?_query=" & URL.Encode(query_)
   Endif
   con.Get
   If con.Status < 0 Then
@@ -109,12 +109,14 @@ Public Sub query_both(query_ As String, Optional path As String = "") As Collect
     If Left$(path, 1) = "/" Then
       path = Mid$(path, 2)
     Endif
-    con.URL &= path
+    con.URL &= URL.Encode(path)
   Endif
   If query_ Then
-    con.URL &= "?_query=" & query_
+    con.URL &= "?_query=" & URL.Encode(query_)
   Endif
-  con.Get
+  con.Async = False
+  con.Timeout = 60
+  con.Get()
   If con.Status < 0 Then
     Return Null
   Else
@@ -126,10 +128,13 @@ Public Sub query_both(query_ As String, Optional path As String = "") As Collect
   Endif
 End
 
+
 Public Sub create_xml_tree(node As XmlNode) As Collection
   ' create a collection from an XML tree
   Dim child As XmlNode
   Dim ret, ch As New Collection
+  Dim txtNode As String
+  
   If node.Attributes Then
     For Each child In node.Attributes
       ret["@" & child.Name] = child.Value
@@ -137,8 +142,11 @@ Public Sub create_xml_tree(node As XmlNode) As Collection
   Endif
   ret["children"] = New Variant[]
   For Each child In node.Children
-    If child Is XmlTextNode Then
-      ret["children"].add(child.TextContent)
+    If child.isText Then
+      txtNode = Trim$(child.TextContent)
+      If txtNode <> "" Then
+        ret["children"].add(child.TextContent)
+      Endif
     Else
       ch = create_xml_tree(child)
       ch["__node_name__"] = child.Name
@@ -164,7 +172,7 @@ Public Sub get_collections(Optional root As String = "") As Collection
   objects["documents"] = New Variant[]
   For i = 0 To res["children"][0]["children"].count - 1
     If TypeOf(res["children"][0]["children"][i]) = gb.Object Then
-      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection" Then
+      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection" And res["children"][0]["children"][i]["@name"] <> "apps" And res["children"][0]["children"][i]["@name"] <> "system" Then
         path = root & "/" & res["children"][0]["children"][i]["@name"]
         objects["collections"].Add(get_collections(path))
       Endif
@@ -229,7 +237,7 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
   For Each col In objects["collections"]
     colname = Split(col["collection name"], "/").Pop()
     un_id = "col_" & col["collection name"]
-    obj = tree.Add(un_id, colname, Picture.Load("directory.png"), parent)
+    obj = tree.Add(un_id, colname, Picture.Load("images/directory.png"), parent)
     populate_tree(tree, un_id, col)
   Next
   For Each doc In objects["documents"]
@@ -238,7 +246,7 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
     Else
       un_id = "doc_" & Mid$(parent, 5) & "/" & doc
     Endif
-    obj = tree.Add(un_id, doc, Picture.Load("document.png"), parent)
+    obj = tree.Add(un_id, doc, Picture.Load("images/document.png"), parent)
   Next
 End
 
@@ -259,50 +267,50 @@ Public Sub refresh_db_tree()
   Dim o As String
   FMain.main_treeview.Clear
   objects = get_db_objects()
-  FMain.main_treeview.Add("Collections", "Collections", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Collections", "Collections", Picture.Load("images/directory.png"))
   populate_tree(FMain.main_treeview, "Collections", objects["collections"])
   ' create Baze object containers
   With FMain.main_treeview
-    .Add("Queries", "Queries", Picture.Load("directory.png"))
-    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert queries"]
-      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
     Next
-    .Add("Replace queries", "Replace queries", Picture.Load("directory.png"), "Queries")
+    .Add("Replace queries", "Replace queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["replace queries"]
-      .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("query.png"), "Replace queries")
+      .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("images/query.png"), "Replace queries")
     Next
-    .Add("Value queries", "Value queries", Picture.Load("directory.png"), "Queries")   
+    .Add("Value queries", "Value queries", Picture.Load("images/directory.png"), "Queries")   
     For Each o In Me.dbobjects["queries"]["value queries"]
-      .Add(Me.dbobjects["queries"]["value queries"].key, Me.dbobjects["queries"]["value queries"].key, Picture.Load("query.png"), "Value queries")
+      .Add(Me.dbobjects["queries"]["value queries"].key, Me.dbobjects["queries"]["value queries"].key, Picture.Load("images/query.png"), "Value queries")
     Next
-    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
-      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
     Next
-    .Add("Rename queries", "Rename queries", Picture.Load("directory.png"), "Queries")
+    .Add("Rename queries", "Rename queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["rename queries"]
-      .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("query.png"), "Rename queries")
+      .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("images/query.png"), "Rename queries")
     Next
-    .Add("xPath queries", "xPath queries", Picture.Load("directory.png"), "Queries")   
+    .Add("xPath queries", "xPath queries", Picture.Load("images/directory.png"), "Queries")   
     For Each o In Me.dbobjects["queries"]["xpath queries"]
-      .Add(Me.dbobjects["queries"]["xpath queries"].key, Me.dbobjects["queries"]["xpath queries"].key, Picture.Load("query.png"), "xPath queries")
+      .Add(Me.dbobjects["queries"]["xpath queries"].key, Me.dbobjects["queries"]["xpath queries"].key, Picture.Load("images/query.png"), "xPath queries")
     Next
-    .Add("xQueries", "xQueries", Picture.Load("directory.png"), "Queries")
+    .Add("xQueries", "xQueries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["xquery queries"]
-      .Add(Me.dbobjects["queries"]["xquery queries"].key, Me.dbobjects["queries"]["xquery queries"].key, Picture.Load("query.png"), "xQueries")
+      .Add(Me.dbobjects["queries"]["xquery queries"].key, Me.dbobjects["queries"]["xquery queries"].key, Picture.Load("images/query.png"), "xQueries")
     Next
-    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["forms"]
-      .Add(o, o, Picture.Load("query.png"), "Forms")
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
     Next
-    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["scripts"]
-      .Add(o, o, Picture.Load("query.png"), "Scripts")
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
     Next
-    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]
-      .Add(o, o, Picture.Load("query.png"), "Reports")
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
     Next
   End With
 End

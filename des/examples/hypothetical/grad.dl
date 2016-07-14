@@ -1,0 +1,76 @@
+% Hypothetical Queries
+% Source: [Bonn89], extended and adapted
+% Coded by: F. Sáenz-Pérez
+% Date: 1/15/2013
+% Extended: 8/28/2015
+
+:-type(student(name: string)), type(take(name: string, title: string)), type(course(title: string)), type(grad(name: string)).
+:-pk(student,[name]), pk(course,[title]).
+:-fk(take,[name],student,[name]), fk(take,[title],course,[title]).
+
+student(adam).
+student(bob).
+student(pete).
+student(scott).
+student(tony).
+
+% course(eng).
+% course(his).
+course(alg).
+course(prg).
+course(lp).
+course(cal).
+
+take(scott,cal).
+take(scott,lp).
+% take(adam,eng).
+% take(pete,his).
+% take(pete,eng).
+% take(scott,his).
+% take(scott,lp).
+% take(scott,cal).
+% take(tony,his).
+
+pre(eng,lp).
+pre(hist,eng).
+pre(Pre,Post) :-
+  pre(Pre,X),
+  pre(X,Post).
+
+grad(S) :-
+  take(S,his), 
+  take(S,eng).
+  
+grad(S,math) :-
+  take(S,alg), 
+  take(S,cal).
+  
+grad(S,cs) :-
+  take(S,prg), 
+  take(S,lp).
+  
+% Degree in math and cs (computer science)
+grad(S,math_cs) :-
+  within1(S,math),
+  within1(S,cs).
+
+within1(S,D) :-
+  take(S,_C)=>grad(S,D).
+  
+ 
+
+% Possible queries from [Bonn89]: 
+% grad(S).
+% Example 1:
+% take(tony,eng) => grad(tony)
+% Example 2:
+% take(S,_C)=>grad(S).
+% Example 3:
+% take(tony,eng) /\ take(adam,his) => grad(S)
+% (grad(S) :- take(S,his), take(S,lp)) => grad(S)
+% pre(lp,hist)=>pre(X,X)
+% -take(pete,eng) => grad(pete)
+% (-pre(Pre,Post) :- pre(Pre,X), pre(X,Post)) /\ (pre(Pre,Post) :- pre(Post,X), pre(X,Pre)) => pre(Pre,Post)
+% (-pre(Pre,Post) :- pre(Post,X), pre(X,Pre)) => pre(Pre,Post)     
+% pre(X,X).
+% [Bonn89] Anthony J. Bonner, Hypothetical Datalog: Negation and Linear Recursion. In: Proceedings of the PODS ACM Symposium, pp. 286–300, 1989.

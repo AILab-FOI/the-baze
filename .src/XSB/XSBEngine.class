@@ -29,27 +29,8 @@ Public success As Boolean
 Private proc As Process
 Private buff_size As Integer
 
-Static Public Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
-        Dim re As Regexp
-        Dim matches As New String[]
-        If subj <> "" Then
-          re = New Regexp(subj, pattern)
-          Do While re.offset >= 0 And subj <> ""
-                If submatchindex = 0 Then 
-                        matches.push(re.Text)
-                Else
-                        matches.push(re[submatchindex].Text)
-                End If
-                If Len(subj) > Len(re.text) Then
-                        subj = Mid(subj, re.offset + Len(re.text) + 1)
-                Else
-                        subj = ""       
-                End If
-                If subj <> "" Then re.exec(subj)
-          Loop
-        Endif
-        Return matches
-End
+
+
 
 Private Function renameDontCare(query As String) As String
   ' rename don't care variables
@@ -59,13 +40,12 @@ Private Function renameDontCare(query As String) As String
   
   counter = 0
   result_ = ""
-  
   re = New Regexp(query, "(^|[^_A-Za-z0-9])([_])[^_A-Za-z0-9]")
   Do While re.offset >= 0 And query <> ""
-    result_ = result_ & Left(query, re.SubMatches[2].Offset) & "_Gambas_Don_T_Care_Variable_" & Str(counter)
+    result_ = result_ & Left(query, re[2].Offset) & "_Gambas_Don_T_Care_Variable_" & Str(counter)
     counter += 1
-    If Len(query) > Len(re.SubMatches[2].text) Then
-      query = Mid(query, re.SubMatches[2].offset + Len(re.SubMatches[2].text) + 1)
+    If Len(query) > Len(re[2].Text) Then
+      query = Mid(query, re[2].offset + Len(re[2].text) + 1)
     Else 
       result_ = result_ & query
       query = ""
@@ -77,28 +57,6 @@ Private Function renameDontCare(query As String) As String
   Return result_
 End
 
-
-Private Function removeDups(listArray As String[]) As String[]
-  
-  Dim i, j As String
-  Dim hasDup As Boolean
-  Dim list As New String[]
-  
-  For Each i In listArray
-    For Each j In list
-      If i = j Then 
-        hasDup = True
-      Endif 
-    Next 
-    If Not hasDup Then 
-      list.push(i)
-    Endif 
-    hasDup = False
-  Next 
-  
-  Return list
-  
-End
 
 Public Sub load(module As String)
   execute("['" & module & "'].")
@@ -118,10 +76,10 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     query &= "."
   Endif
   query = renameDontCare(query)
-  vars = FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z][a-zA-Z0-9_]*)", 2)
-  vars = removeDups(vars)
+  vars = AUX.FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z][a-zA-Z0-9_]*)", 2)
+  vars = AUX.removeDups(vars)
   
-  allVars = FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z_][a-zA-Z0-9_]*)", 2)
+  allVars = AUX.FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z_][a-zA-Z0-9_]*)", 2)
   dontcareCount = 0
   For k = 0 To allVars.count - 1
     If allVars[k] = "_" Then 
@@ -129,7 +87,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
       dontcareCount = dontcareCount + 1
     Endif 
   Next
-  allVars = removeDups(allVars)
+  allVars = AUX.removeDups(allVars)
   
   
     
@@ -157,7 +115,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   
   oldResult = result
   Print #proc, query & "\n"
-  Sleep 0.1
+  Sleep 0.5
   Read #proc, result, buff_size
   Do While oldResult <> result And result <> "" And Lof(proc) > 0
     oldResult = result
@@ -183,8 +141,8 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
           success = False
         Default 
           If vars.count > 0 Then 
-            Try returnVars.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
-            Try returnResults.push(FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
+            Try returnVars.push(AUX.FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
+            Try returnResults.push(AUX.FindAll(i, "([A-Z][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
           Endif 
       End Select 
     Endif 
@@ -195,7 +153,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   If allResults Then 
     For k = 0 To returnVars.count - 1
       If returnVars[k] = "GambasXSBResultListVariable" Then 
-        newRes = FindAll(returnResults[k], "result\\(\\[gambas_res\\(\\$\\$,(.+?),\\$\\$\\)\\]\\)", 1)
+        newRes = AUX.FindAll(returnResults[k], "result\\(\\[gambas_res\\(\\$\\$,(.+?),\\$\\$\\)\\]\\)", 1)
         Break 
       Endif 
     Next 

@@ -25,14 +25,16 @@ Public Sub Form_Open()
   main_table_view = TableViewMain
   pgtable = New PostgreSQLUserType
   pgtable.type_name = Left(FMain.main_tabstrip.Text, Len(FMain.main_tabstrip.Text) - 7)
-  datatypes = ["oid", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
-  basic_datatypes = ["oid", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "xml"]
-  n_datatypes = ["char", "character", "character varying", "varchar"]
-  p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone"]
-  ps_datatypes = ["decimal", "numeric"]
-  fp_datatypes = ["interval"]
+  datatypes = FMain.db.datatypes
+  basic_datatypes = FMain.db.basic_datatypes
+  n_datatypes = FMain.db.n_datatypes
+  p_datatypes = FMain.db.p_datatypes
+  ps_datatypes = FMain.db.ps_datatypes
+  fp_datatypes = FMain.db.fp_datatypes
   For Each user_type In FMain.db.get_db_objects()["types"]
-    datatypes.Push(user_type["user_type"])
+    If Not datatypes.Exist(user_type["user_type"]) Then
+      datatypes.Push(user_type["user_type"])
+    Endif
   Next
   datatypes.Sort()
   With TableViewMain

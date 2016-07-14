@@ -1,0 +1,6 @@
+-- Defining Natural numbers in RA
+-- 2014/10/23
+-- Infinite relation nat which should be consulted with the metapredicate top
+
+nat(n) := project 0 (dual) union project n+1 (nat);
+SELECT TOP 10 * FROM nat;

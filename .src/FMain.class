@@ -21,25 +21,42 @@ Public main_tabstrip As TabStrip
 Public main_treeview As TreeView
 ' main tool panel
 Public main_toolpanel As ToolPanel
+' main table for editing form and report elements
+Public main_application_css As TableView
 ' inbox for a canceled request
 Public request_canceled As Boolean
 ' inbox for a changed table name
 Public table_name As String
+' inbox for a changed form name
+Public form_name As String
+' inbox for a new script name
+Public script_name As String
+Public script_type As String
 ' open wizard
 Public wiz As FormOpenWizard
 ' dbtype if new
 Public new_db_type As String
+' Open subprocesses (DES mainly)
+Public processes As Process[]
   
 Public Sub _new()
   ' make components visible to DB classes
   Me.main_tabstrip = TabStripMain
   Me.main_treeview = TreeViewMain
   Me.main_toolpanel = ToolPanelMain
+  Me.main_application_css = TableViewApplicationElementCSS
+  Me.processes = New Process[]
 End
 
 Public Sub save_close() As Boolean
   ' close database connections if any
+  Dim proc As Process
+  Try db.Save()
   Try db.close()
+  Try RelationalDB.clean_generated_dsns()
+  For Each proc In Me.processes
+    Try proc.Kill()
+  Next
   Quit
 End
 
@@ -63,7 +80,7 @@ Public Sub handle_user_request()
   wiz.ShowModal()
   Try wiz.Delete
   If wizard_return = "canceled" Then ' wizard cancelled, close app
-    Me.save_close
+    Me.save_close()
     Return
   Else
       If wizard_return = "connection" Then ' create a new connection
@@ -82,11 +99,10 @@ Public Sub handle_user_request()
         If wizard_return = "new" Then ' create a new (internal) baze file
           save_file_as()
           If current_file Then
-            ' TODO: add an if combobox in wiz selection for ZODB database here 
             If new_db_type = "ZODB" Then
               db = New ZODBEmbedded("baze.fs")
             Else
-              db = New SQLiteDBInternal("", "", "", False)
+              db = New SQLiteDBEmbedded("baze.sqlite", "baze.sqlite") 'FIXME: Why two arguments? Check how inheritance works in Gambas3
             Endif
             db.baze_file = current_file
             db.new_file()
@@ -147,6 +163,7 @@ End
 
 Public Sub TreeViewMain_Menu()
  ' show the appropriate menu in the tree view
+ Dim ckey As String
   Select TreeViewMain.Current.ParentKey
     Case "Tables"
        MenuTreeTable.Popup()
@@ -164,6 +181,8 @@ Public Sub TreeViewMain_Menu()
       MenuTreeType.Popup()
     Case "Datalog modules"
       MenuDatalogModules.Popup()
+    Case "Datalog rules"
+      MenuDatalogRules.Popup()
     Case "Update queries"
       MenuQuery.Popup()
     Case "Insert queries"
@@ -197,10 +216,14 @@ Public Sub TreeViewMain_Menu()
     Case "Modules"
       MenuFlora2Modules.Popup()
     Default
-      If Left$(TreeViewMain.Current.Key, 4) = "col_" Then
+      Try ckey = Left$(TreeViewMain.Current.Key, 4)
+      If Error Then
+        Return
+      Endif
+      If ckey = "col_" Then
         MenuCollection.Popup()
       Endif
-      If Left$(TreeViewMain.Current.Key, 4) = "doc_" Then
+      If ckey = "doc_" Then
         MenuDocument.Popup()
       Endif
   End Select
@@ -229,14 +252,20 @@ Public Sub MenuAlterTable_Click()
   ' open the alter table form
   ' open table designer
   Dim ask As New FormRenameTable
-  Dim table_designer As FormPostgreSQLAlterTable
+  Dim table_designer As Variant
   ask.caller = Me
   request_canceled = False
   ask.TextBoxTableName.Text = main_treeview.Current.Text
   ask.ShowModal()
   If Not request_canceled Then
     FMain.main_tabstrip.count += 1
-    table_designer = New FormPostgreSQLAlterTable(FMain.main_tabstrip)
+    Select Object.Class(db).Name 
+      Case "PostgreSQLDB"
+        table_designer = New FormPostgreSQLAlterTable(FMain.main_tabstrip)
+      Case "SQLiteDB"
+        table_designer = New FormSQLiteAlterTable(FMain.main_tabstrip)
+    End Select
+
     If main_treeview.Current.Text <> table_name Then
       db.rename_table(main_treeview.Current.Text, table_name)
       db.refresh_db_tree()
@@ -349,8 +378,19 @@ Public Sub MenuDropTrigger_Click()
   Endif
 End
 
+Public Sub MenuDeleteDatalogRule_Click()
+  ' delete the Datalog rule
+  If Message.Question("Are you sure that you want to drop the Datalog rule " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
+    Try db.delete_datalog_rule(TreeViewMain.Current.Text)
+    If Error Then
+      Message.Error("Error while dropping datalog rule " & TreeViewMain.Current.Text & "!")
+    Endif
+    db.refresh_db_tree()
+  Endif
+End
+
 Public Sub MenuUpdateData_Click()
-  ' open the table data editor
+  ' open the table data TextEditor
   Dim tbl As String
   Dim table_updater As FormPostgreSQLEditTableData
   If TreeViewMain.Current.ParentKey = "Tables" Then
@@ -473,13 +513,15 @@ End
 
 Public Sub TreeViewMain_DblClick()
   ' on double click open the given object
-  Dim tbl As String
+  Dim tbl, rule, head, tail As String
+  Dim ht As String[]
   Dim table_updater As FormPostgreSQLEditTableData
   Dim con As Connection
   Dim i As Integer
   Dim sql_view As FormSQLSplit
   Dim datalog_view As FormDatalogSplit
   Dim datalog_module As FormXSBCreateModule
+  Dim datalog_rule As FormDatalogRule
   Dim pymapreduce_split As FormPyMapReduceSplit
   Dim py_edit As FormZODBPythonEditor
   Dim py_mani As FormZODBDataManipulationEditor
@@ -556,6 +598,25 @@ Public Sub TreeViewMain_DblClick()
     TabStripMain.Index = TabStripMain.count - 1
     datalog_view = New FormDatalogSplit(TabStripMain)
     datalog_view.datalog_editor.Text = db.dbobjects["queries"]["datalog queries"][TreeViewMain.Current.Key]
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Datalog query"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Datalog rules" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Datalog rule" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    datalog_rule = New FormDatalogRule(TabStripMain)
+    rule = RegExp.Replace(db.dbobjects["datalog rules"][TreeViewMain.Current.Key], " [:][-] ", "$$$$$$$$$$$$$$$$")
+    rule = RegExp.Replace(rule, "[/]assert ", "")
+    ht = Split(rule, "$")
+    head = ht[0]
+    tail = ht.Pop()
+    datalog_rule.head_editor.Text = head
+    datalog_rule.tail_editor.Text = tail
     TabStripMain.Text = TreeViewMain.Current.Key & " - Datalog query"
   Endif
   If TreeViewMain.Current.ParentKey = "Datalog modules" Then
@@ -718,7 +779,10 @@ Public Sub TreeViewMain_DblClick()
     con.Open
     table_updater = New FormPostgreSQLEditTableData(FMain.main_tabstrip)
     table_updater.data_source.Connection = con
-    table_updater.data_source.Table = tbl
+    Try table_updater.data_source.Table = tbl
+    If Error Then
+      Message.Warning("Cannot load table data!\n" & Error.Text)
+    Endif
     main_tabstrip.Text = tbl & " - Table"
   Endif
   If TreeViewMain.Current.ParentKey = "Replace queries" Then
@@ -847,11 +911,6 @@ Public Sub TreeViewMain_DblClick()
   Endif
 End
 
-' TODO: Implement close button on tabstrip
-' Public Sub TabStripMain_Close(Index As Integer)
-'   Print "Hello" & Str(Index)
-' End
-
 
 Public Sub TreeViewMain_Expand()
   ' when expanding if the db is a ZODB, change the py/id into a real object
@@ -876,5 +935,55 @@ Public Sub TreeViewMain_Expand()
         Endif
       Endif
     Until TreeViewMain.MoveBelow()
+  Endif
+End
+
+Public Sub ToolButtonNewForm_Click()
+  ' Ask for form name, and open the form designer
+  Dim ui As FormFormDesigner
+  Dim ask As FormAskFormName
+  askagain:
+  ask = New FormAskFormName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(form_name) Then
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = form_name & " - Form"
+      ui = New FormFormDesigner(FMain.main_tabstrip)
+    Else
+      Message.Error("Such a form name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub TableViewApplicationElementCSS_Click()
+
+  Print Me.main_application_css.Current.Text
+
+End
+
+Public Sub ToolButtonNewScript_Click()
+  ' Ask for script name and type, and open the script editor
+  Dim ui As FormScriptSplit
+  Dim ask As FormAskScriptName
+  askagain:
+  ask = New FormAskScriptName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(script_name) Then
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = script_name & " - " & script_type & " script"
+      ui = New FormScriptSplit(script_type, FMain.main_tabstrip)
+    Else
+      Message.Error("Such a name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
   Endif
 End

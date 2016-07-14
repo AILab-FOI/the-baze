@@ -3,6 +3,13 @@
 { Form Form
   MoveScaled(0,0,94,71)
   Arrangement = Arrange.Fill
+  { MenuAlterTable Menu
+    Text = ("Menu Alter Table")
+    Visible = False
+    { MenuDropAttribute Menu
+      Text = ("Drop attribute")
+    }
+  }
   { VSplitMain VSplit
     MoveScaled(0,0,91,67)
     { VBoxDesign VBox
@@ -60,7 +67,7 @@
           MoveScaled(37,9,3,3)
           Enabled = False
           ToolTip = ("Choose reference")
-          Text = ("...")
+          Text = ("") & "..."
         }
         { LabelReferencedTable Label
           MoveScaled(24,14,29,3)

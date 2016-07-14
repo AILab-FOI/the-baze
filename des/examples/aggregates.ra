@@ -1,0 +1,53 @@
+%
+% Aggregates
+%
+% RA Formulation
+%
+
+/multiline on
+/datalog
+/abolish
+/show_compilations on
+
+create or replace table employee(name string, department string, salary int);
+create or replace table parking(name string, lot string);
+
+insert into employee values('anderson','accounting',1200);
+insert into employee values('andrews','accounting',1200);
+insert into employee values('arlingon','accounting',1000);
+insert into employee values('nolan',null,null);
+insert into employee values('norton',null,null);
+insert into employee values('randall','resources',800);
+insert into employee values('sanders','sales',null);
+insert into employee values('silver','sales',1000);
+insert into employee values('smith','sales',1000);
+insert into employee values('steel','sales',1020);
+insert into employee values('sullivan','sales',null);
+
+insert into parking values('anderson','a-1');
+insert into parking values('andrews','a-2');
+insert into parking values('randall','r-1');
+insert into parking values('silver','s-1');
+
+/ra
+-- Employee info:
+select true (employee);
+-- Number of employees:
+group_by [] count(*) true (employee);
+-- Employees with assigned salary
+group_by [] count(salary) true (employee);
+-- Some figures:
+group_by [] count(*),count(salary),min(salary),max(salary),sum(salary),avg(salary),times(salary) true (employee);
+-- Info of employee with minimum salary
+(rename v(name) (group_by [] min(name) true (employee))) njoin employee;
+-- Some figures grouped by department:
+group_by [department] department,min(name),max(name),avg(salary) true (employee);
+-- View creation and selection:
+ds:=group_by [department] department,max(salary) true (employee);
+select true (ds);
+-- Natural inner join
+employee njoin parking;
+-- Max lot by department with employee info:
+group_by department department,max(lot) true (parking njoin employee);
+/multiline off
+/datalog

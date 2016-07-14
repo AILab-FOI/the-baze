@@ -9,7 +9,7 @@ Public module_name As String
 
 
 Public Sub ToolButtonNewClassDescriptor_Click()
-  ' open the python editor
+  ' open the python TextEditor
   Dim ask As New FormAskClassName
   Dim module_editor As FormFlora2CreateClass
   ask.caller = Me
@@ -23,7 +23,7 @@ Public Sub ToolButtonNewClassDescriptor_Click()
 End
 
 Public Sub ToolButtonNewFlora2Module_Click()
-  ' open the python editor
+  ' open the python TextEditor
   Dim ask As New FormAskFlora2ModuleName
   Dim module_editor As FormFlora2Editor
   ask.caller = Me

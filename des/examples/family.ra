@@ -1,0 +1,43 @@
+%
+% Family
+%
+% RA Formulation
+
+/multiline on
+/abolish
+/show_compilations on
+/verbose off
+
+create table mother(mother string,child string);
+create table father(father string,child string);
+
+insert into father values('tom','amy');
+insert into father values('jack','fred');
+insert into father values('tony','carolII');
+insert into father values('fred','carolIII');
+
+insert into mother values('grace','amy');
+insert into mother values('amy','fred');
+insert into mother values('carolI','carolII');
+insert into mother values('carolII','carolIII');
+
+/ra 
+-- Parents:
+parent(parent,child) := 
+  father union mother;
+-- Children and their parents:
+project child,father,mother 
+  (father zjoin father.child=mother.child mother);
+-- View ancestor:
+ancestor(ancestor,descendant) := 
+  parent 
+  union 
+  project parent,descendant 
+    (parent zjoin parent.child=ancestor.ancestor ancestor);
+-- Ancestors
+select true (ancestor);
+-- Tom's descendants:
+select ancestor='tom' 
+  (ancestor);
+/datalog
+/multiline off

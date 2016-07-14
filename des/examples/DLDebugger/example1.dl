@@ -1,0 +1,22 @@
+% intensional database (program rules)
+
+p(X) :- s(X). 
+p(X) :- q(X,B), not(r(B)).
+
+s(f).
+s(X) :- t(B,X),r(B).
+
+t(b,X) :- q(c,X), r(X). 
+t(X,g) :- r(X).
+
+
+% extensional database (facts)
+
+q(a,c). 
+q(e,e). 
+q(c,d).
+
+r(a). 
+r(b). 
+r(c).
+

@@ -62,7 +62,7 @@
           MoveScaled(1,2,25,4)
           Text = ("Literals")
         }
-        { EditorFlora2Literals Editor
+        { TextEditorFlora2Literals TextEditor
           MoveScaled(1,7,27,26)
           Mouse = Mouse.Text
           Expand = True
@@ -75,7 +75,7 @@
           MoveScaled(1,2,25,4)
           Text = ("Query (optional)")
         }
-        { EditorFlora2Query Editor
+        { TextEditorFlora2Query TextEditor
           MoveScaled(1,7,27,26)
           Mouse = Mouse.Text
           Expand = True

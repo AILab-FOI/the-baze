@@ -1,0 +1,6 @@
+--
+-- Factorial. Relational algebra definition
+--
+
+factorial(n,f) := project 0,1 (dual) union project n+1,(n+1)*f (factorial);
+SELECT TOP 5 * FROM factorial; 

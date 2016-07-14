@@ -1,0 +1,73 @@
+// Command consult
+name = consult
+action = consult($activeFile$).
+hintText = Consults the selected file
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command listing
+name = listing
+action = listing.
+hintText = Lists the contents of the database
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command shell
+name = shell
+action = shell.
+hintText = Opens an OS shell
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command pwd
+name = pwd
+action = working_directory(X,X).
+hintText = Displays the current folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command clpfd
+name = clpfd
+action = use_module(library(clpfd)).
+hintText = Loads finite domain constraint library
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command clpr
+name = clpr
+action = use_module(library(clpr)).
+hintText = Loads arithmetical constraint library
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command lists
+name = lists
+action = use_module(library(lists)).
+hintText = Loads list library
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command help
+name = help
+action = help.
+hintText = Shows the help
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// buttonConfiguration Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

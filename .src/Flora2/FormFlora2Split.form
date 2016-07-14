@@ -29,11 +29,11 @@
           Text = ("Distinct results")
         }
       }
-      { EditorFlora2 Editor
+      { TextEditorFlora2 TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = Highlight.Diff
+        Highlight = "Diff"
       }
     }
     { TableViewResults TableView

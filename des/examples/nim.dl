@@ -1,0 +1,24 @@
+% Program: Nim game
+% Author: Fernando Sáenz-Pérez
+% Date: 01/27/2013
+% Nim game (simplified). Better known as subtraction game
+% Only one heap, one or two tokens can be removed in a turn
+
+loose_nim(0).
+loose_nim(X) :-
+  X>1,
+  take(N),
+  X1 is X-N,
+  X1>0,
+  win_nim(X1).
+
+win_nim(1).
+win_nim(X) :-
+  X>2,
+  take(N),
+  X1 is X-N,
+  X1>=0,
+  loose_nim(X1).
+ 
+take(1).
+take(2).

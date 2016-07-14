@@ -1,0 +1,209 @@
+' Gambas class file
+
+' The shell proces for the terminal
+Private proc As Process
+' The type of the script. Can be: R, Python, NodeJS
+Public type As String  
+' A task that observes a file, and raises an event if the file is changed
+Public request_observer As FileObserver
+' An observer that monitors the above task and forwards it's event
+Public event_raiser As Observer
+' Name of the input file of the script
+Public infile_name As String
+' Name of the output file of the script
+Public outfile_name As String
+' PID of the process
+Private proc_id As Integer
+
+Public Sub _new(typ As String)
+  ' Create a terminal view
+  Dim shpath As String
+  type = typ
+  tryagain:
+  shpath = get_shell_path()
+  Try proc = TerminalViewMain.Shell(shpath)
+  If Error Then
+    Sleep 0.1
+    Goto tryagain
+  Endif
+  
+  Try proc_id = proc.Id
+  If Error Then
+    Sleep 1
+    Goto tryagain
+  Endif
+  
+  infile_name = Temp()
+  outfile_name = Temp()
+  
+  request_observer = New FileObserver
+  request_observer.filename = outfile_name
+  event_raiser = New Observer(request_observer) As "RequestObserver"
+  
+  reload_baze()
+  clear_terminal()
+End
+
+Public Sub get_shell_path() As String
+  ' Get the selected shell's executable path
+  Dim path As String
+  Dim typ As String
+  If type <> "R" Then
+    typ = Lower(type)
+  Else
+    typ = type
+  Endif
+  Shell "which " & typ To path
+  Return path
+End
+
+Public Sub ToolButtonExecute_Click()
+  clear_terminal()
+  reload_baze()
+End
+
+
+Public Sub Form_Close()
+ ' Kill the shell process
+  TerminalViewMain.Kill()
+End
+
+Public Sub clear_terminal()
+  ' Clear the terminal
+  If proc_id = proc.Id Then
+    Select type
+      Case "Python"
+        Write #proc, "print '\\033[2J'\n"
+      Case "R"
+        Write #proc, "cat('\\u001b[2J\\u001b[0;0H')\n"
+      Case "NodeJS"
+        Write #proc, "module.exports.repl.ignoreUndefined = true;\n"
+        Write #proc, "var y = process.stdout.write('\\u001b[2J\\u001b[0;0H');\n"
+    End Select
+  Endif
+End
+
+Public Sub reload_baze()
+  ' reload the baze scripting API
+  Dim infile, outfile As File
+  Dim queries, forms, reports, scripts As String
+  Dim obs_cmd As String
+  infile = Open infile_name For Write Create
+  Write #infile, "{}"
+  infile.Close()
+  queries = get_queries()
+  forms = get_forms()
+  reports = get_reports()
+  scripts = get_scripts()
+  If proc_id = proc.Id Then
+    Select type
+      Case "Python"
+        Write #proc, "import sys;sys.path.append('" & Application.Path &/ "scriptapi')\n"
+        Write #proc, "from pyscript import baze\nfrom json import loads\n"
+        Write #proc, "dbaze = baze( '" & infile_name & "', '" & outfile_name & "', loads( '" & queries & "' ), loads( '" & forms & "' ), loads( '" & reports & "' ), loads( '" & scripts & "' ) )\n"
+      Case "R"
+        Write #proc, "source('" & Application.Path &/ "scriptapi" &/ "rscript.R' )\n"
+        Write #proc, "dbaze <- baze$new( infile='" & infile_name & "', outfile='" & outfile_name & "', queries=fromJSON( paste( '" & queries & "', collapse='' ) ), forms=fromJSON( paste( '" & forms & "', collapse='' ) ), reports=fromJSON( paste(  '" & reports & "', collapse='' ) ), scripts=fromJSON( paste( '" & scripts & "', collapse='' ) ) )\n"
+      Case "NodeJS"
+        Write #proc, "var baze = require('" & Application.Path &/ "scriptapi" &/ "javascript.js').baze\n"
+        Write #proc, "dbaze = new baze( '" & infile_name & "', '" & outfile_name & "', " & queries & ", " & forms & ", " & reports & ", " & scripts & " )\n"
+    End Select
+  Endif
+End
+
+Public Sub RequestObserver_NewRequest(data As String)
+  ' New request event handler
+  Dim req, res As Collection
+  Dim infile As File
+  Dim jsres As String
+  Dim counter As Integer = 0
+  req = JSON.Decode(data)
+  ' TODO: implement cases showform, showreport and runscript
+  Select req["type"]
+    Case "runquery"
+      res = New Collection
+      res[req["oid"]] = New Collection
+      res[req["oid"]]["success"] = True
+      retry:
+      counter += 1
+      Try res[req["oid"]]["result"] = FMain.db.run_query(req["oid"])
+      If Error Then
+        Print "HERE:", Error.Text
+        If counter < 5 Then
+          FMain.db.close()
+          FMain.db.connect()
+          Goto retry
+        Endif
+        res[req["oid"]]["success"] = False
+      Endif
+  End Select
+  infile = Open infile_name For Write Create
+  jsres = JSON.Encode(res)
+  Write #infile, jsres, Len(jsres)
+  infile.Close()
+End
+
+
+Public Sub get_queries() As String
+  ' Get all queries from the current database and generate JSON for script interface
+  Dim queries, qcol As New Collection
+  Dim q, result As String
+  For Each qcol In FMain.db.dbobjects["queries"]
+    For Each q In qcol
+      queries[qcol.key] = New Collection
+      queries[qcol.key]["name"] = qcol.key
+      queries[qcol.key]["query"] = q
+      queries[qcol.key]["type"] = Replace(FMain.db.dbobjects["queries"].key, "queries", "query")
+    Next
+  Next
+  result = JSON.Encode(queries)
+  result = Replace(result, "'", "\\'")
+  result = Replace(result, "\\n", " ")
+  Return result
+End
+
+Public Sub get_forms() As String
+  ' Get all forms from the current database and generate JSON for script interface
+  Dim forms, qcol As New Collection
+  Dim f, k, result As String
+  For Each f In FMain.db.dbobjects["forms"]
+    k = FMain.db.dbobjects["forms"].key
+    forms[k] = New Collection
+    forms[k]["name"] = f
+  Next
+  result = JSON.Encode(forms)
+  result = Replace(result, "'", "\\'")
+  result = Replace(result, "\\n", " ")
+  Return result
+End
+
+Public Sub get_reports() As String
+  ' Get all forms from the current database and generate JSON for script interface
+  Dim reports, qcol As New Collection
+  Dim r, k, result As String
+  For Each r In FMain.db.dbobjects["reports"]
+    k = FMain.db.dbobjects["reports"].key
+    reports[k] = New Collection
+    reports[k]["name"] = r
+  Next
+  result = JSON.Encode(reports)
+  result = Replace(result, "'", "\\'")
+  result = Replace(result, "\\n", " ")
+  Return result
+End
+
+Public Sub get_scripts() As String
+  ' Get all forms from the current database and generate JSON for script interface
+  Dim scripts, qcol As New Collection
+  Dim s, k, result As String
+  For Each s In FMain.db.dbobjects["scripts"]
+    k = FMain.db.dbobjects["scripts"].key
+    scripts[k] = New Collection
+    scripts[k]["name"] = s
+    scripts[k]["type"] = "R"
+  Next
+  result = JSON.Encode(scripts)
+  result = Replace(result, "'", "\\'")
+  result = Replace(result, "\\n", " ")
+  Return result
+End

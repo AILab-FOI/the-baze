@@ -2,7 +2,27 @@
 
 Inherits SQLiteDB
 
-Public Sub _new()
-  Me.connection_settings["connection type"] = "SQLiteEmbedded" 
+Public Sub _new(dbfile_ As String)
+  Me.dbfile = dbfile_
+  
+  Me.connection_settings["connection type"] = "SQLiteEmbedded"
+  Me.connection_settings["dbfile"] = Me.dbfile
    
+End
+
+Public Sub connect(Optional caller As Object = Null) As Boolean
+  ' connect to DB
+  With Me.con
+    .Type = "sqlite"
+    .Name = Me.temporary_folder &/ Me.dbfile
+    Try .Open
+    If Error Then 
+      Message.Info(Error.Text)
+      Return False
+    End If  
+  End With 
+  ' TODO: add this to enable datalog queries 
+  
+  Me.init_des()
+  Return True
 End

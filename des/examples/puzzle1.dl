@@ -1,0 +1,122 @@
+% 0. Initial state 
+state(0,0,n,n,n,n).
+% 1. Farmer takes Wolf 
+state(C,S,X,X,U,V) :-
+  safe(X,X,U,V),
+  opp(X,X1),
+  state(C1,S1,X1,X1,U,V),
+  S is S1+1,
+  bound(B),
+  S<B,
+  C is C1+1*10**S1.
+% 2. Farmer takes Goat
+state(C,S,X,Y,X,V) :-
+  safe(X,Y,X,V),
+  opp(X,X1),
+  state(C1,S1,X1,Y,X1,V),
+  S is S1+1,
+  bound(B),
+  S<B,
+  C is C1+2*10**S1.
+% 3. Farmer takes Cabbage
+state(C,S,X,Y,U,X) :-
+  safe(X,Y,U,X),
+  opp(X,X1),
+  state(C1,S1,X1,Y,U,X1),
+  S is S1+1,
+  bound(B),
+  S<B,
+  C is C1+3*10**S1.
+% 4. Farmer goes by himself 
+state(C,S,X,Y,U,V) :-
+  safe(X,Y,U,V),
+  opp(X,X1),
+  state(C1,S1,X1,Y,U,V),
+  S is S1+1,
+  bound(B),
+  S<B,
+  C is C1+4*10**S1.
+
+% Opposite shores (n/s)
+%opp(n,s).
+%opp(s,n).
+opp(X,Y) :-
+  shore(X),
+  shore(Y),
+  X\=Y.
+
+% Farmer is with Goat
+safe(X,Y,X,V) :-
+  shore(X),
+  shore(Y),
+  shore(V).
+% Farmer is not with Goat
+safe(X,X,X1,X) :-
+  opp(X,X1).
+
+% Possible shores
+shore(s).
+shore(n).
+
+% Maximum number of allowed crossings
+bound(8).
+
+
+DES> state(C,S,s,s,s,s)
+{                                           
+  state(2412342.0,7,s,s,s,s),
+  state(2432142.0,7,s,s,s,s)
+}
+
+Reading: In 7 crossings, two solutions have been found
+% * Solution 1: state(2412342.0,7,s,s,s,s)
+% 0: Initial state
+%    North: Farmer,Goat,Cabbage,Wolf
+%    South: empty
+% 2: Farmer takes goat to the South shore
+%    North: Cabbage,Wolf
+%    South: Farmer,Goat
+% 4: Farmer returns to North shore
+%    North: Farmer,Cabbage,Wolf
+%    South: Goat
+% 3: Farmer takes cabbage to the South shore
+%    North: Wolf
+%    South: Farmer,Cabbage,Goat
+% 2: Farmer takes goat to the North shore
+%    North: Farmer,Goat,Wolf
+%    South: Cabbage
+% 1: Farmer takes wolf to the South shore
+%    North: Goat
+%    South: Farmer,Cabbage,Wolf
+% 4: Farmer returns to North shore
+%    North: Farmer,Goat
+%    South: Cabbage,Wolf
+% 2: Farmer takes goat to the South shore
+%    North: empty
+%    South: Farmer,Goat,Cabbage,Wolf
+
+% * Solution 2: state(2432142.0,7,s,s,s,s)
+% 0: Initial state
+%    North: Farmer,Goat,Cabbage,Wolf
+%    South: empty
+% 2: Farmer takes goat to the South shore
+%    North: Cabbage,Wolf
+%    South: Farmer,Goat
+% 4: Farmer returns to North shore
+%    North: Farmer,Cabbage,Wolf
+%    South: Goat
+% 1: Farmer takes wolf to the South shore
+%    North: Cabbage
+%    South: Farmer,Goat,Wolf
+% 2: Farmer takes goat to the North shore
+%    North: Farmer,Goat,Cabbage
+%    South: Wolf
+% 3: Farmer takes cabbage to the South shore
+%    North: Goat
+%    South: Farmer,Cabbage,Wolf
+% 4: Farmer returns to North shore
+%    North: Farmer,Goat
+%    South: Cabbage,Wolf
+% 2: Farmer takes goat to the South shore
+%    North: empty
+%    South: Farmer,Goat,Cabbage,Wolf

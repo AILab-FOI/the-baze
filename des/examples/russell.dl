@@ -1,0 +1,14 @@
+%
+% Russell's Paradox
+%
+% Datalog Formulation
+
+man(barber).
+man(mayor).
+
+shaves(barber,M) :-
+  man(M), 
+  not(shaves(M,M)).
+
+shaved(M) :-
+  shaves(barber,M).

@@ -1,0 +1,560 @@
+% File: siie.dl
+% Date: 08/21/2014
+% Author: Fernando Sáenz-Pérez
+% Description:
+%   A conceptual map for "Social Sciences: Countries"
+%   Constraints help developers to maintain a consistent instance.
+%   The ontology meta-model is based on:
+%      F.J. Álvarez, A. Vaquero, and F. Sáenz-Pérez,
+%      "Conceptual Modeling of Ontology-based Linguistic Resources with a Focus on Semantic Relations",
+%      In Proceedings of the Sixth International Conference on Language Resources and Evaluation (LREC 2008), May, 2008.
+%   This Datalog program can be tested on DES (des.sourceforge.net)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ontology Metadata
+% c.f. Ontology Data for description
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Concepts
+%   - Type constraints:
+:- type(concepts(type:string, id:string, arity:integer)).
+%   - Primary key constraint:
+:- pk(concepts,[id]).
+%   - Domain constraints:
+%     * Concepts can be either a concept or a relation:
+:- concepts(Type,Id,Arity),
+   Type \= concept, 
+   Type \= relation.
+%     * A concept has arity 0:
+:- concepts(concept,Id,Arity),
+   Arity \= 0.
+%     * A relation has arity 2:
+:- concepts(relation,Id,Arity),
+   Arity \= 2.
+
+% Binary relations
+%   - Type constraints:
+:- type(binary_relation(relation:string, fromConcept:string, toConcept:string)).
+%   - Primary key constraint:
+:- pk(binary_relation,[relation, fromConcept, toConcept]).
+%   - Foreign key constraint:
+:- fk(binary_relation,[relation],concepts,[id]).
+:- fk(binary_relation,[fromConcept],concepts,[id]).
+:- fk(binary_relation,[toConcept],concepts,[id]).
+
+% Algebraic properties
+%   - Type constraints:
+:- type(algebraic_properties(algebraicProperty:string)).
+%   - Primary key constraint:
+:- pk(algebraic_properties,[algebraicProperty]).
+
+% Has algebraic property
+%   - Type constraints:
+:- type(has_algebraic_property(relation:string, algebraicProperty:string)).
+%   - Primary key constraint:
+:- pk(has_algebraic_property,[relation, algebraicProperty]).
+%   - Foreign key constraint:
+:- fk(has_algebraic_property,[relation],concepts,[id]).
+:- fk(has_algebraic_property,[algebraicProperty],algebraic_properties,[algebraicProperty]).
+
+% Violation of irreflexive algebraic property
+:- type(irreflexive_violation(binaryRelation:string, fromConcept:string, toConcept:string)).
+% As offending tuples can be duplicated, no primary constraint is imposed
+% Also, by its definition, only valid domain elements are allowed. No need for further domain constraints
+
+% Violation of asymmetric algebraic property
+:- type(asymmetric_violation(binaryRelation:string, fromConcept:string, toConcept:string)).
+% As offending tuples can be duplicated, no primary constraint is imposed
+% Also, by its definition, only valid domain elements are allowed. No need for further domain constraints
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Semantics of Predefined Algebraic Properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Exclusion Properties
+% ====================
+%
+% Algebraic property "irreflexive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as an irreflexive relation, fulfilling:
+%     |= ~ A -> A
+%     Here, -> represents the binary relation, the symbol |= represents logical deducibility, and the symbol ~ represents negation
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   irreflexive(binaryRelation:string, fromConcept:string, toConcept:string), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+%     Intensional semantics:
+%       irreflexive(BinaryRelation, From, To) :- 
+%         not(irreflexive_violation(BinaryRelation, From, To)).
+  
+irreflexive_violation(BinaryRelation, From, From) :- 
+  has_algebraic_property(BinaryRelation, irreflexive),
+  binary_relation(BinaryRelation, From, From).
+
+% Algebraic property "asymmetric"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as an asymmetric relation, fulfilling:
+%     A -> B , A \= B |= ~ B -> A
+%     Here, -> represents the binary relation, \= represents "are not equal", |= represents logical deducibility, and ~ represents negation
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   asymmetric(binaryRelation:string, fromConcept:string, toConcept:string), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.Id (usual referential integrity constraint)
+%     Intensional semantics:
+%       asymmetric(BinaryRelation, From, To) :-
+%         not(asymmetric_violation(BinaryRelation, From, To)).
+ 
+asymmetric_violation(BinaryRelation, From, To) :-
+  has_algebraic_property(BinaryRelation, asymmetric),
+  binary_relation(BinaryRelation, From, To),
+  From \= To,
+  binary_relation(BinaryRelation, To, From).
+
+
+%
+% Inclusion Properties
+% ====================
+%
+% Algebraic property "transitive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as a transitive relation, fulfilling:
+%     A -> B, B -> C |= A -> C
+%     Here, -> represents the binary relation, and the symbol |= represents logical deducibility
+% * Enrollment:
+%   - Inclusion constraint
+%     This algebraic property sets the values that an instance relation must have, rather than forbidding values
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   transitive(binaryRelation, fromConcept, toConcept), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+
+binary_relation(BinaryRelation, From, To) :- 
+  has_algebraic_property(BinaryRelation, transitive),
+  binary_relation(BinaryRelation, From, Mid),
+  binary_relation(BinaryRelation, Mid, To).
+
+% Algebraic property "reflexive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as a reflexive relation, fulfilling:
+%     |= A -> A
+%     Here, -> represents the binary relation, and the symbol |= represents logical deducibility
+% * Enrollment:
+%   - Inclusion constraint
+%     This algebraic property sets the values that an instance relation must have, rather than forbidding values
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   reflexive(binaryRelation, fromConcept, toConcept), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+
+binary_relation(BinaryRelation, A, A) :- 
+  has_algebraic_property(BinaryRelation, reflexive),
+  (binary_relation(BinaryRelation, A, _) 
+   ;
+   binary_relation(BinaryRelation, _, A)).
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Semantics of domain-dependent intrinsic properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Intrinsic property "is_eu_country"
+% * Description:
+%   - Para que un country sea miembro de la unión europea debe ser un country europeo
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - concept: Concept identifier of the planet
+% * Formalization:
+%   is_planet(Concept), where:
+%     Concept is an alphanumeric atom
+%     Concept \in concepts.id (usual referential integrity constraint)
+is_eu_country(Country) :-
+  binary_relation(member_of,Country,european_union),
+  binary_relation(is_a,Country,european_country).
+  
+  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ontology Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Metadata relation "concepts":
+% * Description:
+%   - A relation used in any ontology for describing which are the involved concepts and relations of a ontology instance, i.e., it keeps the metadata about concepts and relations in the ontology. Entries in concepts describe part of the ontology instance
+% * Relates:
+%   - type: Either a relation or a non-relation concept
+%   - id: Concept identifier as its known name
+%   - arity: Number of concepts each concept relates. A relation can be n-ary, with n>=2 (no related concepts). A concept has arity 0 as it relates nothing
+% * Example(s):
+%   - concepts(concept, star, 0) is used to represent that the identifier "star" is used to represent the concept "star"
+%   - concepts(relation, component_of, 2) is used to represent that the identifier "component_of" is used to represent a binary relation
+% * Formalization:
+%   concepts(type:string, id:string, arity:integer), where:
+%     type \in {concept,relation}
+%     id is an alphanumeric atom
+%     arity >=0
+% * Instance:
+% Concepts:
+%   - Objects:
+concepts(concept, country, 0).
+concepts(concept, europe, 0).
+concepts(concept, america, 0).
+concepts(concept, european_country, 0).
+concepts(concept, american_country, 0).
+concepts(concept, american_state, 0).
+concepts(concept, european_union, 0).
+concepts(concept, united_kingdom, 0).
+concepts(concept, united_states, 0).
+concepts(concept, germany, 0).
+concepts(concept, spain, 0).
+concepts(concept, iceland, 0).
+concepts(concept, ireland, 0).
+concepts(concept, scotland, 0).
+concepts(concept, california, 0).
+concepts(concept, washington, 0).
+concepts(concept, mexico, 0).
+% Relations:
+concepts(relation, is_a, 2).
+concepts(relation, member_of, 2).
+concepts(relation, component_of, 2).
+
+% Metadata relation "binary_relation":
+% * Description:
+%   - A relation used in any ontology for describing which are the involved binary relations of an ontology instance, i.e., it keeps the metadata about binary relations in the ontology. Entries in binary_relation describe part of the ontology instance
+% * Relates:
+%   - relation identifier: Concept identifier as used in metadata relation "concepts"
+%   - fromConcept identifier: Origin concept identifier in a binary relation as used in metadata relation "concepts"
+%   - toConcept identifier: Destination concept identifier in a binary relation as used in metadata relation "concepts"
+% * Example(s):
+%   - binary_relation(component_of, star, planetary_system) is intended to represent the knowledge "a star is a component of a planetary system"
+% * Formalization:
+%   binary_relation(relation:string, fromConcept:string, toConcept:string), where:
+%     relation, fromConcept, toConcept are alphanumeric atoms
+%     relation, fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+% * Instance:
+binary_relation(is_a, european_country, country).
+binary_relation(is_a, american_country, country).
+binary_relation(is_a, united_states,    country).
+binary_relation(is_a, germany,    european_country).
+binary_relation(is_a, spain,      european_country).
+binary_relation(is_a, iceland,    european_country).
+binary_relation(is_a, ireland,    european_country).
+binary_relation(is_a, scotland,   european_country).
+binary_relation(is_a, california, american_state).
+binary_relation(is_a, washington, american_state).
+binary_relation(is_a, mexico,     american_country).
+
+binary_relation(member_of, germany,    european_union).
+binary_relation(member_of, spain,      european_union).
+binary_relation(member_of, ireland,    united_kingdom).
+binary_relation(member_of, scotland,   united_kingdom).
+binary_relation(member_of, california, united_states).
+binary_relation(member_of, washington, united_states).
+
+binary_relation(component_of, european_union,   europe).
+binary_relation(component_of, united_kingdom,   europe).
+binary_relation(component_of, united_states,    america).
+binary_relation(component_of, american_country, america).
+% Overloading "component_of":
+binary_relation(component_of, X, Y) :-
+  binary_relation(member_of, X, Y).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ontology Constraints
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Instance relation "algebraic_properties"
+% * Description:
+%   - A relation used in any ontology for describing the set of available algebraic properties, which can be attached to relations
+% * Relates:
+%   - algebraicProperty: A single identifier, which is the name of the algebraic property
+% algebraic_properties(algebraicProperty)
+% * Example(s):
+%   - algebraic_properties(irreflexive) represents that an algebraic property named "irreflexive" is available to be used as an algebraic property of a relation
+% * Formalization:
+%   algebraic_properties(algebraicProperty:string), where:
+%     AlgebraicProperty is an alphanumeric atom
+% * Instance:
+algebraic_properties(reflexive).
+algebraic_properties(irreflexive).
+algebraic_properties(asymmetric).
+algebraic_properties(transitive).
+
+% Instance relation "has_algebraic_property"
+% * Description:
+%   - A relation used in any ontology for describing the algebraic properties attached to relations for an ontology instance
+% * Relates:
+%   - relation: Concept identifier of the relation
+%   - algebraicProperty: Identifier of the algebraic property
+% algebraic_properties(AlgebraicProperty)
+% * Example(s):
+%   - has_algebraic_property(component_of, transitive) represents that the relation "component_of" has attached the algebraic property "transitive"
+% * Formalization:
+%   has_algebraic_property(relation:string, algebraicProperty:string), where:
+%     relation, algebraicProperty are alphanumeric atoms
+%     relation \in concepts.id (usual referential integrity constraint)
+%     algebraicProperty \in algebraic_properties.algebraicProperty (usual referential integrity constraint)
+% * Instance:
+has_algebraic_property(is_a, reflexive).
+has_algebraic_property(is_a, asymmetric).
+has_algebraic_property(is_a, transitive).
+
+has_algebraic_property(member_of, irreflexive).
+has_algebraic_property(member_of, asymmetric).
+has_algebraic_property(member_of, transitive).
+
+has_algebraic_property(component_of, irreflexive).
+has_algebraic_property(component_of, asymmetric).
+has_algebraic_property(component_of, transitive).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Semantics of Domain-dependent Intrinsic Properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Intrinsic property "is_eu_country"
+% * Description:
+%   - Describes the properties that an european union state C must fulfill:
+%       C must be an european country 
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - concept: Concept identifier of the planet
+% * Formalization:
+%   is_eu_state(Concept), where:
+%     Concept is an alphanumeric atom
+%     Concept \in concepts.id (usual referential integrity constraint)
+is_eu_state(Country) :-
+  binary_relation(is_a, Country, european_country).
+  
+is_eu_state_violation(Country) :-
+  binary_relation(member_of, Country, european_union),
+  not is_eu_state(Country).
+
+
+% Intrinsic property "is_uk_country"
+% * Description:
+%   - Describes the properties that a united kingdom country C must fulfill:
+%       C must be an european country 
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - concept: Concept identifier of the planet
+% * Formalization:
+%   is_uk_country(Concept), where:
+%     Concept is an alphanumeric atom
+%     Concept \in concepts.id (usual referential integrity constraint)
+is_uk_country(Country) :-
+  binary_relation(is_a, Country, european_country).
+  
+is_uk_country_violation(Country) :-
+  binary_relation(member_of, Country, united_kingdom), 
+  not is_uk_country(Country).
+
+  
+% Intrinsic property "is_usa_state"
+% * Description:
+%   - Describes the properties that a USA state C must fulfill:
+%       C must be an american state 
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - concept: Concept identifier of the planet
+% * Formalization:
+%   is_uk_country(Concept), where:
+%     Concept is an alphanumeric atom
+%     Concept \in concepts.id (usual referential integrity constraint)
+is_usa_state(State) :-
+  binary_relation(is_a, State, american_state).
+  
+is_usa_state_violation(State) :-
+  binary_relation(member_of, State, united_states), 
+  not is_usa_state(State).
+
+  
+% Intrinsic property "is_american_state"
+% * Description:
+%   - Describes the properties that a USA state C must fulfill:
+%       An american state C cannot be a country
+%       A country C cannot be an american state
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - concept: Concept identifier of the planet
+% * Formalization:
+%   is_uk_country(Concept), where:
+%     Concept is an alphanumeric atom
+%     Concept \in concepts.id (usual referential integrity constraint)
+is_american_state_violation(State) :-
+  binary_relation(is_a, State, american_state),
+  binary_relation(is_a, State, country).
+
+
+% Instance relation "intrinsic_property"
+% * Description:
+%   - A relation used in any ontology for describing the set of available intrinsic properties, which can be attached to concepts
+% * Relates:
+%   - intrinsicProperty: A single identifier, which is the name of the intrinsic property
+% intrinsic_property(IntrinsicProperty)
+% * Example(s):
+%   - intrinsic_property(is_planet) represents that an intrinsic property named "is_planet" is available to be used as an intrinsic property of a relation
+% * Formalization:
+%   intrinsic_property(intrinsicProperty:string), where:
+%     intrinsicProperty is an alphanumeric atom
+% * Instance:
+intrinsic_property(is_eu_state).
+intrinsic_property(is_uk_country).
+intrinsic_property(is_usa_state).
+intrinsic_property(is_american_state).
+
+% Instance relation "has_intrinsic_property"
+% * Description:
+%   - A relation used in any ontology for describing the intrinsic properties attached to concepts for an ontology instance
+% * Relates:
+%   - concept: Concept identifier of the relation
+%   - intrinsicProperty: Identifier of the intrinsic property
+% intrinsic_property(intrinsicProperty)
+% * Example(s):
+%   - has_intrinsic_property(planet, is_planet) represents that the concept "planet" has attached the intrinsic property "is_planet"
+% * Formalization:
+%   has_intrinsic_property(concept:string, intrinsicProperty:string), where:
+%     concept, intrinsicProperty are alphanumeric atoms
+%     concept \in concepts.id (usual referential integrity constraint)
+%     intrinsicProperty \in intrinsic_property.intrinsicProperty (usual referential integrity constraint)
+% * Instance:
+has_intrinsic_property(Country,is_eu_state) :- 
+  binary_relation(member_of, Country, european_union).
+
+has_intrinsic_property(Country,is_uk_country) :- 
+  binary_relation(member_of, Country, united_kingdom).
+
+has_intrinsic_property(Country,is_usa_state) :- 
+  binary_relation(member_of, Country, united_states).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Constraint Checking
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This part is devoted to examine consistency of the instance ontology w.r.t. ontology constraints, i.e., algebraic properties attached to relations
+
+% The following are strong constraints which are checked whenever any data related to their definition are updated
+% Only exclusion properties are checked
+
+% Built-in Algebraic Properties
+:- irreflexive_violation(BinaryRelation, From, To).
+
+:- asymmetric_violation(BinaryRelation, From, To).
+
+% Domain-dependent Intrinsic Properties
+:- is_eu_state_violation(Country).
+:- is_uk_country_violation(Country).
+:- is_usa_state_violation(Country).
+:- is_american_state_violation(State).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% System Session Example
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% *********************************************************
+% *                                                       *
+% *        DES: Datalog Educational System v.Devel        *
+% *                                                       *
+% * Type "/help" for help about commands                  *
+% *                                                       *
+% *                    Fernando Saenz-Perez (c) 2004-2014 *
+% *                                         DISIA GPD UCM *
+% *             Please send comments, questions, etc. to: *
+% *                                     fernan@sip.ucm.es *
+% *                                             Web site: *
+% *                           http://des.sourceforge.net/ *
+% *                                                       *
+% * This program comes with ABSOLUTELY NO WARRANTY, is    *
+% * free software, and you are welcome to redistribute it *
+% * under certain conditions. Type "/license" for details *
+% *********************************************************
+
+% DES> /p examples/ontology/countries
+
+% Info: Processing file 'examples/ontology/countries.ini' ...
+
+% DES> /compact_listings on
+% DES> /consult examples/ontology/countries
+% Info: 74 rules consulted.                   
+% Info: 24 constraints consulted.
+% DES> % Trying to assert a concept of incorrect arity:
+% DES> /assert concepts(concept,neck,1)
+% Error: Integrity constraint violation.      
+%        ic(Id,Arity) :-
+%          concepts(concept,Id,Arity),
+%          Arity\=0.
+%        Offending values in database: [ic(neck,1)]
+% DES> % Trying to assert a concept of incorrect type:
+% DES> /assert concepts(concepto,neck,0)
+% Error: Integrity constraint violation.      
+%        ic(Type,Id,Arity) :-
+%          concepts(Type,Id,Arity),
+%          Type\=concept,
+%          Type\=relation.
+%        Offending values in database: [ic(concepto,neck,0)]
+% DES> % Trying to assert a binary relation relating an unknown concept:
+% DES> /assert binary_relation(member_of, france, european_union)  
+% Error: Foreign key violation binary_relation.[fromConcept]->concepts.[id]
+%        when trying to insert: binary_relation(member_of,france,european_union)
+% DES> % Trying to assert an unknown binary relation:
+% DES> /assert binary_relation(border, spain, france) 
+% Error: Foreign key violation binary_relation.[relation]->concepts.[id]
+%        when trying to insert: binary_relation(border,spain,france)
+% DES> % Trying to assert incorrect membership relations (countries must belong to the required continent)
+% DES> /assert binary_relation(member_of, mexico, european_union) 
+% Error: Integrity constraint violation.      
+%        ic(Country) :-
+%          is_eu_state_violation(Country).
+%        Offending values in database: [ic(mexico)]
+% DES> /assert binary_relation(member_of, mexico, united_kingdom) 
+% Error: Integrity constraint violation.      
+%        ic(Country) :-
+%          is_uk_country_violation(Country).
+%        Offending values in database: [ic(mexico)]
+% DES> /assert binary_relation(member_of, mexico, united_states) 
+% Error: Integrity constraint violation.      
+%        ic(Country) :-
+%          is_usa_state_violation(Country).
+%        Offending values in database: [ic(mexico)]
+% DES> % An american state cannot be a country:
+% DES> /assert binary_relation(is_a, washington, country) 
+% Error: Integrity constraint violation.      
+%        ic(State) :-
+%          is_american_state_violation(State).
+%        Offending values in database: [ic(washington)]
+% DES> % An american country cannot be an american state:
+% DES> /assert binary_relation(is_a, mexico, american_state) 
+% Error: Integrity constraint violation.      
+%        ic(State) :-
+%          is_american_state_violation(State).
+%        Offending values in database: [ic(mexico)]
+
+

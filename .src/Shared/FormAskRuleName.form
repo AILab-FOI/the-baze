@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,38.5714,18.5714)
+  Resizable = False
+  { LabelRuleName Label
+    MoveScaled(2,1,30,4)
+    Text = ("Please enter a name for the rule:")
+  }
+  { TextBoxRuleName TextBox
+    MoveScaled(2,6,35,4)
+  }
+  { ButtonOK Button
+    MoveScaled(26,12,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(13,12,11,4)
+    Text = ("Cancel")
+  }
+}

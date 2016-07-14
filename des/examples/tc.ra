@@ -1,0 +1,20 @@
+--
+-- Relational algebra: transitive closure under linear recursion
+--
+-- 2014/10/23
+
+/multiline on
+/show_compilations on
+/abolish
+
+:-type(direct_boss(emp: string, boss: string)).
+/assert direct_boss('a','b')
+/assert direct_boss('b','c')
+/assert direct_boss('c','d')
+
+boss(emp,boss) := project emp,boss (direct_boss) union 
+       project e1,b2 
+       (rename b1(e1,b1) (direct_boss) zjoin b1=e2
+        rename b2(e2,b2) (boss));
+        
+select true (boss);

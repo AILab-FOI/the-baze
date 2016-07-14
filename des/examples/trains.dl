@@ -1,0 +1,45 @@
+% trains.dl
+% An example program used in the course "Logic and Knowledge Representation",
+% taught in the bachelor program of 'Information Management' at
+% Tilburg University
+% Due to Manfred Jeusfeld, 2006
+% Reproduced with permission of the author
+
+directconnection(tilburg_west,tilburg_centraal).
+directconnection(tilburg_centraal,etten_leur).
+directconnection(etten_leur,breda).
+directconnection(tilburg_centraal,eindhoven).
+directconnection(tilburg_centraal,denbosch).
+directconnection(denbosch,utrecht).
+directconnection(utrecht,duivendrecht).
+directconnection(duivendrecht,amsterdam_centraal).
+directconnection(foo,foo).
+
+city(tilburg_west).
+city(tilburg_centraal).
+city(etten_leur).
+city(breda).
+city(eindhoven).
+city(denbosch).
+city(utrecht).
+city(duivendrecht).
+city(amsterdam_centraal).
+city(foo).
+
+connection(X,Y) :-
+  directconnection(X,Y).
+connection(X,Y) :-
+  directconnection(Y,X).
+connection(X,Y) :-
+  connection(X,Z),
+  connection(Z,Y).
+
+inconsistent(X) :-
+  directconnection(X,X).
+
+inconsistent(X,Y) :-
+  city(X),
+  city(Y),
+  not(connection(X,Y)). 
+% The query inconsistent(X,Y) should contain either X=foo or Y=foo 
+% in any answer fact. 

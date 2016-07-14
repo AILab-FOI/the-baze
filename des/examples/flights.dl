@@ -1,0 +1,15 @@
+%
+% Flights
+%
+% Datalog formulation
+
+% Optionally declare types
+:-type(flight(origin:string,destination:string,time:real)).
+flight(london,ny,9).
+flight(mad,par,1.5).
+flight(par,ny,10.0).
+
+% Optionally declare types
+:-type(travel(origin:string,destination:string,time:real)).
+travel(X,Y,T) :- flight(X,Y,T).
+travel(X,Y,T) :- flight(X,Z,T1), travel(Z,Y,T2), T=T1+T2.

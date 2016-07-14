@@ -1,0 +1,40 @@
+%
+% Shortest Paths in a Graph
+%
+% Datalog Formulation
+%
+% Program: Shortest paths in a graph
+% Author : Fernando Sáenz-Pérez
+% Date   : September, 2009
+
+edge(a,b).
+edge(a,c).
+edge(b,a).
+edge(b,d).
+
+path(X,Y,1) :- 
+  edge(X,Y).
+path(X,Y,L) :-
+  path(X,Z,L0),
+  edge(Z,Y),
+  count(edge(A,B),Max),
+  L0<Max,
+  L is L0+1.
+
+spaths(X,Y,L) :-
+   min(path(X,Y,Z),Z,L).
+
+
+% Note that the following is not stratifiable in DES
+
+%sp(X,Y,1) :- 
+%  edge(X,Y).
+%sp(X,Y,L) :-
+%  sp(X,Z,L0),
+%  not(shorter(X,Z,L0)), 
+%  edge(Z,Y),
+%  L is L0+1.
+  
+%shorter(X,Y,L) :-
+%  sp(X,Y,L0),
+%  L0<L.

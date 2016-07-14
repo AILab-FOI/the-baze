@@ -1,0 +1,48 @@
+%
+% Relational Algebra Operations
+%
+% DRC Formulation
+
+/abolish
+%/show_compilations on
+
+% Creating tables
+create or replace table a(a string);
+create or replace table b(b string);
+create or replace table c(a string,b string);
+% Listing the database schema
+/dbschema
+% Inserting values into tables
+insert into a values ('a1');
+insert into a values ('a2');
+insert into a values ('a3');
+insert into b values ('b1');
+insert into b values ('b2');
+insert into b values ('a1');
+insert into c values ('a1','b2');
+insert into c values ('a1','a1');
+insert into c values ('a2','b2');
+
+/drc 
+
+% Testing the just inserted values
+{A|a(A)};
+{B|b(B)};
+{A,B|c(A,B)};
+% Projection
+{A|c(A,_)};
+% Selection
+{A|a(A) and A>='a2'};
+% Cartesian product
+{A,B|a(A) and b(B)};
+% Union 
+{A|a(A) or b(A)};
+% Difference
+{A|a(A) and not b(A)};
+% Intersection
+{A|a(A) and b(A)};
+% Theta Join
+{A,B|a(A) and b(B) and A>=B};
+% Natural Inner Join
+{A,B|a(A) and c(A,B)};
+/datalog

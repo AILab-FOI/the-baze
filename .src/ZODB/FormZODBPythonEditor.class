@@ -1,12 +1,12 @@
 ' Gambas class file
 
-Public pyeditor As Editor
+Public pyeditor As TextEditor
 ' context
 Public context As String
 
 Public Sub _new()
-  ' make editor public
-  pyeditor = EditorPython
+  ' make TextEditor public
+  pyeditor = TextEditorPython
 End
 
 Public Sub ToolButtonClose_Click()
@@ -15,9 +15,9 @@ Public Sub ToolButtonClose_Click()
   With FMain.db
     Select Case context
       Case " - Python Module"
-        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text)
       Case " - Class"
-        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text)
     End Select
     .refresh_db_tree(True)
   End With
@@ -34,9 +34,9 @@ Public Sub ToolButtonExecute_Click()
  With FMain.db
     Select Case context
       Case " - Python Module"
-        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+        .new_module(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text)
       Case " - Class"
-        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text)
+        .new_class(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text)
     End Select
     .refresh_db_tree(True)
   End With

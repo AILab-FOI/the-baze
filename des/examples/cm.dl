@@ -1,0 +1,37 @@
+% Common multiples
+% Date: 22/Oct/2013
+
+
+mult(N,N).
+mult(N,M) :-
+  take(50,P),
+  M is N*P.
+  
+take(N,M) :-
+  top(N,number(M)).
+  
+number(1).
+number(N) :-
+  number(N1),
+  N is N1+1.
+  
+cm(X,Y,Z,N) :-
+  mult(X,N),
+  mult(Y,N),
+  mult(Z,N).
+  
+cm(X,Y,N) :-
+  mult(X,N),
+  mult(Y,N).
+
+% Example:
+% DES> cm(12,15,18,M)
+
+% {                                           
+%   cm(12,15,18,180),
+%   cm(12,15,18,360),
+%   cm(12,15,18,540)
+% }
+% Info: 3 tuples computed.          
+
+ 

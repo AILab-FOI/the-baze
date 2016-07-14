@@ -1,0 +1,80 @@
+% Program: Nim game
+% Author: Fernando Sáenz-Pérez
+% Date: 01/27/2013
+% Nim game (simplified). Better known as subtraction game
+% Only one heap, one or two tokens can be removed in a turn
+% Solved with hypothetical rules
+%   I win if there is one token in your turn
+%   One can take one or two tokens in a turn
+% win_nim succeeds if it is possible to win
+% Each fact 'take' represents that one has taken a token 
+
+% NOTE: Duplicates must be enabled with /duplicates on
+
+% 0
+win_nim :-
+  take       => one_left.
+% 1
+win_nim :-
+  take/\take => one_left.
+% 3
+win_nim :-
+  take       => enough, win_nim.
+% 5
+win_nim :-
+  take/\take => enough, win_nim.
+  
+one_left :-
+  total(N),
+  count(take,C), 
+  N-C=1. 
+
+enough :-
+  total(N),
+  count(take,C),
+  N-C>0.
+
+total(5).
+
+% With total(1):
+% DES> win_nim             
+% {                                           
+% }
+% Info: 0 tuples computed.          
+
+% With total(2):
+% DES> win_nim                     
+% {                                           
+%   win_nim
+% }
+% Info: 1 tuple computed.          
+% One winning path
+
+% With total(3):
+% DES> win_nim                     
+% {                                           
+%   win_nim,
+%   win_nim
+% }
+% Info: 2 tuples computed.          
+% Two winning paths
+
+% With total(4):
+% DES> win_nim                     
+% {                                           
+%   win_nim,
+%   win_nim
+% }
+% Info: 2 tuples computed.          
+% Two winning paths
+
+% With total(5):
+% DES> win_nim                     
+% {                                           
+%   win_nim,
+%   win_nim,
+%   win_nim,
+%   win_nim
+% }
+% Info: 4 tuples computed.          
+% Four winning paths

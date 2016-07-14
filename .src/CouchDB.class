@@ -47,7 +47,7 @@ Public Sub connect(Optional caller As Object = Null) As Boolean
     js = New JSON
     If js.Decode(res)["couchdb"] = "Welcome" Then
       con.URL = Me.host & ":" & Me.port & "/Gambas_Test_DB_From_Baze"
-      con.Put("application/json", "{\"test\":\"from gambas\"}") 'WTF: Here it dies!
+      con.Put("application/json", "{\"test\":\"from gambas\"}") 'FIXME: Here it dies!
       ' If con.Status < 0 Then
       '   Return False
       ' Else

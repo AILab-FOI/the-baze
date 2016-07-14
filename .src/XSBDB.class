@@ -1,28 +1,19 @@
 ' Gambas class file
 
-Inherits DBaze
+Inherits ODBCDB
 
-Public dsn As String
 Public xsb As String
 Public xsb_engine As XSBEngine
 Public Datalog_con As DatalogConnection
 Public con As New Connection
-Public original As String[]
+Public original As New String[]
 
-Public Sub _new(dsn_ As String, username As String, password As String, store_password As Boolean, xsb_ As String)
-  Me.dsn = dsn_
-  Me.username = username
-  Me.password = password
-  Me.store_password = store_password
+Public Sub _new(xsb_ As String)
+  ' Constructor - all other arguments are consumed by ODBCDB constructor!
   Me.xsb = xsb_
   
   Me.connection_settings["connection type"] = "XSB"
-  Me.connection_settings["dsn"] = dsn
-  Me.connection_settings["username"] = username
   Me.connection_settings["xsb"] = xsb
-  If Me.store_password Then
-    Me.connection_settings["password"] = password
-  Endif
 End
 
 Public Sub close()
@@ -48,11 +39,16 @@ Public Function connect(Optional caller As Object = Null) As Boolean
   With con
     .Type = "odbc"
     .Host = Me.dsn
-    .User = Me.username
+    .Login = Me.username
     .Password = Me.password
+    .Name = ""
     Try .Open
     If Error Then
       Message.Error(Error.Text)
+      Return False
+    Endif
+    If .Opened = False Then
+      Message.Error("ODBC connection won't open!")
       Return False
     Endif
   End With
@@ -82,10 +78,7 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
   Dim field_name As String
   Dim counter As Collection
   original = New String[]
-  ' TODO: this is to slow, need to enhance DatalogConnection!
-  'res = Datalog_con.execute_sql(query)
-  'Return res
-  ' TODO: this is buggy, either enhance above or edit below
+  ' TODO: this is buggy, try to edit below
   Try res = con.Exec(rewrite_query(query))
   If Error Then 
     If Not no_messages Then
@@ -116,44 +109,59 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
   Return resultArray
 End
 
-Public Sub get_db_objects() As Collection
-  ' get the database objects (tables, views, indices, functions, triggers, sequences, user defined datatypes)
-  Dim objects As New Collection
-  Dim tables, views, indices, functions, triggers, sequences, types, languages As String
-  Dim row As Object
-  tables = "SELECT n.nspname as schema, c.relname as table, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  views = "SELECT n.nspname as schema, c.relname as view, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('v','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  indices = "SELECT n.nspname as schema, c.relname as index, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as type,  u.usename as owner, c2.relname as table FROM pg_catalog.pg_class c JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('i','') AND n.nspname NOT IN ('pg_catalog', 'pg_toast') AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  functions = "SELECT n.nspname as schema, p.proname as function,  pg_catalog.pg_get_function_result(p.oid) as result_data, pg_catalog.pg_get_function_arguments(p.oid)::VARCHAR as arguments, CASE WHEN p.proisagg THEN 'agg' WHEN p.proiswindow THEN 'window' WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger' ELSE 'normal' END as function_type FROM pg_catalog.pg_proc p LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE pg_catalog.pg_function_is_visible(p.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' ORDER BY 1, 2, 4"
-  triggers = "SELECT DISTINCT trigger_name AS trigger, event_object_table AS table FROM INFORMATION_SCHEMA.triggers WHERE trigger_schema='public';"
-  sequences = "SELECT n.nspname as schema, c.relname as sequence, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('S','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  types = "SELECT n.nspname as schema,   pg_catalog.format_type(t.oid, NULL)::VARCHAR AS user_type, pg_catalog.obj_description(t.oid, 'pg_type')::VARCHAR as description FROM pg_catalog.pg_type t LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid)) AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND pg_catalog.pg_type_is_visible(t.oid) ORDER BY 1, 2;"
-  languages = "SELECT l.lanname AS language, pg_catalog.pg_get_userbyid(l.lanowner) as owner, l.lanpltrusted AS trusted FROM pg_catalog.pg_language l WHERE lanplcallfoid != 0  ORDER BY 1"
-  
-  objects["tables"] = execute(tables)
-  objects["views"] = execute(views)
-  objects["indices"] = execute(indices)
-  objects["functions"] = execute(functions)
-  objects["triggers"] = execute(triggers)
-  objects["sequences"] = execute(sequences)
-  objects["types"] = execute(types)
-  objects["languages"] = execute(languages)
-  
-  objects["attributes"] = New Collection
-  For Each row In objects["tables"]
-    objects["attributes"][row["table"]] = execute("SELECT a.attname as attribute, a.attnum FROM pg_catalog.pg_attribute a WHERE a.attrelid = (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & row["table"] & "' AND pg_catalog.pg_table_is_visible(c.oid)) AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum")
-  Next
-  
-  objects["object types"] = [ 
-    "tables": "table.png", 
-    "views": "view.png", 
-    "indices": "index.png", 
-    "functions": "function.png", 
-    "triggers": "trigger.png", 
-    "sequences": "sequence.png",
-    "types": "data_type.png"]
-  Return objects
-End
+' Public Sub get_db_objects() As Collection
+'   ' get the database objects (tables, views, indices, functions, triggers, sequences, user defined datatypes)
+'   Dim objects As New Collection
+'   Dim tables, views, indices, functions, triggers, sequences, types, languages As String
+'   Dim row As Object
+'   Dim dbtype As String
+'   
+'   dbtype = Me.test_db_type()
+'   
+'   ' Select dbtype
+'   '   Case "sqlite"
+'   ' End Select
+'   
+'   tables = "odbc_get_schema( accessible(_), _L ), member( Table, _L )."
+'   views = ""
+'   indices = ""
+'   functions = ""
+'   triggers = ""
+'   sequences = ""
+'   types = ""
+'   languages = ""
+'   
+'   objects["tables"] = executeDatalog(tables)
+'   For Each row In objects["tables"]
+'     row["table"] = row["Table"]
+'     row.Remove("Table")
+'   Next
+'   objects["views"] = New Collection 'execute(views)
+'   objects["indices"] = New Collection 'execute(indices)
+'   objects["functions"] = New Collection 'execute(functions)
+'   objects["triggers"] = New Collection 'execute(triggers)
+'   objects["sequences"] = New Collection 'execute(sequences)
+'   objects["types"] = New Collection 'execute(types)
+'   objects["languages"] = New Collection 'execute(languages)
+'   
+'   objects["attributes"] = New Collection
+'   For Each row In objects["tables"]
+'     objects["attributes"][row["table"]] = executeDatalog("odbc_get_schema( columns( '" & row["table"] & "' ), _L ), member( C, _L ).")
+'   Next
+'   
+'   objects["object types"] = [ 
+'     "tables": "table.png"] ', 
+'     ' "views": "view.png", 
+'     ' "indices": "index.png", 
+'     ' "functions": "function.png", 
+'     ' "triggers": "trigger.png", 
+'     ' "sequences": "sequence.png",
+'     ' "types": "data_type.png"]
+'   Return objects
+' End
+
+
+
 
 Public Sub initialize_gui()
   ' initialize the GUI for PostgreSQL database
@@ -188,14 +196,14 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   Dim tab As Collection
   Dim o, temp_file As String
   FMain.main_treeview.Clear
-  objects = get_db_objects()
-  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("directory.png"))
+  objects = Me.get_db_objects()  
+  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("images/directory.png"))
   For Each tab In objects["tables"]
-    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load(objects["object types"]["tables"]), "Tables")
+    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load("images/" & objects["object types"]["tables"]), "Tables")
   Next
-  FMain.main_treeview.Add("Datalog modules", "Datalog modules", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Datalog modules", "Datalog modules", Picture.Load("images/directory.png"))
   For Each o In Me.dbobjects["datalog modules"]
-    FMain.main_treeview.Add(Me.dbobjects["datalog modules"].key, Me.dbobjects["datalog modules"].key, Picture.Load("module.png"), "Datalog modules")
+    FMain.main_treeview.Add(Me.dbobjects["datalog modules"].key, Me.dbobjects["datalog modules"].key, Picture.Load("images/module.png"), "Datalog modules")
     If load_modules Then
       temp_file = Me.temporary_folder & "/" & Me.dbobjects["datalog modules"].key
       File.Save(temp_file, Me.dbobjects["datalog modules"][Me.dbobjects["datalog modules"].key])
@@ -206,65 +214,70 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
       Endif
     Endif
   Next
-  FMain.main_treeview.Add("Views", "Views", Picture.Load("directory.png"))
-  For Each tab In objects["views"]
-    FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load(objects["object types"]["views"]), "Views")
-  Next
-  FMain.main_treeview.Add("Indices", "Indices", Picture.Load("directory.png"))
-  For Each tab In objects["indices"]
-    FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load(objects["object types"]["indices"]), "Indices")
-  Next
-  FMain.main_treeview.Add("Functions", "Functions", Picture.Load("directory.png"))
-  For Each tab In objects["functions"]
-    FMain.main_treeview.Add("fun_" & tab["function"] & "(" & tab["arguments"] & ")", tab["function"] & "(" & tab["arguments"] & ")", picture.Load(objects["object types"]["functions"]), "Functions")
-  Next
-  FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("directory.png"))
-  For Each tab In objects["triggers"]
-    FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load(objects["object types"]["triggers"]), "Triggers")
-  Next
-  FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("directory.png"))
-  For Each tab In objects["sequences"]
-    FMain.main_treeview.Add("seq_" & tab["sequence"], tab["sequence"], picture.Load(objects["object types"]["sequences"]), "Sequences")
-  Next
-  FMain.main_treeview.Add("Types", "Types", Picture.Load("directory.png"))
-  For Each tab In objects["types"]
-    FMain.main_treeview.Add("typ_" & tab["user_type"], tab["user_type"], picture.Load(objects["object types"]["types"]), "Types")
-  Next
+  
+  If Me.dbtype <> Null Then
+    FMain.main_treeview.Add("Views", "Views", Picture.Load("images/directory.png"))
+    For Each tab In objects["views"]
+      FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load("images/" & objects["object types"]["views"]), "Views")
+    Next
+    FMain.main_treeview.Add("Indices", "Indices", Picture.Load("images/directory.png"))
+    For Each tab In objects["indices"]
+      FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load("images/" & objects["object types"]["indices"]), "Indices")
+    Next
+    FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("images/directory.png"))
+    For Each tab In objects["triggers"]
+      FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load("images/" & objects["object types"]["triggers"]), "Triggers")
+    Next
+    If Me.dbtype = "postgresql" Then
+      FMain.main_treeview.Add("Functions", "Functions", Picture.Load("images/directory.png"))
+      For Each tab In objects["functions"]
+        FMain.main_treeview.Add("fun_" & tab["function"] & "(" & tab["arguments"] & ")", tab["function"] & "(" & tab["arguments"] & ")", picture.Load("images/" & objects["object types"]["functions"]), "Functions")
+      Next
+      FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("images/directory.png"))
+      For Each tab In objects["sequences"]
+        FMain.main_treeview.Add("seq_" & tab["sequence"], tab["sequence"], picture.Load("images/" & objects["object types"]["sequences"]), "Sequences")
+      Next
+      FMain.main_treeview.Add("Types", "Types", Picture.Load("images/directory.png"))
+      For Each tab In objects["types"]
+        FMain.main_treeview.Add("typ_" & tab["user_type"], tab["user_type"], picture.Load("images/" & objects["object types"]["types"]), "Types")
+      Next
+    Endif
+  Endif
   ' create Baze object containers
   With FMain.main_treeview
-    .Add("Queries", "Queries", Picture.Load("directory.png"))
-    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert queries"]
-      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
     Next
-    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
-      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
     Next
-    .Add("Datalog queries", "Datalog queries", Picture.Load("directory.png"), "Queries")
+    .Add("Datalog queries", "Datalog queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["datalog queries"]
-      .Add(Me.dbobjects["queries"]["datalog queries"].key, Me.dbobjects["queries"]["datalog queries"].key, Picture.Load("query.png"), "Datalog queries")
+      .Add(Me.dbobjects["queries"]["datalog queries"].key, Me.dbobjects["queries"]["datalog queries"].key, Picture.Load("images/query.png"), "Datalog queries")
     Next
-    .Add("SQL queries", "SQL queries", Picture.Load("directory.png"), "Queries")
+    .Add("SQL queries", "SQL queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["sql queries"]
-      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("query.png"), "SQL queries")
+      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("images/query.png"), "SQL queries")
     Next
-    ' return these later when QBE is implemented
-    '.Add("QBE queries", "QBE queries", Picture.Load("directory.png"), "Queries")
+    ' TODO: return these later when QBE is implemented
+    '.Add("QBE queries", "QBE queries", Picture.Load("images/directory.png"), "Queries")
     'For Each o In Me.dbobjects["queries"]["qbe queries"]
-    '  .Add(o, o, Picture.Load("query.png"), "QBE queries")
+    '  .Add(o, o, Picture.Load("images/query.png"), "QBE queries")
     'Next
-    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["forms"]
-      .Add(o, o, Picture.Load("query.png"), "Forms")
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
     Next
-    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["scripts"]
-      .Add(o, o, Picture.Load("query.png"), "Scripts")
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
     Next
-    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]
-      .Add(o, o, Picture.Load("query.png"), "Reports")
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
     Next
   End With
 End
@@ -279,10 +292,10 @@ Public Function rewrite_query(query As String) As String
   Dim rfield As ResultField
   Dim with_string As String
   Dim i As Integer
-  has_asterisk = XSBEngine.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
+  has_asterisk = AUX.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
   If has_asterisk.Count > 0 Then
     query_copy = query
-    defined_limit = XSBEngine.FindAll(query, "(?i)(limit +[0-9]+)", 1)
+    defined_limit = AUX.FindAll(query, "(?i)(limit +[0-9]+)", 1)
     If defined_limit.Count > 0 Then
       For Each replace_limit In defined_limit
         query = Replace(query, replace_limit, "LIMIT 1")
@@ -316,16 +329,6 @@ Public Sub new_sql_query(ttitle As String, tquery As String, Optional ttype As S
      Me.dbobjects["queries"][ttype][ttitle] = tquery
   Else
      Me.dbobjects["queries"]["sql queries"][ttitle] = tquery
-  Endif
-  Me.Save()
-End
-
-Public Sub new_datalog_query(ttitle As String, tquery As String, Optional ttype As String)
-  ' create new datalog query and store it in dbobjects
-  If ttype Then
-     Me.dbobjects["queries"][ttype][ttitle] = tquery
-  Else
-     Me.dbobjects["queries"]["datalog queries"][ttitle] = tquery
   Endif
   Me.Save()
 End

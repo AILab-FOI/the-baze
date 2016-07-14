@@ -14,7 +14,7 @@ Public Sub ToolButtonNewSQLQuery_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "SQL queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "SQL queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - SQL query"
@@ -33,4 +33,29 @@ Public Sub ToolButtonNewQBEQuery_Click()
   'FormQBESplit.Show()
   
 
+End
+
+Public Sub ToolButtonNewDatalogQuery_Click()
+  ' create a new tab in the tabview and add the SQL querying interface
+  Dim ui As FormDatalogSplit
+  Dim ask As FormAskQueryName
+  askagain:
+  ask = New FormAskQueryName
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Datalog queries")
+      FMain.main_tabstrip.Count += 1
+      FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
+      FMain.main_tabstrip.Text = query_name & " - Datalog query"
+      FMain.db.new_datalog_query(query_name, " ")
+      ui = New FormDatalogSplit(FMain.main_tabstrip)
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+  
 End

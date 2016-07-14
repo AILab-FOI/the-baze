@@ -1,8 +1,9 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,101.25,73)
+  MoveScaled(0,0,101.2857,73)
   Expand = True
+  Text = ("The-Baze - Database development environment")
   Icon = Picture["images/majin-bu.png"]
   Arrangement = Arrange.Fill
   { MenuTreeTable Menu
@@ -85,6 +86,14 @@
       Picture = Picture["icon:/32/halt"]
     }
   }
+  { MenuDatalogRules Menu
+    Text = ("Datalog rules menu")
+    Visible = False
+    { MenuDeleteDatalogRule Menu
+      Text = ("Delete Datalog rule")
+      Picture = Picture["icon:/32/halt"]
+    }
+  }
   { MenuCollection Menu
     Text = ("Collection menu")
     Visible = False
@@ -141,7 +150,6 @@
     MoveScaled(0,0,99,73)
     { ToolPanelMain ToolPanel
       MoveScaled(0,0,22,73)
-      Foreground = Color.TextBackground
       Arrangement = Arrange.Vertical
       Margin = True
       Count = 4
@@ -170,6 +178,13 @@
         Mouse = Mouse.Pointing
         Text = ("New report")
         Picture = Picture["icon:/32/text"]
+      }
+      { TableViewApplicationElementCSS TableView
+        MoveScaled(1,29,19,28)
+        Visible = False
+        Expand = True
+        Header = GridView.Horizontal
+        Sorted = True
       }
       Index = 0
     }

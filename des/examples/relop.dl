@@ -1,0 +1,47 @@
+%
+% Relational Algebra Operations
+%
+% Datalog Formulation
+
+% Relations
+a(a1).
+a(a2).
+a(a3).
+
+b(b1).
+b(b2).
+b(a1).
+
+c(a1,b2).
+c(a1,a1).
+c(a2,b2).
+
+% (Extended) Relational Algebra Operations
+
+% pi(X)(c(X,Y)) : Projection of the first argument of c
+projection(X) :- c(X,Y).
+
+% sigma(X=a2)(a) : Selecting tuples from a such that its first argument is a2
+selection(X) :- a(X), X=a2.
+
+% a x b : Cartesian product of relations a and b
+cartesian(X,Y) :- a(X), b(Y).
+
+% a |x| b : Natural inner join of relations a and b
+inner_join(X) :- a(X), b(X).
+
+% a =|x| b : Left outer join of relations a and b
+left_join(X,Y) :- lj(a(X), b(Y), X=Y).
+
+% a |x|= b : Right outer join of relations a and b
+right_join(X,Y) :- rj(a(X), b(Y), X=Y).
+
+% a =|x|= b : Full outer join of relations a and b
+full_join(X,Y) :- fj(a(X), b(Y), X=Y).
+
+% a U b : Set union of relations a and b
+union(X) :- a(X) ; b(X).
+
+% a - b: Set difference of relations a and b
+difference(X) :- a(X), not(b(X)).
+

@@ -1,0 +1,31 @@
+% Taylor
+%
+% e = 1 + 1 + 1/2! + 1/3! + 1/4! + ...
+%
+% e = sigma n=0 (1/n!)
+
+terms(N,E) :-
+  nth(N),
+  term(N,T)
+  count(n)<10, 
+  terms(E).
+taylor(N,T) :-
+  nth(N),
+  sum(term(N,E),E,T).
+  
+
+nth(0). 
+nth(N) :- 
+  term(N,T).
+
+term(N,T) :-
+  nth(N),
+  fac(N,F),
+  T = 1/F.
+  
+fac(0, 1).
+fac(N, F) :-
+  N>0,
+  N1 is N-1,
+  fac(N1, F1),
+  F is N * F1.

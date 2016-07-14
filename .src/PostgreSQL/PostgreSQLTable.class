@@ -281,7 +281,7 @@ Public Sub toSQL() As String
     statement &= "\"" & escape(attributes[i]) & "\" "
     statement &= Upper(datatypes[i])
     If options[i]["size"] <> "" Then
-      ' STAVITI PROVJERE JE LI RIJEC O BROJEVIMA
+      ' TODO: STAVITI PROVJERE JE LI RIJEC O BROJEVIMA
       statement &= "(" & options[i]["size"] & ")"
     Endif
     If options[i]["precision"] <> "" Then
@@ -406,10 +406,11 @@ Public Sub load_from_db(tblname As String)
   ' set the table name
   table_name = tblname
   ' get postgresql version
-  query = "SELECT version()::VARCHAR"
-  result_set = db.execute(query)
-  version = result_set[0]["version"]
-  version = XSBEngine.FindAll(version, "PostgreSQL ([0-9]+)[.]", 1)[0]
+  ' query = "SELECT version()::VARCHAR"
+  ' result_set = db.execute(query)
+  ' version = result_set[0]["version"]
+  ' version = AUX.FindAll(version, "PostgreSQL ([0-9]+)[.]", 1)[0]
+  version = Str(Int(db.version))
   ' get the table oid
   oid = get_table_oid()
   ' get the attributes, default expressions and not null constraints
@@ -422,14 +423,16 @@ Public Sub load_from_db(tblname As String)
       Message.Error("Version " & version & " of PostgreSQL is not supported!")
       Quit
   End Select
-
+  
+  i = 0
   result_set = db.execute(query)
   For Each res In result_set
     add_attribute(res["attname"], res["format_type"], res["col_description"])
     If res["def_expr"] <> "" Then
-      change_default_constraint(res["attnum"] - 1, True, res["def_expr"])
+      change_default_constraint(i, True, res["def_expr"])
     Endif
-    change_not_null_constraint(res["attnum"] - 1, res["attnotnull"])
+    change_not_null_constraint(i, res["attnotnull"])
+    i += 1
   Next
   ' get unique and primary key constraints
   reload_unique_and_primary_key_constraints()
@@ -439,7 +442,7 @@ Public Sub load_from_db(tblname As String)
   query = "SELECT conname, pg_catalog.pg_get_constraintdef(r.oid, true) as condef FROM pg_catalog.pg_constraint r WHERE r.conrelid = '" & oid & "' AND r.contype = 'f' ORDER BY 1"
   result_set = db.execute(query)
   For Each res In result_set
-    foreign = XSBEngine.FindAll(res["condef"], "FOREIGN KEY \\((.*?)\\) REFERENCES", 1)[0]
+    foreign = AUX.FindAll(res["condef"], "FOREIGN KEY \\((.*?)\\) REFERENCES", 1)[0]
     i = attributes.Find(foreign)
     If i = -1 Then
       For i = 0 To attributes.Max
@@ -448,13 +451,13 @@ Public Sub load_from_db(tblname As String)
         Endif
       Next
     Endif
-    ref_table = XSBEngine.FindAll(res["condef"], "REFERENCES (.*?)\\(", 1)[0]
-    ref_att = XSBEngine.FindAll(res["condef"], "REFERENCES .*?\\((.*?)\\)", 1)[0]
-    Try on_delete = XSBEngine.FindAll(res["condef"], "(?:\\)| )ON DELETE ([A-Z ]+?)$", 1)[0]
+    ref_table = AUX.FindAll(res["condef"], "REFERENCES (.*?)\\(", 1)[0]
+    ref_att = AUX.FindAll(res["condef"], "REFERENCES .*?\\((.*?)\\)", 1)[0]
+    Try on_delete = AUX.FindAll(res["condef"], "(?:\\)| )ON DELETE ([A-Z ]+?)$", 1)[0]
     If Error Then
       on_delete = "NO ACTION"
     Endif
-    Try on_update = XSBEngine.FindAll(res["condef"], "\\) ON UPDATE ([A-Z ]+?)(?:$| ON)", 1)[0]
+    Try on_update = AUX.FindAll(res["condef"], "\\) ON UPDATE ([A-Z ]+?)(?:$| ON)", 1)[0]
     If Error Then
       on_update = "NO ACTION"
     Endif
@@ -503,7 +506,7 @@ Public Sub reload_unique_and_primary_key_constraints()
   result_set = db.execute(query)
   For Each res In result_set
     If res["contype"] = "p" Then
-      pkey_expr = XSBEngine.FindAll(res["pg_get_constraintdef"], "PRIMARY KEY \\((.*)\\)", 1)[0]
+      pkey_expr = AUX.FindAll(res["pg_get_constraintdef"], "PRIMARY KEY \\((.*)\\)", 1)[0]
       pkeys = get_attributes_from_string(pkey_expr)
       If pkeys.Count = 1 Then
         change_primary_key_constraint(attributes.Find(pkeys[0]), True)
@@ -514,7 +517,7 @@ Public Sub reload_unique_and_primary_key_constraints()
       Endif
     Else
       If res["contype"] = "u" Then
-        uniq_expr = XSBEngine.FindAll(res["pg_get_constraintdef"], "UNIQUE \\((.*)\\)", 1)[0]
+        uniq_expr = AUX.FindAll(res["pg_get_constraintdef"], "UNIQUE \\((.*)\\)", 1)[0]
         uniques = get_attributes_from_string(uniq_expr)
         If uniques.Count = 1 Then
           change_unique_constraint(attributes.Find(uniques[0]), True)
@@ -545,7 +548,7 @@ Public Sub reload_check_constraints()
   query = "SELECT r.conname, pg_catalog.pg_get_constraintdef(r.oid, true) as cdef FROM pg_catalog.pg_constraint r WHERE r.conrelid = '" & oid & "' AND r.contype = 'c' ORDER BY 1"
   result_set = db.execute(query)
   For Each res In result_set
-    checks.Push(XSBEngine.FindAll(res["cdef"], "CHECK \\((.*)\\)", 1)[0])
+    checks.Push(AUX.FindAll(res["cdef"], "CHECK \\((.*)\\)", 1)[0])
     check_names.Push(res["conname"])
   Next
   If result_set.Count > 0 Then
@@ -562,7 +565,7 @@ Public Function get_attributes_from_string(att_expr As String) As String[]
   Dim att As String
   Dim i, j As Integer
   att_expr = Replace$(att_expr, "\"\"", "___DOUBLE$$$QUOTE___")
-  atts = XSBEngine.FindAll(att_expr, "\".*?\"")
+  atts = AUX.FindAll(att_expr, "\".*?\"")
   i = 0
   For Each att In atts
     att_expr = Replace$(att_expr, att, "a" & Str(i))
@@ -590,9 +593,33 @@ Public Sub alter_add_attribute(att_name As String, att_type As String, att_desc 
   db.execute(query)
 End 
 
+Public Sub alter_drop_column(att_name As String) As Boolean
+  ' drop a column of the table
+  Dim query As String
+  If att_name <> "" Then
+    query = "ALTER TABLE \"" & escape(table_name) & "\" DROP COLUMN \"" & escape(att_name) & "\""
+    If Message.Question("Are you sure that you want to drop attribute " & att_name & "? All data in this column will be lost!", "Yes, drop it!", "No") = 1 Then
+      db.execute(query)
+      Return True
+    Endif
+    Else
+      Return True
+  Endif
+  Return False
+End
+
+Public Sub alter_set_to_default(att_name As String)
+  ' set all values in a column to default
+  Dim query As String
+  query = "UPDATE \"" & escape(table_name) & "\" SET \"" & escape(att_name) & "\" = DEFAULT" 
+  db.execute(query)
+End
+
+
 Public Sub alter_change_datatype(att_name As String, att_type As String)
   ' alter the datatype of the attribute
-  ' RJEŠITI PROBLEM SERIAL (kreirati sekvencu i staviti je u default)
+  ' FIXME: RJEŠITI PROBLEM SERIAL (kreirati sekvencu i staviti je u default)
+  ' TODO: Get rid of all MsgBox-es in this class, or it won't be usable in apps
   Dim query As String
   query = "ALTER TABLE \"" & escape(table_name) & "\" ALTER COLUMN \"" & escape(att_name) & "\" SET DATA TYPE " & att_type
   If IsNull(db.execute(query, True)) Then

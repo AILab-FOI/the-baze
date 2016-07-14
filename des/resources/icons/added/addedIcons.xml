@@ -1,0 +1,38 @@
+<acide.configuration.icons.AcideMenuIconsConfiguration>
+  <__iconsManager>
+    <__list>
+      <__list>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>C:/Users/Usuario/workspace/acide/resources/icons/menu/file/newFile.png</__absolute>
+          <__relative>./resources/icons/added/newFile.png</__relative>
+          <__name>newFile.png</__name>
+        </acide.configuration.icons.AcideAddedIcon>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>C:/Users/Usuario/workspace/acide/resources/icons/menu/newFile.png</__absolute>
+          <__relative>./resources/icons/added/newFile (1).png</__relative>
+          <__name>newFile.png</__name>
+        </acide.configuration.icons.AcideAddedIcon>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>C:/Users/Usuario/Documents/ab.jpg</__absolute>
+          <__relative>./resources/icons/added/ab.jpg</__relative>
+          <__name>ab.jpg</__name>
+        </acide.configuration.icons.AcideAddedIcon>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>      </__absolute>
+          <__relative>./resources/icons/added/      </__relative>
+          <__name>      </__name>
+        </acide.configuration.icons.AcideAddedIcon>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>         </__absolute>
+          <__relative>./resources/icons/added/         </__relative>
+          <__name>         </__name>
+        </acide.configuration.icons.AcideAddedIcon>
+        <acide.configuration.icons.AcideAddedIcon>
+          <__absolute>           </__absolute>
+          <__relative>./resources/icons/added/           </__relative>
+          <__name>           </__name>
+        </acide.configuration.icons.AcideAddedIcon>
+      </__list>
+    </__list>
+  </__iconsManager>
+</acide.configuration.icons.AcideMenuIconsConfiguration>

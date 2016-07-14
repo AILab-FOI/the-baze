@@ -1,0 +1,145 @@
+// buttonConfiguration process
+name = process
+action = /process $activeFile$
+hintText = Process the selected file as inputs at the command prompt
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration consult
+name = consult
+action = /consult $activeFile$
+hintText = Consults the selected file
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration listing
+name = listing
+action = /listing
+hintText = Lists the contents of the database
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration dbschema
+name = dbschema
+action = /dbschema
+hintText = Displays the schema of the database
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration pdg
+name = pdg
+action = /pdg
+hintText = Lists the predicate dependency graph
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration strata
+name = strata
+action = /strata
+hintText = Lists the strata
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration abolish
+name = abolish
+action = /abolish
+hintText = Abolish all the database rules
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration list_et
+name = list_et
+action = /list_et
+hintText = List the extension table contents
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration clear_et
+name = clear_et
+action = /clear_et
+hintText = Clear the extension table
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration cd
+name = cd
+action = /cd
+hintText = Sets the current folder to the installation folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration ls
+name = ls
+action = /ls
+hintText = Lists the contents of the current folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration pwd
+name = pwd
+action = /pwd
+hintText = Displays the current folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration verbose
+name = verbose
+action = /verbose on
+hintText = Enables verbose output
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration noverbose
+name = noverbose
+action = /verbose off
+hintText = Disables verbose output
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration builtins
+name = builtins
+action = /builtins
+hintText = Lists predefined operators
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration help
+name = help
+action = /help
+hintText = Shows the help
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration autosave
+name = autosave
+action = /autosave toggle
+hintText = Toggles autosave mode
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// Command Acrobat Reader
+name = Acrobat Reader
+path = AcroRd32.exe
+hintText = Launch Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

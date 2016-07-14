@@ -1,0 +1,425 @@
+% File: biology.dl
+% Date: 08/20/2014
+% Author: Fernando Sáenz-Pérez
+% Description:
+%   A conceptual map for "Biology: The human body"
+%   Constraints help developers to maintain a consistent instance.
+%   The ontology meta-model is based on:
+%      F.J. Álvarez, A. Vaquero, and F. Sáenz-Pérez,
+%      "Conceptual Modeling of Ontology-based Linguistic Resources with a Focus on Semantic Relations",
+%      In Proceedings of the Sixth International Conference on Language Resources and Evaluation (LREC 2008), May, 2008.
+%   This Datalog program can be used on DES (des.sourceforge.net). See system session at the end. Tested in DES 3.8
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Relational Constraints: Type, PK, FK, domain
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Concepts
+%   - Type constraints:
+:- type(concepts(type:string, id:string, arity:integer)).
+%   - Primary key constraint:
+:- pk(concepts,[id]).
+%   - Domain constraints:
+%     * Concepts can be either a concept or a relation:
+:- concepts(Type,Id,Arity),
+   Type \= concept, 
+   Type \= relation.
+%     * A concept has arity 0:
+:- concepts(concept,Id,Arity),
+   Arity \= 0.
+%     * A relation has arity 2:
+:- concepts(relation,Id,Arity),
+   Arity \= 2.
+
+% Binary relations
+%   - Type constraints:
+:- type(binary_relation(relation:string, fromConcept:string, toConcept:string)).
+%   - Primary key constraint:
+:- pk(binary_relation,[relation, fromConcept, toConcept]).
+%   - Foreign key constraint:
+:- fk(binary_relation,[relation],concepts,[id]).
+:- fk(binary_relation,[fromConcept],concepts,[id]).
+:- fk(binary_relation,[toConcept],concepts,[id]).
+%   - Pseudo-Foreign key constraint:
+% :- binary_relation(Relation, _FromConcept, _ToConcept), not (concepts(relation,Relation, 2)).
+% :- binary_relation(_Relation, FromConcept, _ToConcept), not (concepts(concept,FromConcept, 0)).
+% :- binary_relation(_Relation, _FromConcept, ToConcept), not (concepts(concept,ToConcept, 0)).
+
+% Algebraic properties
+%   - Type constraints:
+:- type(algebraic_properties(algebraicProperty:string)).
+%   - Primary key constraint:
+:- pk(algebraic_properties,[algebraicProperty]).
+
+% Has algebraic property
+%   - Type constraints:
+:- type(has_algebraic_property(relation:string, algebraicProperty:string)).
+%   - Primary key constraint:
+:- pk(has_algebraic_property,[relation, algebraicProperty]).
+%   - Foreign key constraint:
+:- fk(has_algebraic_property, [relation], concepts,[id]).
+:- fk(has_algebraic_property, [algebraicProperty], algebraic_properties, [algebraicProperty]).
+
+% Violation of irreflexive algebraic property
+:- type(irreflexive_violation(binaryRelation:string, fromConcept:string, toConcept:string)).
+% As offending tuples can be duplicated, no primary constraint is imposed
+% Also, by its definition, only valid domain elements are allowed. No need for further domain constraints
+
+% Violation of asymmetric algebraic property
+:- type(asymmetric_violation(binaryRelation:string, fromConcept:string, toConcept:string)).
+% As offending tuples can be duplicated, no primary constraint is imposed
+% Also, by its definition, only valid domain elements are allowed. No need for further domain constraints
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Concepts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Metadata relation "concepts":
+% * Description:
+%   - A relation used in any ontology for describing which are the involved concepts and relations of a ontology instance, i.e., it keeps the metadata about concepts and relations in the ontology. Entries in concepts describe part of the ontology instance
+% * Relates:
+%   - type: Either a relation or a non-relation concept
+%   - id: Concept identifier as its known name
+%   - arity: Number of concepts each concept relates. A relation can be n-ary, with n>=2 (no related concepts). A concept has arity 0 as it relates nothing
+% * Example(s):
+%   - concepts(concept, head, 0) is used to represent that the identifier "head" is used to represent the concept "head"
+%   - concepts(relation, part_of, 2) is used to represent that the identifier "part_of" is used to represent a binary relation
+% * Formalization:
+%   concepts(type:string, id:string, arity:integer), where:
+%     type \in {concept,relation}
+%     id is an alphanumeric atom
+%     arity >=0
+% * Instance:
+% Concepts:
+%   - Objects:
+concepts(concept, body, 0).
+concepts(concept, head, 0).
+concepts(concept, trunk, 0).
+concepts(concept, arm, 0).
+concepts(concept, leg, 0).
+concepts(concept, hand, 0).
+concepts(concept, toe, 0).
+concepts(concept, finger, 0).
+% Domain-independent Relations:
+concepts(relation, part_of, 2).
+concepts(relation, component_of, 2).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Algebraic and Intrinsic Properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Instance relation "algebraic_properties"
+% * Description:
+%   - A relation used in any ontology for describing the set of available algebraic properties, which can be attached to relations
+% * Relates:
+%   - algebraicProperty: A single identifier, which is the name of the algebraic property
+% algebraic_properties(algebraicProperty)
+% * Example(s):
+%   - algebraic_properties(irreflexive) represents that an algebraic property named "irreflexive" is available to be used as an algebraic property of a relation
+% * Formalization:
+%   algebraic_properties(algebraicProperty:string), where:
+%     AlgebraicProperty is an alphanumeric atom
+% * Instance:
+algebraic_properties(irreflexive).
+algebraic_properties(asymmetric).
+algebraic_properties(transitive).
+
+% Instance relation "has_algebraic_property"
+% * Description:
+%   - A relation used in any ontology for describing the algebraic properties attached to relations for an ontology instance
+% * Relates:
+%   - relation: Concept identifier of the relation
+%   - algebraicProperty: Identifier of the algebraic property
+% algebraic_properties(AlgebraicProperty)
+% * Example(s):
+%   - has_algebraic_property(part_of, transitive) represents that the relation "part_of" has attached the algebraic property "transitive"
+% * Formalization:
+%   has_algebraic_property(relation:string, algebraicProperty:string), where:
+%     relation, algebraicProperty are alphanumeric atoms
+%     relation \in concepts.id (usual referential integrity constraint)
+%     algebraicProperty \in algebraic_properties.algebraicProperty (usual referential integrity constraint)
+% * Instance:
+has_algebraic_property(part_of, irreflexive).
+has_algebraic_property(part_of, asymmetric).
+has_algebraic_property(part_of, transitive).
+
+has_algebraic_property(component_of, irreflexive).
+has_algebraic_property(component_of, asymmetric).
+has_algebraic_property(component_of, transitive).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Semantics of Predefined Binary Relations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Relation "part_of"
+% * Description:
+%   - Extensionally describes which concepts are parts of others
+%   - If X is component of Y, then X is part of Y.
+% * Formalization:
+
+% Implicit derivations. 
+% Given (component_of,X,Y), this implies (part_of,X,Y)
+binary_relation(part_of, X, Y) :-
+  binary_relation(component_of, X, Y).
+  
+% Alternative approach: Stating a constraint avoiding redundant facts:
+% :-  binary_relation(component_of, X, Y),
+%     binary_relation(part_of, X, Y).
+  
+
+% Checking redundancy.
+redundant(part_of, X, Y) :-
+  binary_relation(component_of, X, Y),
+  binary_relation(part_of, X, Y).
+  
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Semantics of Predefined Algebraic Properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Exclusion Properties
+% ====================
+%
+% Algebraic property "irreflexive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as an irreflexive relation, fulfilling:
+%     |= ~ A -> A
+%     Here, -> represents the binary relation, the symbol |= represents logical deducibility, and the symbol ~ represents negation
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   irreflexive(binaryRelation:string, fromConcept:string, toConcept:string), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+%     Intensional semantics:
+%       irreflexive(BinaryRelation, From, To) :- 
+%         not(irreflexive_violation(BinaryRelation, From, To)).
+  
+irreflexive_violation(BinaryRelation, From, From) :- 
+  has_algebraic_property(BinaryRelation, irreflexive),
+  binary_relation(BinaryRelation, From, From).
+
+% Algebraic property "asymmetric"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as an asymmetric relation, fulfilling:
+%     A -> B , A \= B |= ~ B -> A
+%     Here, -> represents the binary relation, \= represents "are not equal", |= represents logical deducibility, and ~ represents negation
+% * Enrollment:
+%   - Exclusion constraint
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   asymmetric(binaryRelation:string, fromConcept:string, toConcept:string), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.Id (usual referential integrity constraint)
+%     Intensional semantics:
+%       asymmetric(BinaryRelation, From, To) :-
+%         not(asymmetric_violation(BinaryRelation, From, To)).
+ 
+asymmetric_violation(BinaryRelation, From, To) :-
+  has_algebraic_property(BinaryRelation, asymmetric),
+  binary_relation(BinaryRelation, From, To),
+  From \= To,
+  binary_relation(BinaryRelation, To, From).
+
+
+%
+% Inclusion Properties
+% ====================
+%
+% Algebraic property "transitive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as a transitive relation, fulfilling:
+%     A -> B, B -> C |= A -> C
+%     Here, -> represents the binary relation, and the symbol |= represents logical deducibility
+% * Enrollment:
+%   - Inclusion constraint
+%     This algebraic property sets the values that an instance relation must have, rather than forbidding values
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   transitive(binaryRelation, fromConcept, toConcept), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+
+binary_relation(BinaryRelation, From, To) :- 
+  has_algebraic_property(BinaryRelation, transitive),
+  binary_relation(BinaryRelation, From, Mid),
+  binary_relation(BinaryRelation, Mid, To).
+
+% Algebraic property "reflexive"
+% * Description:
+%   - Intensionally describes all the instance members of a given binary relation to be considered as a reflexive relation, fulfilling:
+%     |= A -> A
+%     Here, -> represents the binary relation, and the symbol |= represents logical deducibility
+% * Enrollment:
+%   - Inclusion constraint
+%     This algebraic property sets the values that an instance relation must have, rather than forbidding values
+% * Relates:
+%   - binaryRelation: Concept identifier of the binary relation
+%   - fromConcept: Origin concept
+%   - toConcept: Destination concept
+% * Formalization:
+%   reflexive(binaryRelation, fromConcept, toConcept), where:
+%     binaryRelation, fromConcept, toConcept are alphanumeric atoms
+%     fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+
+binary_relation(BinaryRelation, A, A) :- 
+  has_algebraic_property(BinaryRelation, reflexive),
+  (binary_relation(BinaryRelation, A, _) 
+   ;
+   binary_relation(BinaryRelation, _, A)).
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Constraint Checking
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This part is devoted to examine consistency of the instance 
+% ontology w.r.t. ontology constraints, i.e., algebraic 
+% properties attached to relations and intrinsic properties
+% attached to concepts under a relation 
+
+% The following are strong constraints which are
+% checked whenever any data related to their definition are updated
+% Only exclusion properties are checked
+% Inclusion constraints are intensionally stated
+
+% Built-in Algebraic Properties
+:- irreflexive_violation(BinaryRelation, From, To).
+:- asymmetric_violation(BinaryRelation, From, To).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Instance Relations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Metadata relation "binary_relation":
+% * Description:
+%   - A relation used in any ontology for describing which are the involved binary relations of an ontology instance, i.e., it keeps the metadata about binary relations in the ontology. Entries in binary_relation describe part of the ontology instance
+% * Relates:
+%   - relation identifier: Concept identifier as used in metadata relation "concepts"
+%   - fromConcept identifier: Origin concept identifier in a binary relation as used in metadata relation "concepts"
+%   - toConcept identifier: Destination concept identifier in a binary relation as used in metadata relation "concepts"
+% * Example(s):
+%   - binary_relation(part_of, star, planetary_system) is intended to represent the knowledge "a star is a part of a planetary system"
+% * Formalization:
+%   binary_relation(relation:string, fromConcept:string, toConcept:string), where:
+%     relation, fromConcept, toConcept are alphanumeric atoms
+%     relation, fromConcept, toConcept \in concepts.id (usual referential integrity constraint)
+% * Instance:
+binary_relation(component_of, head, body).
+binary_relation(component_of, trunk, body).
+
+binary_relation(part_of, finger, toe).
+binary_relation(part_of, finger, hand).
+binary_relation(part_of, toe, leg).
+binary_relation(part_of, hand, arm).
+binary_relation(part_of, arm, body).
+binary_relation(part_of, leg, body).
+%binary_relation(part_of, head, body).  % Intensionally derived
+%binary_relation(part_of, trunk, body).  % Intensionally derived
+
+
+direct_part_of(X,Y) :-
+  binary_relation(part_of,X,Y),
+  not indirect_part_of(X,Y).
+  
+indirect_part_of(X,Y) :-
+  binary_relation(part_of,X,Z),
+  binary_relation(part_of,Z,Y).
+  
+:- binary_relation(part_of, X, Y),
+   X \= finger, 
+   count(direct_part_of(X, _), C), 
+   C>1.
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% System Session Example
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% *********************************************************
+% *                                                       *
+% *        DES: Datalog Educational System v.Devel        *
+% *                                                       *
+% * Type "/help" for help about commands                  *
+% *                                                       *
+% *                    Fernando Saenz-Perez (c) 2004-2014 *
+% *                                         DISIA GPD UCM *
+% *             Please send comments, questions, etc. to: *
+% *                                     fernan@sip.ucm.es *
+% *                                             Web site: *
+% *                           http://des.sourceforge.net/ *
+% *                                                       *
+% * This program comes with ABSOLUTELY NO WARRANTY, is    *
+% * free software, and you are welcome to redistribute it *
+% * under certain conditions. Type "/license" for details *
+% *********************************************************
+
+% DES> /p examples/ontology/biology
+
+% Info: Processing file 'examples/ontology/biology.ini' ...
+
+% DES> /compact_listings on
+% DES> /consult examples/ontology/biology
+% Info: 35 rules consulted.                   
+% Info: 21 constraints consulted.
+% DES> % Trying to assert a concept of incorrect arity:
+% DES> /assert concepts(concept,neck,1)
+% Error: Integrity constraint violation.      
+%        ic(Id,Arity) :-
+%          concepts(concept,Id,Arity),
+%          Arity\=0.
+%        Offending values in database: [ic(neck,1)]
+% DES> % Trying to assert a concept of incorrect type:
+% DES> /assert concepts(concepto,neck,0)
+% Error: Integrity constraint violation.      
+%        ic(Type,Id,Arity) :-
+%          concepts(Type,Id,Arity),
+%          Type\=concept,
+%          Type\=relation.
+%        Offending values in database: [ic(concepto,neck,0)]
+% DES> % Trying to assert a binary relation relating an unknown concept:
+% DES> /assert binary_relation(part_of, neck, head)  
+% Error: Foreign key violation binary_relation.[fromConcept]->concepts.[id]
+%        when trying to insert: binary_relation(part_of,neck,head)
+% DES> % Trying to assert an unknown binary relation:
+% DES> /assert binary_relation(smaller_than, hand, arm) 
+% Error: Foreign key violation binary_relation.[relation]->concepts.[id]
+%        when trying to insert: binary_relation(smaller_than,hand,arm)
+% DES> % Inserting an incorrect relation instance (part_of is asymmetric, so if finger is part of arm, the other way round is invalid):
+% DES> /assert binary_relation(part_of, arm, finger)
+% Error: Integrity constraint violation.      
+%        ic(BinaryRelation,From,To) :-
+%          irreflexive_violation(BinaryRelation,From,To).
+%        Offending values in database: [ic(part_of,finger,finger),ic(part_of,hand,hand),ic(part_of,arm,arm)]
+% DES> % Redundant assertions due to implicit derivations:
+% DES> redundant(R, X, Y)     
+% {                                           
+%   redundant(part_of,head,body),
+%   redundant(part_of,trunk,body)
+% }
+% Info: 2 tuples computed.          
+% DES> % Trying to assert an incorrect binary relation (a concept cannot be part or more than one other concept, excepting fingers):
+% DES> /assert binary_relation(part_of, toe, arm)    
+% Error: Integrity constraint violation.      
+%        ic(X,Y,C) :-
+%          binary_relation(part_of,X,Y),
+%          X\=finger,
+%          count(direct_part_of(X,_),C),
+%          C>1.
+%        Offending values in database: [ic(toe,leg,2),ic(toe,arm,2),ic(toe,body,2)]

@@ -1,0 +1,182 @@
+' Gambas class file
+
+Public htmlFile As File
+Public json As New JSON
+Public form_response As Collection
+
+' Counters for form element ids
+Public buttonCounter As Integer = 0 
+Public textboxCounter As Integer = 0
+Public textareaCounter As Integer = 0
+Public comboboxCounter As Integer = 0
+Public headerCounter As Integer = 0
+Public paragraphCounter As Integer = 0
+Public datepickerCounter As Integer = 0
+Public imageCounter As Integer = 0
+Public checkboxCounter As Integer = 0
+Public radiobuttonCounter As Integer = 0
+Public tableCounter As Integer = 0
+Public customHTMLCounter As Integer = 0
+Public datasourceCounter As Integer = 0
+
+
+Public Sub _new()
+  ' load a local html file
+  WebViewDesigner.Url = "file:///home/markus/smece/test_form.html"
+  'WebViewDesigner.Editable = True
+End
+
+
+Public Sub ToolButtonEdit_Click()
+  ' Make the form editable
+  WebViewDesigner.Editable = True
+End
+
+Public Sub ToolButtonPreview_Click()
+  ' Preview the form
+  WebViewDesigner.Editable = False
+End
+
+
+Public Sub ToolButtonSaveForm_Click()
+  ' Save the form
+  Dim fhtml As String
+  fhtml = WebViewDesigner.Eval("getHTML()")
+  htmlFile = Open "/home/markus/smece/test_form1.html" For Write Create
+  Print #htmlFile, fhtml
+End
+
+Public Sub WebViewDesigner_MouseMove()
+  ' Read the inbox
+  readInbox()
+End
+
+Public Sub WebViewDesigner_MouseUp()
+  ' Read the inbox
+  readInbox()
+End
+
+Public Sub WebViewDesigner_Status()
+  ' Read the inbox
+  readInbox()
+End
+
+Public Sub readInbox()
+  ' Function to read the inbox (invoked by various webview events above
+  Dim inbox As String
+  inbox = WebViewDesigner.Eval("getInbox()")
+  If inbox <> "" Then
+    form_response = json.Decode(inbox)
+    Print form_response
+    handleRequest()
+  Endif
+End
+
+Public Sub handleRequest()
+  ' handle a request from the form
+  Dim cssdata As String
+  Dim css As Collection
+  Dim cssval As String
+  FMain.main_application_css.Visible = False
+  Select form_response["status"]
+    Case "element click"
+      With FMain.main_application_css
+        .Enabled = True
+        .Columns.Count = 2
+        .Rows.Count = 1
+        .Columns[0].Title = "Attribute"
+        .Columns[1].Title = "Value"
+        FMain.main_application_css[0, 0].Text = "Element ID"
+        FMain.main_application_css[0, 1].Text = form_response["element"]
+        For Each cssval In form_response
+          If form_response.Key <> "element" And form_response.Key <> "status" Then
+            .Rows.Count += 1
+            FMain.main_application_css[.Rows.Count - 1, 0].Text = form_response.Key
+            FMain.main_application_css[.Rows.Count - 1, 1].Text = cssval
+          Endif
+        Next
+        .Visible = True
+      End With
+  End Select
+  
+End
+
+
+Public Sub ToolButtonAddButton_Click()
+  ' Add a button to the form
+  buttonCounter += 1
+  WebViewDesigner.Eval("addElement('button','Button" & Str(buttonCounter) & "')")
+End
+
+Public Sub ToolButtonAddTextBox_Click()
+  ' Add a textbox to the form
+  textboxCounter += 1
+  WebViewDesigner.Eval("addElement('textbox','TextBox" & Str(textboxCounter) & "')")
+End
+
+
+
+Public Sub ToolButtonAddTextArea_Click()
+  ' Add a textarea to the form
+  textareaCounter += 1
+  WebViewDesigner.Eval("addElement('textarea','TextArea" & Str(textareaCounter) & "')")
+End
+
+
+
+Public Sub ToolButtonAddComboBox_Click()
+  ' Add a combobox to the form
+  comboboxCounter += 1
+  WebViewDesigner.Eval("addElement('combobox','ComboBox" & Str(comboboxCounter) & "')")
+End
+
+Public Sub ToolButtonAddHeaderText_Click()
+  ' Add a header to the form
+  headerCounter += 1
+  WebViewDesigner.Eval("addElement('header','Header" & Str(headerCounter) & "')")
+End
+
+Public Sub ToolButtonAddParagraphText_Click()
+  ' Add a paragraph to the form
+  paragraphCounter += 1
+  WebViewDesigner.Eval("addElement('paragraph','Paragraph" & Str(paragraphCounter) & "')")
+End
+
+Public Sub ToolButtonAddDatePicker_Click()
+  ' Add a datepicker to the form
+  datepickerCounter += 1
+  WebViewDesigner.Eval("addElement('datepicker','DatePicker" & Str(datepickerCounter) & "')")
+End
+
+Public Sub ToolButtonAddImage_Click()
+  ' Add a image to the form
+  imageCounter += 1
+  WebViewDesigner.Eval("addElement('image','Image" & Str(imageCounter) & "')")
+End
+
+Public Sub ToolButtonAddCheckbox_Click()
+  ' Add a checkbox to the form
+  checkboxCounter += 1
+  WebViewDesigner.Eval("addElement('checkbox','CheckBox" & Str(checkboxCounter) & "')")
+End
+
+Public Sub ToolButtonAddRadiobutton_Click()
+  ' Add a radiobutton to the form
+  radiobuttonCounter += 1
+  WebViewDesigner.Eval("addElement('radiobutton','RadioButton" & Str(radiobuttonCounter) & "')")
+End
+
+Public Sub ToolButtonAddTable_Click()
+  ' Add a radiobutton to the form
+  tableCounter += 1
+  WebViewDesigner.Eval("addElement('table','Table" & Str(tableCounter) & "')")
+End
+
+
+Public Sub ToolButtonAddCustomHtml_Click()
+  ' Add a custom HTML element to the form
+  customHTMLCounter += 1
+  WebViewDesigner.Eval("addElement('custom','CustomHTML" & Str(customHTMLCounter) & "','<a href=\"http://ai.foi.hr\">AI LAB</a>')")
+End
+
+

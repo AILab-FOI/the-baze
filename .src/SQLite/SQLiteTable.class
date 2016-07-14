@@ -1,0 +1,524 @@
+' Gambas class file
+
+' name of the table
+Public table_name As String
+' ordered array of attribute names
+Public attributes As New String[]
+' ordered array of their datatypes
+Public datatypes As New String[]
+' ordered array of attribute descriptions 
+Public descriptions As New String[]
+' ordered array of collections of constraints on each attribute (not null, unique, primary key, check, references, default)
+Public constraints As New Collection[]
+' collection of table constraints
+Public table_constraints As New Collection
+' ordered array of datatype dependent options of each attribute (e.g. 1D array, 2D array, precision, scale etc.)
+Public options As New Collection[]
+' connection to the database
+Public db As Variant ' don't ask me why, it should be DBaze which is a superclass of both PostgreSQLDB and XSBDB...
+' mode of operation (if set to ALTER then the table is existing and each change results in an ALTER TABLE statement)
+Public mode As Integer
+' PostgreSQL version
+Public version As String
+
+Public Const NEW_TABLE As Integer = 27
+Public Const ALTER As Integer = 1981
+
+
+Public Sub _new(dbase As DBaze, Optional mode_of_operation As Integer = NEW_TABLE)
+  ' initialize the PostgreSQL db connection
+  db = dbase
+  mode = mode_of_operation
+  ' initialize table constraints
+  table_constraints["primary key"] = Null
+  table_constraints["primary keys"] = New String[]
+  table_constraints["primary key constraint names"] = New String[]
+  table_constraints["check"] = Null
+  table_constraints["check formulae"] = New String[]
+  table_constraints["check constraint names"] = New String[]
+  table_constraints["unique"] = Null
+  table_constraints["unique tuples"] = New String[]
+  table_constraints["unique constraint names"] = New String[]
+End
+
+
+Public Sub add_attribute(name As String, datatype As String, description As String)
+  ' create a new attribute
+  Dim c, o As New Collection
+  attributes.Add(name)
+  datatypes.Add(datatype)
+  descriptions.Add(description)
+  constraints.Add(c)
+  options.Add(o)
+End
+
+Public Sub change_attribute(a_index As Integer, new_name As String, new_datatype As String, new_description As String)
+  ' change the attribute under the given index
+  If a_index > attributes.Count - 1 Then
+    add_attribute(new_name, new_datatype, new_description)
+  Else
+    If mode = ALTER Then
+      If new_name <> "" Then
+        If attributes[a_index] = "" Then
+          alter_add_attribute(new_name, new_datatype, new_description)
+        Endif
+        If datatypes[a_index] <> new_datatype Then
+          Message.Error("SQLite does not support change of attribute datatapes!", "OK")
+          Return
+        Endif
+        If descriptions[a_index] <> new_description Then
+          Message.Error("SQLite does not support change of attribute descriptions!", "OK")
+          Return
+        Endif
+        If attributes[a_index] <> new_name Then
+          Message.Error("SQLite does not support change of attribute names!", "OK")
+          Return
+        Endif
+      Endif
+    Endif
+    attributes[a_index] = new_name
+    datatypes[a_index] = new_datatype
+    descriptions[a_index] = new_description
+  Endif
+End
+
+Public Sub change_not_null_constraint(a_index As Integer, not_null As Boolean) As Boolean
+  ' change not null constraint on a given attribute index
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    constraints[a_index]["not null"] = not_null
+  Endif
+  Return can_change
+End
+
+Public Sub change_unique_constraint(a_index As Integer, unique As Boolean) As Boolean
+  ' change unique constraint on a given attribute index
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    constraints[a_index]["unique"] = unique
+  Endif
+  Return can_change
+End
+
+Public Sub change_primary_key_constraint(a_index As Integer, primary_key As Boolean) As Boolean
+  ' change primary key constraint on a given attribute index
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    constraints[a_index]["primary key"] = primary_key
+  End If
+  Return can_change
+End
+
+Public Sub change_check_constraint(a_index As Integer, check As Boolean, Optional check_expression As String)
+  ' change check constraint on a given attribute index
+  constraints[a_index]["check"] = check
+  If check Then
+    constraints[a_index]["check formula"] = check_expression
+  Endif
+End
+
+Public Sub change_references_constraint(a_index As Integer, references As Boolean, Optional reference As String = "", Optional onDelete As String = "", Optional onUpdate As String = "", Optional constraint_name As String) As Boolean
+  ' change check constraint on a given attribute index
+  Dim can_change As Boolean = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    constraints[a_index]["references"] = references
+    If references Then
+      constraints[a_index]["referenced table"] = reference
+      constraints[a_index]["on delete"] = onDelete
+      constraints[a_index]["on update"] = onUpdate
+    Endif
+    If constraint_name Then
+      constraints[a_index]["reference constraint name"] = constraint_name
+    Endif
+  Endif
+  Return can_change
+End
+
+Public Sub change_default_constraint(a_index As Integer, default_ As Boolean, Optional default_value As String) As Boolean
+  ' change check constraint on a given attribute index
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    constraints[a_index]["default"] = default_
+    If default_ Then
+      constraints[a_index]["default value"] = default_value
+    Endif
+  Endif
+  Return can_change
+End
+
+Public Sub change_table_primary_key_constraint(primary_key As Boolean, keys As String[]) As Boolean
+  ' change a multiple primary key constraint
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    can_change = False
+  Endif
+  If can_change Then
+    table_constraints["primary key"] = primary_key
+    If primary_key Then
+      table_constraints["primary keys"] = keys
+    Endif
+  Endif
+  Return can_change
+End
+
+Public Sub change_table_check_constraint(check As Boolean, formulae As String[], Optional con_names As String[]) As Boolean
+  ' change a multiple check constraint
+  Dim can_change As Boolean
+  Dim i As Integer
+  Dim to_add, to_delete As New String[]
+  Dim constraint As String
+  can_change = True
+  If mode = ALTER Then
+    If check Then
+      For i = 0 To formulae.Max
+        If table_constraints["check formulae"].Find(formulae[i]) = -1 Then
+          to_add.Push(formulae[i])
+        Endif
+      Next
+      For i = 0 To table_constraints["check formulae"].max 
+        If formulae.Find(table_constraints["check formulae"][i]) = -1 Then
+          to_delete.Push(table_constraints["check formulae"][i]) 
+        Endif
+      Next
+      If to_add.count > 0 Then
+        For i = 0 To to_add.Max
+          can_change = False
+        Next
+      Endif
+      If to_delete.Count > 0 Then
+        For i = 0 To to_delete.Max
+          can_change = False
+        Next
+      Endif
+    Else
+      For Each constraint In table_constraints["check formulae"].Copy()
+        can_change = False
+      Next
+    Endif
+  Endif
+  If can_change Then
+    table_constraints["check"] = check
+    If check Then
+      table_constraints["check formulae"] = formulae
+    Endif
+    If con_names Then
+      table_constraints["check constraint names"] = con_names
+    Endif
+  Endif
+  If mode = ALTER Then
+    reload_check_constraints()
+  Endif
+  Return can_change
+End
+
+Public Sub change_table_unique_constraint(unique As Boolean, tuples As String[][]) As Boolean
+  ' change the multiple unique constraint
+  Dim can_change As Boolean
+  can_change = True
+  If mode = ALTER Then
+    reload_unique_and_primary_key_constraints()
+    can_change = False
+  Endif
+  If can_change Then
+    table_constraints["unique"] = unique
+    If unique Then
+      table_constraints["unique tuples"] = tuples
+    Endif  
+  Endif
+  Return can_change
+End
+
+
+Public Sub change_options(attribute As Integer, att_options As Collection)
+  options[attribute] = att_options
+End
+
+Public Sub toSQL() As String
+  ' construct a CREATE TABLE statement
+  Dim i As Integer
+  Dim statement, attrs, check_formula As String
+  Dim uniq_tups As String[]
+  statement = "BEGIN;"
+  statement &= "CREATE TABLE \"" & escape(table_name) & "\" (" 
+  For i = 0 To attributes.Count - 1 
+    If attributes[i] = "" Then
+      Break
+    Endif
+    statement &= "\"" & escape(attributes[i]) & "\" "
+    statement &= Upper(datatypes[i])
+    statement &= " "
+    If constraints[i]["not null"] Then
+      statement &= "NOT NULL "
+    Endif
+    If constraints[i]["unique"] Then
+      statement &= "UNIQUE "
+    Endif
+    If constraints[i]["primary key"] Then
+      statement &= "PRIMARY KEY "
+    Endif
+    If constraints[i]["check"] Then
+      statement &= "CHECK(" & escape(constraints[i]["check formula"]) & ") "
+    Endif
+    If constraints[i]["references"] Then
+      statement &= "REFERENCES " & constraints[i]["referenced table"] & " ON DELETE " & constraints[i]["on delete"] & " ON UPDATE " & constraints[i]["on update"] & " "
+    Endif
+    If constraints[i]["default"] Then
+      statement &= "DEFAULT " & constraints[i]["default value"] & ""
+    Endif
+    statement &= "/* " & escape(descriptions[i]) & " */\n, "
+  Next
+  If table_constraints["primary key"] Then
+    attrs = ""
+    For i = 0 To table_constraints["primary keys"].Max
+      attrs &= "\"" & escape(table_constraints["primary keys"][i]) & "\", "
+    Next
+    attrs = Left$(attrs, -2)
+    statement &= "PRIMARY KEY(" & attrs & "), "
+  Endif
+  If table_constraints["check"] Then
+    For Each check_formula In table_constraints["check formulae"]
+      statement &= "CHECK(" & check_formula & "), "
+    Next
+  Endif
+  If table_constraints["unique"] Then
+    For Each uniq_tups In table_constraints["unique tuples"]
+      attrs = ""
+      For i = 0 To uniq_tups.Max
+        attrs &= "\"" & escape(uniq_tups[i]) & "\", "
+      Next
+      attrs = Left$(attrs, -2)
+      statement &= "UNIQUE(" & attrs & "), "
+    Next
+  Endif
+  statement = Left$(statement, -2)
+  statement &= ")"
+  statement &= ";"
+  statement &= "COMMIT;"
+  Return statement
+End
+
+Public Sub escape(repl_string As String) As String
+  ' escape "-characters in a string
+  Return Replace(repl_string, "\"", "\"\"")  
+End
+
+Public Sub load_from_db(tblname As String)
+  ' load table definition from database
+  Dim query As String
+  Dim result_set As Object[]
+  Dim res As Object
+  Dim sql, desc, foreign, ref_table, ref_att, on_delete, on_update, fk As String
+  Dim descriptions, fks As New String[]
+  Dim i As Integer
+  Dim save_mode As Integer
+  Dim nnul As Boolean
+  ' don't alter the table while loading
+  save_mode = mode
+  mode = NEW_TABLE
+  ' set the table name
+  table_name = tblname
+  ' get sql definition
+  query = "SELECT sql FROM sqlite_master WHERE name = '" & table_name & "';"
+  result_set = db.execute(query)
+  sql = result_set[0]["sql"]
+  descriptions = Split(sql, ",")
+  ' get the attributes, default expressions and not null constraints
+  query = "PRAGMA table_info('" & table_name & "')"
+
+  result_set = db.execute(query)
+  i = 0
+  For Each res In result_set
+    Try desc = AUX.FindAll(descriptions[i], "/[*](.*)[*]/", 1)[0]
+    If Error Then
+      desc = ""
+    Endif
+    add_attribute(res["name"], res["type"], desc)
+    If res["dflt_value"] <> "" Then
+      change_default_constraint(res["cid"], True, res["dflt_value"])
+    Endif
+    nnul = (res["notnull"] = 1)
+    change_not_null_constraint(res["cid"], nnul)
+    i += 1
+  Next
+  ' get unique and primary key constraints
+  reload_unique_and_primary_key_constraints()
+  ' get check constraints
+  reload_check_constraints()
+  ' get foreign keys
+  'FIXME: Solve loading of foreign keys (foreign key clause in SQLite is much more complicated then in PGSQL - see https://www.sqlite.org/lang_createtable.html)
+  ' fks = AUX.FindAll(sql, "REFERENCES [^,)]*", 1)
+  ' For Each fk In fks
+  '   foreign = "fk_" & table_name
+  '   i = attributes.Find(foreign)
+  '   If i = -1 Then
+  '     For i = 0 To attributes.Max
+  '       If foreign = "\"" & escape(attributes[i]) & "\"" Then
+  '         Break
+  '       Endif
+  '     Next
+  '   Endif
+  '   ref_table = AUX.FindAll(res["condef"], "REFERENCES (.*?)\\(", 1)[0]
+  '   ref_att = AUX.FindAll(res["condef"], "REFERENCES .*?\\((.*?)\\)", 1)[0]
+  '   Try on_delete = AUX.FindAll(res["condef"], "(?:\\)| )ON DELETE ([A-Z ]+?)$", 1)[0]
+  '   If Error Then
+  '     on_delete = "NO ACTION"
+  '   Endif
+  '   Try on_update = AUX.FindAll(res["condef"], "\\) ON UPDATE ([A-Z ]+?)(?:$| ON)", 1)[0]
+  '   If Error Then
+  '     on_update = "NO ACTION"
+  '   Endif
+  '   change_references_constraint(i, True, ref_table & "(" & ref_att & ")", on_delete, on_update, res["conname"])
+  ' Next
+  mode = save_mode
+End
+
+Public Sub get_table_oid() As String
+  ' get the table oid
+  Dim query As String
+  Dim result_set As Object[]
+  query = "SELECT c.oid, n.nspname, c.relname FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & table_name & "' AND pg_catalog.pg_table_is_visible(c.oid);"
+  result_set = db.execute(query)
+  Return result_set[0]["oid"]
+End
+
+
+Public Sub reload_primary_key_constraints()
+  ' get the primary key constraint from metadata
+  Dim query As String
+  Dim result_set As Object[]
+  Dim res As Object
+  Dim pkeys As New String[]
+  Dim save_mode As Integer
+  save_mode = mode
+  mode = NEW_TABLE
+  query = "PRAGMA table_info(" & table_name & ")"
+  result_set = db.execute(query)
+  For Each res In result_set
+    If res["pk"] <> 0 Then
+      pkeys.Add(res["name"])
+    Endif
+  Next
+  If pkeys.Count = 1 Then
+    change_primary_key_constraint(attributes.Find(pkeys[0]), True)
+    constraints[attributes.Find(pkeys[0])]["primary key constraint name"] = "pk_" & table_name 
+    'FIXME: dummy name here and below (pk_, uq_, ch_ in next function). Add unique names, since they are not named in SQLite (they are the keys in constraints[]
+  Else
+    change_table_primary_key_constraint(True, pkeys)
+    table_constraints["primary key constraint name"] = "pk_" & table_name
+  Endif 
+  mode = save_mode
+End
+
+Public Sub reload_unique_constraints()
+  ' get the unique constraints from metadata (sql definition)
+  Dim query, sql, uniq_expr As String
+  Dim result_set As Object[]
+  Dim uniqs, con_names As New String[]
+  Dim attrs As New String[][]
+  Dim save_mode As Integer
+  save_mode = mode
+  mode = NEW_TABLE
+  query = "SELECT sql FROM sqlite_master WHERE name = '" & table_name & "';"
+  result_set = db.execute(query)
+  sql = result_set[0]["sql"]
+  Try uniq_expr = AUX.FindAll(sql, "UNIQUE\\(([^)]*)\\)", 1)[0]
+  If Error Then
+    Return
+  Endif
+  uniqs = get_attributes_from_string(uniq_expr)
+  If uniqs.Count = 1 Then
+    change_unique_constraint(attributes.Find(uniqs[0]), True)
+    constraints[attributes.Find(uniqs[0])]["unique constraint name"] = "uq_" & table_name 
+  Else
+    attrs.Push(uniqs)
+    con_names.Push("uq_" & table_name)
+  Endif
+  change_table_unique_constraint(True, attrs)
+  table_constraints["unique constraint names"] = con_names
+  mode = save_mode
+End
+
+Public Sub reload_check_constraints()
+  ' reload the check constraints
+  Dim query, sql, ch As String
+  Dim result_set As Object[]
+  Dim res As Object
+  Dim checks, check_names, chks As New String[]
+  Dim oid As String
+  Dim save_mode As Integer
+  save_mode = mode
+  mode = NEW_TABLE
+  query = "SELECT sql FROM sqlite_master WHERE name = '" & table_name & "';"
+  result_set = db.execute(query)
+  sql = result_set[0]["sql"]
+  chks = AUX.FindAll(sql, "CHECK \\((.*)\\)", 1)
+  For Each ch In chks
+    checks.Push(ch)
+    check_names.Push("ch_" & table_name)
+  Next
+  If checks.Count > 0 Then
+    change_table_check_constraint(True, checks, check_names)
+  Endif
+  mode = save_mode
+End
+
+Public Sub reload_unique_and_primary_key_constraints()
+  ' just for backward compatibility
+  reload_primary_key_constraints()
+  reload_unique_constraints()
+End
+
+
+Public Function get_attributes_from_string(att_expr As String) As String[]
+  ' parse an attribute list separated by ','-characters with possible '"'-quoted strings in it
+  ' escape for '"' is '""'
+  Dim atts, new_atts As String[]
+  Dim att As String
+  Dim i, j As Integer
+  att_expr = Replace$(att_expr, "\"\"", "___DOUBLE$$$QUOTE___")
+  atts = AUX.FindAll(att_expr, "\".*?\"")
+  i = 0
+  For Each att In atts
+    att_expr = Replace$(att_expr, att, "a" & Str(i))
+    i += 1
+  Next
+  att_expr = Replace$(att_expr, " ", "")
+  new_atts = Split(att_expr, ",")
+  For j = 0 To i - 1
+    new_atts[new_atts.Find("a" & Str(j))] = Replace$(atts[j], "___DOUBLE$$$QUOTE___", "\"")
+  Next
+  For j = 0 To new_atts.Max
+    If Left$(new_atts[j], 1) = "\"" And Right$(new_atts[j], 1) = "\"" Then
+      new_atts[j] = Right$(Left$(new_atts[j], -1), -1)
+    Endif
+  Next
+  Return new_atts
+End
+
+Public Sub alter_add_attribute(att_name As String, att_type As String, att_desc As String)
+  ' alter the table and add a new attribute
+  Dim query As String
+  query = "ALTER TABLE \"" & escape(table_name) & "\" ADD COLUMN \"" & escape(att_name) & "\" " & att_type & " /* " & att_desc & " */"
+  db.execute(query)
+End 
+

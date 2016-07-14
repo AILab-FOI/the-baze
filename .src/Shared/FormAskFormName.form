@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,38.5714,18.5714)
+  Resizable = False
+  { LabelClassName Label
+    MoveScaled(1,2,38,4)
+    Text = ("Please enter a name for the form:")
+  }
+  { TextBoxFormName TextBox
+    MoveScaled(2,7,35,4)
+  }
+  { ButtonOK Button
+    MoveScaled(27,13,11,4)
+    Text = ("OK")
+  }
+  { ButtonCancel Button
+    MoveScaled(14,13,11,4)
+    Text = ("Cancel")
+  }
+}

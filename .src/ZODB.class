@@ -7,7 +7,7 @@ Public engine As ZODBEngine
 ' the DB type (Embedded, FileStorage or ClientStorage)
 Public type As String
 ' auxilliary variable for unique key in the object tree
-Public key As Integer
+Public unique_key As Integer
 ' auxilliary indicator if the last parent in the recursion was an object or dictionary
 Public was_object As Boolean
 
@@ -39,11 +39,11 @@ End
 
 Public Sub get_unique_key() As String
   ' get a unique key for the tree of objects
-  If IsNull(key) Then
-    key = 0
+  If IsNull(unique_key) Then
+    unique_key = 0
   Endif
-  key += 1
-  Return "key_" & Str$(key)  
+  unique_key += 1
+  Return "key_" & Str$(unique_key)  
 End
 
 
@@ -61,7 +61,7 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
     If TypeOf(objects) = gb.Object Then
       If objects Is Variant[] Then
         key_ = get_unique_key()
-        tree_view.Add(key_, "list", Picture.Load("directory.png"), parent)
+        tree_view.Add(key_, "list", Picture.Load("images/directory.png"), parent)
         For i = 0 To objects.count - 1
           construct_object_tree(objects[i], key_, tree_view)
         Next
@@ -69,7 +69,7 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
       Endif
     Endif
     key_ = get_unique_key()
-    tree_view.Add(key_, Str(objects), Picture.Load("class.png"), parent)
+    tree_view.Add(key_, Str(objects), Picture.Load("images/class.png"), parent)
     Return
   Endif
   Select Case objects["py/object"]
@@ -77,13 +77,13 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
       'it's a dictionary
       For Each iter In objects["py/state"]["data"]
         key_ = get_unique_key()
-        tree_view.Add(key_, objects["py/state"]["data"].Key, Picture.Load("directory.png"), parent)
+        tree_view.Add(key_, objects["py/state"]["data"].Key, Picture.Load("images/directory.png"), parent)
         construct_object_tree(iter, key_, tree_view)
       Next
     Case "persistent.list.PersistentList"
       ' it's a list
       key_ = get_unique_key()
-      tree_view.Add(key_, objects["py/object"], Picture.Load("directory.png"), parent)
+      tree_view.Add(key_, objects["py/object"], Picture.Load("images/directory.png"), parent)
       For i = 0 To objects["py/state"]["data"].count - 1
         construct_object_tree(objects["py/state"]["data"][i], key_, tree_view)
       Next
@@ -91,14 +91,14 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
       If objects Is Collection Then
         If objects.Exist("py/object") Then 
           key_ = get_unique_key()
-          tree_view.Add(key_, objects["py/object"], Picture.Load("directory.png"), parent)
+          tree_view.Add(key_, objects["py/object"], Picture.Load("images/directory.png"), parent)
           was_object = True
           construct_object_tree(objects["py/state"], key_, tree_view)
           was_object = False
         Else
           If objects.Exist("py/tuple") Then
             key_ = get_unique_key()
-            tree_view.Add(key_, "tuple", Picture.Load("directory.png"), parent)
+            tree_view.Add(key_, "tuple", Picture.Load("images/directory.png"), parent)
             For i = 0 To objects["py/tuple"].count - 1
               construct_object_tree(objects["py/tuple"][i], key_, tree_view)
             Next
@@ -106,12 +106,12 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
           Endif
           If Not was_object Then
             key_ = get_unique_key()
-            tree_view.Add(key_, "dict", Picture.Load("directory.png"), parent)
+            tree_view.Add(key_, "dict", Picture.Load("images/directory.png"), parent)
             parent = key_
           Endif
           For Each iter In objects
             key_ = get_unique_key()
-            tree_view.Add(key_, objects.key, Picture.Load("directory.png"), parent)
+            tree_view.Add(key_, objects.key, Picture.Load("images/directory.png"), parent)
             construct_object_tree(iter, key_, tree_view)
           Next
         Endif
@@ -121,7 +121,7 @@ Public Sub construct_object_tree(objects As Variant, parent As String, tree_view
 End
 
 Public Sub initialize_gui()
-  ' initialize the GUI for PostgreSQL database
+  ' initialize the GUI for ZODB database
   Dim documentation As New WebView(FMain.main_tabstrip)
   Dim data_definition As FormZODBDataDefinition
   Dim data_manipulation As FormZODBDataManipulation
@@ -160,9 +160,9 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   Dim o, temp_file As String
   FMain.main_treeview.Clear
   
-  FMain.main_treeview.Add("Class definitions", "Class definitions", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Class definitions", "Class definitions", Picture.Load("images/directory.png"))
   For Each o In Me.dbobjects["class definitions"]
-    FMain.main_treeview.Add("cla_" & Me.dbobjects["class definitions"].key, Me.dbobjects["class definitions"].key, Picture.Load("class.png"), "Class definitions")
+    FMain.main_treeview.Add("cla_" & Me.dbobjects["class definitions"].key, Me.dbobjects["class definitions"].key, Picture.Load("images/class.png"), "Class definitions")
     If load_modules Then
       temp_file = Me.temporary_folder & "/" & Me.dbobjects["class definitions"].key & ".py"
       File.Save(temp_file, Me.dbobjects["class definitions"][Me.dbobjects["class definitions"].key])
@@ -176,13 +176,13 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   
   
   objects = get_db_objects()
-  FMain.main_treeview.Add("Root", "Root", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Root", "Root", Picture.Load("images/directory.png"))
   FMain.main_treeview.Tag = objects["root"]["__pickler_id__"]
   construct_object_tree(objects["root"], "Root", FMain.main_treeview)
   
-  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Modules", "Modules", Picture.Load("images/directory.png"))
   For Each o In Me.dbobjects["modules"]
-    FMain.main_treeview.Add("mod_" & Me.dbobjects["modules"].key, Me.dbobjects["modules"].key, Picture.Load("module.png"), "Modules")
+    FMain.main_treeview.Add("mod_" & Me.dbobjects["modules"].key, Me.dbobjects["modules"].key, Picture.Load("images/module.png"), "Modules")
     If load_modules Then
       temp_file = Me.temporary_folder & "/" & Me.dbobjects["modules"].key & ".py"
       File.Save(temp_file, Me.dbobjects["modules"][Me.dbobjects["modules"].key])
@@ -195,30 +195,30 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
   Next
   ' create Baze object containers
   With FMain.main_treeview
-    .Add("Queries", "Queries", Picture.Load("directory.png"))
-    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert queries"]
-      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
     Next
-    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
-      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
     Next
-    .Add("PyMapReduce queries", "PyMapReduce queries", Picture.Load("directory.png"), "Queries")
+    .Add("PyMapReduce queries", "PyMapReduce queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["pymapreduce queries"]
-      .Add(Me.dbobjects["queries"]["pymapreduce queries"].key, Me.dbobjects["queries"]["pymapreduce queries"].key, Picture.Load("query.png"), "PyMapReduce queries")
+      .Add(Me.dbobjects["queries"]["pymapreduce queries"].key, Me.dbobjects["queries"]["pymapreduce queries"].key, Picture.Load("images/query.png"), "PyMapReduce queries")
     Next
-    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["forms"]
-      .Add("frm_" & o, o, Picture.Load("query.png"), "Forms")
+      .Add("frm_" & o, o, Picture.Load("images/query.png"), "Forms")
     Next
-    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["scripts"]
-      .Add("scr_" & o, o, Picture.Load("query.png"), "Scripts")
+      .Add("scr_" & o, o, Picture.Load("images/query.png"), "Scripts")
     Next
-    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]
-      .Add("rep_" & o, o, Picture.Load("query.png"), "Reports")
+      .Add("rep_" & o, o, Picture.Load("images/query.png"), "Reports")
     Next
   End With
 End

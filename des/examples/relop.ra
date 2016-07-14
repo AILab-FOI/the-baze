@@ -1,0 +1,66 @@
+%
+% Relational Algebra Operations
+%
+% RA Formulation
+
+/abolish
+%/show_compilations on
+
+% Creating tables
+create or replace table a(a string);
+create or replace table b(b string);
+create or replace table c(a string,b string);
+% Listing the database schema
+/dbschema
+% Inserting values into tables
+insert into a values ('a1');
+insert into a values ('a2');
+insert into a values ('a3');
+insert into b values ('b1');
+insert into b values ('b2');
+insert into b values ('a1');
+insert into c values ('a1','b2');
+insert into c values ('a1','a1');
+insert into c values ('a2','b2');
+
+/ra 
+
+% Testing the just inserted values
+select true (a);
+select true (b);
+select true (c);
+% Projection
+project a (c);
+% Selection
+select a>='a2' (a);
+% Cartesian product
+a product b;
+% Union 
+a union b;
+% Difference
+a difference b;
+% Intersection
+a intersect b;
+% Theta Join
+select a.a>=b.b (a product b);
+a zjoin a.a>=b.b b;
+% Natural Inner Join
+a njoin c;
+% Left Outer Join
+a ljoin a.a=b.b b;
+% Right Outer Join
+a rjoin a.a=b.b b;
+% Full Outer Join
+a fjoin a.a=b.b b;
+% Grouping
+group_by a a,count(*) true (c);
+% Renaming
+select a1.a<a2.a ((rename a1(a) (a)) product (rename a2(a) (a)));
+% Duplicate elimination
+/duplicates off
+project a (c);
+/duplicates on
+project a (c);
+distinct (project a (c));
+/duplicates off
+/datalog

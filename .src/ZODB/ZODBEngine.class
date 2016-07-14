@@ -7,7 +7,9 @@ Public buff_size As Integer
 ' command to execute
 Public python_command As String
 ' Python process
-Public hproc As Process
+Private hproc As Process
+' PID of the process
+Private proc_id As Integer
 ' result string
 Public result As String
 ' connection indicator
@@ -47,7 +49,8 @@ Public Sub _new(dbfile_or_server As String, Optional dbtype As String = "FileSto
 End
 
 Public Sub open()
-  hproc = Shell python_command For Input Output 
+  hproc = Exec Split(python_command) For Input Output 
+  proc_id = hproc.Id
 End
 
 
@@ -60,53 +63,57 @@ Public Sub load_modules()
     Case "ClientStorage"
       storage_import = "from ZEO import ClientStorage"
   End Select
-  Print #hproc, "from json import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load json\n\n" & result)
+  If proc_id = hproc.Id Then
+    Print #hproc, "from json import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load json\n\n" & result)
+    Endif
+    Print #hproc, "from jsonpickle import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load jsonpickle\n\n" & result)
+    Endif
+    Print #hproc, "from ZODB import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load ZODB\n\n" & result)
+    Endif
+    Print #hproc, storage_import
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load storage type\n\n" & result)
+    Endif
+    Print #hproc, "from persistent import Persistent"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load persistent\n\n" & result)
+    Endif
+    Print #hproc, "from persistent.list import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load persistent.list\n\n" & result)
+    Endif
+    Print #hproc, "from persistent.mapping import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load persistent.mapping\n\n" & result)
+    Endif
+    Print #hproc, "import transaction"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load transaction\n\n" & result)
+    Endif
+    Print #hproc, "from BTrees import *"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load BTrees\n\n" & result)
+    Endif
+    Print #hproc, "import sys"
+    If Not read() = ">>> " Then
+      Error.Raise("Couldn't load sys\n\n" & result)
+    Endif
+    execute("from jsonpickle.pickler import Pickler\nimport json\nclass BazePickler( Pickler ):\n\tdef _mkref(self, obj):\n\t\tif self.unpicklable is False:\n\t\t\treturn True\n\t\tobjid = id(obj)\n\t\tif objid not in self._objs:\n\t\t\tnew_id = len(self._objs)\n\t\t\tself._objs[objid] = new_id\n\t\t\ttry: \n\t\t\t\tnot self.baze_objects\n\t\t\texcept:\n\t\t\t\tself.baze_objects = {}\n\t\t\tself.baze_objects[ new_id ] = obj\n\t\t\treturn True\n\t\treturn False\n\npicklers = []\n\ndef baze_encode( value, unpicklable=True, max_depth=None ):\n\tb = BazePickler( unpicklable=unpicklable, max_depth=max_depth )\n\tpicklers.append( b )\n\treturn json.dumps( b.flatten( value ) )\n")
   Endif
-  Print #hproc, "from jsonpickle import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load jsonpickle\n\n" & result)
-  Endif
-  Print #hproc, "from ZODB import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load ZODB\n\n" & result)
-  Endif
-  Print #hproc, storage_import
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load storage type\n\n" & result)
-  Endif
-  Print #hproc, "from persistent import Persistent"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load persistent\n\n" & result)
-  Endif
-  Print #hproc, "from persistent.list import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load persistent.list\n\n" & result)
-  Endif
-  Print #hproc, "from persistent.mapping import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load persistent.mapping\n\n" & result)
-  Endif
-  Print #hproc, "import transaction"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load transaction\n\n" & result)
-  Endif
-  Print #hproc, "from BTrees import *"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load BTrees\n\n" & result)
-  Endif
-  Print #hproc, "import sys"
-  If Not read() = ">>> " Then
-    Error.Raise("Couldn't load sys\n\n" & result)
-  Endif
-  execute("from jsonpickle.pickler import Pickler\nimport json\nclass BazePickler( Pickler ):\n\tdef _mkref(self, obj):\n\t\tif self.unpicklable is False:\n\t\t\treturn True\n\t\tobjid = id(obj)\n\t\tif objid not in self._objs:\n\t\t\tnew_id = len(self._objs)\n\t\t\tself._objs[objid] = new_id\n\t\t\ttry: \n\t\t\t\tnot self.baze_objects\n\t\t\texcept:\n\t\t\t\tself.baze_objects = {}\n\t\t\tself.baze_objects[ new_id ] = obj\n\t\t\treturn True\n\t\treturn False\n\npicklers = []\n\ndef baze_encode( value, unpicklable=True, max_depth=None ):\n\tb = BazePickler( unpicklable=unpicklable, max_depth=max_depth )\n\tpicklers.append( b )\n\treturn json.dumps( b.flatten( value ) )\n")
 End
 
 Public Sub read() As String
   ' read the result and return it
-  result = Read #hproc, buff_size
-  Return result
+  If proc_id = hproc.Id Then
+    result = Read #hproc, buff_size
+    Return result
+  Endif
 End
 
 Public Sub close()
@@ -121,32 +128,34 @@ Public Sub exec(cmd As String) As String
   ' execute a command and return the results
   Dim oldResult As String
   oldResult = result
-  Print #hproc, cmd
-  Sleep 0.1
-  read()
-  Do While oldResult <> result And result <> "" And Lof(hproc) > 0
-    oldResult = result
+  If proc_id = hproc.Id Then
+    Print #hproc, cmd
     Sleep 0.1
     read()
-  Loop 
-  Do While Right$(result, 4) = ">>> " 
-    result = Left$(result, -4)
-  Loop
-  Do While Left$(result, 4) = ">>> " 
-    result = Right$(result, -4)
-  Loop
-  Do While Right$(result, 4) = "... " 
-    result = Left$(result, -4)
-  Loop
-  Do While Left$(result, 4) = "... " 
-    result = Right$(result, -4)
-  Loop
-  If result Then
-    If XSBEngine.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
-      Error.Raise(result)
+    Do While oldResult <> result And result <> "" And Lof(hproc) > 0
+      oldResult = result
+      Sleep 0.1
+      read()
+    Loop 
+    Do While Right$(result, 4) = ">>> " 
+      result = Left$(result, -4)
+    Loop
+    Do While Left$(result, 4) = ">>> " 
+      result = Right$(result, -4)
+    Loop
+    Do While Right$(result, 4) = "... " 
+      result = Left$(result, -4)
+    Loop
+    Do While Left$(result, 4) = "... " 
+      result = Right$(result, -4)
+    Loop
+    If result Then
+      If AUX.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
+        Error.Raise(result)
+      Endif
     Endif
+    Return result
   Endif
-  Return result
 End
 
 Public Sub execute(cmd As String) As String[]
@@ -184,7 +193,7 @@ Public Sub load(folder As String, module As String)
   exec("import " & module)
   exec("reload(" & module & ")")
   If result Then
-    If XSBEngine.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
+    If AUX.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
       Error.Raise(result)
     Endif
   Endif

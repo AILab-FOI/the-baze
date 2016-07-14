@@ -45,7 +45,7 @@ Public Sub ComboBoxFunction_Click()
   Dim params As String[]
   Dim par As String
   Dim i As Integer
-  params = XSBEngine.FindAll(ComboBoxFunction.Text, ".*\\((.+)\\)", 1)
+  params = AUX.FindAll(ComboBoxFunction.Text, ".*\\((.+)\\)", 1)
   has_params = (params.Count > 0)
   LabelArguments.Visible = has_params
   ListViewArguments.Visible = has_params
@@ -87,7 +87,7 @@ Public Sub ToolButtonExecute_Click()
       query &= ComboBoxFor.Text & " "
       query &= "EXECUTE PROCEDURE "
       If ListViewArguments.Visible Then
-        func_name = XSBEngine.FindAll(ComboBoxFunction.Text, "(.+)\\([^\\(]*\\)", 1)[0] & "("
+        func_name = AUX.FindAll(ComboBoxFunction.Text, "(.+)\\([^\\(]*\\)", 1)[0] & "("
         For i = 0 To ListViewArguments.Count - 1
           func_name &= "'" & FMain.pg_escape(ListViewArguments[i].Text) & "',"
         Next

@@ -50,7 +50,7 @@ Public Sub ToolButtonNewUpdateQuery_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Update queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Update queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - Update query"
@@ -75,7 +75,7 @@ Public Sub ToolButtonNewInsertQuery_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Insert queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Insert queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - Insert query"
@@ -100,7 +100,7 @@ Public Sub ToolButtonNewDeleteQuery_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Delete queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Delete queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - Delete query"

@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,39,19)
+  MoveScaled(0,0,38.5714,18.5714)
   Resizable = False
   { LabelIndexName Label
     MoveScaled(2,2,30,4)

@@ -1,12 +1,12 @@
 ' Gambas class file
 
-Public pyeditor As Editor
+Public pyeditor As TextEditor
 ' context
 Public context As String
 
 Public Sub _new()
-  ' make editor public
-  pyeditor = EditorPython
+  ' make TextEditor public
+  pyeditor = TextEditorPython
 End
 
 Public Sub ToolButtonClose_Click()
@@ -15,11 +15,11 @@ Public Sub ToolButtonClose_Click()
   With FMain.db
     Select Case context
       Case " - Insert query"
-        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text, True) Then
           Return
         Endif
       Case " - Delete query"
-        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text, True) Then
           Return
         Endif
     End Select
@@ -38,11 +38,11 @@ Public Sub ToolButtonExecute_Click()
  With FMain.db
     Select Case context
       Case " - Insert query"
-        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+        If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text, True) Then
           Return
         Endif
       Case " - Delete query"
-        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), EditorPython.Text, True) Then
+        If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(context)), TextEditorPython.Text, True) Then
           Return
         Endif
     End Select

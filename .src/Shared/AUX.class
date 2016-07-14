@@ -1,0 +1,70 @@
+' Gambas class file
+
+
+Static Public Sub get_answer_from_proc(proc As Process, Optional cmd As String = "") As String
+  ' send cmd to proces and get answer
+  Dim result, rline As String
+  proc.Blocking = False
+  proc.Begin()
+  cmd = cmd & "\n"
+  Print #proc, cmd & "\n"
+  proc.Send()
+  ' Sleep 0.5
+  
+  For Each rline In proc.Lines
+    ' FIXME: This is not a good solution. See why the reading process blocks on the last line to be read...
+    If Lof(proc) < 10 Then
+      Break
+    Endif
+    result &= rline & "\n"
+    If rline = "" Then
+      Break
+    Endif
+  Next
+  Return result
+End
+
+Static Public Function FindAll(subj As String, pattern As String, Optional submatchindex As Integer = 0) As String[]
+  ' Findall matches of a given regex (optional submatchindex if using ()-groups)
+  Dim re As Regexp
+  Dim matches As New String[]
+  If subj <> "" Then
+    re = New Regexp(subj, pattern)
+    Do While re.offset >= 0 And subj <> ""
+          If submatchindex = 0 Then 
+                  matches.push(re.Text)
+          Else
+                  matches.push(re[submatchindex].Text)
+          End If
+          If Len(subj) > Len(re.text) Then
+                  subj = Mid(subj, re.offset + Len(re.text) + 1)
+          Else
+                  subj = ""       
+          End If
+          If subj <> "" Then re.exec(subj)
+    Loop
+  Endif
+  Return matches
+End
+
+Static Public Function removeDups(listArray As String[]) As String[]
+  ' remove duplicates from a string array
+  Dim i, j As String
+  Dim hasDup As Boolean
+  Dim list As New String[]
+  
+  For Each i In listArray
+    For Each j In list
+      If i = j Then 
+        hasDup = True
+      Endif 
+    Next 
+    If Not hasDup Then 
+      list.push(i)
+    Endif 
+    hasDup = False
+  Next 
+  
+  Return list
+  
+End

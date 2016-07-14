@@ -1,0 +1,18 @@
+% Naive Fibonacci
+%
+% RA Formulation
+
+/multiline on
+
+fib(n,f) :=
+  project 0,1 (dual)
+  union
+  project 1,1 (dual)
+  union
+  project fib1.n+1,fib1.f+fib2.f
+  (rename fib1(n1,f1) (fib) 
+   zjoin
+   n1=n2+1 and n1<10
+   rename fib2(n2,f2) (fib));
+  
+/multiline off

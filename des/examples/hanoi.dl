@@ -1,0 +1,53 @@
+% Towers of Hanoi
+% Reproduced from [FD92]
+%
+% DES> hanoi(10,a,b,c)
+% {
+%   hanoi(10,a,b,c)
+% }
+%
+% DES> /list_et
+% Answers:
+% {
+%   ...,
+%   hanoi(1,a,c,b),
+%   hanoi(1,b,a,c),
+%   hanoi(1,c,b,a),
+%   hanoi(2,a,b,c),
+%   hanoi(2,b,c,a),
+%   hanoi(2,c,a,b),
+%   hanoi(3,a,c,b),
+%   hanoi(3,b,a,c),
+%   hanoi(3,c,b,a),
+%   hanoi(4,a,b,c),
+%   hanoi(4,b,c,a),
+%   hanoi(4,c,a,b),
+%   hanoi(5,a,c,b),
+%   hanoi(5,b,a,c),
+%   hanoi(5,c,b,a),
+%   hanoi(6,a,b,c),
+%   hanoi(6,b,c,a),
+%   hanoi(6,c,a,b),
+%   hanoi(7,a,c,b),
+%   hanoi(7,b,a,c),
+%   hanoi(7,c,b,a),
+%   hanoi(8,a,b,c),
+%   hanoi(8,b,c,a),
+%   hanoi(8,c,a,b),
+%   hanoi(9,a,c,b),
+%   hanoi(9,c,b,a),
+%   hanoi(10,a,b,c)
+% }
+%
+% DES> /clear_et
+% DES> hanoi(N,A,B,C)
+% {
+%   hanoi(1,_21800,_21801,_21802)
+% }
+
+hanoi(1,A,B,C).
+hanoi(N,A,B,C) :-
+  N>1,
+  N1 is N-1,
+  hanoi(N1,A,C,B),
+  hanoi(N1,C,B,A).

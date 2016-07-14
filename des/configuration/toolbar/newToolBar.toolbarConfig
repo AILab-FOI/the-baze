@@ -1,0 +1,17 @@
+// Command dir
+name = dir
+action = dir
+hintText = asd
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// buttonConfiguration Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

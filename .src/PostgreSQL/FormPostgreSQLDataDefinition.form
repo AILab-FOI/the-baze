@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,48,82)
+  MoveScaled(0,0,48,121)
   Arrangement = Arrange.Vertical
   { ToolButtonNewTable ToolButton
     MoveScaled(8,4,32,7)
@@ -46,9 +46,27 @@
     Picture = Picture["icon:/32/menu"]
   }
   { ToolButtonNewEnum ToolButton
-    MoveScaled(8,72,38,8)
+    MoveScaled(8,71,38,8)
     Mouse = Mouse.Pointing
     Text = ("Create enum")
     Picture = Picture["icon:/32/view-detail"]
+  }
+  { ToolButtonNewRule ToolButton
+    MoveScaled(8,80,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create rule")
+    Picture = Picture["icon:/32/flip-v"]
+  }
+  { ToolButtonNewDatalogRule ToolButton
+    MoveScaled(9,88,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create Datalog rule")
+    Picture = Picture["icon:/32/flip-h"]
+  }
+  { ToolButtonNewDatalogModule ToolButton
+    MoveScaled(10,97,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create Datalog module")
+    Picture = Picture["icon:/32/program"]
   }
 }

@@ -1,0 +1,126 @@
+% Bridge problem
+%  Late midnight. It's dark. You and your three partners must cross a bridge which stands up to two. Only one torch is available and it is needed to cross the bridge if you keep stay alive withou falling into deep, frozen, and troubled waters. Behind you, a group of warriors are willing to cut some necks. Your estimations tell that warriors will come in less than 19 minutes, and each one of you, fugitives, needs (because of wounds) 1, 2, 5 and 10 minutes to cross the bridge. Are you able to safe all of you at the south, opposite shore before enemy arrive?
+% Source: Unknown (Anonymous?)
+% Coded by: F. Sáenz-Pérez
+% Date: 9/19/2012
+% Note: Based on farmer-wolf-goat-cabbage puzzle
+
+% state(partner 1, partner 2, partner 3, partner 4, torch)
+% Initial state 
+state(n,n,n,n,n,0).
+% Only one crosses
+% 1
+state(X,Y,U,V,X,T) :-
+  opp(X,X1),
+  state(X1,Y,U,V,X1,TT),
+  time(1,T1),
+  T is TT+T1,
+  bound(B),
+  T < B.
+% 2
+state(X,Y,U,V,Y,T) :-
+  opp(Y,Y1),
+  state(X,Y1,U,V,Y1,TT),
+  time(2,T1),
+  T is TT+T1,
+  bound(B),
+  T < B.
+% 3
+state(X,Y,U,V,U,T) :-
+  opp(U,U1),
+  state(X,Y,U1,V,U1,TT),
+  time(3,T1),
+  T is TT+T1,
+  bound(B),
+  T < B.
+% 4
+state(X,Y,U,V,V,T) :-
+  opp(V,V1),
+  state(X,Y,U,V1,V1,TT),
+  time(4,T1),
+  T is TT+T1,
+  bound(B),
+  T < B.
+% Two partners cross together
+% 1-2
+state(X,X,U,V,X,T) :-
+  opp(X,X1),
+  state(X1,X1,U,V,X1,TT),
+  time(1,T1),
+  time(2,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+% 1-3
+state(X,Y,X,V,X,T) :-
+  opp(X,X1),
+  state(X1,Y,X1,V,X1,TT),
+  time(1,T1),
+  time(3,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+% 1-4
+state(X,Y,U,X,X,T) :-
+  opp(X,X1),
+  state(X1,Y,U,X1,X1,TT),
+  time(1,T1),
+  time(4,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+% 2-3
+state(X,Y,Y,V,Y,T) :-
+  opp(Y,Y1),
+  state(X,Y1,Y1,V,Y1,TT),
+  time(2,T1),
+  time(3,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+% 2-4
+state(X,Y,U,Y,Y,T) :-
+  opp(Y,Y1),
+  state(X,Y1,U,Y1,Y1,TT),
+  time(2,T1),
+  time(4,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+% 3-4
+state(X,Y,U,U,U,T) :-
+  opp(U,U1),
+  state(X,Y,U1,U1,U1,TT),
+  time(3,T1),
+  time(4,T2),
+  max_val(T1,T2,MT),
+  T is TT+MT,
+  bound(B),
+  T < B.
+
+  
+
+% Opposite shores (n/s)
+opp(n,s).
+opp(s,n).
+
+% Time to cross
+time(1,1).
+time(2,2).
+time(3,5).
+time(4,10).
+
+% Time bound
+bound(19).
+
+% Maximum value
+max_val(X,Y,X) :-
+  X>=Y.
+max_val(X,Y,Y) :-
+  X<Y.
+  

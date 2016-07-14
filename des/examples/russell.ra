@@ -1,0 +1,22 @@
+%
+% Russell's Paradox
+%
+% RA Formulation
+
+/abolish
+/show_compilations on
+/multiline on
+
+create table man(man string);
+insert into man values ('barber');
+insert into man values ('mayor');
+
+shaves(man,to) :=
+  project 'barber',man 
+   (man)
+ difference
+  select man=to (shaves);
+
+/ra select true (shaves);
+
+/multiline off

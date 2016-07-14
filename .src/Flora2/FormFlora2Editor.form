@@ -31,7 +31,7 @@
         Value = CheckBox.True
       }
     }
-    { EditorFlora2 Editor
+    { TextEditorFlora2 TextEditor
       MoveScaled(0,6,61,24)
       Mouse = Mouse.Text
       Expand = True

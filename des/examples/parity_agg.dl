@@ -1,0 +1,17 @@
+% The parity query using aggregates. 
+
+even :-
+  count(br(X),C),
+  0 is C rem 2,
+  not(void).
+  
+void :-
+  false.
+
+odd :-
+  not(even).
+
+% Base relation
+br(a).
+br(b).
+br(c).

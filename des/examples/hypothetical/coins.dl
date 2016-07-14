@@ -1,0 +1,11 @@
+% Program: Coins
+% Author: Fernando Sáenz-Pérez
+% Date: 01/30/2013
+
+% Tails win:
+:- win, heads.
+
+win :- heads ; tails.
+
+% Goal:
+%   heads /\ tails => win.

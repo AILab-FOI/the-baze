@@ -2,24 +2,29 @@ FMain
 Baze Database Environment
 0
 0
-0.5.6
+0.6.0
 
 gb.image
-gb.qt4
+gb.qt5
 gb.form
 gb.db
 gb.db.form
+gb.db.odbc
 gb.db.postgresql
 gb.db.sqlite3
+gb.debug
 gb.eval
 gb.eval.highlight
+gb.form.dialog
+gb.form.editor
 gb.settings
+gb.form.terminal
 gb.image.effect
 gb.net
 gb.net.curl
 gb.pcre
-gb.qt4.ext
-gb.qt4.webkit
+gb.pdf
+gb.qt5.webkit
 gb.web
 gb.xml
 gb.xml.xslt

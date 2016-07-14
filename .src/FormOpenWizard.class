@@ -30,7 +30,7 @@ Public Sub Form_Open()
   dbtype = ""
   save_shell = System.Shell
   System.Shell = "/bin/bash"
-  Shell "which xsb" To xsb 
+  Shell "which xsb" To xsb 'TODO: Make XSB and Flora2 and integral part of the-baze
   If xsb Then
     TextBoxXXSB.Text = Left$(xsb, -1)
   Endif
@@ -85,27 +85,20 @@ Public Sub Form_Open()
 End
 
 Private Sub load_odbc_dsn()
-  ' parse /etc/odbc.ini and put the DSNs into the appropriate comboboxes
-  Dim odbc_ini As File
-  Dim txt As String
-  Dim tline As String
+  ' Query odbcinst and put the DSNs into the appropriate comboboxes
+  ' odbcinst -q -s -h --> query user defined DSNs
+  ' odbcinst -q -s -l --> query system defined DSNs
   Dim DSNs As String[]
   Dim dsn As String
-  Try odbc_ini = Open "/etc/odbc.ini" For Input
+  Try DSNs = RelationalDB.get_all_dsns()
   If Error Then
-    Message.Error("Cannot find odbc.ini file in /etc! Please install unixODBC")
+    Message.Error("Cannot find odbcinst on your path! Please install unixODBC.")
     Return
   Endif
-  txt = ""
-  While Not Eof(odbc_ini)
-    Line Input #odbc_ini, tLine
-    txt &= tLine
-  Wend
-  DSNs = XSBEngine.FindAll(txt, "\\[([^\\]]+)\\]", 1) 
-  DSNs = DSNs.Sort(gb.IgnoreCase)
   For Each dsn In DSNs
     ComboBoxXDSN.Add(dsn, ComboBoxXDSN.Count)
     ComboBoxfDSN.Add(dsn, ComboBoxXDSN.Count)
+    ComboBoxODSN.Add(dsn, ComboBoxXDSN.Count)
   Next
 End
 
@@ -206,8 +199,30 @@ Public Sub WizardIntro_Change()
                 stop_event = True
                 WizardIntro[7].show
                 last_index = WizardIntro.Index
+                db = New SQLiteDB(TextBoxSDBFile.Text)
+                FMain.connection_settings["dbfile"] = TextBoxSDBFile.Text
+                FMain.connection_settings["connection"] = db
                 stop_event = False
               Endif
+            Case "ODBC"
+              FMain.connection_settings["dsn"] = ComboBoxODSN.Text
+              FMain.connection_settings["username"] = TextBoxOUsername.Text
+              FMain.connection_settings["password"] = TextBoxOPassword.Text
+              FMain.connection_settings["store password"] = CheckBoxOStoreP.Value
+              db = New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
+              db.close()
+              FMain.connection_settings["connection"] = db
+            Case "MongoDB"
+              FMain.connection_settings["mongo host"] = TextBoxMgHost.Text
+              FMain.connection_settings["mongo port"] = TextBoxMgPort.Text
+              FMain.connection_settings["username"] = TextBoxMgUsername.Text
+              FMain.connection_settings["password"] = TextBoxMgPassword.Text
+              FMain.connection_settings["rest host"] = TextBoxMgHostREST.Text
+              FMain.connection_settings["rest port"] = TextBoxMgPortREST.Text
+              FMain.connection_settings["store password"] = CheckBoxMgStoreP.Value
+              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, TextBoxMgHostREST.Text, TextBoxMgPortREST.Text, CheckBoxOStoreP.Value)
+              db.close()
+              FMain.connection_settings["connection"] = db
           End Select
           If dbtype = "XSB" Then
             please_wait = New FormPleaseWait
@@ -291,6 +306,20 @@ Public Sub WizardIntro_Change()
                 last_index = WizardIntro.Index
                 stop_event = False
               Endif
+            Case "ODBC"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[8].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
+            Case "MongoDB"
+              If Not stop_event Then
+                stop_event = True
+                WizardIntro[9].show
+                last_index = WizardIntro.Index
+                stop_event = False
+              Endif
           End Select
         Endif
       Endif
@@ -367,7 +396,7 @@ Public Sub ListViewRecent_Click()
   ' if recent file is selected update the file to be opened variable
   Dim s As String
   s = ListViewRecent.Current.Text
-  openfile = XSBEngine.FindAll(s, "\\((.*)\\)", 1)[0]
+  openfile = AUX.FindAll(s, "\\((.*)\\)", 1)[0]
 End
 
 Public Sub ComboBoxZStorageType_Click()
@@ -421,6 +450,7 @@ Public Sub ButtonPGTest_Click()
   Dim db As New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
   
   If db.connect() Then
+    Try db.close()
     Message.Info("Connection succesfull!")
   Endif
 End
@@ -435,7 +465,9 @@ End
 
 Public Sub ToolButtonFindXSB_Click()
   ' show form to find XSB executable
-  FormFindXSB.ShowModal()
+  Dim find_xsb As New FormFindXSB
+  find_xsb.caller = Me
+  find_xsb.ShowModal()
   TextBoxXXSB.Text = xsb_exe
 End
 
@@ -450,6 +482,7 @@ End
 Public Sub ButtonETest_Click()
   Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
   If db.connect() Then
+    Try db.close()
     Message.Info("Connection successful!")
   Else
     Message.Error("Error connecting to eXist server!")
@@ -470,6 +503,7 @@ Public Sub ButtonfTest_Click()
   ' try to connect to Flora2
   Dim db As New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
   If db.connect() Then
+    Try db.close()
     Message.Info("Connection successful!")
   Else
     Message.Error("Error connecting to Flora2 database!")
@@ -480,8 +514,65 @@ Public Sub ButtonCTest_Click()
   ' try to connect to couch db
   Dim db As New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
   If db.connect() Then
+    Try db.close()
     Message.Info("Connection successful!")
   Else
     Message.Error("Error connecting to CouchDB!")
   Endif
 End
+
+Public Sub ToolButtonFindSDBFile_Click()
+  ' find an existing SQLite DB file
+  Dialog.Title = "Please find the SQLite database file"
+  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  If Dialog.OpenFile() Then
+    Return
+  Endif
+  TextBoxSDBFile.Text = Dialog.Path
+End
+
+
+
+Public Sub ToolButtonSCreateNew_Click()
+  ' Create a new SQLite DB file
+  Dim db As SQLiteDB
+  Dim db_file, db_host As String
+  Dialog.Title = "New SQLite database file"
+  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  If Dialog.SaveFile() Then
+    Return
+  Endif
+  TextBoxSDBFile.Text = Dialog.Path
+  db = New SQLiteDB(Dialog.Path)
+  db_file = Split(db.dbfile, "/").Pop()
+  db_host = Mid(db.dbfile, 1, Len(Dialog.Path) - Len(db_file))
+  With db.con
+    .Type = "sqlite"
+    .Host = db_host
+    .Name = ""
+    .Open()
+    .Databases.Add(db_file)
+    .Close()
+  End With
+End
+
+Public Sub ButtonSTest_Click()
+ ' try to connect to SQLite db
+  Dim db As New SQLiteDB(TextBoxSDBFile.Text)
+  
+  If db.connect() Then
+    Try db.close()
+    Message.Info("Connection succesfull!")
+  Endif
+End
+
+
+Public Sub ButtonOTest_Click()
+  ' Try to connect to SQLite db ' dsn_ As String, username As String, password As String, store_password As Boolean
+  Dim db As New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
+  If db.is_open Then
+    Try db.close()
+    Message.Info("Connection succesfull!")
+  Endif
+End
+

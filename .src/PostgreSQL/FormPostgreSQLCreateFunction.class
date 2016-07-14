@@ -33,8 +33,8 @@ End
 
 
 Public Sub Form_Resize()
-  ' resize the editor
-  EditorCode.Height = Me.Height - PanelToolBox.Height - IconPanelOptions.Height
+  ' resize the TextEditor
+  TextEditorCode.Height = Me.Height - PanelToolBox.Height - IconPanelOptions.Height
 End
 
 Public Sub RadioButtonRetType_Click()
@@ -178,7 +178,7 @@ Public Sub ToolButtonExecute_Click()
     query &= ") "
   Endif
   query &= "AS $$"
-  query &= EditorCode.Text
+  query &= TextEditorCode.Text
   query &= "$$ "
   query &= "LANGUAGE " & ComboBoxLanguage.Text & " "
   If CheckBoxOptimization.Value Then
@@ -231,19 +231,19 @@ Public Sub ToolButtonCancel_Click()
   Endif
 End
 
-Public Sub EditorCode_KeyPress_()  
+Public Sub TextEditorCode_KeyPress_()  
 ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorCode.Copy()
+    TextEditorCode.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorCode.Paste()
+      TextEditorCode.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorCode.Cut()
+        TextEditorCode.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorCode.SelectAll()
+          TextEditorCode.SelectAll()
         Endif
       Endif
     Endif

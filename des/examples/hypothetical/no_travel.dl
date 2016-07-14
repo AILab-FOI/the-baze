@@ -1,0 +1,18 @@
+travel(X,Y) :-
+  link(X,Y).
+travel(X,Y) :-
+  travel(X,Z),
+  travel(Z,Y).
+  
+no_travel(X,Y) :-
+  city(X),
+  city(Y),
+  not(travel(X,Y)).
+ 
+no_travel(X,Y) :-
+  city(a) /\
+  city(b) /\
+  city(c) /\
+  link(a,b) =>
+  no_travel(X,Y).
+  

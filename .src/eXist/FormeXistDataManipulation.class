@@ -6,7 +6,7 @@ Public request_canceled As Boolean
 Public query_name As String
 
 Public Sub ToolButtonNewInsertQuery_Click()
-  ' open the query editor
+  ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormeXistXMLEditor
   Dim i As Integer
@@ -35,7 +35,7 @@ Public Sub ToolButtonNewInsertQuery_Click()
 End
 
 Public Sub ToolButtonNewReplaceQuery_Click()
-  ' open the query editor
+  ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormeXistXMLEditor
   Dim i As Integer
@@ -64,7 +64,7 @@ Public Sub ToolButtonNewReplaceQuery_Click()
 End
 
 Public Sub ToolButtonNewValueQuery_Click()
-  ' open the query editor
+  ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormeXistXMLEditor
   Dim i As Integer
@@ -93,7 +93,7 @@ Public Sub ToolButtonNewValueQuery_Click()
 End
 
 Public Sub ToolButtonNewDeleteQuery_Click()
-  ' open the query editor
+  ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormeXistXMLEditor
   Dim i As Integer
@@ -122,7 +122,7 @@ Public Sub ToolButtonNewDeleteQuery_Click()
 End
 
 Public Sub ToolButtonNewRenameQuery_Click()
-  ' open the query editor
+  ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormeXistXMLEditor
   Dim i As Integer

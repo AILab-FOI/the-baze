@@ -1,0 +1,48 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,45,92)
+  Arrangement = Arrange.Vertical
+  { ToolButtonNewTable ToolButton
+    MoveScaled(0,0,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create table")
+    Picture = Picture["icon:/32/grid"]
+  }
+  { ToolButtonNewView ToolButton
+    MoveScaled(0,10,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create view")
+    Picture = Picture["icon:/32/filter"]
+  }
+  { ToolButtonNewIndex ToolButton
+    MoveScaled(0,20,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create index")
+    Picture = Picture["icon:/32/indent"]
+  }
+  { ToolButtonNewTrigger ToolButton
+    MoveScaled(0,30,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create trigger")
+    Picture = Picture["icon:/32/wizard"]
+  }
+  { ToolButtonNewVirtualTable ToolButton
+    MoveScaled(1,41,32,7)
+    Mouse = Mouse.Pointing
+    Text = ("Create virtual table")
+    Picture = Picture["icon:/32/disconnect"]
+  }
+  { ToolButtonNewDatalogRule ToolButton
+    MoveScaled(1,49,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create Datalog rule")
+    Picture = Picture["icon:/32/flip-h"]
+  }
+  { ToolButtonNewDatalogModule ToolButton
+    MoveScaled(2,58,38,8)
+    Mouse = Mouse.Pointing
+    Text = ("Create Datalog module")
+    Picture = Picture["icon:/32/program"]
+  }
+}

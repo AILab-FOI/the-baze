@@ -1,0 +1,166 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,101,71)
+  Arrangement = Arrange.Fill
+  { MenuTableDesign Menu
+    Text = ("Menu Table Design")
+    Visible = False
+    { MenuDeleteRow Menu
+      Text = ("Delete this row")
+    }
+    { MenuPrimaryKey Menu
+      Text = ("Make primary key")
+    }
+  }
+  { VSplitMain VSplit
+    MoveScaled(0,0,91,67)
+    { VBoxDesign VBox
+      MoveScaled(2,3,69,23)
+      { PanelToolBox Panel
+        MoveScaled(1,1,67,5)
+        { ToolButtonExecute ToolButton
+          MoveScaled(0,0,5,4)
+          ToolTip = ("Create table")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonCancel ToolButton
+          MoveScaled(5,0,5,4)
+          ToolTip = ("Cancel")
+          Picture = Picture["icon:/32/halt"]
+        }
+      }
+      { TableViewMain TableView
+        MoveScaled(0,7,68,15)
+        Expand = True
+        Mode = Select.Single
+        ShowCursor = True
+      }
+    }
+    { IconPanelConstraints IconPanel
+      MoveScaled(2,27,87,37)
+      Expand = True
+      Arrangement = Arrange.Fill
+      Count = 2
+      Index = 0
+      Text = ("Column constraints")
+      Picture = Picture["icon:/32/view-detail"]
+      { PanelColumnConstraints Panel
+        MoveScaled(-1,1,56,28)
+        { CheckBoxNotNull CheckBox
+          MoveScaled(2,4,14,2)
+          Text = ("Not null")
+        }
+        { CheckBoxUnique CheckBox
+          MoveScaled(2,9,14,2)
+          Text = ("Unique")
+        }
+        { CheckBoxPrimaryKey CheckBox
+          MoveScaled(2,14,14,2)
+          Text = ("Primary key")
+        }
+        { CheckBoxCheck CheckBox
+          MoveScaled(23,4,14,2)
+          Text = ("Check (")
+        }
+        { CheckBoxReferences CheckBox
+          MoveScaled(23,14,14,2)
+          Text = ("References")
+        }
+        { TextBoxCheck TextBox
+          MoveScaled(32,3,18,4)
+          Enabled = False
+        }
+        { ButtonFindReferencedTable Button
+          MoveScaled(37,14,3,3)
+          Enabled = False
+          ToolTip = ("Choose reference")
+          Text = ("") & "..."
+        }
+        { TextLabelBrace TextLabel
+          MoveScaled(50,4,2,3)
+          Font = Font["+1"]
+          Text = (")")
+        }
+        { LabelReferencedTable Label
+          MoveScaled(24,19,29,3)
+        }
+        { CheckBoxDefault CheckBox
+          MoveScaled(23,9,14,2)
+          Text = ("Default")
+        }
+        { TextBoxDefault TextBox
+          MoveScaled(33,8,18,4)
+          Enabled = False
+        }
+      }
+      Index = 1
+      Text = ("Table constraints")
+      Picture = Picture["icon:/32/text-fill"]
+      { PanelTableConstraints Panel
+        MoveScaled(-1,1,58,34)
+        { CheckBoxTableUnique CheckBox
+          MoveScaled(1,1,14,2)
+          Text = ("Unique")
+        }
+        { CheckBoxTablePrimaryKey CheckBox
+          MoveScaled(24,1,14,2)
+          Text = ("Primary key")
+        }
+        { CheckBoxTableCheck CheckBox
+          MoveScaled(24,16,14,2)
+          Text = ("Check (")
+        }
+        { TextBoxTableCheck TextBox
+          MoveScaled(33,15,18,4)
+          Enabled = False
+        }
+        { TextLabelTableBrace TextLabel
+          MoveScaled(51,16,2,3)
+          Font = Font["+1"]
+          Text = (")")
+        }
+        { ListBoxUnique ListBox
+          MoveScaled(4,5,19,8)
+          Enabled = False
+          Mode = Select.Multiple
+        }
+        { ListBoxPrimaryKey ListBox
+          MoveScaled(27,5,19,8)
+          Enabled = False
+          Mode = Select.Multiple
+        }
+        { ListBoxAdded ListBox
+          MoveScaled(4,17,19,8)
+          Enabled = False
+        }
+        { ToolButtonAdd ToolButton
+          MoveScaled(5,13,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/add"]
+        }
+        { ToolButtonRemove ToolButton
+          MoveScaled(17,13,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/remove"]
+        }
+        { ListBoxTableCheck ListBox
+          MoveScaled(28,20,23,8)
+          Enabled = False
+          Mode = Select.Multiple
+        }
+        { ToolButtonAddCheck ToolButton
+          MoveScaled(51,15,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/add"]
+        }
+        { ToolButtonRemoveCheck ToolButton
+          MoveScaled(51,25,4,4)
+          Enabled = False
+          Picture = Picture["icon:/16/remove"]
+        }
+      }
+      Index = 0
+    }
+  }
+}

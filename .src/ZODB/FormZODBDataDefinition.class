@@ -9,7 +9,7 @@ Public module_name As String
 
 
 Public Sub ToolButtonNewClassDescriptor_Click()
-  ' open the python editor
+  ' open the python TextEditor
   Dim ask As New FormAskClassName
   Dim module_editor As FormZODBPythonEditor
   ask.caller = Me
@@ -25,7 +25,7 @@ Public Sub ToolButtonNewClassDescriptor_Click()
 End
 
 Public Sub ToolButtonNewPythonModule_Click()
-  ' open the python editor
+  ' open the python TextEditor
   Dim ask As New FormAskPythonModuleName
   Dim module_editor As FormZODBPythonEditor
   ask.caller = Me

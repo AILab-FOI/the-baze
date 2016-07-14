@@ -1,7 +1,7 @@
 ' Gambas class file
 
-' xml editor
-Public xml_editor As Editor
+' xml TextEditor
+Public xml_editor As TextEditor
 ' execute button
 Public but As ToolButton
 ' path to document being edited
@@ -10,19 +10,19 @@ Public path As String
 Public query_type As String
 
 Public Sub _new()
-  ' make editor visible
-  xml_editor = EditorXML
+  ' make TextEditor visible
+  xml_editor = TextEditorXML
   but = ToolButtonExecute
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  EditorXML.Flags[EditorXML.ShowLineNumbers] = True
+  TextEditorXML.ShowLineNumber = True
 End
 
 Public Sub ToolButtonExecute_Click()
   ' if query then execute it and show the results
-  ' else (XML editor) update the document on the given path
+  ' else (XML TextEditor) update the document on the given path
   Dim spath As String[]
   Dim doc, query_name As String
   Dim child As Variant
@@ -31,19 +31,19 @@ Public Sub ToolButtonExecute_Click()
     Select Case query_type
       Case "insert"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Insert query"))
-        success = FMain.db.new_insert_query(query_name, EditorXML.Text)
+        success = FMain.db.new_insert_query(query_name, TextEditorXML.Text)
       Case "replace"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Replace query"))
-        success = FMain.db.new_replace_query(query_name, EditorXML.Text)
+        success = FMain.db.new_replace_query(query_name, TextEditorXML.Text)
       Case "value"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Value query"))
-        success = FMain.db.new_value_query(query_name, EditorXML.Text)
+        success = FMain.db.new_value_query(query_name, TextEditorXML.Text)
       Case "delete"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Delete query"))
-        success = FMain.db.new_delete_query(query_name, EditorXML.Text)
+        success = FMain.db.new_delete_query(query_name, TextEditorXML.Text)
       Case "rename"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Rename query"))
-        success = FMain.db.new_rename_query(query_name, EditorXML.Text)
+        success = FMain.db.new_rename_query(query_name, TextEditorXML.Text)
     End Select
     If success Then
       Message.Info("Query successfully executed!")
@@ -57,7 +57,7 @@ Public Sub ToolButtonExecute_Click()
   Else
     spath = Split(path, "/")
     doc = spath.Pop()
-    If FMain.db.new_document(doc, spath.Join("/"), EditorXML.Text) Then
+    If FMain.db.new_document(doc, spath.Join("/"), TextEditorXML.Text) Then
       Message.Info("Document sucessfully updated!")
       With FMain.main_tabstrip.Current
         For Each child In .Children
@@ -72,7 +72,38 @@ End
 Public Sub ToolButtonClose_Click()
   ' close the current tab
   Dim child As Variant
-  If Message.Question("Are you sure that you want to abandon all changes?", "Yes", "No") = 1 Then
+  Dim query_name As String
+  Dim ok As Boolean = False
+  If but.Tooltip = "Execute query" Then
+    Select Case query_type
+      Case "insert"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Insert query"))
+      Case "replace"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Replace query"))
+      Case "value"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Value query"))
+      Case "delete"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Delete query"))
+      Case "rename"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Rename query"))
+    End Select
+  Else
+    query_type = "doc"
+    query_name = Left$(FMain.main_tabstrip.Text, - Len(" - XML Document"))
+  Endif
+  If query_type <> "doc" Then
+    If FMain.db.dbobjects["queries"][query_type & " queries"][query_name] = TextEditorXML.Text Then
+      ok = True
+    Endif
+  Else
+    If FMain.db.get_xml_doc(query_name) = TextEditorXML.Text Then
+      ok = True
+    Endif
+  Endif
+  If Not ok Then
+    ok = Message.Question("Are you sure that you want to abandon all changes?", "Yes", "No") = 1
+  Endif
+  If ok Then
     With FMain.main_tabstrip.Current
       For Each child In .Children
         child.Close
@@ -82,21 +113,22 @@ Public Sub ToolButtonClose_Click()
   Endif
 End
 
-Public Sub EditorXML_KeyPress_()
+Public Sub TextEditorXML_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorXML.Copy()
+    TextEditorXML.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorXML.Paste()
+      TextEditorXML.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorXML.Cut()
+        TextEditorXML.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorXML.SelectAll()
+          TextEditorXML.SelectAll()
         Endif
       Endif
     Endif
   Endif
 End
+

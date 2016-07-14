@@ -1,0 +1,59 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,86,53)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(2,3,80,48)
+    { Panel1 Panel
+      MoveScaled(2,2,75,5)
+      Arrangement = Arrange.Row
+      AutoResize = True
+      { ToolButtonExecute ToolButton
+        MoveScaled(1,1,5,4)
+        ToolTip = ("Execute query")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/make"]
+      }
+      { ToolButtonClose ToolButton
+        MoveScaled(6,1,5,4)
+        ToolTip = ("Close")
+        Text = ("ToolButton1")
+        Picture = Picture["icon:/32/close"]
+      }
+    }
+    { VSplitBottom VSplit
+      MoveScaled(2,10,77,36)
+      { PanelLabelAddRule Panel
+        MoveScaled(3,1,44,5)
+        Arrangement = Arrange.Horizontal
+        AutoResize = True
+        { LabelAddRule Label
+          MoveScaled(1,0,35,3)
+          Text = ("Add a rule to the knowledgebase:")
+        }
+      }
+      { HSplitRule HSplit
+        MoveScaled(2,6,73,29)
+        { TextEditorHead TextEditor
+          MoveScaled(0,2,35,28)
+          Highlight = "Diff"
+        }
+        { PanelImplication Panel
+          MoveScaled(36,2,6,8)
+          Arrangement = Arrange.Horizontal
+          AutoResize = True
+          { TextLabelImplication TextLabel
+            MoveScaled(2,2,3,5)
+            Font = Font["+6"]
+            Text = (" :- ")
+          }
+        }
+        { TextEditorTail TextEditor
+          MoveScaled(43,1,34,29)
+          Highlight = "Diff"
+        }
+      }
+    }
+  }
+}

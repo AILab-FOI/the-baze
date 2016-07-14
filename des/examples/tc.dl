@@ -1,0 +1,57 @@
+% Transitive closure
+% Reproduced from [FD92]
+%
+% DES> tcl(X,Y)
+% {
+%   tcl(a,b),
+%   tcl(a,c),
+%   tcl(a,d),
+%   tcl(a,e),
+%   tcl(a,f),
+%   tcl(a,g),
+%   tcl(b,c),
+%   tcl(b,d),
+%   tcl(b,e),
+%   tcl(b,f),
+%   tcl(b,g),
+%   tcl(c,d),
+%   tcl(c,e),
+%   tcl(c,f),
+%   tcl(c,g),
+%   tcl(d,e),
+%   tcl(d,f),
+%   tcl(d,g),
+%   tcl(e,f),
+%   tcl(e,g),
+%   tcl(f,g)
+% }
+% DES> tcr(X,Y)
+% Same answer as before
+% DES> tc(X,Y)
+% Same answer as before
+
+% Left-Recursive Transitive Closure
+tcl(X, Y) :-
+  base(X,Y).
+tcl(X,Y) :-
+  tcl(X,Z),
+  base(Z,Y).
+% Right-recursive Transitive Closure
+tcr(X,Y) :-
+  base(X,Y).
+tcr(X,Y) :-
+  base(X, Z),tcr(Z,Y).
+% Double-recursive Transitive Closure
+tc(X,Y) :-
+  base(X,Y).
+tc(X,Y) :-
+  tc(X,Z),tc(Z,Y).
+
+/* base relation */
+
+base(a,b).
+base(b,c).
+base(c,d).
+base(d,e).
+base(e,f).
+base(f,g).

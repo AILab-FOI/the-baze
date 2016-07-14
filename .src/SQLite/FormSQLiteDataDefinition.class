@@ -1,0 +1,22 @@
+' Gambas class file
+
+Public table_name As String
+Public view_name As String
+Public index_name As String
+Public trigger_name As String
+Public request_canceled As Boolean
+
+Public Sub ToolButtonNewTable_Click()
+  ' open table designer
+  Dim ask As New FormAskTableName
+  Dim table_designer As FormSQLiteCreateTable
+  ask.caller = Me
+  request_canceled = False
+  ask.ShowModal()
+  If Not request_canceled Then
+    FMain.main_tabstrip.count += 1
+    table_designer = New FormSQLiteCreateTable(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = table_name & " - Table"
+  Endif
+End
+

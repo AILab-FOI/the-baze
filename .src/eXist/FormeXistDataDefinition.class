@@ -1,7 +1,7 @@
 ' Gambas class file
 
 ' request canceled inbox
-Public canceled As Boolean
+Public request_canceled As Boolean
 ' document name inbox
 Public doc_name As String
 ' collection name inbox
@@ -12,9 +12,10 @@ Public Sub ToolButtonNewDocument_Click()
   Dim cho As New FormAskDocumentName
   Dim table_updater As FormeXistCreateDocument
   Dim i As Integer
+  request_canceled = False
   cho.caller = Me
   cho.ShowModal()
-  If Not canceled Then
+  If Not request_canceled Then
     For i = 0 To FMain.main_tabstrip.Count - 1
       If FMain.main_tabstrip[i].Text = doc_name & " - XML Document" Then 
         FMain.main_tabstrip.Index = i
@@ -30,9 +31,10 @@ End
 Public Sub ToolButtonNewCollection_Click()
   ' create a new collection
   Dim cho As New FormAskCollectionPath
+  request_canceled = False
   cho.caller = Me
   cho.ShowModal()
-  If Not canceled Then
+  If Not request_canceled Then
     If FMain.db.new_collection(collection_path) Then
       Message.Info("Collection successfully created!")
       FMain.db.refresh_db_tree()

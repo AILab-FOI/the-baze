@@ -24,11 +24,11 @@
           Picture = Picture["icon:/32/close"]
         }
       }
-      { EditorXML Editor
+      { TextEditorXML TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = Highlight.SQL
+        Highlight = "HTML"
       }
     }
   }

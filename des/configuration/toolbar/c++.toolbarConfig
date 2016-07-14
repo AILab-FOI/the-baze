@@ -1,0 +1,25 @@
+// Command show options
+name = show options
+action = bcc32
+hintText = show options
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command compile
+name = compile
+action = bcc32 -tW $activeFile$
+hintText = compile a file
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// buttonConfiguration Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

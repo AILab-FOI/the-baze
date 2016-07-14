@@ -1,21 +1,24 @@
 ' Gambas class file
 
+Public caller As Variant
+
+Public Sub _new()
+  ' no op
+End
+
+
 
 Public Sub ButtonOK_Click()
-  FormOpenWizard.xsb_exe = FileChooserMain.Value
+  caller.xsb_exe = FileChooserMain.Value
   Me.Close
-
 End
 
 Public Sub ButtonCancel_Click()
-
   Me.Hide
-
 End
 
 Public Sub FileChooserMain_DblClick()
-  
-  FormOpenWizard.xsb_exe = FileChooserMain.Value
+  caller.xsb_exe = FileChooserMain.Value
   Me.Close
   
 End

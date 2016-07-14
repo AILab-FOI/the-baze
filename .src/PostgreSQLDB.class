@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Inherits DBaze
+Inherits RelationalDB
 
 Public host As String
 Public port As String
@@ -8,6 +8,31 @@ Public dbname As String
 Public con As New Connection
 Public system_objects As Collection
 Public original As String[]
+Public version As Float
+
+' PostgreSQL datatypes
+Public datatypes As String[]
+' datatypes without additional options
+Public basic_datatypes As String[]
+' datatypes with optional length
+Public n_datatypes As String[]
+' datatypes with optional precision
+Public p_datatypes As String[]
+' datatypes with optional precision and scale
+Public ps_datatypes As String[]
+' datatypes with optional field and precision
+Public fp_datatypes As String[]
+
+Static Public tables As String = "SELECT n.nspname as schema, c.relname as table, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
+Static Public views As String = "SELECT n.nspname as schema, c.relname as view, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('v','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
+Static Public indices As String = "SELECT n.nspname as schema, c.relname as index, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as type,  u.usename as owner, c2.relname as table FROM pg_catalog.pg_class c JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('i','') AND n.nspname NOT IN ('pg_catalog', 'pg_toast') AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
+Static Public functions As String = "SELECT n.nspname as schema, p.proname as function,  pg_catalog.pg_get_function_result(p.oid) as result_data, pg_catalog.pg_get_function_arguments(p.oid) as arguments, CASE WHEN p.proisagg THEN 'agg' WHEN p.proiswindow THEN 'window' WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger' ELSE 'normal' END as function_type FROM pg_catalog.pg_proc p LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE pg_catalog.pg_function_is_visible(p.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'inform`ation_schema' ORDER BY 1, 2, 4"
+Static Public triggers As String = "SELECT DISTINCT trigger_name AS trigger, event_object_table AS table FROM INFORMATION_SCHEMA.triggers WHERE trigger_schema='public';"
+Static Public sequences As String = "SELECT n.nspname as schema, c.relname as sequence, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('S','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
+Static Public types As String = "SELECT n.nspname as schema,   pg_catalog.format_type(t.oid, NULL) AS user_type, pg_catalog.obj_description(t.oid, 'pg_type') as description FROM pg_catalog.pg_type t LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid)) AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND pg_catalog.pg_type_is_visible(t.oid) ORDER BY 1, 2;"
+Static Public languages As String = "SELECT l.lanname AS language, pg_catalog.pg_get_userbyid(l.lanowner) as owner, l.lanpltrusted AS trusted FROM pg_catalog.pg_language l WHERE lanplcallfoid != 0  ORDER BY 1"
+  
+
 
 Public Sub _new(host_ As String, port_ As String, dbname_ As String, username_ As String, password_ As String, store_password_ As Boolean)
   Me.host = host_
@@ -29,6 +54,9 @@ End
 
 Public Sub connect(Optional caller As Object = Null) As Boolean
   ' connect to the database
+  Dim query As String
+  Dim result_set As Object[]
+  Dim version_string As String
   With con
     .Type = "postgresql"
     .Host = Me.host
@@ -43,9 +71,49 @@ Public Sub connect(Optional caller As Object = Null) As Boolean
     End If  
   End With 
   execute("SET client_min_messages TO WARNING;")
+  query = "SELECT version()::VARCHAR"
+  result_set = execute(query)
+  version_string = result_set[0]["version"]
+  version_string = AUX.FindAll(version_string, "PostgreSQL ([0-9]+[.][0-9]+)", 1)[0]
+  version = CFloat(version_string)
+  If version < 8.4 Then
+    Message.Error("Version " & version_string & " of PostgreSQL is not supported!")
+    Quit
+  Else
+    setup_datatypes()
+  End If
+  ' TODO: add this to enable datalog queries 
+  Me.init_des()
   Return True
   
 End
+
+Public Sub setup_datatypes()
+  ' Depending on PostgreSQL version, setup the supported datatypes
+  If version >= 8.4 And version < 9.2 Then
+    datatypes = ["bigint", "bigserial", "bit", "bit varying", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "interval", "line", "lseg", "macaddr", "money", "numeric", "oid", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+    basic_datatypes = ["bigint", "bigserial", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int8", "integer", "line", "lseg", "macaddr", "money", "oid", "path", "point", "polygon", "real", "serial", "serial4", "serial8", "smallint", "text", "tsquery", "tsvector", "txid_snapshot", "uuid", "xml"]
+    n_datatypes = ["bit", "bit varying", "char", "character", "character varying", "varbit", "varchar"]
+    p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz"]
+    ps_datatypes = ["decimal", "numeric"]
+    fp_datatypes = ["interval"]
+  Else If version >= 9.2 And version < 9.4 Then
+    datatypes = ["bigint", "bigserial", "bit", "bit varying", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "daterange", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int4range", "int8", "int8range", "integer", "interval", "json", "line", "lseg", "macaddr", "money", "numeric", "numrange", "oid", "path", "point", "polygon", "real", "serial", "serial2", "serial4", "serial8", "smallint", "smallserial", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsrange", "tstzrange", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+    basic_datatypes = ["bigint", "bigserial", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "daterange", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int4range", "int8", "int8range", "integer", "json", "line", "lseg", "macaddr", "money", "numrange", "oid", "path", "point", "polygon", "real", "serial", "serial2", "serial4", "serial8", "smallint", "smallserial", "text", "tsquery", "tsrange", "tstzrange", "tsvector", "txid_snapshot", "uuid", "xml"]
+    n_datatypes = ["bit", "bit varying", "char", "character", "character varying", "varbit", "varchar"]
+    p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz"]
+    ps_datatypes = ["decimal", "numeric"]
+    fp_datatypes = ["interval"]
+  Else If version >= 9.4 Then
+    datatypes = ["bigint", "bigserial", "bit", "bit varying", "bool", "boolean", "box", "bytea", "char", "character", "character varying", "cidr", "circle", "date", "daterange", "decimal", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int4range", "int8", "int8range", "integer", "interval", "json", "jsonb", "line", "lseg", "macaddr", "money", "numeric", "numrange", "oid", "path", "pg_lsn", "point", "polygon", "real", "serial", "serial2", "serial4", "serial8", "smallint", "smallserial", "text", "time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz", "tsquery", "tsrange", "tstzrange", "tsvector", "txid_snapshot", "uuid", "varbit", "varchar", "xml"]
+    basic_datatypes = ["bigint", "bigserial", "bool", "boolean", "box", "bytea", "cidr", "circle", "date", "daterange", "double precision", "float4", "float8", "inet", "int", "int2", "int4", "int4range", "int8", "int8range", "integer", "json", "jsonb", "line", "lseg", "macaddr", "money", "numrange", "oid", "path", "pg_lsn", "point", "polygon", "real", "serial", "serial2", "serial4", "serial8", "smallint", "smallserial", "text", "tsquery", "tsrange", "tstzrange", "tsvector", "txid_snapshot", "uuid", "xml"]
+    n_datatypes = ["bit", "bit varying", "char", "character", "character varying", "varbit", "varchar"]
+    p_datatypes = ["time without time zone", "time with time zone", "timestamp without time zone", "timestamp with time zone", "timestamptz", "timetz"]
+    ps_datatypes = ["decimal", "numeric"]
+    fp_datatypes = ["interval"]
+  Endif
+End
+
 
 Public Function execute(query As String, Optional no_messages As Boolean) As Object[]
   ' execute a query and return the results
@@ -55,7 +123,7 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
   Dim one_line As Collection
   Dim cmd As String
   Dim context As New Collection
-  Dim field_name As String
+  Dim field_name, fname As String
   Dim counter As Collection
   original = New String[]
   If query <> "SET client_min_messages TO WARNING;" Then
@@ -73,9 +141,15 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
     one_line = New Collection
     counter = New Collection
     For Each rfield In res.Fields
-      ' here is a bug due to connetion implementation
-      ' if there are more than one field with the same name
-      ' only the values of the first are displayed
+      ' Here was a bug due to connection implementation
+      ' if there were more than one fields with the same name
+      ' only the values of the first are displayed. 
+      ' Now there is a workaround (e.g. fields are renamed).
+      ' Also to be able to use the evil Eval down there with
+      ' ?column? field names, they are renamed as well.
+      ' There will probably be more such "unpleasant" field
+      ' names in the future, so I leave this comment here
+      ' for future reference. 
       If counter.Exist(rfield.Name) Then
         counter[rfield.Name] += 1
         field_name = rfield.Name & "_" & Str(counter[rfield.Name])
@@ -84,7 +158,12 @@ Public Function execute(query As String, Optional no_messages As Boolean) As Obj
         counter[rfield.Name] = 0
       Endif
       context["res"] = res
-      cmd = "res!" & rfield.Name
+      If rfield.Name = "?column?" Then
+        fname = "\"?column?\""
+      Else
+        fname = rfield.Name
+      Endif
+      cmd = "res!" & fname
       one_line.Add(Eval(cmd, context), field_name)
     Next
     resultArray.Add(one_line)
@@ -95,17 +174,8 @@ End
 Public Sub get_db_objects() As Collection
   ' get the database objects (tables, views, indices, functions, triggers, sequences, user defined datatypes)
   Dim objects As New Collection
-  Dim tables, views, indices, functions, triggers, sequences, types, languages As String
   Dim row As Object
-  tables = "SELECT n.nspname as schema, c.relname as table, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  views = "SELECT n.nspname as schema, c.relname as view, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('v','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  indices = "SELECT n.nspname as schema, c.relname as index, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as type,  u.usename as owner, c2.relname as table FROM pg_catalog.pg_class c JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('i','') AND n.nspname NOT IN ('pg_catalog', 'pg_toast') AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  functions = "SELECT n.nspname as schema, p.proname as function,  pg_catalog.pg_get_function_result(p.oid) as result_data, pg_catalog.pg_get_function_arguments(p.oid) as arguments, CASE WHEN p.proisagg THEN 'agg' WHEN p.proiswindow THEN 'window' WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger' ELSE 'normal' END as function_type FROM pg_catalog.pg_proc p LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE pg_catalog.pg_function_is_visible(p.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' ORDER BY 1, 2, 4"
-  triggers = "SELECT DISTINCT trigger_name AS trigger, event_object_table AS table FROM INFORMATION_SCHEMA.triggers WHERE trigger_schema='public';"
-  sequences = "SELECT n.nspname as schema, c.relname as sequence, CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as type, pg_catalog.pg_get_userbyid(c.relowner) as owner FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('S','') AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND n.nspname !~ '^pg_toast' AND pg_catalog.pg_table_is_visible(c.oid) ORDER BY 1,2"
-  types = "SELECT n.nspname as schema,   pg_catalog.format_type(t.oid, NULL) AS user_type, pg_catalog.obj_description(t.oid, 'pg_type') as description FROM pg_catalog.pg_type t LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid)) AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid) AND n.nspname <> 'pg_catalog' AND n.nspname <> 'information_schema' AND pg_catalog.pg_type_is_visible(t.oid) ORDER BY 1, 2;"
-  languages = "SELECT l.lanname AS language, pg_catalog.pg_get_userbyid(l.lanowner) as owner, l.lanpltrusted AS trusted FROM pg_catalog.pg_language l WHERE lanplcallfoid != 0  ORDER BY 1"
-  
+
   objects["tables"] = execute(tables)
   objects["views"] = execute(views)
   objects["indices"] = execute(indices)
@@ -116,7 +186,7 @@ Public Sub get_db_objects() As Collection
   objects["languages"] = execute(languages)
   
   objects["attributes"] = New Collection
-  For Each row In objects["tables"]
+  For Each row In objects["tables"] ' If the query below is to be changed, also change it in ODBCDB
     objects["attributes"][row["table"]] = execute("SELECT a.attname as attribute, a.attnum FROM pg_catalog.pg_attribute a WHERE a.attrelid = (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = '" & row["table"] & "' AND pg_catalog.pg_table_is_visible(c.oid)) AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum")
   Next
   
@@ -127,7 +197,9 @@ Public Sub get_db_objects() As Collection
     "functions": "function.png", 
     "triggers": "trigger.png", 
     "sequences": "sequence.png",
-    "types": "data_type.png"]
+    "types": "data_type.png",
+    "datalog rules": "rule.png",
+    "datalog modules": "module.png"]
   Return objects
 End
 
@@ -165,69 +237,82 @@ Public Sub refresh_db_tree()
   Dim o As String
   FMain.main_treeview.Clear
   objects = get_db_objects()
-  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Tables", "Tables", Picture.Load("images/directory.png"))
   For Each tab In objects["tables"]
-    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load(objects["object types"]["tables"]), "Tables")
+    FMain.main_treeview.Add("tab_" & tab["table"], tab["table"], Picture.Load("images/" & objects["object types"]["tables"]), "Tables")
   Next
-  FMain.main_treeview.Add("Views", "Views", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Views", "Views", Picture.Load("images/directory.png"))
   For Each tab In objects["views"]
-    FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load(objects["object types"]["views"]), "Views")
+    FMain.main_treeview.Add("viw_" & tab["view"], tab["view"], picture.Load("images/" & objects["object types"]["views"]), "Views")
   Next
-  FMain.main_treeview.Add("Indices", "Indices", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Indices", "Indices", Picture.Load("images/directory.png"))
   For Each tab In objects["indices"]
-    FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load(objects["object types"]["indices"]), "Indices")
+    FMain.main_treeview.Add("ind_" & tab["index"], tab["index"], picture.Load("images/" & objects["object types"]["indices"]), "Indices")
   Next
-  FMain.main_treeview.Add("Functions", "Functions", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Functions", "Functions", Picture.Load("images/directory.png"))
   For Each tab In objects["functions"]
-    FMain.main_treeview.Add("fun_" & tab["function"] & "(" & tab["arguments"] & ")", tab["function"] & "(" & tab["arguments"] & ")", picture.Load(objects["object types"]["functions"]), "Functions")
+    FMain.main_treeview.Add("fun_" & tab["function"] & "(" & tab["arguments"] & ")", tab["function"] & "(" & tab["arguments"] & ")", picture.Load("images/" & objects["object types"]["functions"]), "Functions")
   Next
-  FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Triggers", "Triggers", Picture.Load("images/directory.png"))
   For Each tab In objects["triggers"]
-    FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load(objects["object types"]["triggers"]), "Triggers")
+    FMain.main_treeview.Add("tri_" & tab["trigger"] & " on " & tab["table"], tab["trigger"] & " on " & tab["table"], picture.Load("images/" & objects["object types"]["triggers"]), "Triggers")
   Next
-  FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Sequences", "Sequences", Picture.Load("images/directory.png"))
   For Each tab In objects["sequences"]
-    FMain.main_treeview.Add("seq_" & tab["sequence"], tab["sequence"], picture.Load(objects["object types"]["sequences"]), "Sequences")
+    FMain.main_treeview.Add("seq_" & tab["sequence"], tab["sequence"], picture.Load("images/" & objects["object types"]["sequences"]), "Sequences")
   Next
-  FMain.main_treeview.Add("Types", "Types", Picture.Load("directory.png"))
+  FMain.main_treeview.Add("Types", "Types", Picture.Load("images/directory.png"))
   For Each tab In objects["types"]
-    FMain.main_treeview.Add("typ_" & tab["user_type"], tab["user_type"], picture.Load(objects["object types"]["types"]), "Types")
+    FMain.main_treeview.Add("typ_" & tab["user_type"], tab["user_type"], picture.Load("images/" & objects["object types"]["types"]), "Types")
   Next
+
   ' create Baze object containers
   With FMain.main_treeview
-    .Add("Queries", "Queries", Picture.Load("directory.png"))
-    .Add("Update queries", "Update queries", Picture.Load("directory.png"), "Queries")
+    .Add("Datalog rules", "Datalog rules", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["datalog rules"]
+      .Add(Me.dbobjects["datalog rules"].key, Me.dbobjects["datalog rules"].key, picture.Load("images/rule.png"), "Datalog rules")
+    Next
+    .Add("Datalog modules", "Datalog modules", Picture.Load("images/directory.png"))
+    For Each o In Me.dbobjects["datalog modules"]
+      .Add(Me.dbobjects["datalog modules"].key, Me.dbobjects["datalog modules"].key, picture.Load("images/module.png"), "Datalog modules")
+    Next
+    .Add("Queries", "Queries", Picture.Load("images/directory.png"))
+    .Add("Update queries", "Update queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["update queries"]
-      .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("query.png"), "Update queries")
+      .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
     Next
-    .Add("Insert queries", "Insert queries", Picture.Load("directory.png"), "Queries")
+    .Add("Insert queries", "Insert queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["insert queries"]
-      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("query.png"), "Insert queries")
+      .Add(Me.dbobjects["queries"]["insert queries"].key, Me.dbobjects["queries"]["insert queries"].key, Picture.Load("images/query.png"), "Insert queries")
     Next
-    .Add("Delete queries", "Delete queries", Picture.Load("directory.png"), "Queries")
+    .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
-      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("query.png"), "Delete queries")
+      .Add(Me.dbobjects["queries"]["delete queries"].key, Me.dbobjects["queries"]["delete queries"].key, Picture.Load("images/query.png"), "Delete queries")
     Next
-    .Add("SQL queries", "SQL queries", Picture.Load("directory.png"), "Queries")
+    .Add("SQL queries", "SQL queries", Picture.Load("images/directory.png"), "Queries")
    
     For Each o In Me.dbobjects["queries"]["sql queries"]
-      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("query.png"), "SQL queries")
+      .Add(Me.dbobjects["queries"]["sql queries"].key, Me.dbobjects["queries"]["sql queries"].key, Picture.Load("images/query.png"), "SQL queries")
     Next
-    .Add("QBE queries", "QBE queries", Picture.Load("directory.png"), "Queries")
+    .Add("QBE queries", "QBE queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["qbe queries"]
-      .Add(o, o, Picture.Load("query.png"), "QBE queries")
+      .Add(o, o, Picture.Load("images/query.png"), "QBE queries")
     Next
-    .Add("Forms", "Forms", Picture.Load("directory.png"))
+    .Add("Datalog queries", "Datalog queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["datalog queries"]
+      .Add(Me.dbobjects["queries"]["datalog queries"].key, Me.dbobjects["queries"]["datalog queries"].key, Picture.Load("images/query.png"), "Datalog queries")
+    Next
+    .Add("Forms", "Forms", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["forms"]
-      .Add(o, o, Picture.Load("query.png"), "Forms")
+      .Add(o, o, Picture.Load("images/query.png"), "Forms")
     Next
-    .Add("Scripts", "Scripts", Picture.Load("directory.png"))
+    .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["scripts"]
-      .Add(o, o, Picture.Load("query.png"), "Scripts")
+      .Add(o, o, Picture.Load("images/query.png"), "Scripts")
     Next
-    .Add("Reports", "Reports", Picture.Load("directory.png"))
+    .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]
-      .Add(o, o, Picture.Load("query.png"), "Reports")
+      .Add(o, o, Picture.Load("images/query.png"), "Reports")
     Next
   End With
 End
@@ -245,22 +330,25 @@ End
 
 Public Function rewrite_query(query As String) As String
   ' rewrite the query to return distinct column names
-  Dim has_asterisk As String[]
+  Dim has_asterisk, is_create_function As String[]
   Dim defined_limit As String[]
   Dim replace_limit As String
   Dim query_copy As String
   Dim res As Result
-  Dim rfield As ResultField
   Dim with_string As String
-  Dim i As Integer
+  Dim i, j As Integer
   query = Replace(query, "\n", " ")
-  has_asterisk = XSBEngine.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
+  is_create_function = AUX.FindAll(query, "(?i)create function") ' check if query is a CREATE FUNCTION statement (no need to rewrite).
+  If is_create_function.Count > 0 Then
+    Return query
+  Endif
+  has_asterisk = AUX.FindAll(query, "(?i)select (.*?[\\*].*?) from", 1)
   ' FIXME: This is not a good solution, since queries like SELECT a.a, b.a FROM a, b still give wrong solutions
   ' the SELECT clause has to be parsed for possible same entries (e.g. "a" in the above example) and then rewritten
   ' with a WITH clause as for SELECT * queries
   If has_asterisk.Count > 0 Then
     query_copy = query
-    defined_limit = XSBEngine.FindAll(query, "(?i)(limit +[0-9]+)", 1)
+    defined_limit = AUX.FindAll(query, "(?i)(limit +[0-9]+)", 1)
     If defined_limit.Count > 0 Then
       For Each replace_limit In defined_limit
         query = Replace(query, replace_limit, "LIMIT 1")
@@ -269,10 +357,8 @@ Public Function rewrite_query(query As String) As String
       query &= " LIMIT 1"
     Endif
     res = con.Exec(query)
-    For Each res
-      For Each rfield In res.Fields
-        original.Push(rfield.name)
-      Next
+    For j = 0 To res.Fields.Count - 1
+      original.Push(res.Fields[j].name)
     Next
     If original.Count = 0 Then
       Return query_copy

@@ -1,0 +1,11 @@
+edge(a,b).
+edge(b,c).
+edge(c,d).
+edge(d,e).
+edge(d,b).
+
+tc(X,Y) :- edge(X,Y).
+tc(X,Y) :- edge(X,Z),tc(Z,Y).
+
+% Cycle-free graph:
+% (-tc(Y,X) :- edge(X,Y)) /\ (-tc(Y,X) :- edge(X,Z),tc(Z,Y)) => tc(X,Y).

@@ -1,15 +1,15 @@
 ' Gambas class file
 
-Public flora2_literals As Editor
-Public flora2_query As Editor
+Public flora2_literals As TextEditor
+Public flora2_query As TextEditor
 Public insert_rb As RadioButton
 Public insertall_rb As RadioButton
 Public trans_chk As CheckBox
 
 Public Sub _new()
   ' make controls public
-  flora2_literals = EditorFlora2Literals
-  flora2_query = EditorFlora2Query
+  flora2_literals = TextEditorFlora2Literals
+  flora2_query = TextEditorFlora2Query
   insert_rb = RadioButtonInsert
   insertall_rb = RadioButtonInsertAll
   trans_chk = CheckBoxTransactional
@@ -28,7 +28,7 @@ Public Sub ToolButtonClose_Click()
     insop = "t_" & insop
   Endif
   With FMain.db
-    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, TextEditorFlora2Literals.Text, TextEditorFlora2Query.text) Then
       Return
     Endif
     .refresh_db_tree(True)
@@ -53,7 +53,7 @@ Public Sub ToolButtonExecute_Click()
     insop = "t_" & insop
   Endif
   With FMain.db
-    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+    If Not .new_insert_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Insert query")), insop, TextEditorFlora2Literals.Text, TextEditorFlora2Query.text) Then
       Return
     Endif
     .refresh_db_tree(True)

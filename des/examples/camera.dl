@@ -1,0 +1,168 @@
+% PROBLEM: Guiding a motorized camera
+% Authors: Enrique Martín-Martín and Fernando Sáenz-Pérez
+% Date:    04/04/2011
+%
+% DESCRIPTION:
+% This problem consists of finding the minimum number of
+% energy units to locate a motorized camera
+% at a new position departing from an initial position 
+%
+%
+% There are 4 possible headings: 
+% * 'North'
+% * 'South'
+% * 'East' 
+% * 'West'
+%
+% There are 3 possible attitudes:
+% * '+' (45 degrees w.r.t. to horizontal plane)
+% * 'o' (0)
+% * '-' (-45)
+%
+% The camera accepts several commands:
+% * 'Up' (Tilt 45 degrees in vertical plane)
+% * 'Down' (Tilt -45 degrees in vertical plane)
+% * 'Right' (Pan 90 degrees in horizontal plane)
+% * 'Left' (Pan -90 degrees in horizontal plane)
+%
+% Each move requires several energy units, as follows:
+% * 45 degrees tilt : 4
+% * -45 degrees tilt: 1
+% * 90 degrees pan  : 3
+% * -90 degrees pan : 3
+%
+
+% USAGE:
+% A query session for the next program follows, where 
+% the initial position is ('North','-') and required 
+% final position is ('South','+'):
+%
+% DES-Datalog> /consult examples/camera
+% Info: 35 rules consulted.
+% DES-Datalog> min(path('North','-','South','+',C),C,Min)
+% Info: Processing:
+%   answer(Min) :-
+%     min(path('North','-','South','+',C),C,[],Min).
+% {
+%   answer(14)
+% }
+% Info: 1 tuple computed.
+%
+% If the path relation is typed, then it can also
+% be queried from SQL, as follows:
+%
+% DES-Datalog> :- type(path(fh:string,fa:string,th:string,ta:string,cost:int))
+% DES-Datalog> select min(cost) as "MinCost" from path where fh='North' and fa='-' and th='South' and ta='+'
+% answer(MinCost) ->
+% {
+%   answer(14)
+% }
+% Info: 1 tuple computed.
+%
+% The above type declaration is equivalent to the following SQL table declaration:
+%
+% create table path(fh string, fa string, th string, ta string, cost int)
+%
+
+% heading/1
+heading('North').
+heading('South').
+heading('East').
+heading('West').
+
+% tilt/1
+attitude('+').
+attitude('o').
+attitude('-').
+
+% state/2
+% Intensional definition
+state(Heading,Tilt) :-
+  heading(Heading),
+  attitude(Tilt).
+  
+% State transition
+state_transition(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost) :-
+  state(FromHeading,FromAttitude),
+  state(ToHeading,ToAttitude),
+  cost(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost).
+  
+% Paths
+% :- type(path(fh:string,fa:string,th:string,ta:string,cost:int))
+% select min(cost) from path where fh='North' and fa='-' and th='South' and ta='+'
+path(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost) :-
+  state_transition(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost).
+path(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost) :-
+  state_transition(FromHeading,FromAttitude,ToStateHeading,ToStateTilt,StateTransitionCost),
+  path(ToStateHeading,ToStateTilt,ToHeading,ToAttitude,TailPathCost),
+  Cost is StateTransitionCost+TailPathCost,
+  max_cost(MaxCost),
+  Cost =< MaxCost.
+
+% Maximum number of moves
+max_moves(Moves) :-
+  count(state(_,_),Moves).
+  
+% Allowed moves
+move(0).
+move(M1) :-
+  move(M),
+  M1 is M+1,
+  max_moves(Max),
+  M1 =< Max.  
+
+% Pan with commands
+pan('North','East',PanCost) :-
+  command_cost('Right',PanCost).
+pan('East','South',PanCost) :-
+  command_cost('Right',PanCost).
+pan('South','West',PanCost) :-
+  command_cost('Right',PanCost).
+pan('West','North',PanCost) :-
+  command_cost('Right',PanCost).
+pan(FromHeading,ToHeading,PanCost) :-
+  pan(ToHeading,FromHeading,_),
+  command_cost('Left',PanCost).
+
+% Tilt with commands
+tilt('-','o',TiltCost) :-
+  command_cost('Up',TiltCost).
+tilt('o','+',TiltCost) :-
+  command_cost('Up',TiltCost).
+tilt('+','o',TiltCost) :-
+  command_cost('Down',TiltCost).
+tilt('o','-',TiltCost) :-
+  command_cost('Down',TiltCost).
+
+% cost(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost)
+% Pan costs:
+cost(FromHeading,Attitude,ToHeading,Attitude,Cost) :-
+  state(FromHeading,Attitude),
+  state(ToHeading,Attitude),
+  FromHeading \= ToHeading,
+  pan(FromHeading,ToHeading,Cost).
+% Tilt costs:
+cost(Heading,FromAttitude,Heading,ToAttitude,Cost) :-
+  state(Heading,FromAttitude),
+  state(Heading,ToAttitude),
+  FromAttitude \= ToAttitude,
+  tilt(FromAttitude,ToAttitude,Cost).
+
+% Cost of commands
+command_cost('Right',3).
+command_cost('Left',3).
+command_cost('Up',4).
+command_cost('Down',1).
+  
+% max_cost
+max_cost(Cost) :-
+  command_cost('Right',PanCost),
+  command_cost('Up',UpCost),
+  count(heading(P),Ps),
+  count(attitude(T),Ts),
+  Cost is Ps*PanCost+Ts*UpCost.
+
+% min_cost_path
+min_cost_path(FromHeading,FromAttitude,ToHeading,ToAttitude,MinCost) :-
+  min(path(FromHeading,FromAttitude,ToHeading,ToAttitude,Cost),Cost,MinCost).
+

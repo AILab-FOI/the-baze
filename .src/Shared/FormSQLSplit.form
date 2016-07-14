@@ -25,11 +25,11 @@
           Picture = Picture["icon:/32/close"]
         }
       }
-      { EditorSQL Editor
+      { TextEditorSQL TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = Highlight.SQL
+        Highlight = "SQL"
       }
     }
     { TableViewResults TableView

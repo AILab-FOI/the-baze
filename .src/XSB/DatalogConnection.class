@@ -151,25 +151,14 @@ Public Sub connect(Optional caller As Object = Null)
   If Not IsNull(caller) Then
     caller.ProgressBarLoading.Value = 0.2
   Endif
-  engine.execute("setof(_R, (_R ^ odbc_sql([],'select tablename from pg_tables " & 
-    "where tablename not like ''pg_%'' and tablename not like ''sql_%''',_R)), _L), flatten(_L,__L), " &
-    "setof( _X, ( _X ^ ( member( _X, __L ), odbc_attach( _X, table( _X ) ) ) ), _L1 ).")
+  engine.execute("odbc_get_schema( accessible( _ ), _T ), member( T, _T ), odbc_attach( T, table( T ) ).")
   If Not engine.success Then 
     Error.Raise(engine.result)
   Endif 
   If Not IsNull(caller) Then
     caller.ProgressBarLoading.Value = 0.25
   Endif
-  query = "setof(_R, (_R ^ odbc_sql([],'SELECT COUNT(*), tb.tablename " &
-    "FROM pg_attribute att, pg_type tp, pg_tables tb " &
-    "WHERE att.attrelid = tp.typrelid " &
-    "AND tp.typname = tb.tablename " &
-    "AND tb.tablename NOT LIKE ''pg_%'' " &
-    "AND tb.tablename NOT LIKE ''sql_%'' " &
-    "AND att.attstattarget <> 0 " &
-    "GROUP BY 2' " &
-    ",_R)), _L), " &
-    "member( [NumArgs, Relation], _L )."
+  query = "odbc_get_schema( accessible( _ ), _T ), member( Relation, _T ), odbc_get_schema( arity( Relation ), NumArgs )." 
   resultSet = engine.execute(query, True, True)
   If Not IsNull(caller) Then
     caller.ProgressBarLoading.Value = 0.3

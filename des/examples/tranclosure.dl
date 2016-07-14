@@ -1,0 +1,30 @@
+%
+% Transitive closure of relations p and q
+%
+% Datalog Formulation
+%
+% DES> pqs(X,Y)
+% {
+%   pqs(a,b),
+%   pqs(a,c),
+%   pqs(a,d),
+%   pqs(a,e),
+%   pqs(b,c),
+%   pqs(b,d),
+%   pqs(b,e),
+%   pqs(c,d),
+%   pqs(c,e),
+%   pqs(d,e)
+% }
+
+p(a,b).
+p(c,d).
+
+q(b,c).
+q(d,e).
+
+pqs(X,Y) :- p(X,Y).
+pqs(X,Y) :- q(X,Y).
+pqs(X,Y) :- pqs(X,Z),p(Z,Y).
+pqs(X,Y) :- pqs(X,Z),q(Z,Y).
+

@@ -1,0 +1,86 @@
+' Gambas class file
+
+Public head_editor As TextEditor
+Public tail_editor As TextEditor
+
+Public Sub _new()
+  ' make the editors public
+  head_editor = TextEditorHead
+  tail_editor = TextEditorTail
+End
+
+
+Public Sub Form_Open()
+  VSplitMain.Settings = [1, 1]
+  HSplitRule.Settings = [5, 1, 5]
+  TextEditorHead.ShowLineNumber = True
+  TextEditorTail.ShowLineNumber = True
+End
+
+Public Sub TextEditorHead_KeyPress_()
+  ' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    TextEditorHead.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      TextEditorHead.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        TextEditorHead.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          TextEditorHead.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End
+
+Public Sub TextEditorTail_KeyPress_()
+  ' handle copy, paste, cut, select all
+  If Key.Code = Key["C"] And If Key.Control Then
+    TextEditorTail.Copy()
+  Else
+    If Key.Code = Key["V"] And If Key.Control Then
+      TextEditorTail.Paste()
+    Else
+      If Key.Code = Key["X"] And If Key.Control Then
+        TextEditorTail.Cut()
+      Else
+        If Key.Code = Key["A"] And If Key.Control Then
+          TextEditorTail.SelectAll()
+        Endif
+      Endif
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' Add a new rule to the deductive database
+  Dim rule As String
+  rule = "/assert " & TextEditorHead.Text & " :- " & TextEditorTail.Text
+  FMain.db.init_des()
+  Try FMain.db.executeDES(rule, True)
+  If Error Then
+    Message.Error(Error.Text)
+  Endif
+  FMain.db.new_datalog_rule(Left(FMain.main_tabstrip.Text, -15), rule)
+  FMain.db.refresh_db_tree()
+End
+
+Public Sub ToolButtonClose_Click()
+  ' close the current tab
+  Dim child As Variant
+  Dim rule As String
+  rule = "/assert " & TextEditorHead.Text & " :- " & TextEditorTail.Text
+  If Message.Question("Save changes on this Datalog rule?", "Yes", "No") = 1 Then
+    FMain.db.new_datalog_rule(Left(FMain.main_tabstrip.Text, -15), rule)
+    FMain.db.refresh_db_tree()
+  Endif
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
+End

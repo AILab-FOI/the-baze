@@ -1,0 +1,136 @@
+<!-- For use with NASM and PE -->
+
+<acide.configuration.lexicon.AcideLexiconConfiguration>
+  <__name>asm</__name>
+  <__path>.\configuration\lexicon\Nasm.xml</__path>
+  <__isCompiledOrInterpreted>false</__isCompiledOrInterpreted>
+  <__tokenTypeManager>
+    <__list>
+      <__list>
+        <acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+          <__name>Color: [R: 0, G: 0, B: 0], Font Style: Bold, Case Sensitive: No</__name>
+          <__color>
+            <red>255</red>
+            <green>0</green>
+            <blue>0</blue>
+            <alpha>255</alpha>
+          </__color>
+          <__fontStyle>2</__fontStyle>
+          <__isCaseSensitive>True</__isCaseSensitive>
+          <__tokenList>
+            <__list>
+              <string>%include</string>
+              <string>%define</string>
+              <string>BYTE</string>
+              <string>DWORD</string>
+              <string>QWORD</string>
+              <string>IMPORT</string>
+              <string>ENDIMPORT</string>
+              <string>RESOURCE</string>
+              <string>ENDRESOURCE</string>
+              <string>FLAT</string>
+              <string>DIALOG</string>
+              <string>ENDDIALOG</string>
+              <string>START</string>
+              <string>END</string>
+              <string>SIZEOF</string>
+              <string>PE64</string>
+              <string>PE32</string>
+            </__list>
+          </__tokenList>
+        </acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+            <acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+          <__name>Color: [R: 0, G: 0, B: 0], Font Style: Bold, Case Sensitive: No</__name>
+          <__color>
+            <red>0</red>
+            <green>0</green>
+            <blue>255</blue>
+            <alpha>255</alpha>
+          </__color>
+          <__fontStyle>1</__fontStyle>
+          <__isCaseSensitive>False</__isCaseSensitive>
+          <__tokenList>
+            <__list>
+              <string>add</string>
+              <string>and</string>
+              <string>call</string>
+              <string>cmp</string>
+              <string>imul</string>
+              <string>jmp</string>
+              <string>jle</string>
+              <string>jnz</string>
+              <string>jge</string>
+              <string>je</string>
+              <string>jb</string>
+              <string>lea</string>
+              <string>mov</string>
+              <string>movzx</string>
+              <string>nop</string>
+              <string>pop</string>
+              <string>push</string>
+              <string>sar</string>
+              <string>shr</string>
+              <string>sub</string>
+              <string>test</string>
+              <string>rcx</string>
+              <string>rsi</string>
+              <string>xor</string>
+
+               </__list>
+          </__tokenList>
+        </acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+        
+        <acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+          <__name>Color: [R: 0, G: 0, B: 0], Font Style: Bold, Case Sensitive: No</__name>
+          <__color>
+            <red>204</red>
+            <green>0</green>
+            <blue>0</blue>
+            <alpha>255</alpha>
+          </__color>
+          <__fontStyle>2</__fontStyle>
+          <__isCaseSensitive>false</__isCaseSensitive>
+          <__tokenList>
+            <__list>
+              <string>[</string>
+              <string>]</string>
+
+            </__list>
+          </__tokenList>
+        </acide.configuration.lexicon.tokens.AcideLexiconTokenGroup>
+        
+      </__list>
+    </__list>
+  </__tokenTypeManager>
+  
+  <__validExtensionsManager>
+    <__list>
+      <__list>
+        <string>asm</string>
+      </__list>
+    </__list>
+  </__validExtensionsManager>
+  
+  <__delimitersManager>
+    <__list>
+      <__list>
+        <string>,=</string>
+        <string>.=</string>
+        <string>+</string>
+         </__list>
+    </__list>
+  </__delimitersManager>
+  
+  <__remarksManager>
+    <__symbol>;</__symbol>
+    <__isCaseSensitive>false</__isCaseSensitive>
+    <__color>
+      <red>0</red>
+      <green>124</green>
+      <blue>0</blue>
+      <alpha>255</alpha>
+    </__color>
+    <__fontStyle>0</__fontStyle>
+  </__remarksManager>
+  
+</acide.configuration.lexicon.AcideLexiconConfiguration>

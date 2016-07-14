@@ -1,0 +1,33 @@
+% File: hubs_auth.dl
+% Date: 10/03/2013
+% Author: Fernando Sáenz-Pérez
+
+% Example: Hubs and Authorities
+% Adaptation from SQL to Datalog of the formulation found in Jennifer Widom Slides
+
+% Notes:
+% - The original SQL code is in file hubs_auth.sql
+% - Non-stratifiable program
+
+% Description:
+% Intuition: A web page is important if important pages link to it.
+% A Hub is a node that points to enough authorities (let's say, 3)
+% An Authority is a node that is pointed by enough hubs (let's say, 3)
+
+% EDB:
+%   link(src, dest): Defines the graph
+%   hubStart(node) : Start hub nodes (already known as hubs)
+%   authStart(node): Start authority nodes (already known as authorities)
+
+% Hub points to >= 3 Authority
+% Authority points to >= 3 Hub
+
+hub(H) :-
+  hubStart(H).
+hub(H) :-
+  group_by((link(H,A),auth(A)),[H],count>=3).
+
+auth(A) :-
+  authStart(A).
+auth(A) :-
+  group_by((link(H,A),hub(H)),[A],count>=3).

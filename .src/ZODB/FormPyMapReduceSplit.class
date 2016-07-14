@@ -1,22 +1,22 @@
 ' Gambas class file
 
-Public pymapreduce_editor As Editor
+Public pymapreduce_editor As TextEditor
 
 Public Sub _new()
-  ' make editor visible
-  pymapreduce_editor = EditorPyMapReduce
+  ' make TextEditor visible
+  pymapreduce_editor = TextEditorPyMapReduce
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  EditorPyMapReduce.Flags[EditorPyMapReduce.ShowLineNumbers] = True
+  TextEditorPyMapReduce.ShowLineNumber = True
 End
 
 Public Sub ToolButtonExecute_Click()
 ' execute the query and show the results
   Dim results As Variant
   TreeViewResult.Clear
-  Try results = FMain.db.query(EditorPyMapReduce.Text)
+  Try results = FMain.db.query(TextEditorPyMapReduce.Text)
   If Error Then
     Message.Error(Error.Text)
     Return
@@ -24,7 +24,7 @@ Public Sub ToolButtonExecute_Click()
   TreeViewResult.tag = FMain.db.query("len(picklers) - 1")
   FMain.db.construct_object_tree(results, Null, TreeViewResult)
   TreeViewResult_Expand()
-  FMain.db.dbobjects["queries"]["pymapreduce queries"][Left$(FMain.main_tabstrip.Text, - Len(" - PyMapReduce query"))] = EditorPyMapReduce.Text
+  FMain.db.dbobjects["queries"]["pymapreduce queries"][Left$(FMain.main_tabstrip.Text, - Len(" - PyMapReduce query"))] = TextEditorPyMapReduce.Text
   FMain.db.save()
   FMain.db.refresh_db_tree()
 End
@@ -33,7 +33,7 @@ Public Sub ToolButtonClose_Click()
   ' close the current tab
   Dim child As Variant
   If Message.Question("Save the query?", "Yes", "No") = 1 Then
-    FMain.db.dbobjects["queries"]["pymapreduce queries"][Left$(FMain.main_tabstrip.Text, - Len(" - PyMapReduce query"))] = EditorPyMapReduce.Text
+    FMain.db.dbobjects["queries"]["pymapreduce queries"][Left$(FMain.main_tabstrip.Text, - Len(" - PyMapReduce query"))] = TextEditorPyMapReduce.Text
     FMain.db.save()
   Endif
   With FMain.main_tabstrip.Current
@@ -44,19 +44,19 @@ Public Sub ToolButtonClose_Click()
   End With
 End
 
-Public Sub EditorPyMapReduce_KeyPress_()
+Public Sub TextEditorPyMapReduce_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorPyMapReduce.Copy()
+    TextEditorPyMapReduce.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorPyMapReduce.Paste()
+      TextEditorPyMapReduce.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorPyMapReduce.Cut()
+        TextEditorPyMapReduce.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorPyMapReduce.SelectAll()
+          TextEditorPyMapReduce.SelectAll()
         Endif
       Endif
     Endif

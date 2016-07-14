@@ -17,6 +17,9 @@ Geometry=[59,24,240,240]
 [DebugWindow/Collection]
 Geometry=[59,24,240,240]
 
+[DebugWindow/Connection]
+Geometry=[0,29,224,280]
+
 [DebugWindow/Datalog_con]
 Geometry=[59,24,240,240]
 
@@ -30,7 +33,13 @@ Geometry=[68,40,240,240]
 Geometry=[77,56,240,240]
 
 [DebugWindow/FileChooserMain]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
+
+[DebugWindow/FormOpenWizard]
+Geometry=[0,29,224,280]
+
+[DebugWindow/FormPostgreSQLEditTableData]
+Geometry=[0,29,224,280]
 
 [DebugWindow/ListBoxMethods]
 Geometry=[59,24,240,240]
@@ -38,8 +47,14 @@ Geometry=[59,24,240,240]
 [DebugWindow/ListBoxMethods[0]]
 Geometry=[68,40,240,240]
 
+[DebugWindow/ListBoxUnique]
+Geometry=[0,29,224,280]
+
+[DebugWindow/ListBoxUnique[3]]
+Geometry=[14,43,224,280]
+
 [DebugWindow/Me]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
 
 [DebugWindow/Me.dbobjects]
 Geometry=[68,40,240,240]
@@ -68,8 +83,113 @@ Geometry=[68,40,240,240]
 [DebugWindow/Variant[]]
 Geometry=[59,24,240,240]
 
+[DebugWindow/WebViewDesigner]
+Geometry=[0,29,224,280]
+
+[DebugWindow/WebViewDesigner.Document]
+Geometry=[0,29,1600,852]
+
+[DebugWindow/WebViewDesigner.Document.Child]
+Geometry=[-86,77,1600,852]
+
+[DebugWindow/WebViewDesigner.Document.Child.Next]
+Geometry=[-50,74,1600,852]
+
+[DebugWindow/WebViewDesigner.Document.Child.Next.Child]
+Geometry=[-61,91,1600,852]
+
 [DebugWindow/WizardIntro]
 Geometry=[59,24,240,240]
+
+[DebugWindow/XmlElement(XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[1]).Attributes]
+Geometry=[84,113,398,666]
+
+[DebugWindow/XmlElement(XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[1]).ChildElements]
+Geometry=[84,113,398,666]
+
+[DebugWindow/XmlElement(XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[1]).ChildNodes]
+Geometry=[84,113,398,666]
+
+[DebugWindow/XmlElement(XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[1]).Children]
+Geometry=[84,113,398,666]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes]
+Geometry=[56,85,398,666]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[0]]
+Geometry=[70,99,398,666]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[0]).AllChildNodes[1]]
+Geometry=[70,99,398,666]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).AllChildNodes]
+Geometry=[56,85,398,666]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).Attributes]
+Geometry=[57,229,274,596]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).ChildElements]
+Geometry=[57,229,274,596]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).ChildNodes]
+Geometry=[57,229,274,596]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).Children]
+Geometry=[57,229,274,596]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).Element]
+Geometry=[57,229,274,596]
+
+[DebugWindow/XmlElement(XmlElement(ex.Node).AllChildNodes[2]).Element.AllChildNodes]
+Geometry=[71,243,274,596]
+
+[DebugWindow/XmlElement(XmlElement(node).AllChildNodes[0]).AllChildNodes]
+Geometry=[50,159,339,459]
+
+[DebugWindow/XmlElement(XmlElement(node).AllChildNodes[0]).AllChildNodes[0]]
+Geometry=[64,173,339,459]
+
+[DebugWindow/XmlElement(ex.Node).AllChildNodes]
+Geometry=[28,57,398,666]
+
+[DebugWindow/XmlElement(ex.Node).AllChildNodes[0]]
+Geometry=[42,71,398,666]
+
+[DebugWindow/XmlElement(ex.Node).AllChildNodes[1]]
+Geometry=[42,71,398,666]
+
+[DebugWindow/XmlElement(ex.Node).AllChildNodes[2]]
+Geometry=[42,71,398,666]
+
+[DebugWindow/XmlElement(ex.Node).Attributes]
+Geometry=[28,57,327,696]
+
+[DebugWindow/XmlElement(node).AllChildNodes]
+Geometry=[22,131,339,459]
+
+[DebugWindow/XmlElement(node).AllChildNodes[0]]
+Geometry=[36,145,339,459]
+
+[DebugWindow/XmlElement(node).Attributes]
+Geometry=[85,195,339,459]
+
+[DebugWindow/XmlElement(node).ChildElements]
+Geometry=[85,195,339,459]
+
+[DebugWindow/XmlElement(node).ChildElements[0]]
+Geometry=[99,209,339,459]
+
+[DebugWindow/XmlElement(node).ChildElements[0].Attributes]
+Geometry=[113,223,339,459]
+
+[DebugWindow/XmlElement(node).Children]
+Geometry=[22,131,339,459]
+
+[DebugWindow/XmlElement(node).Element]
+Geometry=[22,131,339,459]
+
+[DebugWindow/XmlElement(node).Element.Attributes]
+Geometry=[36,145,339,459]
 
 [DebugWindow/ZODBClientStorage]
 Geometry=[59,24,240,240]
@@ -99,7 +219,7 @@ Geometry=[62,295,240,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/child]
-Geometry=[59,24,240,240]
+Geometry=[59,24,402,597]
 
 [DebugWindow/col]
 Geometry=[59,24,240,240]
@@ -111,19 +231,37 @@ Geometry=[59,24,240,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/con]
-Geometry=[59,135,436,240]
+Geometry=[59,135,436,280]
+
+[DebugWindow/con.Headers]
+Geometry=[73,149,436,280]
+
+[DebugWindow/con.Lines]
+Geometry=[73,149,436,280]
+
+[DebugWindow/con.Proxy]
+Geometry=[73,149,436,280]
+
+[DebugWindow/con.SQL]
+Geometry=[73,149,436,280]
+
+[DebugWindow/con.SSL]
+Geometry=[73,149,436,280]
+
+[DebugWindow/con.Tables]
+Geometry=[73,149,436,280]
 
 [DebugWindow/con_names]
 Geometry=[59,24,240,240]
 
 [DebugWindow/connection_settings]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
 
 [DebugWindow/constraints]
 Geometry=[59,24,376,379]
 
 [DebugWindow/constraints[0]]
-Geometry=[68,40,376,379]
+Geometry=[73,38,376,379]
 
 [DebugWindow/constraints[10]]
 Geometry=[68,40,376,379]
@@ -135,10 +273,10 @@ Geometry=[68,40,376,379]
 Geometry=[68,40,376,379]
 
 [DebugWindow/constraints[1]]
-Geometry=[68,40,376,379]
+Geometry=[73,38,376,379]
 
 [DebugWindow/constraints[2]]
-Geometry=[18,129,328,379]
+Geometry=[73,38,376,379]
 
 [DebugWindow/constraints[3]]
 Geometry=[68,40,376,379]
@@ -160,6 +298,12 @@ Geometry=[68,40,376,379]
 
 [DebugWindow/constraints[9]]
 Geometry=[68,40,376,379]
+
+[DebugWindow/context]
+Geometry=[0,29,224,280]
+
+[DebugWindow/datatypes]
+Geometry=[0,29,224,280]
 
 [DebugWindow/dbo]
 Geometry=[59,24,471,341]
@@ -213,7 +357,7 @@ Geometry=[77,56,471,341]
 Geometry=[68,40,471,341]
 
 [DebugWindow/dbobjects]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
 
 [DebugWindow/dbobjects["queries"]]
 Geometry=[68,40,240,240]
@@ -227,6 +371,12 @@ Geometry=[77,56,240,240]
 [DebugWindow/engine]
 Geometry=[59,24,240,240]
 
+[DebugWindow/ex]
+Geometry=[67,86,224,280]
+
+[DebugWindow/ex.Node]
+Geometry=[14,43,398,666]
+
 [DebugWindow/flclass]
 Geometry=[59,24,240,240]
 
@@ -236,14 +386,26 @@ Geometry=[68,40,240,240]
 [DebugWindow/flclass.return_values]
 Geometry=[68,40,240,240]
 
+[DebugWindow/form_response]
+Geometry=[0,29,395,655]
+
 [DebugWindow/formulae]
 Geometry=[301,24,240,240]
 
 [DebugWindow/has_asterisk]
-Geometry=[65,24,240,240]
+Geometry=[65,24,240,280]
 
 [DebugWindow/hproc]
 Geometry=[59,24,240,240]
+
+[DebugWindow/ht]
+Geometry=[0,29,224,280]
+
+[DebugWindow/is_create_function]
+Geometry=[0,29,224,280]
+
+[DebugWindow/js]
+Geometry=[0,29,224,280]
 
 [DebugWindow/matches]
 Geometry=[65,314,442,240]
@@ -260,11 +422,14 @@ Geometry=[59,24,259,240]
 [DebugWindow/new_atts]
 Geometry=[59,24,240,240]
 
+[DebugWindow/node]
+Geometry=[71,181,339,459]
+
 [DebugWindow/objects]
-Geometry=[59,301,240,240]
+Geometry=[59,301,240,280]
 
 [DebugWindow/objects["attributes"]]
-Geometry=[68,40,347,240]
+Geometry=[73,315,240,280]
 
 [DebugWindow/objects["autori"]]
 Geometry=[68,57,592,468]
@@ -306,7 +471,7 @@ Geometry=[95,105,401,240]
 Geometry=[104,121,401,240]
 
 [DebugWindow/objects["collections"]]
-Geometry=[68,317,240,240]
+Geometry=[73,315,240,280]
 
 [DebugWindow/objects["collections"].Root]
 Geometry=[77,73,347,240]
@@ -510,10 +675,13 @@ Geometry=[77,56,347,240]
 Geometry=[68,57,401,240]
 
 [DebugWindow/objects["tables"]]
-Geometry=[68,40,347,240]
+Geometry=[73,315,240,280]
 
 [DebugWindow/objects["tables"][0]]
-Geometry=[77,56,347,240]
+Geometry=[87,329,240,280]
+
+[DebugWindow/objects["tables"][1]]
+Geometry=[87,329,240,280]
 
 [DebugWindow/objects["triggers"]]
 Geometry=[68,40,347,240]
@@ -529,6 +697,9 @@ Geometry=[68,40,347,240]
 
 [DebugWindow/objects["views"][0]]
 Geometry=[77,56,347,240]
+
+[DebugWindow/one_line]
+Geometry=[0,29,224,280]
 
 [DebugWindow/pgtable]
 Geometry=[11,109,385,240]
@@ -576,7 +747,10 @@ Geometry=[68,155,385,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/proc]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
+
+[DebugWindow/proc.Lines]
+Geometry=[73,38,240,280]
 
 [DebugWindow/re]
 Geometry=[65,24,240,240]
@@ -591,31 +765,37 @@ Geometry=[77,56,240,240]
 Geometry=[77,56,240,240]
 
 [DebugWindow/res]
-Geometry=[59,24,240,240]
+Geometry=[59,24,393,325]
 
 [DebugWindow/res.Connection]
 Geometry=[68,40,240,240]
 
 [DebugWindow/res.Fields]
-Geometry=[68,40,240,240]
+Geometry=[73,38,393,325]
 
 [DebugWindow/res["children"]]
-Geometry=[68,40,240,240]
+Geometry=[73,38,393,325]
 
 [DebugWindow/res["children"][0]]
-Geometry=[77,56,240,240]
+Geometry=[87,52,393,325]
 
 [DebugWindow/res["children"][0]["children"]]
-Geometry=[86,72,240,240]
+Geometry=[101,66,393,325]
 
 [DebugWindow/res["children"][0]["children"][0]]
-Geometry=[95,88,240,240]
+Geometry=[115,80,393,325]
 
 [DebugWindow/res["children"][0]["children"][0]["children"]]
-Geometry=[104,104,240,240]
+Geometry=[129,94,393,325]
+
+[DebugWindow/res["children"][0]["children"][0]["children"][0]]
+Geometry=[143,108,393,325]
 
 [DebugWindow/res["children"][0]["children"][1]]
-Geometry=[95,88,240,240]
+Geometry=[115,80,240,240]
+
+[DebugWindow/res["children"][0]["children"][1]["children"]]
+Geometry=[129,94,240,240]
 
 [DebugWindow/res["children"][0]["children"][2]]
 Geometry=[95,88,240,240]
@@ -624,7 +804,10 @@ Geometry=[95,88,240,240]
 Geometry=[95,88,240,240]
 
 [DebugWindow/res["children"][1]]
-Geometry=[77,56,240,240]
+Geometry=[87,52,393,325]
+
+[DebugWindow/res["children"][1]["children"]]
+Geometry=[101,66,393,325]
 
 [DebugWindow/res["children"][2]]
 Geometry=[77,56,240,240]
@@ -654,10 +837,13 @@ Geometry=[68,40,240,240]
 Geometry=[59,24,240,240]
 
 [DebugWindow/resultArray]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
 
 [DebugWindow/resultSet]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
+
+[DebugWindow/resultSet[0]]
+Geometry=[73,38,240,280]
 
 [DebugWindow/result_set]
 Geometry=[59,24,240,240]
@@ -669,7 +855,7 @@ Geometry=[68,40,439,350]
 Geometry=[68,40,364,287]
 
 [DebugWindow/results]
-Geometry=[59,187,240,240]
+Geometry=[59,187,240,280]
 
 [DebugWindow/resultsArray]
 Geometry=[59,24,240,240]
@@ -681,7 +867,7 @@ Geometry=[68,40,240,240]
 Geometry=[68,40,240,240]
 
 [DebugWindow/results[0]]
-Geometry=[68,203,240,240]
+Geometry=[73,201,240,280]
 
 [DebugWindow/results[1]]
 Geometry=[68,203,240,240]
@@ -716,8 +902,20 @@ Geometry=[59,24,240,240]
 [DebugWindow/rezult]
 Geometry=[59,24,240,240]
 
+[DebugWindow/rfield]
+Geometry=[0,29,224,280]
+
 [DebugWindow/row]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
+
+[DebugWindow/save]
+Geometry=[0,29,210,210]
+
+[DebugWindow/save["children"]]
+Geometry=[14,43,210,210]
+
+[DebugWindow/save["children"][0]]
+Geometry=[28,57,210,210]
 
 [DebugWindow/savecol]
 Geometry=[59,24,240,240]
@@ -762,7 +960,7 @@ Geometry=[77,56,240,240]
 Geometry=[86,72,240,240]
 
 [DebugWindow/tab]
-Geometry=[59,24,240,240]
+Geometry=[59,24,240,280]
 
 [DebugWindow/table]
 Geometry=[59,24,240,240]
@@ -791,6 +989,9 @@ Geometry=[77,56,383,306]
 [DebugWindow/table_constraints["unique tuples"][2]]
 Geometry=[77,56,383,306]
 
+[DebugWindow/table_updater]
+Geometry=[0,29,342,617]
+
 [DebugWindow/to_add]
 Geometry=[59,24,240,240]
 
@@ -817,6 +1018,9 @@ Geometry=[68,40,240,240]
 
 [DebugWindow/unique_attributes]
 Geometry=[59,24,240,240]
+
+[DebugWindow/user_type]
+Geometry=[0,29,224,280]
 
 [DebugWindow/vars]
 Geometry=[59,24,240,240]
@@ -871,174 +1075,85 @@ SearchComment=False
 SearchString=True
 
 [OpenFile]
-File[1]=".src/FormOpenWizard.form"
-File[2]=".src/FormOpenWizard.class:163.58"
-File[3]=".src/Shared/FormOpenFile.form"
-File[4]=".src/Shared/FormOpenFile.class:4.0"
-File[5]=".src/DBaze.class:314.6"
-File[6]=".src/CouchDB.class:19.48"
-File[7]=".src/XSB/FormFindXSB.form"
-File[8]=".src/Shared/FormAskPasword.form"
-File[9]=".src/XSB/FormFindXSB.class:21.0"
-File[10]=".src/XSBDB.class:295.16"
-File[11]=".src/XSB/XSBEngine.class:33.8"
-File[12]=".src/XSB/DatalogConnection.class:156.11"
-File[13]=".src/ZODBFileStorage.class:15.32"
-File[14]=".src/Shared/FormSQLSplit.form"
-File[15]=".src/Shared/FormSQLSplit.class:110.0"
-Active=16
-File[16]=".src/PostgreSQLDB.class:263.33"
-File[17]=".src/PostgreSQL/FormPostgreSQLDataDefinition.form"
-File[18]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
-File[19]=".src/PostgreSQL/FormPostgreSQLDataQuerying.form"
-File[20]=".src/PostgreSQL/FormPostgreSQLDataQuerying.class:36.0"
-File[21]=".src/Shared/FormAskQueryName.form"
-File[22]=".src/Shared/FormAskQueryName.class:28.25"
-File[23]=".src/Shared/FormAskPasword.class:12.7"
-File[24]=".src/PostgreSQL/FormPostgreSQLCreateTable.form"
-File[25]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:535.0"
-File[26]=".src/PostgreSQL/FormPostgreSQLDataDefinition.class:123.0"
-File[27]=".src/Shared/FormAskTableName.form"
-File[28]=".src/Shared/FormAskTableName.class:30.0"
-File[29]=".src/PostgreSQL/PostgreSQLTable.class:0.0"
-File[30]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.form"
-File[31]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsMinimal.class:10.12"
-File[32]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsN.form"
-File[33]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsP.form"
-File[34]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsP.class:32.2"
-File[35]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsPS.form"
-File[36]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsFP.form"
-File[37]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsFP.class:40.2"
-File[38]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsN.class:56.0"
-File[39]=".src/PostgreSQL/FormPostgreSQLDataTypeOptionsPS.class:4.0"
-File[40]=".src/PostgreSQL/FormPostgreSQLGetReference.form"
-File[41]=".src/PostgreSQL/FormPostgreSQLGetReference.class:15.2"
-File[42]=".src/PostgreSQL/FormPostgreSQLEditTableData.form"
-File[43]=".src/PostgreSQL/FormPostgreSQLDataManipulation.class:37.47"
-File[44]=".src/PostgreSQL/FormPostgreSQLChooseTable.form"
-File[45]=".src/PostgreSQL/FormPostgreSQLChooseTable.class:6.2"
-File[46]=".src/PostgreSQL/FormPostgreSQLEditTableData.class:26.34"
-File[47]=".src/PostgreSQL/FormPostgreSQLCreateView.form"
-File[48]=".src/Shared/FormAskViewName.form"
-File[49]=".src/Shared/FormAskViewName.class:33.0"
-File[50]=".src/PostgreSQL/FormPostgreSQLCreateView.class:91.36"
-File[51]=".src/PostgreSQL/FormPostgreSQLQueryResult.form"
-File[52]=".src/PostgreSQL/FormPostgreSQLCreateIndex.form"
-File[53]=".src/PostgreSQL/FormPostgreSQLCreateIndex.class:54.57"
-File[54]=".src/Shared/FormAskIndexName.form"
-File[55]=".src/Shared/FormAskIndexName.class:30.0"
-File[56]=".src/PostgreSQL/FormPostgreSQLCreateTrigger.form"
-File[57]=".src/PostgreSQL/FormPostgreSQLCreateTrigger.class:52.29"
-File[58]=".src/Shared/FormAskTriggerName.form"
-File[59]=".src/Shared/FormAskTriggerName.class:10.40"
-File[60]=".src/PostgreSQL/FormPostgreSQLCreateFunction.form"
-File[61]=".src/PostgreSQL/FormPostgreSQLCreateFunction.class:216.7"
-File[62]=".src/PostgreSQL/FormAskFunctionName.form"
-File[63]=".src/PostgreSQL/FormAskFunctionName.class:26.43"
-File[64]=".src/PostgreSQL/FormPostgreSQLCreateType.form"
-File[65]=".src/PostgreSQL/FormAskTypeName.form"
-File[66]=".src/PostgreSQL/FormAskTypeName.class:26.40"
-File[67]=".src/PostgreSQL/FormPostgreSQLCreateType.class:28.25"
-File[68]=".src/PostgreSQL/PostgreSQLUserType.class:87.18"
-File[69]=".src/Shared/FormQBESplit.form"
-File[70]=".src/Shared/FormQBESplit.class:5.24"
-File[71]=".src/PostgreSQL/FormPostgreSQLCreateSequence.form"
-File[72]=".src/PostgreSQL/FormPostgreSQLCreateSequence.class:100.7"
-File[73]=".src/PostgreSQL/FormPostgreSQLGetTableAttribute.form"
-File[74]=".src/PostgreSQL/FormPostgreSQLGetTableAttribute.class:43.0"
-File[75]=".src/PostgreSQL/FormAskSequenceName.form"
-File[76]=".src/PostgreSQL/FormAskSequenceName.class:26.26"
-File[77]=".src/PostgreSQL/FormPostgreSQLCreateEnum.form"
-File[78]=".src/PostgreSQL/FormPostgreSQLCreateEnum.class:55.32"
-File[79]=".src/PostgreSQL/FormAskEnumName.form"
-File[80]=".src/PostgreSQL/FormAskEnumName.class:30.0"
-File[81]=".src/PostgreSQL/FormPostgreSQLGetTable.form"
-File[82]=".src/PostgreSQL/FormPostgreSQLGetTable.class:18.11"
-File[83]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
-File[84]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:31.29"
-File[85]=".src/Shared/FormRenameTable.form"
-File[86]=".src/Shared/FormRenameTable.class:2.23"
-File[87]=".src/FMain.class:514.35"
-File[88]=".src/Shared/FormPleaseWait.form"
-File[89]=".src/Shared/FormPleaseWait.class:22.11"
-File[90]=".src/FMain.form"
-File[91]=".src/XSB/FormXSBDataManipulation.form"
-File[92]=".src/XSB/FormXSBDataManipulation.class:42.0"
-File[93]=".src/XSB/FormDatalogSplit.form"
-File[94]=".src/XSB/FormDatalogSplit.class:94.0"
-File[95]=".src/XSB/FormXSBDataQuerying.form"
-File[96]=".src/XSB/FormXSBDataQuerying.class:33.0"
-File[97]=".src/XSB/FormXSBDataDefinition.form"
-File[98]=".src/XSB/FormXSBDataDefinition.class:126.0"
-File[99]=".src/XSB/FormXSBCreateModule.form"
-File[100]=".src/XSB/FormAskDatalogModuleName.form"
-File[101]=".src/XSB/FormAskDatalogModuleName.class:30.0"
-File[102]=".src/XSB/FormXSBCreateModule.class:31.3"
-File[103]=".src/ZODB.class:263.0"
-File[104]=".src/ZODBClientStorage.class:36.31"
-File[105]=".src/ZODBEmbedded.class:15.32"
-File[106]=".src/SQLiteDBEmbedded.class:7.3"
-File[107]=".src/SQLiteDB.class:7.21"
-File[108]=".src/ZODB/ZODBEngine.class:169.21"
-File[109]=".src/Flora2DB.class:93.99"
-File[110]=".src/eXistDB.class:78.20"
-File[111]=".src/ZODB/FormZODBDataDefinition.form"
-File[112]=".src/ZODB/FormZODBDataManipulation.form"
-File[113]=".src/ZODB/FormZODBDataManipulation.class:58.0"
-File[114]=".src/ZODB/FormZODBDataQuerying.form"
-File[115]=".src/ZODB/FormZODBPythonEditor.form"
-File[116]=".src/ZODB/FormZODBDataDefinition.class:40.0"
-File[117]=".src/Shared/FormAskClassName.form"
-File[118]=".src/Shared/FormAskClassName.class:30.0"
-File[119]=".src/ZODB/FormZODBPythonEditor.class:43.0"
-File[120]=".src/ZODB/FormAskPythonModuleName.form"
-File[121]=".src/ZODB/FormAskPythonModuleName.class:30.0"
-File[122]=".src/ZODB/FormFindZODBFileStorage.form"
-File[123]=".src/ZODB/FormFindZODBFileStorage.class:6.3"
-File[124]=".src/ZODB/FormPyMapReduceSplit.form"
-File[125]=".src/ZODB/FormPyMapReduceSplit.class:24.32"
-File[126]=".src/ZODB/FormZODBDataQuerying.class:15.17"
-File[127]=".src/ZODB/FormZODBDataManipulationEditor.form"
-File[128]=".src/ZODB/FormZODBDataManipulationEditor.class:51.0"
-File[129]=".src/eXist/FormeXistDataDefinition.form"
-File[130]=".src/eXist/FormeXistDataQuerying.form"
-File[131]=".src/eXist/FormeXistDataQuerying.class:52.19"
-File[132]=".src/eXist/FormeXistDataManipulation.form"
-File[133]=".src/eXist/FormeXistCreateDocument.form"
-File[134]=".src/eXist/FormeXistDataDefinition.class:11.1"
-File[135]=".src/eXist/FormAskDocumentName.form"
-File[136]=".src/eXist/FormAskDocumentName.class:26.43"
-File[137]=".src/eXist/FormeXistCreateDocument.class:4.12"
-File[138]=".src/eXist/FormAskCollectionPath.form"
-File[139]=".src/eXist/FormAskCollectionPath.class:7.55"
-File[140]=".src/eXist/FormeXistXMLEditor.form"
-File[141]=".src/eXist/FormeXistXMLEditor.class:102.0"
-File[142]=".src/eXist/FormeXistDataManipulation.class:8.2"
-File[143]=".src/eXist/FormXMLSplit.form"
-File[144]=".src/eXist/FormXMLSplit.class:35.36"
-File[145]=".src/eXist/FormAskQueryWithPathName.form"
-File[146]=".src/eXist/FormAskQueryWithPathName.class:39.6"
-File[147]=".src/Flora2/Flora2Engine.class:0.0"
-File[148]=".src/Flora2/FormFlora2DataDefinition.form"
-File[149]=".src/Flora2/FormFlora2DataDefinition.class:20.54"
-File[150]=".src/Flora2/FormFlora2DataManipulation.form"
-File[151]=".src/Flora2/FormFlora2DataManipulation.class:98.8"
-File[152]=".src/Flora2/FormFlora2DataQuerying.form"
-File[153]=".src/Flora2/FormFlora2DataQuerying.class:24.8"
-File[154]=".src/Flora2/FormFlora2Split.form"
-File[155]=".src/Flora2/FormFlora2Split.class:22.1"
-File[156]=".src/Flora2/FormFlora2InsertEditor.form"
-File[157]=".src/Flora2/FormFlora2InsertEditor.class:61.0"
-File[158]=".src/Flora2/FormFlora2DeleteEditor.form"
-File[159]=".src/Flora2/FormFlora2DeleteEditor.class:77.100"
-File[160]=".src/Flora2/FormFlora2Editor.form"
-File[161]=".src/Flora2/FormFlora2Editor.class:46.21"
-File[162]=".src/Flora2/FormAskFlora2ModuleName.form"
-File[163]=".src/Flora2/FormAskFlora2ModuleName.class:30.0"
-File[164]=".src/Flora2/FormFlora2CreateClass.form"
-File[165]=".src/Flora2/FormFlora2CreateClass.class:44.28"
-File[166]=".src/Flora2/Flora2Class.class:46.8"
-Count=166
+Count=77
+File[1]=".src/eXistDB.class:33.271"
+File[2]=".src/PostgreSQLDB.class:26.279"
+File[3]=".src/eXist/FormXMLSplit.class:16.74"
+File[4]=".src/MongoDB.class:0.0"
+File[5]=".src/SQLiteDB.class:39.138"
+File[6]=".src/SQLiteDBEmbedded.class:21.5"
+File[7]=".src/CouchDB.class:25.55"
+File[8]=".src/XSBDB.class:6.215"
+File[9]=".src/XSB/DatalogConnection.class:3.128"
+File[10]=".src/Shared/FormDatalogSplit.class:0.66"
+File[11]=".src/XSB/XSBEngine.class:0.200"
+File[12]=".src/PostgreSQL/FormPostgreSQLDataQuerying.class:75.16"
+Active=17
+File[13]=".src/FMain.class:27.979"
+File[14]=".src/PostgreSQL/FormPostgreSQLEditTableData.form"
+File[15]=".src/FMain.form"
+File[16]=".src/PostgreSQL/FormPostgreSQLEditTableData.class:19.0"
+File[17]=".src/Flora2/Flora2Engine.class:27.148"
+File[18]=".src/Flora2/Flora2Class.class:0.0"
+File[19]=".src/Flora2DB.class:20.85"
+File[20]=".src/SQLite/SQLiteTable.class:0.423"
+File[21]=".src/SQLite/FormSQLiteCreateTable.class:0.288"
+File[22]=".src/PostgreSQL/PostgreSQLTable.class:31.610"
+File[23]=".src/ZODBEmbedded.class:59.10"
+File[24]=".src/ZODB.class:30.45"
+File[25]=".src/DBaze.class:14.327"
+File[26]=".src/FormOpenWizard.form"
+File[27]=".src/Shared/FormFormDesigner.form"
+File[28]=".src/Shared/FormQBESplit.form"
+File[29]=".src/Shared/FormSQLSplit.form"
+File[30]=".src/Shared/FormAskClassName.form"
+File[31]=".src/Shared/FormAskFormName.form"
+File[32]=".src/Shared/FormAskClassName.class:0.31"
+File[33]=".src/Shared/FormAskFormName.class:9.27"
+File[34]=".src/PostgreSQL/FormPostgreSQLDataManipulation.form"
+File[35]=".src/PostgreSQL/FormPostgreSQLDataManipulation.class:7.113"
+File[36]=".src/Shared/FormFormDesigner.class:8.89"
+File[37]=".src/ZODB/ZODBEngine.class:17.34"
+File[38]=".src/Shared/FormSQLSplit.class:39.69"
+File[39]=".src/PostgreSQL/FormPostgreSQLAlterTable.form"
+File[40]=".src/PostgreSQL/FormPostgreSQLAlterTable.class:58.43"
+File[41]=".src/PostgreSQL/FormPostgreSQLCreateType.class:58.33"
+File[42]=".src/PostgreSQL/FormPostgreSQLCreateTable.class:9.53"
+File[43]=".src/PostgreSQL/FormPostgreSQLCreateType.form"
+File[44]=".src/ODBCDB.class:13.45"
+File[45]=".src/XSB/FormFindXSB.form"
+File[46]=".src/XSB/FormFindXSB.class:0.9"
+File[47]=".src/FormOpenWizard.class:3.153"
+File[48]=".src/SQLite/FormSQLiteDataDefinition.form"
+File[49]=".src/ODBC/FormODBCDataDefinition.form"
+File[50]=".src/ODBC/FormODBCDataManipulation.form"
+File[51]=".src/ODBC/FormODBCDataQuerying.form"
+File[52]=".src/Shared/FormPleaseWait.class:3.19"
+File[53]=".src/XSB/FormXSBDataDefinition.class:0.127"
+File[54]=".src/XSB/FormXSBCreateModule.class:0.32"
+File[55]=".src/XSB/FormXSBCreateModule.form"
+File[56]=".src/Flora2/FormFlora2Editor.form"
+File[57]=".src/Flora2/FormFlora2InsertEditor.form"
+File[58]=".src/des/DESEngine.class:39.11"
+File[59]=".src/RelationalDB.class:3.348"
+File[60]=".src/Shared/FormDatalogRule.form"
+File[61]=".src/Shared/FormAskRuleName.form"
+File[62]=".src/Shared/FormAskRuleName.class:0.18"
+File[63]=".src/Shared/FormAskQueryName.form"
+File[64]=".src/Shared/FormAskQueryName.class:0.14"
+File[65]=".src/Shared/FormDatalogRule.class:2.73"
+File[66]=".src/Shared/FormDatalogSplit.form"
+File[67]=".src/Shared/FormScriptSplit.form"
+File[68]=".src/Shared/FormScriptSplit.class:17.93"
+File[69]="scriptapi/javascript.js:0.0"
+File[70]="scriptapi/pyscript.py:0.0"
+File[71]="scriptapi/rscript.R:0.0"
+File[72]=".src/Shared/FormAskIndexName.form"
+File[73]=".src/Shared/FormAskPasword.form"
+File[74]=".src/Shared/FormAskTriggerName.form"
+File[75]=".src/Shared/FormAskViewName.form"
+File[76]=".src/Shared/FormAskScriptName.form"
+File[77]=".src/Shared/FormAskScriptName.class:9.28"
 
 [Watches]
 Count=2

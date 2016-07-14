@@ -1,0 +1,49 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,68,68)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(2,2,62,62)
+    Expand = True
+    { VBox1 VBox
+      MoveScaled(2,2,57,30)
+      { PanelToolbar Panel
+        MoveScaled(1,1,55,5)
+        Arrangement = Arrange.Row
+        AutoResize = True
+        { ToolButtonExecute ToolButton
+          MoveScaled(1,0,5,4)
+          ToolTip = ("Execute script")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonImportAsModule ToolButton
+          MoveScaled(6,0,5,4)
+          ToolTip = ("Import into terminal")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/add"]
+        }
+        { ToolButtonClose ToolButton
+          MoveScaled(11,0,5,4)
+          ToolTip = ("Close")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/close"]
+        }
+      }
+      { TextEditorScript TextEditor
+        MoveScaled(1,6,55,24)
+        Mouse = Mouse.Text
+        Expand = True
+        Highlight = "SQL"
+      }
+    }
+    { TerminalViewMain TerminalView
+      MoveScaled(3,34,55,26)
+      Background = Color.White
+      Foreground = Color.Foreground
+      Blink = True
+      ShowScrollBar = True
+    }
+  }
+}

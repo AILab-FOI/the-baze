@@ -1,0 +1,20 @@
+/abolish
+/show_compilations on
+/multiline on
+
+/assert p(a)
+/assert p(b)
+/assert q(c)
+/assert q(d)
+
+/ra
+
+-- View q must be given a prototype for view p to be defined
+q(x) := select true (q);
+p(x) := select true (q);
+q(x) := select true (p);
+
+select true (p);
+select true (q);
+
+/datalog

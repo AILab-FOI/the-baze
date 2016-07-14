@@ -1,0 +1,145 @@
+// Command run
+name = run
+action = /run($activeFile$)
+hintText = Compile and execute the selected file
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command cflpr
+name = cflpr
+action = /cflpr
+hintText = Enables arithmetical constraint solving
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command nocflpr
+name = nocflpr
+action = /nocflpr
+hintText = Disables arithmetical constraint solving
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command cflpfd
+name = cflpfd
+action = /cflpfd
+hintText = Enables finite domain constraint solving
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command nocflpfd
+name = nocflpfd
+action = /nocflpfd
+hintText = Disables finite domain constraint solving
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command prop
+name = prop
+action = /prop
+hintText = Enables constraint propagation
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command noprop
+name = noprop
+action = /noprop
+hintText = Disables constraint propagation
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command cd
+name = cd
+action = /cd
+hintText = Sets the working directory to the installation directory
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command ls
+name = ls
+action = /ls
+hintText = Lists the contents of the current folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command pwd
+name = pwd
+action = /pwd
+hintText = Displays the current folder
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command tot
+name = tot
+action = /tot
+hintText = Enables displaying totality constraints
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command notot
+name = notot
+action = /notot
+hintText = Disables displaying totality constraints
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command cut
+name = cut
+action = /cut
+hintText = Enables compilation with dynamic cut optimization
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command nocut
+name = nocut
+action = /nocut
+hintText = Disables compilation with dynamic cut optimization
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command status
+name = status
+action = /status
+hintText = Lists the loaded libraries
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command version
+name = version
+action = /version
+hintText = Displays software version
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command help
+name = help
+action = /help
+hintText = Shows the help
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// buttonConfiguration Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

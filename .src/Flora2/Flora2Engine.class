@@ -31,10 +31,10 @@ Private Function renameDontCare(query As String) As String
   
   re = New Regexp(query, "(^|[^_A-Za-z0-9])([\\?][_])[^_A-Za-z0-9]")
   Do While re.offset >= 0 And query <> ""
-    result_ = result_ & Left(query, re.SubMatches[2].Offset) & "?_Gambas_Don_T_Care_Variable_" & Str(counter)
+    result_ = result_ & Left(query, re[2].Offset) & "?_Gambas_Don_T_Care_Variable_" & Str(counter)
     counter += 1
-    If Len(query) > Len(re.SubMatches[2].text) Then
-      query = Mid(query, re.SubMatches[2].offset + Len(re.SubMatches[2].text) + 1)
+    If Len(query) > Len(re[2].text) Then
+      query = Mid(query, re[2].offset + Len(re[2].text) + 1)
     Else 
       result_ = result_ & query
       query = ""
@@ -93,10 +93,10 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     query &= "."
   Endif
   query = renameDontCare(query)
-  vars = XSBEngine.Findall(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9][a-zA-Z0-9_]*)", 2)
+  vars = AUX.FindAll(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9][a-zA-Z0-9_]*)", 2)
   vars = removeDups(vars)
   
-  allVars = XSBEngine.Findall(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9_]*)", 2)
+  allVars = AUX.FindAll(query, "(^|[^_A-Za-z0-9'\\?])([\\?][a-zA-Z0-9_]*)", 2)
   dontcareCount = 0
   For k = 0 To allVars.count - 1
     If allVars[k] = "?_" Then 
@@ -144,13 +144,13 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   answers = Split(result, "\n")
   For Each i In answers
     If Left(i, 7) = "++Error"
-      If XSBEngine.FindAll(i, "after insertfact").Count = 0 Then
+      If AUX.FindAll(i, "after insertfact").Count = 0 Then
         success = False
         Error.Raise(result)
       Endif
     Endif
     If Left(i, 7) = "++Abort"
-      If XSBEngine.FindAll(i, "after insertfact").Count = 0 Then
+      If AUX.FindAll(i, "after insertfact").Count = 0 Then
         success = False
         Error.Raise(result)
       Endif
@@ -163,8 +163,8 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
           success = False
         Default 
           If vars.count > 0 Then 
-            Try returnVars.push(XSBEngine.Findall(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
-            Try returnResults.push(XSBEngine.Findall(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
+            Try returnVars.push(AUX.FindAll(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 1)[0])
+            Try returnResults.push(AUX.FindAll(i, "([\\?][A-Za-z0-9_]*) = ([^=]*)", 2)[0])
           Endif 
       End Select 
     Endif 
@@ -175,7 +175,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
   If allResults Then 
     For k = 0 To returnVars.count - 1
       If returnVars[k] = "?Gambas_Flora2_Result_List_Variable" Then 
-        newRes = XSBEngine.Findall(returnResults[k], "result\\(\\[gambas_res\\(\\$\\$,(.+?),\\$\\$\\)\\]\\)", 1)
+        newRes = AUX.FindAll(returnResults[k], "result\\(\\[gambas_res\\('\\$\\$',(.+?),'\\$\\$'\\)\\]\\)", 1)
         Break 
       Endif 
     Next 
@@ -187,7 +187,7 @@ Public Function execute(query As String, Optional allResults As Boolean = False,
     returnVars = newVars
     returnResults = New String[]
     For Each i In newRes
-      i = Replace$(i, ",$$), gambas_res($$,", "$$$$$$$$$$$$$$$$$$$$")
+      i = Replace$(i, ",'$$'), gambas_res('$$',", "$$$$$$$$$$$$$$$$$$$$")
       newReturn = Split(i, "$", "", True)
       results = New Collection
       For k = 0 To returnVars.count - 1
@@ -236,7 +236,7 @@ End
 
 Public Sub close()
   ' stop XSB
-  Print #proc, "_halt.\n"
+  Print #proc, "\\halt.\n"
   Close #proc
 End
 

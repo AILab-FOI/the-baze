@@ -1,0 +1,71 @@
+// buttonConfiguration LaTeX
+name = LaTeX
+action = latex $mainFileName$\$mainFilePaht$
+hintText = LaTeX Compiler
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration BibTeX
+name = BibTeX
+action = bibtex $mainFileName$
+hintText = BibTeX Bibliography
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration dvi2pdf
+name = dvi2pdf
+action = dvipdfm $mainFileName$
+hintText = dvi2pdf
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration Yap
+name = Yap
+action = "C:\Archivos de programa\MiKTeX 2.8\miktex\bin\yap.exe" $activeFilePath$\$activeFileName$
+hintText = Yet Another Previewer
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = true
+
+// buttonConfiguration TeXify
+name = TeXify
+action = elatex.bat $mainFileName$
+hintText = LaTex+BibTeX+LaTeX+LaTeX
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration Acrobat
+name = Acrobat
+action = "C:\Archivos de programa\Adobe\Acrobat 7.0\Acrobat\acrobat" $mainFilePath$\$mainFileName$.pdf
+hintText = Acrobat Reader
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// buttonConfiguration PDFLaTeX
+name = PDFLaTeX
+action = pdflatex $mainFile$
+hintText = dvi2pdf
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// Command Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// Command Yap
+name = Yap
+path = C:\Archivos de programa\MiKTeX 2.8\miktex\bin\yap.exe $mainFilePath$\$mainFileName$
+hintText = Yet Another Previewer
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

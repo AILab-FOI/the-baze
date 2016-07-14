@@ -9,8 +9,14 @@
     Text = ("New SQL query")
     Picture = Picture["icon:/32/find"]
   }
+  { ToolButtonNewDatalogQuery ToolButton
+    MoveScaled(10,17,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New Datalog query")
+    Picture = Picture["icon:/32/find"]
+  }
   { ToolButtonNewQBEQuery ToolButton
-    MoveScaled(9,17,32,6)
+    MoveScaled(10,27,32,6)
     Mouse = Mouse.Pointing
     Text = ("New QBE query")
     Picture = Picture["icon:/32/find"]

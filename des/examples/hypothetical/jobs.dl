@@ -1,0 +1,144 @@
+% File: jobs.dl
+% Date: 09/17/2013
+% Author: Fernando Sáenz-Pérez
+% Description:
+%   A company has employees, employee positions, and dependencies between positions.
+%   Constraints: 
+%     * A given employee cannot have more than a boss
+%     * Position dependencies can not be circular
+% Note: An SQL formulation can be found in jobs.sql
+
+
+% Job Positions
+p(p1).
+p(p2).
+p(p3).
+p(p4).
+p(p5).
+
+% Job Position Dependencies
+d(p1,p2).
+d(p2,p3).
+d(p2,p4).
+d(p1,p5).
+
+% Positions of Employees
+ep(e1,p1).
+ep(e2,p2).
+ep(e3,p3).
+ep(e4,p4).
+ep(e5,p5).
+
+
+% Direct Boss
+db(B,S) :-
+ ep(B,BP),
+ ep(S,SP),
+ d(BP,SP).
+ 
+% DES> db(B,S)
+% {                                           
+%   db(e1,e2),
+%   db(e1,e5),
+%   db(e2,e3),
+%   db(e2,e4)
+% }
+% Info: 4 tuples computed.          
+
+% Boss
+b(B,S) :-
+ db(B,S).
+b(B,S) :-
+ b(B,I),
+ b(I,S).
+ 
+% Mutual recursion: Direct Boss-Subordinate Positions
+dbp(BP,SP) :-
+  d(BP,SP).
+dbp(BP,SP) :-
+  dsp(SP,BP).
+  
+dsp(SP,BP) :-
+  dbp(BP,SP).
+   
+% Mutual recursion: Direct Boss-Subordinate Employees
+dbe(B,S) :-
+  d(BP,SP),
+  ep(B,BP),
+  ep(S,SP).
+dbe(B,S) :-
+  dse(S,B).
+  
+dse(S,B) :-
+  dbe(B,S).
+   
+% DES> b(B,S)
+% {                                           
+%   b(e1,e2),
+%   b(e1,e3),
+%   b(e1,e4),
+%   b(e1,e5),
+%   b(e2,e3),
+%   b(e2,e4)
+% }
+% Info: 6 tuples computed.          
+
+% An employee cannot have more than one direct boss
+:- group_by(db(B,S),[S],(C=count,C>1)).
+
+% Circular job dependencies are not allowed
+:- b(B,B).
+
+% May position 4 depend on position 5?
+% d(p5,p4) => true.
+% No, because employee 4 would have 2 bosses
+% DES> d(p5,p4) => true.
+% Info: Processing:
+%   answer :-
+%     d(p5,p4)=>true.
+% Error: Integrity constraint violation.      
+%        ic(C,S) :-
+%          group_by(db(B,S),[S],(C=count,C>1)).
+%        Offending values in database: [ic(2,e4)]
+% Info: The following rule cannot be assumed:
+%   d(p5,p4).
+% {                                           
+%   answer
+% }
+% Info: 1 tuple computed.          
+
+% May employee 6 be assigned to position 2?
+% No, because employees 3 and 4 would have 2 bosses
+% ep(e6,p2) => true.
+% DES> ep(e6,p2) => true
+% Info: Processing:
+%   answer :-
+%     ep(e6,p2)=>true.
+% Error: Integrity constraint violation.      
+%        ic(C,S) :-
+%          group_by(db(B,S),[S],(C=count,C>1)).
+%        Offending values in database: [ic(2,e3),ic(2,e4)]
+% Info: The following rule cannot be assumed:
+%   ep(e6,p2).
+% {                                           
+%   answer
+% }
+% Info: 1 tuple computed.          
+
+% May position 1 depend on position 4?
+% No, because it would imply a circular boss dependency
+% d(p4,p1) => true.
+% DES> d(p4,p1) => true.
+% Info: Processing:
+%   answer :-
+%     d(p4,p1)=>true.
+% Error: Integrity constraint violation.      
+%        ic(B) :-
+%          b(B,B).
+%        Offending values in database: [ic(e1),ic(e2),ic(e4)]
+% Info: The following rule cannot be assumed:
+%   d(p4,p1).
+% {                                           
+%   answer
+% }
+% Info: 1 tuple computed.          

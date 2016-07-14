@@ -1,0 +1,350 @@
+' Gambas class file
+
+Inherits DBaze
+
+' Name of the DSN
+Public dsn As String
+Public con As Connection
+Static Public buff_size As Integer = -20000
+' Integrated DES command line tool
+Public des_command As String
+Public des_proc As Process
+
+Public Sub init_des()
+  ' Initialize the DES shell
+  Dim result, open_cmd As String
+  Dim proc As Process
+  Try des_proc.Kill()
+  For Each proc In FMain.processes
+    Try proc.Kill()
+    FMain.processes = New Process[]
+  Next
+  Shell "killall swipl"
+  dsn = create_user_dsn(Me.con)
+  
+  des_command = "swipl -g \"working_directory(_, '" & Application.Path &/ "des" & "'), ensure_loaded(des)\"" 
+  des_proc = Shell des_command For Input Output 
+  
+  FMain.processes.Add(des_proc)
+  result = get_answer_from_proc(des_proc)
+  open_cmd = "/tapi /open_db " & Me.dsn 
+  If Me.username <> "" And Me.password <> "" Then
+    open_cmd &= " user('" & Me.username & "') password('" & Me.password & "')"
+  Endif
+  open_cmd &= "\n"
+  result = get_answer_from_proc(des_proc, open_cmd)
+  Flush #des_proc
+  open_cmd = "/tapi /duplicates on \n"
+  result = get_answer_from_proc(des_proc, open_cmd)
+  Flush #des_proc
+  If AUX.FindAll(result, "[$]success").Length = 0 Then
+    '
+  Else
+    '
+  Endif
+  Try reload_rules()
+End
+
+Public Sub get_answer_from_proc(proc As Process, Optional cmd As String = "") As String
+  ' send cmd to proces and get answer
+  Dim result, rline As String
+  Dim counter As Integer = 0
+  proc.Blocking = False
+  
+  If cmd <> "" Then
+    Print #proc, cmd
+    Sleep 0.5
+  Endif
+  sleep_a_bit:
+  Sleep 0.1
+  For Each rline In proc.Lines
+    ' FIXME: This is not a valid solution. See why the reading process blocks on the last line to be read...
+    If Lof(proc) < 10 Then
+      Break
+    Endif
+    result &= rline & "\n"
+  Next
+  If counter < 150 And result = "" And cmd <> "" Then
+    counter += 1
+    Goto sleep_a_bit
+  Endif
+  Return result
+End
+
+Public Sub executeDES(query As String, Optional no_messages As Boolean, Optional typ As String = "sql", Optional distinct As Boolean) As Object[]
+  ' same as execute, except that the des command line tool is used for query execution
+  Dim q, result, ans_line, head_line, status As String
+  Dim answers, headers As String[]
+  Dim resultArray As New Object[]
+  Dim one_line As New Collection
+  Dim counter As Integer = 0
+  Dim header_found As Boolean = False
+  
+  If distinct Then
+    Try get_answer_from_proc(des_proc, "/tapi /duplicates off\n")
+    If Error Then
+      init_des()
+      get_answer_from_proc(des_proc, "/tapi /duplicates off\n")
+    Endif
+  Endif
+  q = "/tapi " & query & "\n"
+  Try result = get_answer_from_proc(des_proc, q)
+  If Error Then
+    init_des()
+    result = get_answer_from_proc(des_proc, q)
+  Endif
+  If AUX.FindAll(result, "is opened already and is the current one").Length > 0 Then
+    result = get_answer_from_proc(des_proc)
+  Endif
+  
+  If distinct Then
+    Try get_answer_from_proc(des_proc, "/tapi /duplicates on\n")
+    If Error Then
+      init_des()
+      get_answer_from_proc(des_proc, "/tapi /duplicates on\n")
+    Endif
+  Endif
+  
+  If result = "" Then ' Or AUX.FindAll(result, "[$]error").Length > 0 
+    'FIXME: sometimes it just displays an error, enquire at author to see why this is happening to provide error reporting to user
+    Return Null
+  Endif
+  
+  If typ = "sql" Then
+    Try head_line = AUX.FindAll(result, "answer[(](.+)[)][ ][-][>]", 1)[0]
+    If head_line <> "" Then
+      headers = AUX.FindAll(head_line, "([^:,]+)[:][^:,]+", 1)
+      header_found = True
+    Endif
+  Else If typ = "datalog" Then
+    headers = AUX.FindAll(query, "(^|[^_A-Za-z0-9'])([A-Z][a-zA-Z0-9_]*)", 2)
+    headers = AUX.removeDups(headers)
+    If headers.Length > 0 Then
+      header_found = True
+    Endif
+  Else If typ = "schema" Then
+    ' TODO: add parsing of /dbschema and /list_view_schemas
+  Else
+    ' Wrong type
+    Return Null
+  Endif
+  
+  If Not header_found Then
+    ' Cannot find header!
+    Return Null
+  Endif
+  answers = Split(result, "\n")
+  status = "break"
+  counter = 0
+  For Each ans_line In answers
+    ans_line = Replace(ans_line, "DES> ", "")
+    ans_line = Replace(ans_line, "|: ", "")
+    If ans_line = "" Then
+      Continue
+    Endif
+    Select status
+      Case "break"
+        If ans_line = "$" Then
+          status = "fill"
+        Endif
+      Case "fill"
+        head_line = ""
+        Try head_line = AUX.FindAll(ans_line, "answer[(](.+)[)][ ][-][>]", 1)[0]
+        If ans_line <> "$" And ans_line <> "$eot" And head_line = "" Then
+          If one_line.Length < headers.Length Then
+            If Left(ans_line) = "'" And Right(ans_line) = "'" Then
+              ans_line = Right(Left(ans_line, -1), -1)
+            Endif
+            one_line.Add(ans_line, headers[counter])
+            counter += 1
+          Endif
+        Else
+          resultArray.Add(one_line)
+          one_line = New Collection
+          counter = 0
+        Endif
+    End Select
+  Next
+  Return resultArray
+End
+
+Public Sub executeDatalog(query As String, distinct As Boolean) As Object[]
+  ' Execute a datalog query and return the results
+  Dim result As Object[]
+  Try result = executeDES(query, False, "datalog", distinct)
+  If Error Then
+    init_des()
+    result = executeDES(query, False, "datalog", distinct)
+  Endif
+  Return result
+End
+
+
+Static Public Sub get_all_dsns() As String[]
+  ' Return a list of all DSNs on the current machine (both user and system)
+  ' Query odbcinst and put the DSNs into the appropriate comboboxes
+  ' odbcinst -q -s -h --> query user defined DSNs
+  ' odbcinst -q -s -l --> query system defined DSNsDim txt As String
+  Dim DSNs As String[]
+  Dim hproc As Process
+  Dim txt As String
+  Try hproc = Shell "odbcinst -q -s -h" For Input
+  Sleep 0.1
+  txt = ""
+  txt = Read #hproc, buff_size
+  Try hproc = Shell "odbcinst -q -s -l" For Input
+  Sleep 0.1
+  txt &= Read #hproc, buff_size
+  DSNs = AUX.FindAll(txt, "\\[([^\\]]+)\\]", 1) 
+  DSNs = DSNs.Sort(gb.IgnoreCase)
+  Return DSNs
+End
+
+
+Static Public Sub create_user_dsn(con As Connection) As String
+  ' Create an ODBC DSN in user's .odbc.ini from a given connection and return it's name
+  Dim sqlite_dsn, postgresql_dsn, mysql_dsn, tdsn, dsn_name As String
+  Dim odbc_ini As File
+  Dim txt As String
+  Dim hproc As Process
+  Dim new_num, max_num As Integer = 0
+  Dim DSNs As String[]
+  
+  DSNs = get_all_dsns()
+  For Each dsn_name In DSNs
+    Try new_num = Val(AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)")[0])
+    If max_num < new_num Then
+      max_num = new_num
+    Endif
+  Next
+  max_num += 1
+  
+  Try hproc = Shell " odbcinst -j" For Input
+  Sleep 0.1
+  txt = Read #hproc, buff_size
+  txt = AUX.FindAll(txt, "USER DATA SOURCES[.][.][:] ([^\n]*)", 1)[0]
+  
+  odbc_ini = Open txt For Append
+  
+  sqlite_dsn = "[(dsn_name)]\n" &
+    "Description=(description)\n" &
+    "Driver=SQLite3\n" &
+    "Database=(database)\n" &
+    "UserName=(username)\n" &
+    "Password=(password)\n" &
+    "ShowSystemTables=Yes\n"
+  
+  postgresql_dsn = "[(dsn_name)]\n" & 
+    "Description=(description)\n" & 
+    "Driver=PostgreSQL\n" & 
+    "Trace=Yes\n" & 
+    "TraceFile=/tmp/psqlodbc.log\n" & 
+    "Database=(database)\n" & 
+    "Servername=(server)\n" & 
+    "UserName=(username)\n" & 
+    "Password=(password)\n" & 
+    "Port=(port)\n" & 
+    "Protocol=6.4\n" & 
+    "ReadOnly=No\n" & 
+    "RowVersioning=No\n" & 
+    "ShowSystemTables=No\n" & 
+    "ShowOidColumn=No\n" & 
+    "FakeOidIndex=No\n" & 
+    "ConnSettings=\n" & 
+    "ForceTrace=Yes\n" & 
+    "Pooling=No\n"
+  
+  mysql_dsn = "[(dsn_name)]\n" & 
+    "Description = (description)\n" & 
+    "Trace       = Off\n" & 
+    "TraceFile   = stderr\n" & 
+    "Driver      = MySQL\n" & 
+    "SERVER      = (server)\n" & 
+    "USER        = (username)\n" & 
+    "PASSWORD    = (password)\n" & 
+    "PORT        = (port)\n" & 
+    "DATABASE    = (database)\n"
+  
+  dsn_name = "the_baze_dsn_name_" & max_num
+  
+  Select con.Type
+    Case "postgresql"
+      tdsn = postgresql_dsn
+      tdsn = Replace(tdsn, "(dsn_name)", dsn_name)
+      tdsn = Replace(tdsn, "(description)", "A PostgreSQL connection by The Baze")
+      tdsn = Replace(tdsn, "(database)", con.Name)
+      tdsn = Replace(tdsn, "(server)", con.Host)
+      tdsn = Replace(tdsn, "(username)", con.User)
+      tdsn = Replace(tdsn, "(password)", con.Password) ' FIXME: this is unsafe! Maybe find a different way to store the password...
+      tdsn = Replace(tdsn, "(port)", con.Port)
+    Case "mysql"
+      tdsn = mysql_dsn
+      tdsn = Replace(tdsn, "(dsn_name)", dsn_name)
+      tdsn = Replace(tdsn, "(description)", "A MySQL connection by The Baze")
+      tdsn = Replace(tdsn, "(database)", con.Name)
+      tdsn = Replace(tdsn, "(server)", con.Host)
+      tdsn = Replace(tdsn, "(username)", con.User)
+      tdsn = Replace(tdsn, "(password)", con.Password) ' FIXME: this is unsafe! Maybe find a different way to store the password...
+      tdsn = Replace(tdsn, "(port)", con.Port)
+    Case "sqlite", "sqlite2", "sqlite3"
+      tdsn = sqlite_dsn
+      tdsn = Replace(tdsn, "(dsn_name)", dsn_name)
+      tdsn = Replace(tdsn, "(description)", "A SQLite connection by The Baze")
+      tdsn = Replace(tdsn, "(database)", con.Name)
+      tdsn = Replace(tdsn, "(username)", con.User)
+      tdsn = Replace(tdsn, "(password)", con.Password) ' FIXME: this is unsafe! Maybe find a different way to store the password...
+    Default
+      ' Unsupported connection type
+      Return Null
+  End Select
+  
+  Print #odbc_ini, "\n\n" & tdsn & "\n\n"
+  odbc_ini.Close()
+  
+  Return dsn_name
+End
+
+Static Public Sub clean_generated_dsns()
+  ' Delete all generated DSNs from users .odbc.ini file
+  Dim DSNs As String[]
+  Dim dsn_name, dsn_num As String
+  DSNs = get_all_dsns()
+  For Each dsn_name In DSNs
+    Try dsn_num = AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)", 1)[0]
+    If Not Error Then
+      Shell " odbcinst -u -s -n " & dsn_name
+    Endif
+  Next
+End
+
+Public Sub new_datalog_query(ttitle As String, tquery As String, Optional ttype As String)
+  ' create new datalog query and store it in dbobjects
+  If ttype Then
+     Me.dbobjects["queries"][ttype][ttitle] = tquery
+  Else
+     Me.dbobjects["queries"]["datalog queries"][ttitle] = tquery
+  Endif
+  Me.Save()
+End
+
+Public Sub new_datalog_rule(ttitle As String, tquery As String)
+  ' create new datalog query and store it in dbobjects
+  Me.dbobjects["datalog rules"][ttitle] = tquery
+  Me.Save()
+End
+
+Public Sub delete_datalog_rule(ttitle As String)
+  ' create new datalog query and store it in dbobjects
+  Me.dbobjects["datalog rules"].remove(ttitle)
+  Me.Save()
+  init_des()
+End
+
+Public Sub reload_rules()
+  ' reload all rules from the knowledgebase
+  Dim rule As String
+  For Each rule In Me.dbobjects["datalog rules"]
+    get_answer_from_proc(des_proc, rule)
+  Next
+End
+

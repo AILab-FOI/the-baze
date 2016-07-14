@@ -1,37 +1,37 @@
 ' Gambas class file
 
-' xml editor
-Public xml_editor As Editor
+' xml TextEditor
+Public xml_editor As TextEditor
 ' path to document/collection being queried
 Public path As String
 ' type of query
 Public query_type As String
 ' unique key
-Public key As Integer
+Public unique_key As Integer
 
 Public Sub _new()
-  ' make editor visible
-  xml_editor = EditorXML
+  ' make TextEditor visible
+  xml_editor = TextEditorXML
   VSplitMain.Layout = [1, 3]
-  EditorXML.Flags[EditorXML.ShowLineNumbers] = True
+  TextEditorXML.ShowLineNumber = True
 End
 
 
 Public Sub ToolButtonExecute_Click()
   ' if query then execute it and show the results
-  ' else (XML editor) update the document on the given path
+  ' else (XML TextEditor) update the document on the given path
   Dim res, obj As Variant
   If query_type = "xpath" Then
-    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, - Len(" - xPath query")), EditorXML.Text, path)
+    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, - Len(" - xPath query")), TextEditorXML.Text, path)
   Else
-    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, - Len(" - xQuery")), EditorXML.Text)
+    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, - Len(" - xQuery")), TextEditorXML.Text)
   Endif
-  EditorResult.Text = res["xml"]
+  TextEditorResult.Text = res["xml"]
   TreeViewResult.Clear()
   
   For Each obj In res["collection"]["children"]
     If TypeOf(obj) = gb.String Then
-      TreeViewResult.Add(Str(get_unique_key()), obj, Picture.Load("class.png"))
+      TreeViewResult.Add(Str(get_unique_key()), obj, Picture.Load("images/class.png"))
     Else
       create_xml_treeview(obj, Null)
     Endif
@@ -45,20 +45,20 @@ Public Sub create_xml_treeview(objects As Collection, parent As String)
   Dim child As Variant
   With TreeViewResult
     pkey = Str(get_unique_key())
-    .Add(pkey, objects["__node_name__"], Picture.Load("directory.png"), parent)
+    .Add(pkey, objects["__node_name__"], Picture.Load("images/directory.png"), parent)
     
     For Each attr In objects
       If objects.key <> "children" And objects.Key <> "__node_name__" Then
         ukey = Str(get_unique_key())
-        .Add(ukey, objects.key, Picture.Load("directory.png"), pkey)
+        .Add(ukey, objects.key, Picture.Load("images/directory.png"), pkey)
         skey = Str(get_unique_key())
-        .Add(skey, attr, Picture.Load("class.png"), ukey)
+        .Add(skey, attr, Picture.Load("images/class.png"), ukey)
       Endif
     Next
     For Each child In objects["children"]
       If TypeOf(child) = gb.String Then
         ukey = Str(get_unique_key())
-        .Add(ukey, child, Picture.Load("class.png"), pkey)
+        .Add(ukey, child, Picture.Load("images/class.png"), pkey)
       Else
         create_xml_treeview(child, pkey)
       Endif
@@ -68,18 +68,37 @@ End
 
 Public Sub get_unique_key() As Integer
   ' get a unique key
-  If Not key Then
-    key = 0
+  If Not unique_key Then
+    unique_key = 0
   Endif
-  key += 1
-  Return key
+  unique_key += 1
+  Return unique_key
 End
 
 
 Public Sub ToolButtonClose_Click()
   ' close the current tab
   Dim child As Variant
-  If Message.Question("Are you sure that you want to abandon all changes?", "Yes", "No") = 1 Then
+  Dim qname As String
+  Dim ok As Boolean = False
+  If query_type = "xpath" Then
+    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xPath query"))
+  Else
+    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xQuery"))
+  Endif
+  If FMain.db.dbobjects["queries"][query_type & " queries"][qname] = TextEditorXML.Text Then
+    If query_type = "xquery" Then
+      ok = True
+    Else
+      If FMain.db.dbobjects["queries"][query_type & " queries paths"][qname] = path Then
+        ok = True
+      Endif 
+    Endif
+  Endif
+  If Not ok Then
+    ok = Message.Question("Are you sure that you want to abandon all changes?", "Yes", "No") = 1 
+  Endif
+  If ok Then
     With FMain.main_tabstrip.Current
       For Each child In .Children
         child.Close
@@ -89,19 +108,19 @@ Public Sub ToolButtonClose_Click()
   Endif
 End
 
-Public Sub EditorXML_KeyPress_()
+Public Sub TextEditorXML_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorXML.Copy()
+    TextEditorXML.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorXML.Paste()
+      TextEditorXML.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorXML.Cut()
+        TextEditorXML.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorXML.SelectAll()
+          TextEditorXML.SelectAll()
         Endif
       Endif
     Endif

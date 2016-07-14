@@ -1,0 +1,36 @@
+%
+% Shortest Paths in a Graph
+%
+% RA Formulation
+
+/abolish
+/multiline on
+/show_compilations on
+
+create table edge(origin string,destination string);
+
+insert into edge values('a','b');
+insert into edge values('a','c');
+insert into edge values('b','a');
+insert into edge values('b','d');
+
+max_length(max_length) :=
+  group_by [] count(*) true (edge);
+  
+path(origin,destination,length) :=
+   project origin,destination,1 (edge)
+  union
+   project path.origin,edge.destination,path.length+1
+	   (
+	    path 
+	   zjoin path.destination=edge.origin and path.length<max_length
+	    (edge product max_length)
+	   );
+  
+spaths(origin,destination,length) :=
+  group_by origin,destination origin,destination,min(length) true
+    (path);
+    
+/ra select true (spaths);
+
+/multiline off

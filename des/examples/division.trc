@@ -1,0 +1,14 @@
+%
+% Understanding Relational Database Query Languages, S. W. Dietrich, Prentice Hall, 2001.
+%
+/abolish
+/development on
+/show_compilations on
+/datalog
+create table abTable(a string, b string);
+create table bTable(b string);
+insert into abTable values ('a1','b1'),('a1','b2'),('a2','b2'),('a3','b1'),('a3','b2'),('a3','b3');
+insert into bTable values ('b1'),('b2');
+{T.a | abTable(T) and (forall B) (bTable(B) implies ((exists AB) (abTable(AB) and AB.a=T.a and AB.b=B.b)))};
+{T.a | abTable(T) and (forall B) ((not bTable(B)) or (exists AB) (abTable(AB) and AB.a=T.a and AB.b=B.b))};
+{T.a | abTable(T) and (not exists B (bTable(B) and (not (exists AB) (abTable(AB) and AB.a=T.a and AB.b=B.b))))};

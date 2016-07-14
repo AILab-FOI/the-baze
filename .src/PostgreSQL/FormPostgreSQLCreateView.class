@@ -4,7 +4,7 @@ Public Sub Form_open()
   ' initialize the vsplit
   Dim query As String
   VSplitMain.Settings = [1, 1]
-  EditorViewQuery.Flags[EditorViewQuery.ShowLineNumbers] = True
+  TextEditorViewQuery.ShowLineNumber = True
   For Each query In FMain.db.dbobjects["queries"]["sql queries"]
     ComboBoxChooseQuery.Add(FMain.db.dbobjects["queries"]["sql queries"].key)
   Next
@@ -14,12 +14,12 @@ End
 Public Sub RadioButtonCreateFromQuery_Click()
   ' enable the combobox
   ComboBoxChooseQuery.Enabled = True
-  EditorViewQuery.Enabled = False
+  TextEditorViewQuery.Enabled = False
 End
 
 Public Sub RadioButtonEnterQuery_Click()
-  ' enable the editor
-  EditorViewQuery.Enabled = True
+  ' enable the TextEditor
+  TextEditorViewQuery.Enabled = True
   ComboBoxChooseQuery.Enabled = False
 End
 
@@ -38,9 +38,9 @@ Public Sub ToolButtonCancel_Click()
 End
 
 Public Sub ComboBoxChooseQuery_Click()
-  ' put the query text into the editor
-  EditorViewQuery.Text = FMain.db.dbobjects["queries"]["sql queries"][ComboBoxChooseQuery.Text]
-  EditorViewQuery.HighlightAll()
+  ' put the query text into the TextEditor
+  TextEditorViewQuery.Text = FMain.db.dbobjects["queries"]["sql queries"][ComboBoxChooseQuery.Text]
+  TextEditorViewQuery.HighlightAll()
 End
 
 Public Sub ToolButtonExecute_Click()
@@ -55,7 +55,7 @@ Public Sub ToolButtonExecute_Click()
   con.Name = FMain.db.con.Name
   con.Open
   res = New FormPostgreSQLQueryResult(PanelResult)
-  res.DataSourceMain.Table = EditorViewQuery.Text
+  res.DataSourceMain.Table = TextEditorViewQuery.Text
   res.DataSourceMain.Connection = con
 End
 
@@ -70,7 +70,7 @@ Public Sub ToolButtonCreateView_Click()
       Else
         repl = " "
       Endif
-      If IsNull(FMain.db.execute("CREATE" & repl & "VIEW " & Left$(.Text, -7) & " AS " & EditorViewQuery.Text)) Then
+      If IsNull(FMain.db.execute("CREATE" & repl & "VIEW " & Left$(.Text, -7) & " AS " & TextEditorViewQuery.Text)) Then
         Return
       Else
         With FMain.main_tabstrip.Current
@@ -89,19 +89,19 @@ Public Sub ToolButtonCreateView_Click()
 
 End
 
-Public Sub EditorViewQuery_KeyPress_()
+Public Sub TextEditorViewQuery_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorViewQuery.Copy()
+    TextEditorViewQuery.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorViewQuery.Paste()
+      TextEditorViewQuery.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorViewQuery.Cut()
+        TextEditorViewQuery.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorViewQuery.SelectAll()
+          TextEditorViewQuery.SelectAll()
         Endif
       Endif
     Endif

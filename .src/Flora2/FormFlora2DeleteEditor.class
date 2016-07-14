@@ -1,7 +1,7 @@
 ' Gambas class file
 
-Public flora2_literals As Editor
-Public flora2_query As Editor
+Public flora2_literals As TextEditor
+Public flora2_query As TextEditor
 Public delete_rb As RadioButton
 Public deleteall_rb As RadioButton
 Public erase_rb As RadioButton
@@ -10,8 +10,8 @@ Public trans_chk As CheckBox
 
 Public Sub _new()
   ' make controls public
-  flora2_literals = EditorFlora2Literals
-  flora2_query = EditorFlora2Query
+  flora2_literals = TextEditorFlora2Literals
+  flora2_query = TextEditorFlora2Query
   delete_rb = RadioButtonDelete
   deleteall_rb = RadioButtonDeleteAll
   erase_rb = RadioButtonErase
@@ -41,7 +41,7 @@ Public Sub ToolButtonClose_Click()
     delop = "t_" & delop
   Endif
   With FMain.db
-    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, TextEditorFlora2Literals.Text, TextEditorFlora2Query.text) Then
       Return
     Endif
     .refresh_db_tree(True)
@@ -75,7 +75,7 @@ Public Sub ToolButtonExecute_Click()
     delop = "t_" & delop
   Endif
   With FMain.db
-    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, EditorFlora2Literals.Text, EditorFlora2Query.text) Then
+    If Not .new_delete_query(Left(FMain.main_tabstrip.Current.Text, - Len(" - Delete query")), delop, TextEditorFlora2Literals.Text, TextEditorFlora2Query.text) Then
       Return
     Endif
     .refresh_db_tree(True)

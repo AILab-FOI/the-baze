@@ -1,0 +1,86 @@
+% Generalized same generation problem 10
+% Reproduced from [FD92]
+%
+% The same generation problem defines the cousins at the same generation, i.e. it
+% finds the individuals that have some common ancestor and are the same number of
+% generations away from that ancestor.
+% 
+% DES> sg(X,Y)
+% {
+%   sg(a,f),
+%   sg(b1,e1),
+%   sg(b1,e2),
+%   sg(b1,e3),
+%   sg(b1,e4),
+%   sg(b1,e5),
+%   sg(b1,e6),
+%   sg(b2,e1),
+%   sg(b2,e2),
+%   sg(b2,e3),
+%   sg(b2,e4),
+%   sg(b2,e5),
+%   sg(b2,e6),
+%   sg(b3,e1),
+%   sg(b3,e2),
+%   sg(b3,e3),
+%   sg(b3,e4),
+%   sg(b3,e5),
+%   sg(b3,e6),
+%   sg(b4,e1),
+%   sg(b4,e2),
+%   sg(b4,e3),
+%   sg(b4,e4),
+%   sg(b4,e5),
+%   sg(b4,e6),
+%   sg(b5,e1),
+%   sg(b5,e2),
+%   sg(b5,e3),
+%   sg(b5,e4),
+%   sg(b5,e5),
+%   sg(b5,e6),
+%   sg(b6,e1),
+%   sg(b6,e2),
+%   sg(b6,e3),
+%   sg(b6,e4),
+%   sg(b6,e5),
+%   sg(b6,e6),
+%   sg(c,d)
+% }
+
+
+sg(X, Y) :-
+  over(X, Y) .
+sg(X, Y) :-
+  up(X, X1), 
+  sg(X1, Y1), 
+  down(Y1, Y) .
+
+/* data */
+
+over(c, d).
+
+up(a,b1).
+up(b1,c).
+up(a,b2).
+up(b2,c).
+up(a,b3).
+up(b3,c).
+up(a,b4).
+up(b4,c).
+up(a,b5).
+up(b5,c).
+up(a,b6).
+up(b6,c).
+
+down(d,e1).
+down(e1,f).
+down(d,e2).
+down(e2,f).
+down(d,e3).
+down(e3,f).
+down(d,e4).
+down(e4,f).
+down(d,e5).
+down(e5,f).
+down(d,e6).
+down(e6,f).

@@ -1,0 +1,24 @@
+%
+% Paths in a Graph
+%
+% RA Formulation
+
+/abolish
+/show_compilations on
+/multiline on
+
+create table edge(origin string,destination string);
+insert into edge values('a','b');
+insert into edge values('a','c');
+insert into edge values('b','a');
+insert into edge values('b','d');
+
+paths(origin,destination) :=
+   select true (edge)
+  union 
+   project paths.origin,edge.destination 
+    (edge zjoin paths.destination=edge.origin paths);
+
+/ra select true (paths);
+
+/multiline off

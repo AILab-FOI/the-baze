@@ -1,15 +1,15 @@
 ' Gambas class file
 
-Public flora2_editor As Editor
+Public flora2_editor As TextEditor
 
 Public Sub _new()
-  ' make editor visible
-  flora2_editor = EditorFlora2
+  ' make TextEditor visible
+  flora2_editor = TextEditorFlora2
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  EditorFlora2.Flags[EditorFlora2.ShowLineNumbers] = True
+  TextEditorFlora2.ShowLineNumber = True
 End
 
 Public Sub ToolButtonExecute_Click()
@@ -20,13 +20,13 @@ Public Sub ToolButtonExecute_Click()
   Dim first As Boolean
   Dim counter_row As Integer
   Dim counter_col As Integer
-  Try results = FMain.db.query(EditorFlora2.Text, CheckBoxDistinct.Value)
+  Try results = FMain.db.query(TextEditorFlora2.Text, CheckBoxDistinct.Value)
   If Error Then 
     Message.Error(Error.Text)
     Stop Event
     Return
   Else
-    FMain.db.new_flora2_query(Left(FMain.main_tabstrip.Text, - Len(" - Flora2 query")), EditorFlora2.Text) 
+    FMain.db.new_flora2_query(Left(FMain.main_tabstrip.Text, - Len(" - Flora2 query")), TextEditorFlora2.Text) 
     If results Then 
       first = True
       counter_row = 0
@@ -70,19 +70,19 @@ Public Sub ToolButtonClose_Click()
   End With
 End
 
-Public Sub EditorFlora2_KeyPress_()
+Public Sub TextEditorFlora2_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    EditorFlora2.Copy()
+    TextEditorFlora2.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      EditorFlora2.Paste()
+      TextEditorFlora2.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        EditorFlora2.Cut()
+        TextEditorFlora2.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          EditorFlora2.SelectAll()
+          TextEditorFlora2.SelectAll()
         Endif
       Endif
     Endif

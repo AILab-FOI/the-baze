@@ -6,7 +6,7 @@ Public query_name As String
 Public request_canceled As Boolean
 
 Public Sub ToolButtonInsertObject_Click()
-  ' open the data manipulation query editor
+  ' open the data manipulation query TextEditor
   Dim ui As FormZODBDataManipulationEditor
   Dim ask As FormAskQueryName
   askagain:
@@ -16,7 +16,7 @@ Public Sub ToolButtonInsertObject_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Insert queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Insert queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - Insert query"
@@ -32,7 +32,7 @@ Public Sub ToolButtonInsertObject_Click()
 End
 
 Public Sub ToolButtonDeleteObjects_Click()
-  ' open the data manipulation query editor
+  ' open the data manipulation query TextEditor
   Dim ui As FormZODBDataManipulationEditor
   Dim ask As FormAskQueryName
   askagain:
@@ -42,7 +42,7 @@ Public Sub ToolButtonDeleteObjects_Click()
   ask.ShowModal()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
-      FMain.main_treeview.Add(query_name, query_name, Picture.Load("query.png"), "Delete queries")
+      FMain.main_treeview.Add(query_name, query_name, Picture.Load("images/query.png"), "Delete queries")
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = query_name & " - Delete query"

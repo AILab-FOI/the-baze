@@ -1,0 +1,103 @@
+%
+% Jobs
+%
+% DRC Formulation
+%
+
+/datalog
+/abolish
+/show_compilations on
+/development on
+
+-- A company has its headquarters in city:
+create or replace table headquarters(company string, city string);
+-- An employee works for a company with a salary:
+create or replace table works(employee string, company string, salary int);
+-- An employee lives in a street of a city:
+create or replace table lives(employee string, street string, city string);
+-- An employee has a boss:
+create or replace table boss(employee string, boss string);
+
+insert into headquarters values('IBM','Armonk');
+insert into headquarters values('Oracle','Redwood');
+insert into headquarters values('Evernote','Redwood');
+insert into headquarters values('Microsoft','Redmond');
+
+insert into works values('Anderson','IBM',1100);
+insert into works values('Andrews','IBM',1000);
+insert into works values('Arlington','IBM',900);
+insert into works values('Arlington','Oracle',700);
+insert into works values('Bond','IBM',500);
+insert into works values('Bond','Oracle',500);
+insert into works values('Bond','Evernote',500);
+insert into works values('Nolan','Oracle',900);
+insert into works values('Norton','Oracle',1500);
+insert into works values('Randall',Evernote,800);
+insert into works values('Sanders','Evernote',1100);
+insert into works values('Silver','Microsoft',1000);
+insert into works values('Smith','Microsoft',1000);
+insert into works values('Steel','Microsoft',1020);
+insert into works values('Sullivan','Microsoft',1400);
+
+insert into lives values('Anderson','Main','Armonk');
+insert into lives values('Andrews','Bacon','Armonk');
+insert into lives values('Arlington','Park','Palo Alto');
+insert into lives values('Bond','Downing','London');
+insert into lives values('Nolan','Sunsent','Redwood');
+insert into lives values('Norton','James','Redwood');
+insert into lives values('Randall','Baker','Redwood');
+insert into lives values('Sanders','High','Redmond');
+insert into lives values('Silver','North','New Jersey');
+insert into lives values('Smith','Hamilton','Redmond');
+insert into lives values('Steel','Oak','Redmond');
+insert into lives values('Sullivan','Oak','Redmond');
+
+insert into boss values('Anderson','Andrews');
+insert into boss values('Arlington','Andrews');
+insert into boss values('Arlington','Norton');
+insert into boss values('Nolan','Norton');
+insert into boss values('Randall','Sanders');
+insert into boss values('Silver','Sullivan');
+insert into boss values('Smith','Sullivan');
+insert into boss values('Steel','Sullivan');
+
+-- Names of employees working for IBM
+q1:={W.employee | works(W) and W.company='IBM'}
+-- Alternative syntax:
+-- {W.employee | W in works and W.company='IBM'}
+
+-- Names of employees not working for IBM
+q2:={W.employee | works(W) and not exists U (works(U) and U.company='IBM' and U.employee=W.employee)};
+
+-- Name of employees and their companies living either in London or Palo Alto
+q3:={L.employee,W.company | lives(L) and (L.city='London' or L.city='Palo Alto') and works(W) and L.employee=W.employee};
+
+-- Name, street and city of employees earning more than 1000 in a given company
+q4:={L.employee, L.street, L.city | lives(L) and exists W (works(W) and W.employee=L.employee and W.salary>1000)};
+
+-- Name and salary of employees with the minimum salary earned at a single company
+q5:={W.employee,W.salary | works(W) and not exists M (works(M) and M.salary<W.salary)};
+
+-- Names of employees living in the same city they work in
+q6:={L.employee | lives(L) and exists W (works(W) and W.employee=L.employee and exists H (headquarters(H) and H.company=W.company and H.city=L.city))};
+
+-- Names of employees living in the same city and street as their bosses
+q7:={EL.employee | lives(EL) and exists BL,B (lives(BL) and boss(B) and EL.employee=B.employee and B.boss=BL.employee and EL.street=BL.street and EL.city=BL.city)};
+
+-- Names of employees with no boss
+q8:={W.employee | works(W) and not exists B (boss(B) and B.employee=W.employee)};
+
+-- Employees working at least for the same companies as Arlington
+q9:={W.employee | works(W) and (forall AW ((works(AW) and AW.employee='Arlington') -> (exists O (works(O) and W.employee=O.employee and AW.company=O.company))))};
+
+/log t.txt
+select * from q1;
+select * from q2;
+select * from q3;
+select * from q4;
+select * from q5;
+select * from q6;
+select * from q7;
+select * from q8;
+select * from q9;
+/nolog

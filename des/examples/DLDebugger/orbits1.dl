@@ -1,0 +1,27 @@
+% Orbits of cosmological objects
+% Rafael Caballero-Rold\'an, 2007
+
+star(sun).
+
+orbits(earth, sun).
+orbits(moon, earth).
+orbits(X,Y) :- 
+  orbits(X,Z), 
+  orbits(Z,Y). % This is correct
+%  orbits(Y,Z). % This is an error
+
+% satellite(X,Y) :-
+%   orbits(X,Y),
+%   not(intermediate(X,Y)), 
+%   not(star(Y)).
+
+planet(X) :- 
+  orbits(X,Y), 
+  star(Y), 
+  not(intermediate(X,Y)).
+
+intermediate(X,Y) :- 
+  orbits(X,Y), % This is an error
+  %orbits(X,Z), % This is correct
+  orbits(Z,Y).
+

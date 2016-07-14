@@ -1,0 +1,57 @@
+// Command load
+name = load
+action = :l "$activeFile$"
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command programa
+name = programa
+action = ejecuta "programa { si (x<5) entonces {x=x+2;};y=x;}"
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command incrementa
+name = incrementa
+action = mainComienza(ejecuta "programa { si (x<5) entonces {x=x+2;};y=x;}")
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command programa gordisimo
+name = programa gordisimo
+action = ejecuta "programa { 	 si (x < 5) entonces{ 		x = x + 2; };  mientras (x > 10) hacer { 	y = y * (x +7); 	x = x -1; } ;  repetir { 	y = y * 2; 	z = 5; 	si (y == 7) entonces{ 		b = cierto; 	} 	sino { 		b = ((z == 5) and (y < 100)); y = y - 3; 	}; } hasta ( z == 5);  }"
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command incrementa gordisimo
+name = incrementa gordisimo
+action = mainComienza(ejecuta "programa { 	 si (x < 5) entonces{ 		x = x + 2; };  mientras (x > 10) hacer { 	y = y * (x +7); 	x = x -1; } ;  repetir { 	y = y * 2; 	z = 5; 	si (y == 7) entonces{ 		b = cierto; 	} 	sino { 		b = ((z == 5) and (y < 100)); y = y - 3; 	}; } hasta ( z == 5);  }" )
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// Command mainCajas
+name = mainCajas
+action = mainCajas "&"
+hintText = 
+icon = 
+parameterType = NONE
+isExecutedInSytemShell = false
+
+// End Of Console Panel Tool Bar Button Configuration
+
+// buttonConfiguration Acrobat Reader
+name = Acrobat Reader
+path = C:\Archivos de programa\Adobe\Reader 10.0\Reader\AcroRd32.exe
+hintText = Launch the Acrobat Reader
+icon = 
+
+// End Of External Applications Tool Bar Button Configuration

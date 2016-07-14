@@ -1,0 +1,21 @@
+//------------------------------//
+//  ACIDE 0.17 Release Notes    //
+//    September, 10th 2015      //
+//------------------------------//
+
+  
+* Enhancements, changes and fixed bugs:
+  o Localization to French
+  o Multiple editors for new files
+  o New Reset and Refresh buttons for the Database panel
+  o The Datalog query for Trace Datalog becomes single-lined
+  o Keyboard shortcut (F9) for Play
+  o Rule (SQL statement, resp.) location  becomes disabled by-default in Trace Datalog (Trace SQL, resp.)
+  o New Debug SQL panel but with incomplete functionality
+  o Bug fixes in several panels (Console, Database, ...) but presumably others added.
+
+
+IMPORTANT CAVEATS / KNOWN BUGS:
+  o Ctrl+Mouse Wheel for resizing font display may take long time depending on the number of open file editors.
+  o Opening medium-sized text files may take long time due to lexical analysis. No progress indicators are provided. Only when all editor windows are processed they are displayed.
+  o As an alpha version, there are expected many bugs and incomplete functionalities. Please report them to fernan@sip.ucm.es

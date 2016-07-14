@@ -1,0 +1,96 @@
+% 
+% Two-people games
+%
+
+%
+% First unstratifiable implementation
+%
+
+% Possible moves
+move(0,1).
+move(1,2).
+%move(2,3).
+move(0,3).
+
+% Winning state
+winning(3).
+
+winning(St) :- 
+  move(St,NextSt), 
+  not(winning(NextSt)).
+
+%
+% Second stratifiable implementation
+%
+
+% Winning state
+winning_state(3).
+
+% States
+state(X) :-
+   move(X,_)
+  ;
+   move(_,X).
+
+% Series of moves
+%path(X,X,0) :-
+%  state(X).
+path(X,Y, N) :-
+  move(X,Z),
+  path(Z,Y,N1), 
+  N is N1+1.
+  
+% An even number of moves
+move_even(X,Y) :-
+  path(X,Y,N), 
+  N > 0,
+  0 is N rem 2.
+
+% A state is winning if a winning state is reached in an even number of moves
+is_winning(X):-
+  move_even(X,Y), 
+  winning_state(Y).
+  
+% Winning state as a stratifiable program
+winning_st(X) :-
+  winning_state(X).
+winning_st(X) :-
+  move(X,Y), 
+  not(is_winning(Y)).
+  
+  
+% % Possible moves
+% move(0,1).
+% move(1,2).
+% move(0,3).
+
+% DES-Datalog> winning_st(X)
+
+% Info: Stratifiable subprogram found for the given query.
+% {
+%   winning_st(0),
+%   winning_st(1),
+%   winning_st(3)
+% }
+% Info: 3 tuples computed.
+
+
+% % Possible moves
+% move(0,1).
+% move(1,2).
+% move(2,3).
+% move(0,3).
+
+% DES-Datalog> /c examples/game                                                      
+
+% Info: 14 rules consulted.
+% Warning: Non stratifiable program.
+
+% DES-Datalog> winning_st(X)   
+
+% Info: Stratifiable subprogram found for the given query.
+% {
+%   winning_st(1),
+%   winning_st(3)
+% }
+% Info: 2 tuples computed.  

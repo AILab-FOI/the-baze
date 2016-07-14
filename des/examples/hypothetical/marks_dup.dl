@@ -1,0 +1,57 @@
+% File: marks_dup.dl
+% Date: 09/24/2013
+% Author: Fernando Sáenz-Pérez
+% Description:
+%   Given a number of marks, determine the number of students with a top mark of 6 s.t. 
+%   the target minimum average mark is 5.
+
+% NOTE: Duplicates must be enabled
+
+
+mark(2).
+mark(3).
+
+top_mark(6).
+
+target(5).
+
+v(A,C) :-
+  target(T),
+  top_mark(TM),
+  count(mark(TM),C),
+  avg(mark(N),N,A),
+  A>=T.
+v(A,C) :-
+  avg(mark(N),N,A1),
+  target(T),
+  A1<T,
+  ((mark(M) :- top_mark(M)) => v(A,C)).
+  
+% DES> /duplicates on
+% DES> /c examples/hypothetical/marks
+% Info: 6 rules consulted.
+% DES> v(A,C)
+% {                                           
+%   v(5.0,5)
+% }
+% Info: 1 tuple computed.          
+
+% TODO:
+
+% CREATE TABLE mark(mark FLOAT);
+% CREATE TABLE top_mark(mark FLOAT);
+
+% CREATE VIEW v(number,average) AS 
+% (
+% SELECT COUNT(*),AVG(mark.mark)
+% FROM mark,top_mark
+% WHERE mark.mark = top_mark.mark
+% HAVING AVG(mark.mark) >= top_mark.mark
+% )
+% UNION
+% (
+% ASSUME SELECT mark FROM top_mark IN mark
+% SELECT number,average
+% FROM v
+% WHERE (SELECT AVG(mark) FROM marks) < (SELECT mark FROM top_mark)
+% );

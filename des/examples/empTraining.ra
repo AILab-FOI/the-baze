@@ -1,0 +1,342 @@
+%
+% Understanding Relational Database Query Languages, S. W. Dietrich, Prentice Hall, 2001.
+%
+% -------------------------------------------------------------------------------------------------------------------------------
+% 	      RELATIONAL ALGEBRA
+% -------------------------------------------------------------------------------------------------------------------------------
+%                        EMPLOYEE TRAINING Enterprise
+%
+%  employee(eID, eLast, eFirst, eTitle, eSalary)	key: eID
+%  technologyArea(aID, aTitle, aURL, aLeadID)	    key: aID      foreign key (aLeadID) references employee(eID)
+%  trainingCourse(cID, cTitle, cHours, areaID)	  key: cID      foreign key (areaID) references technologyArea(aID)
+%  takes(eID, cID, tYear, tMonth, tDay)	          key: eID, cID foreign key (eID) references employee(eID)
+%                                                               foreign key (cID) references trainingCourse(cID)
+%--------------------------------------------------------------------------------------------------------------------------------
+%
+
+/multiline on
+/abolish
+/show_compilations on
+
+create table employee (eID string primary key, eLast string, eFirst string, eTitle string, eSalary int);
+create table technologyArea(aID string primary key, aTitle string, aURL string, aLeadID string, foreign key (aLeadID) references employee(eID));
+create table trainingCourse(cID string primary key, cTitle string, cHours int, areaID string, foreign key (areaID) references technologyArea(aID));
+create table takes(eID string, cID string, tYear int, tMonth int, tDay int, primary key (eID, cID), foreign key (eID) references employee(eID), foreign key (cID) references trainingCourse(cID));
+
+insert into employee values ('111','Last111','First111','Database Administrator',75111);
+insert into employee values ('222','Last222','First222','Software Engineer',51722);
+insert into employee values ('321','Last321','First321','Database Administrator',68321);
+insert into employee values ('333','Last333','First333','Sr Software Engineer',60333);
+insert into employee values ('345','Last345','First345','Sr Software Engineer',59345);
+insert into employee values ('369','Last369','First369','Software Engineer',36369);
+insert into employee values ('444','Last444','First444','Software Engineer',44444);
+insert into employee values ('456','Last456','First456','Software Engineer',45456);
+insert into employee values ('555','Last555','First555','Sr Software Engineer',55555);
+insert into employee values ('654','Last654','First654','Coach',60654);
+insert into employee values ('666','Last666','First666','Coach',66666);
+insert into employee values ('678','Last678','First678','Coach',67678);
+insert into employee values ('693','Last693','First693','Coach',69693);
+insert into employee values ('777','Last777','First777','Database Administrator',77777);
+insert into employee values ('789','Last789','First789','Database Administrator',78789);
+insert into employee values ('888','Last888','First888','Database Administrator',88888);
+insert into employee values ('963','Last963','First963','Manager',98963);
+insert into employee values ('987','Last987','First987','Manager',99987);
+insert into employee values ('999','Last999','First999','Manager',100999);
+
+insert into technologyArea values ('DB','Database','http://www.company.intranet/technology/db','321');
+insert into technologyArea values ('JA','Java','http://www.company.intranet/technology/java','333');
+insert into technologyArea values ('SE','Software Engineering','http://www.company.intranet/technology/software','345');
+insert into technologyArea values ('WW','Web','http://www.company.intranet/technology/web','369');
+
+insert into trainingCourse values ('DB01','Microsoft Access',8,'DB');
+insert into trainingCourse values ('DB02','Query Languages',16,'DB');
+insert into trainingCourse values ('DB03','Database Modeling',8,'DB');
+insert into trainingCourse values ('DB04','Transactions',8,'DB');
+insert into trainingCourse values ('JA01','Introduction to Java',8,'JA');
+insert into trainingCourse values ('JA02','JavaBeans',16,'JA');
+insert into trainingCourse values ('JA03','Enterprise JavaBeans',32,'JA');
+insert into trainingCourse values ('JA04','JDBC',8,'JA');
+insert into trainingCourse values ('SE01','Patterns',16,'SE');
+insert into trainingCourse values ('SE02','Validation & Verification',32,'SE');
+insert into trainingCourse values ('SE03','Software Components',40,'SE');
+insert into trainingCourse values ('WW01','Dynamic HTML',8,'WW');
+insert into trainingCourse values ('WW02','XML',16,'WW');
+insert into trainingCourse values ('WW03','XSLT',24,'WW');
+
+insert into takes values ('321','JA01',2000,7,24);
+insert into takes values ('333','JA04',2000,7,27);
+insert into takes values ('333','SE01',2000,6,1);
+insert into takes values ('345','SE01',2000,6,1);
+insert into takes values ('345','SE02',2000,6,2);
+insert into takes values ('345','WW01',2000,8,1);
+insert into takes values ('369','JA04',2000,7,27);
+insert into takes values ('369','WW01',2000,8,1);
+insert into takes values ('369','WW02',2000,8,2);
+insert into takes values ('369','WW03',2000,8,3);
+insert into takes values ('444','DB01',2000,5,1);
+insert into takes values ('444','DB02',2000,9,15);
+insert into takes values ('456','JA01',2001,1,15);
+insert into takes values ('456','WW01',2001,3,1);
+insert into takes values ('555','DB03',2000,9,22);
+insert into takes values ('666','JA01',2000,1,1);
+insert into takes values ('678','JA01',2000,1,1);
+insert into takes values ('678','JA02',2000,1,2);
+insert into takes values ('693','JA01',2000,7,24);
+insert into takes values ('693','JA02',2000,1,2);
+insert into takes values ('693','JA03',2000,12,12);
+insert into takes values ('693','JA04',2000,12,4);
+insert into takes values ('777','DB01',2000,5,1);
+insert into takes values ('777','DB02',2000,9,15);
+insert into takes values ('777','DB03',2000,9,22);
+insert into takes values ('777','DB04',2000,9,29);
+insert into takes values ('789','WW01',2001,3,1);
+insert into takes values ('888','DB01',2000,5,1);
+insert into takes values ('888','JA01',2000,7,24);
+insert into takes values ('888','SE01',2000,6,1);
+insert into takes values ('888','WW01',2000,8,1);
+insert into takes values ('987','JA01',2000,7,24);
+insert into takes values ('999','DB01',2000,5,1);
+insert into takes values ('999','SE01',2000,6,1);
+
+% Relational Algebra: Fundamental EMPLOYEE TRAINING Queries
+
+qSelection :=
+    select  eSalary > 100000 (employee);
+
+qProjection :=
+    project eLast, eFirst, eTitle (employee);
+
+qUnion :=
+    (project eID (select  eTitle = 'Manager' (employee)))  union  
+    (project eID (select  eTitle = 'Coach' (employee)));
+
+% Alternative for qUnion: using or in selection condition
+qUnionA :=
+    project eID (select  eTitle = 'Manager'  or  eTitle = 'Coach' (employee));
+
+qDifference :=
+    (project eID (select eTitle='Manager' (employee))) difference (project eID (takes));
+
+qProduct :=
+    (project eID (employee)) product (project cID (trainingCourse));
+
+% Relational Algebra: Additional EMPLOYEE TRAINING Queries
+
+qIntersection :=
+    (project eID (select eTitle='Manager'(employee))) intersect (project eID (takes));
+
+% The generic join is not supported by the educational tool by design,
+% forcing its equivalent definition in terms of the fundamental relational algebra operators;
+qJoin :=
+    select eID = aLeadID (employee product technologyArea);
+
+qNaturalJoin :=
+    project cTitle, tYear, tMonth, tDay (trainingCourse njoin takes);
+
+% Division: see query Q6 below (see also the separate ABSTRACT DIVISION enterprise)
+
+% Intermediate Tables
+
+managers := 
+     project eID (select eTitle='Manager' (employee));
+takenCourse := 
+    project eID (takes);
+qIntersectionA :=
+    managers intersect takenCourse;
+
+% Renaming attributes
+leads(eID) := 
+    project aLeadID (technologyArea);
+
+managersOrLeads :=
+    managers union leads;
+
+% Relational Algebra: Example EMPLOYEE TRAINING Queries
+
+% Q1: What training courses are offered in the `Database' technology area?
+%     (cID, cTitle, cHours)
+
+dbTechArea(areaID) := 
+    project aID (select aTitle='Database' (technologyArea)); 
+q1 := 
+     project cID, cTitle, cHours (dbTechArea njoin trainingCourse);
+
+% Q2: Which employees have taken a training course offered in the 
+%     'Database' technology area?
+%     (eID, eLast, eFirst, eTitle)
+
+dbCourseID := 
+    project cID (q1);
+q2 := 
+     project eID, eLast, eFirst, eTitle ( (dbCourseID njoin takes) njoin employee);
+
+% Q3: Which employees have not taken any training courses?
+%     (eID, eLast, eFirst, eTitle)
+
+alleIDs := 
+    project eID (employee);
+takeseIDs := 
+    project eID (takes);
+q3 :=  
+    project eID, eLast, eFirst, eTitle ( (alleIDs difference takeseIDs) njoin employee);
+
+% Q4: Which employees took courses in more than one technology area?  
+%     (eID, eLast, eFirst, eTitle)
+
+eIDaIDs(eID, aID) := 
+    project eID, areaID (takes njoin trainingCourse);
+eIDaIDsCopy(eID1, aID1) := 
+    eIDaIDs;
+eIDsMoreThanOne := 
+    project eID (select eID=eID1 and aID <> aID1 (eIDaIDs product eIDaIDsCopy));
+q4 :=  
+    project eID, eLast, eFirst, eTitle (eIDsMoreThanOne njoin employee);
+
+% Q5: Which employees have the minimum salary?
+%     (eID, eLast, eFirst, eTitle, eSalary)
+
+empSal := 
+    project eSalary(employee);
+empSalCopy(eSalary1) := 
+    empSal;
+empSalNotMin := 
+    project eSalary (select eSalary > eSalary1 (empSal product empSalCopy));
+empSalMin := 
+    empSal difference empSalNotMin;
+q5 :=   
+    employee njoin empSalMin;
+
+% Q6: Which employees took all of the training courses offered 
+%     in the `Database' technology area?  
+%     (eID, eLast, eFirst, eTitle)
+
+% The division operator is not supported by the educational tool by design,
+% forcing its equivalent definition in terms of the fundamental relational algebra operators.
+% empsAllDB := (project eID, cID (takes)) / dbCourseID.
+
+% Reusing q2, which finds the employees that took a Database course
+allEmpWithAllDB :=
+    (project eID (q2)) product dbCourseID;
+
+empNotRelatedToSomeDB :=
+    project eID (allEmpWithAllDB difference (project eID, cID (takes)));
+
+empsAllDB :=
+    (project eID (q2)) difference empNotRelatedToSomeDB;
+
+q6 :=
+    project eID, eLast, eFirst, eTitle (empsAllDB njoin employee);
+
+% Query Optimization
+
+% Q1 illustrates: Performing selections as early as possible
+
+% Q1 Option A: selects Database title as early as possible
+q1OptA :=
+    project cID, cTitle, cHours  
+	(select aID=areaID
+	   ((project aID (select aTitle='Database' (technologyArea))) product trainingCourse));
+
+% Stepwise refinement of q1OptA
+q1A1 := project aID (select aTitle='Database' (technologyArea));
+q1A2 := q1A1 product trainingCourse;
+q1A3 := select aID=areaID (q1A2);
+q1A4 := project cID, cTitle, cHours (q1A3);
+
+% Q1 Option B: performs selection of Database title after product
+
+q1OptB :=
+    project cID, cTitle, cHours
+	(select aTitle='Database'  
+	    (select aID=areaID (technologyArea product trainingCourse)));
+
+% Stepwise refinement of q1OptB
+q1B1 := technologyArea product trainingCourse;
+q1B2 := select aID=areaID (q1B1);
+q1B3 := select aTitle='Database' (q1B2);
+q1B4 := project cID, cTitle, cHours (q1B3);
+
+% Q1: Compare size of intermediate tables in stepwise refinement of Option A versus Option B
+
+% Q2 illustrates: Reordering of joins
+
+% Q2 Option A: Join dbCourse with takes first
+q2OptA :=
+    project eID, eLast, eFirst, eTitle 
+	((q1 njoin takes) njoin employee);
+
+% Stepwise refinement of q2OptA    
+q2A1 := q1 njoin takes;
+q2A2 := q2A1 njoin employee;
+q2A3 := project eID, eLast, eFirst, eTitle (q2A2);
+
+% Q2 Option B: Joins with dbCourse last
+q2OptB :=
+    project eID, eLast, eFirst, eTitle
+	(q1 njoin (takes njoin employee));
+
+% Stepwise refinement of q2OptB
+q2B1 := takes njoin employee;
+q2B2 := q1 njoin q2B1;
+q2B3 := project eID, eLast, eFirst, eTitle (q2B2);
+
+% Q2: Compare size of intermediate tables in stepwise refinement of Option A versus Option B
+
+%-----------------------------------------End EMPLOYEE TRAINING Enterprise--------------------------------------
+
+% Queries:
+
+/ra
+select true (qSelection);
+select true (qProjection);
+select true (qUnion);
+select true (qUnionA);
+select true (qDifference);
+select true (qProduct);
+select true (qIntersection);
+select true (qJoin);
+select true (qNaturalJoin);
+select true (managers);
+select true (takenCourse);
+select true (qIntersectionA);
+select true (leads);
+select true (managersOrLeads);
+select true (dbTechArea);
+select true (q1);
+select true (dbCourseID);
+select true (q2);
+select true (alleIDs);
+select true (takeseIDs);
+select true (q3);
+select true (eIDaIDs);
+select true (eIDaIDsCopy);
+select true (eIDsMoreThanOne);
+select true (q4);
+select true (empSal);
+select true (empSalCopy);
+select true (empSalNotMin);
+select true (empSalMin);
+select true (q5);
+select true (allEmpWithAllDB);
+select true (empNotRelatedToSomeDB);
+select true (empsAllDB);
+select true (q6);
+select true (q1OptA);
+select true (q1A1);
+select true (q1A2);
+select true (q1A3);
+select true (q1A4);
+select true (q1OptB);
+select true (q1B1);
+select true (q1B2);
+select true (q1B3);
+select true (q1B4);
+select true (q2OptA);
+select true (q2A1);
+select true (q2A2);
+select true (q2A3);
+select true (q2OptB);
+select true (q2B1);
+select true (q2B2);
+select true (q2B3);
+/datalog

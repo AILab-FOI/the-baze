@@ -1,0 +1,2 @@
+v(C):-p => count(p,C1),C1=<3,v(C).
+v(C):-count(p,C),C=3.

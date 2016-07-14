@@ -124,7 +124,7 @@ Public Sub ToolButtonNewEnum_Click()
 End
 
 Public Sub ToolButtonNewModule_Click()
-  ' open the module editor
+  ' open the module TextEditor
   Dim ask As New FormAskDatalogModuleName
   Dim module_editor As FormXSBCreateModule
   ask.caller = Me
