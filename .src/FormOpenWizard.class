@@ -111,6 +111,7 @@ Public Sub WizardIntro_Change()
   Dim db As Variant
   Dim please_wait As FormPleaseWait
   Dim i As Integer
+  Dim res As Boolean
   'Stop Event
   If RadioButtonNew.Value Then ' create a new baze
     FMain.new_db_type = ComboBoxNewDatabase.Text
@@ -231,7 +232,11 @@ Public Sub WizardIntro_Change()
             please_wait.ShowModal
           Else
             FMain.db = db
-            If db.connect() Then
+            Try res = db.connect()
+            If Error Then
+              Message.Error("Error connecting to database! Please check your settings.")
+            Endif
+            If res Then
               Me.Close
             Endif
           Endif
