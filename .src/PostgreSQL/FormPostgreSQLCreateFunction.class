@@ -148,7 +148,7 @@ End
 
 Public Sub ToolButtonExecute_Click()
   ' construct the create function query and execute it
-  Dim query As String
+  Dim query, ret_type As String
   Dim i As Integer
   Dim child As Object
   query = "CREATE "
@@ -168,7 +168,11 @@ Public Sub ToolButtonExecute_Click()
     If CheckBoxSetOf.Value Then
       query &= "SETOF "
     Endif
-    query &= ComboBoxRetType.Text & " "
+    ret_type = ComboBoxRetType.Text
+    If String.Lower(ret_type) <> ret_type Then
+      ret_type = "\"" & ret_type & "\""
+    Endif
+    query &= ret_type & " "
   Else
     query &= "TABLE ("
     For i = 0 To ListBoxReturnColons.Count - 1
