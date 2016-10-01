@@ -12,13 +12,19 @@ Public event_raiser As Observer
 Public infile_name As String
 ' Name of the output file of the script
 Public outfile_name As String
+' Title of the script
+Public stitle As String
+' make editor public
+Public editor As TextEditor
 ' PID of the process
 Private proc_id As Integer
 
-Public Sub _new(typ As String)
+Public Sub _new(typ As String, script_name As String)
   ' Create a terminal view
   Dim shpath As String
   type = typ
+  stitle = script_name
+  editor = TextEditorScript
   tryagain:
   shpath = get_shell_path()
   Try proc = TerminalViewMain.Shell(shpath)
@@ -58,8 +64,11 @@ Public Sub get_shell_path() As String
 End
 
 Public Sub ToolButtonExecute_Click()
-  clear_terminal()
+  ' Save the script and pipe it to the console
+  FMain.db.new_script(stitle, TextEditorScript.Text, type)
   reload_baze()
+  clear_terminal()
+  Write #proc, TextEditorScript.Text & "\n\n"
 End
 
 
@@ -196,14 +205,46 @@ Public Sub get_scripts() As String
   ' Get all forms from the current database and generate JSON for script interface
   Dim scripts, qcol As New Collection
   Dim s, k, result As String
-  For Each s In FMain.db.dbobjects["scripts"]
-    k = FMain.db.dbobjects["scripts"].key
+  For Each s In FMain.db.dbobjects["scripts"]["python"]
+    k = FMain.db.dbobjects["scripts"]["python"].key
     scripts[k] = New Collection
     scripts[k]["name"] = s
-    scripts[k]["type"] = "R"
+    scripts[k]["type"] = "python"
+  Next
+  For Each s In FMain.db.dbobjects["scripts"]["r"]
+    k = FMain.db.dbobjects["scripts"]["r"].key
+    scripts[k] = New Collection
+    scripts[k]["name"] = s
+    scripts[k]["type"] = "r"
+  Next
+  For Each s In FMain.db.dbobjects["scripts"]["nodejs"]
+    k = FMain.db.dbobjects["scripts"]["nodejs"].key
+    scripts[k] = New Collection
+    scripts[k]["name"] = s
+    scripts[k]["type"] = "nodejs"
   Next
   result = JSON.Encode(scripts)
   result = Replace(result, "'", "\\'")
   result = Replace(result, "\\n", " ")
   Return result
+End
+
+Public Sub ToolButtonImportAsModule_Click()
+  ' TODO: save the script to a file and load it as a module
+  FMain.db.new_script(stitle, TextEditorScript.Text, type)
+  reload_baze()
+  clear_terminal()
+  Write #proc, TextEditorScript.Text & "\n\n"
+End
+
+Public Sub ToolButtonClose_Click()
+  ' Save the script and close the script editor
+  Dim child As Variant
+  FMain.db.new_script(stitle, TextEditorScript.Text, type)
+  With FMain.main_tabstrip.Current
+    For Each child In .Children
+      child.Close
+    Next
+    .Delete
+  End With
 End

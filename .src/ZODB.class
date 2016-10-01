@@ -213,8 +213,17 @@ Public Sub refresh_db_tree(Optional load_modules As Boolean = False)
       .Add("frm_" & o, o, Picture.Load("images/query.png"), "Forms")
     Next
     .Add("Scripts", "Scripts", Picture.Load("images/directory.png"))
-    For Each o In Me.dbobjects["scripts"]
-      .Add("scr_" & o, o, Picture.Load("images/query.png"), "Scripts")
+    .Add("Python", "Python", Picture.Load("images/directory.png"), "Scripts")
+    .Add("R", "R", Picture.Load("images/directory.png"), "Scripts")
+    .Add("NodeJS", "NodeJS", Picture.Load("images/directory.png"), "Scripts")
+    For Each o In Me.dbobjects["scripts"]["python"]
+      .Add(Me.dbobjects["scripts"]["python"].key, Me.dbobjects["scripts"]["python"].key, Picture.Load("images/module.png"), "Python")
+    Next
+    For Each o In Me.dbobjects["scripts"]["r"]
+      .Add(Me.dbobjects["scripts"]["r"].key, Me.dbobjects["scripts"]["r"].key, Picture.Load("images/module.png"), "R")
+    Next
+    For Each o In Me.dbobjects["scripts"]["nodejs"]
+      .Add(Me.dbobjects["scripts"]["nodejs"].key, Me.dbobjects["scripts"]["nodejs"].key, Picture.Load("images/module.png"), "NodeJS")
     Next
     .Add("Reports", "Reports", Picture.Load("images/directory.png"))
     For Each o In Me.dbobjects["reports"]

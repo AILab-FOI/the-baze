@@ -531,6 +531,8 @@ Public Sub TreeViewMain_DblClick()
   Dim fl_insert As FormFlora2InsertEditor
   Dim fl_delete As FormFlora2DeleteEditor
   Dim fl_mod As FormFlora2Editor
+  ' TODO: enable opening scripts on doubleclick
+  Dim sc_edit As FormScriptSplit
   If TreeViewMain.Current.ParentKey = "Modules" Then
     If db Is ZODB Then
       For i = 0 To TabStripMain.Count - 1
@@ -856,6 +858,22 @@ Public Sub TreeViewMain_DblClick()
     ex_mani.query_type = "xquery"
     TabStripMain.Text = TreeViewMain.Current.Key & " - xQuery"
   Endif
+  With TreeViewMain.Current
+    If .ParentKey = "Python" Or .ParentKey = "R" Or .ParentKey = "NodeJS" Then
+      For i = 0 To TabStripMain.Count - 1
+        If TabStripMain[i].Text = .Text & " - " & .ParentKey & " script" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      TabStripMain.Count += 1
+      TabStripMain.Index = TabStripMain.count - 1
+      sc_edit = New FormScriptSplit(.ParentKey, .Key, TabStripMain)
+      sc_edit.editor.Text = db.dbobjects["scripts"][Lower(.ParentKey)][.Key]
+      sc_edit.type = .ParentKey
+      TabStripMain.Text = TreeViewMain.Current.Key & " - " & .ParentKey & " script"
+    Endif
+  End With
   If Left$(TreeViewMain.Current.Key, 4) = "doc_" Then
     MenuEditDocument_Click()
   Endif
@@ -980,10 +998,13 @@ Public Sub ToolButtonNewScript_Click()
       FMain.main_tabstrip.Count += 1
       FMain.main_tabstrip.Index = FMain.main_tabstrip.Count - 1
       FMain.main_tabstrip.Text = script_name & " - " & script_type & " script"
-      ui = New FormScriptSplit(script_type, FMain.main_tabstrip)
+      FMain.db.new_script(script_name, " ", Lower(script_type))
+      FMain.db.refresh_db_tree()
+      ui = New FormScriptSplit(script_type, script_name, FMain.main_tabstrip)
     Else
       Message.Error("Such a name already exists! Please choose a different name.")
       Goto askagain
     Endif
   Endif
 End
+

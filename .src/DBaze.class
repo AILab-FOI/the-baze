@@ -336,6 +336,9 @@ Public Sub initialize_dbobjects()
   
   Me.dbobjects["forms"] = New Collection
   Me.dbobjects["scripts"] = New Collection
+  Me.dbobjects["scripts"]["python"] = New Collection
+  Me.dbobjects["scripts"]["r"] = New Collection
+  Me.dbobjects["scripts"]["nodejs"] = New Collection
   Me.dbobjects["reports"] = New Collection
   Select Case connection_settings["connection type"]
     Case "PostgreSQL", "SQLite", "SQLiteEmbedded", "ODBC"
@@ -442,3 +445,11 @@ Public Sub run_query(query_name As String) As Variant
   
 End
 
+Public Sub new_script(ttitle As String, tcode As String, ttype As String)
+  ' create new script and store it in dbobjects
+  Print "1: " & ttitle
+  Print "2: " & tcode
+  Print "3: " & ttype
+  Me.dbobjects["scripts"][Lower(ttype)][ttitle] = tcode
+  Me.Save()
+End
