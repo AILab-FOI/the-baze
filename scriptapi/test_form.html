@@ -1,0 +1,237 @@
+<!-- B A Z E   F O R M   D E F I N I T I O N -->
+<!-- Edit freely except for the jQuery-UI CSS file, indicated below. -->
+<!-- If you want your elements to be draggable and editable make sure -->
+<!-- to add a class=".the-baze-form-element" in their main HTML tag. -->
+<html>
+    <head>
+        <title>A form</title>
+        <!-- jQuery-UI CSS - if changed, forms might look weird. Edit at own risk! -->
+        <link href="jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet">
+        <style>
+            .the-baze-form-element {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <!--<h1 class="the-baze-form-element" id="h1jebogapatak">Hello</h1>
+        <p class="the-baze-form-element" id="pjebogapatak">This is a test!</p>
+        <input id="inp" type="text" class="ui-widget-content the-baze-form-element"/>
+        <button id="abutton" class="ui-widget-content the-baze-form-element">Click me!</button>
+        <h2 class="the-baze-form-element" id="h2jebogapatak">Datepicker</h2>
+        <div id="datepicker" class="the-baze-form-element"></div>
+        <textarea class="ui-widget-content the-baze-form-element" id="tajebogapatak"></textarea>
+        <br />
+        <div class="the-baze-form-element"> <!-- Select has to have a div around it to be draggable ... ->
+            <select name="radius" id="radius" class="the-baze-form-element">
+                <option value="50">50px tralalalalalalala</option>
+                <option value="100">100px</option>
+                <option value="150" selected="selected">150px</option>
+                <option value="200">200px</option>
+                <option value="250">250px</option>
+            </select> -->
+        </div>
+    </body>
+</html>
+<!-- B A Z E   I N T E R F A C E   S C R I P T S -->
+<!-- Editing might cause malfunction. Change at own risk! -->
+<script src="jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
+<script src="jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+<script language="javascript" type="text/javascript">
+$('#abutton').click( function()
+{
+    setInbox( $( '#inp' ).val() );
+}).button();
+
+
+$( "#datepicker" ).datepicker({
+	inline: true
+});
+
+
+$( "#radius" ).selectmenu({
+	change: function( event, data ) {
+        alert( data.item.value );
+    }
+});
+
+var save_background = ""; // save the background color of the current widget being dragged
+
+function reinit() {
+    $( ".the-baze-form-element" )
+        .draggable({
+            cancel: false,
+            start: function( event, ui ){
+                var color = $( this ).css( "background-color" );
+                if( color != "rgba(0, 0, 0, 0)" )
+                {
+                    save_background = color;
+                }
+                else
+                {
+                    save_background = "";
+                }
+                
+                $( this ).css( "background-color", "yellow" );
+            },
+            stop: function( event, ui ){
+                $( this ).css( "background-color", save_background );
+                console.log( $( this ) );
+                console.log( $( this ).css( "left" ) );
+                console.log( $( this ).css( "top" ) );
+            }      
+        })
+        .mousedown( function( e ){ 
+            if( e.button == 2 ) { 
+                console.log( $( this ) ); 
+                return false; 
+            }
+            else
+            {
+                var ret = getStyle( this );
+                ret["status"] = "element click";
+                ret["element"] = $( this ).attr( "id" );
+                console.log( ret );
+                setInbox( JSON.stringify( ret ) );
+            } 
+            return true; 
+        });
+    $( ".the-baze-form-element:not(input):not(button):not(p):not(textarea):not(select):not(img)" )
+        .css( 'width', '0px' ) // All elements, except the listed above, should only take up space enough to show their (textual) content.
+    $( "select" ).selectmenu();
+    $( ".datepicker" ).datepicker({
+        inline: true
+    });
+    $( 'button' ).button();
+};
+
+
+$(document).ready(function(){ // cancel right click event
+  document.oncontextmenu = function() { return false; };
+  reinit()
+});
+
+/* G A M B A S   I N T E R F A C E */
+/* Baze needs these functions to communicate with the form. */
+/* Better do not edit them at all! */
+/* Get the current state of the HTML document (e.g. to be saved or to update the current html file */
+function getHTML()
+{
+    $( 'select' ).selectmenu( 'destroy' ); // TODO: restore state for selectmenu and datepicker
+    $( '.datepicker' ).datepicker( 'destroy' );
+    $( 'button' ).button( 'destroy' );
+    html = $('html').clone();
+    reinit();
+    return html.html();
+}
+/* Get the title of the form */
+function getTitle()
+{
+    return $( 'title' ).text();
+}
+/* Set the title of the form */
+function setTitle( newtitle )
+{
+    return $( 'title' ).text( newtitle );
+}
+function getInbox()
+{
+    var data = $( '#the-baze-inbox' ).text();
+    $( '#the-baze-inbox' ).text( '' );
+    return data;
+}
+function setInbox( status )
+{
+    $( '#the-baze-inbox' ).text( status );
+    window.status = status;
+}
+function addElement( type, id, html )
+{
+    if( $( '#' + id ).length )
+    {
+        alert( 'Given ID is not unique! Please use another ID!' );
+        setInbox( 'duplicateID' );
+    }
+    else
+    {
+        switch( type )
+        {
+            case 'button':
+                $( "body" ).append("<button id='" + id + "' class='ui-widget-content the-baze-form-element'>" + id + "</button>")
+                $( '#' + id ).button();
+                break;
+            case 'textbox': 
+                $( "body" ).append("<input type='text' id='" + id + "' class='ui-widget-content the-baze-form-element' />")
+                break;
+            case 'textarea': 
+                $( "body" ).append("<textarea id='" + id + "' class='ui-widget-content the-baze-form-element'></textarea>")
+                break;
+            case 'combobox': 
+                $( "body" ).append('<div class="the-baze-form-element" id="'  + id +  '">' +
+                    '    <select name="radius" id="cb'  + id +  '" class="the-baze-form-element">' +
+                    '        <option value="50">50px tralalalalalalala</option>' +
+                    '        <option value="100">100px</option>' +
+                    '        <option value="150" selected="selected">150px</option>' +
+                    '        <option value="200">200px</option>' +
+                    '        <option value="250">250px</option>' +
+                    '    </select>' +
+                    '</div>');
+                    $( '#cb' + id ).selectmenu();
+                break;
+            case 'header': 
+                $( 'body' ).append( '<h1 class="the-baze-form-element" id="'  + id +  '">Hello</h1>' );
+                break;
+            case 'paragraph': 
+                $( 'body' ).append( '<p class="the-baze-form-element" id="'  + id +  '">This is a test!</p>' );
+                break;
+            case 'datepicker': 
+                $( 'body' ).append( '<div id="'  + id +  '" class="the-baze-form-element datepicker"></div>' );
+                $( '#' + id ).datepicker({
+                    inline: true
+                });
+                break;
+            case 'image': 
+                $( '<img src="http://ai.foi.hr/uavtraffic/wp/wp-content/uploads/2015/03/logo2.png" id="'  + id +  '" class="the-baze-form-element"/>' ).load( function() {
+                    $( this ).appendTo( 'body' );
+                    reinit();
+                });
+                break;
+            case 'checkbox':
+                $( 'body' ).append( "<input type='checkbox' id='" + id + "' class='ui-widget-content the-baze-form-element' />" );
+                break;
+            case 'radiobutton':
+                $( 'body' ).append( "<input type='radio' id='" + id + "' class='ui-widget-content the-baze-form-element' />" );
+                break;
+            case 'table':
+                $( 'body' ).append( "<table id='" + id + "' class='the-baze-form-element ui-widget-content'><tr><th>Header</th><th>Header</th></tr><tr><td>Test</td><td>Test</td></tr><tr><td>Test</td><td>Test</td></tr></table>" );
+                break;
+            case 'custom': 
+                var elem = $( html ).addClass( 'the-baze-form-element' ).attr( 'id', id );
+                $( 'body' ).append( elem ); 
+                break;
+            default:
+                break;
+        }
+        reinit();
+    }
+}
+function getStyle( elem )
+{
+    var getCss = function( el ) {
+        var style = window.getComputedStyle( el );
+        return Object.keys(style).reduce(function(acc, k) {
+            var name = style[k],
+                value = style.getPropertyValue(name);
+            if (value !== null) {
+                acc[name] = value;
+            }
+            return acc;
+        }, {});
+    };
+    
+    return getCss( document.getElementById( $( elem ).attr( 'id' ) ) )
+}
+</script>
+<div id="the-baze-inbox" style="display: none">{"status":"init"}</div>

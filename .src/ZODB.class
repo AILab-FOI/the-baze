@@ -134,7 +134,7 @@ Public Sub initialize_gui()
     FMain.main_tabstrip.Text = "ZODB - " & Me.connection_settings["host"] & ":" & Me.connection_settings["port"]
   Endif
   
-  documentation.Frame.Url = "http://www.zodb.org/en/latest/documentation/guide/index.html"
+  documentation.Frame.Url = "http://www.zodb.org/en/latest/guide/index.html"
  
   
   ' create the treeview

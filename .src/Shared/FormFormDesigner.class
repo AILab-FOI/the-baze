@@ -22,7 +22,7 @@ Public datasourceCounter As Integer = 0
 
 Public Sub _new()
   ' load a local html file
-  WebViewDesigner.Url = "file:///home/markus/smece/test_form.html"
+  WebViewDesigner.Url = "file://" & Application.Path &/ "scriptapi/test_form.html"
   'WebViewDesigner.Editable = True
 End
 
@@ -42,7 +42,7 @@ Public Sub ToolButtonSaveForm_Click()
   ' Save the form
   Dim fhtml As String
   fhtml = WebViewDesigner.Eval("getHTML()")
-  htmlFile = Open "/home/markus/smece/test_form1.html" For Write Create
+  htmlFile = Open Application.Path &/ "scriptapi/test_form1.html" For Write Create
   Print #htmlFile, fhtml
 End
 

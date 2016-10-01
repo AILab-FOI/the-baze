@@ -23,3 +23,40 @@ A recent binary can be downloaded from:
 http://tinyurl.com/skini-baze
 
 but only the source has the latest features.
+
+COMPILE
+-------
+
+In order to compile from source you need the latest Gambas3 packages
+from the official ppa (as from October 2016). To add the ppa to Ubuntu
+type:
+
+$ sudo -y add-apt-repository ppa:gambas-team/gambas-daily
+$ sudo apt-get update
+
+Also to use the NodeJS scripting interface, you need the newest version
+of NodeJS. To add the repository use:
+
+$ curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+$ sudo bash nodesource_setup.sh
+$ rm nodesource_setup.sh
+
+Then install the following packages:
+
+$ sudo apt-get install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base nodejs
+
+Now you can compile the-baze with:
+
+$ cd the-baze
+$ make
+
+If everything is OK, you can install it to /usr/bin with:
+
+$ make install
+
+You should now be able to run the-baze with:
+
+$ baze
+
+
+
