@@ -4,6 +4,8 @@
 .netrc
 .gitignore
 .*.prof
+baze
+*.pyc
 #---- Gambas files to ignore (v1)
 *.gambas
 .lock
