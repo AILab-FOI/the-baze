@@ -15,8 +15,8 @@ and support for report creation is pending.
 
 It is implemented in Gambas3, not fully functional yet, but a lot
 of functionality is already implemented. It uses the Datalog Educational
-System (DES - see des.sourceforge.net) to supply Datalog queries for 
-all types of relational databases that are supported.
+System (DES - see http://des.sourceforge.net) to supply Datalog queries 
+for all types of relational databases that are supported.
 
 A recent binary can be downloaded from:
 
@@ -31,32 +31,43 @@ In order to compile from source you need the latest Gambas3 packages
 from the official ppa (as from October 2016). To add the ppa to Ubuntu
 type:
 
+```
 $ sudo -y add-apt-repository ppa:gambas-team/gambas-daily
 $ sudo apt-get update
+```
 
 Also to use the NodeJS scripting interface, you need the newest version
 of NodeJS. To add the repository use:
 
+```
 $ curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
 $ sudo bash nodesource_setup.sh
 $ rm nodesource_setup.sh
+```
 
 Then install the following packages:
 
+```
 $ sudo apt-get install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base nodejs
+```
 
 Now you can compile the-baze with:
 
+```
 $ cd the-baze
 $ make
+```
 
 If everything is OK, you can install it to /usr/bin with:
 
+```
 $ make install
+```
 
 You should now be able to run the-baze with:
 
+```
 $ baze
-
+```
 
 
