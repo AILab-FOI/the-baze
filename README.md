@@ -1,3 +1,6 @@
+Intro
+-----
+
 The Baze is a database development environment similar to MS Access, 
 LibreOffice Base, Query Anaylzer and similar. It aims on being a Swiss
 army knife for the data scientist.
@@ -24,8 +27,8 @@ http://tinyurl.com/skini-baze
 
 but only the source has the latest features.
 
-COMPILE
--------
+How to compile
+--------------
 
 In order to compile from source you need the latest Gambas3 packages
 from the official ppa (as from October 2016). To add the ppa to Ubuntu
@@ -48,7 +51,7 @@ $ rm nodesource_setup.sh
 Then install the following packages:
 
 ```
-$ sudo apt-get install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base nodejs
+$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base r-cran-rjson nodejs 
 ```
 
 Now you can compile the-baze with:
