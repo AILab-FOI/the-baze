@@ -177,6 +177,9 @@ Public Sub query(query_ As String) As Variant
   Dim res As String
   If is_open Then
     res = exec("print baze_encode(" & query_ & ")")
+    If Left$( res, 5 ) = "print" Then
+	Return json.Decode( "{}" )
+    Endif 
     Return json.Decode(res)
   Else
     Error.Raise("Connection to ZODB closed!")
