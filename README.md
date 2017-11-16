@@ -35,7 +35,7 @@ from the official ppa (as from October 2016). To add the ppa to Ubuntu
 type:
 
 ```
-$ sudo -y add-apt-repository ppa:gambas-team/gambas-daily
+$ sudo add-apt-repository -y ppa:gambas-team/gambas-daily
 $ sudo apt-get update
 ```
 
@@ -51,7 +51,7 @@ $ rm nodesource_setup.sh
 Then install the following packages:
 
 ```
-$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base r-cran-rjson nodejs 
+$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base r-cran-rjson nodejs gambas3-gb-qt4-webkit
 ```
 
 Now you can compile the-baze with:
@@ -64,7 +64,7 @@ $ make
 If everything is OK, you can install it to /usr/bin with:
 
 ```
-$ make install
+$ sudo make install
 ```
 
 You should now be able to run the-baze with:
