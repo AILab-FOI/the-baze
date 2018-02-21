@@ -1,4 +1,4 @@
-Intro
+Intro:
 -----
 
 The Baze is a database development environment similar to MS Access, 
