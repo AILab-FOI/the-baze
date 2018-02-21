@@ -73,5 +73,3 @@ You should now be able to run the-baze with:
 $ baze
 ```
 
-
-Here comes MySQL
