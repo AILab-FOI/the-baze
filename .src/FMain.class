@@ -38,6 +38,8 @@ Public wiz As FormOpenWizard
 Public new_db_type As String
 ' Open subprocesses (DES mainly)
 Public processes As Process[]
+' Maximum amount of recently opened .baze files that will be previewed in Home window - set value of this constant 0 (or any negative number) if you don't want list of recently opened files to be unlimited
+Public Const MAX_RECENT_LIST_SIZE As Integer = 6
   
 Public Sub _new()
   ' make components visible to DB classes
@@ -154,15 +156,31 @@ End
 
 Public Sub shift_recent_files(next_file As String)
   ' shift the settings and add next_file on top
-  If next_file <> Settings["FormOpenWizard/sixth"] And next_file <> Settings["FormOpenWizard/fifth"] And next_file <> Settings["FormOpenWizard/fourth"] And next_file <> Settings["FormOpenWizard/third"] And next_file <> Settings["FormOpenWizard/second"] And next_file <> Settings["FormOpenWizard/first"] Then
-    Settings["FormOpenWizard/sixth"] = Settings["FormOpenWizard/fifth"]
-    Settings["FormOpenWizard/fifth"] = Settings["FormOpenWizard/fourth"]
-    Settings["FormOpenWizard/fourth"] = Settings["FormOpenWizard/third"]
-    Settings["FormOpenWizard/third"] = Settings["FormOpenWizard/second"]
-    Settings["FormOpenWizard/second"] = Settings["FormOpenWizard/first"]
-    Settings["FormOpenWizard/first"] = next_file
-    Settings.Save()
+  Dim i As Integer = 1
+  Dim already_in_recent_list As Boolean = False
+  Dim new_recent_list_size As Integer
+  While True
+    Select Settings["FormOpenWizard/option-" & i]
+      Case Null
+        Goto exit_from_loop ' unlike VB6, VB.NET and other Basic dialects, Gambas doesn't have Exit While/For statement nor Break # (in this example, Break 2 would be useful for exiting from While loop), so I am using this Goto directive to avoid introducing additional Boolean variable
+      Case next_file
+        already_in_recent_list = True
+        Break
+    End Select
+    i += 1
+  Wend
+  exit_from_loop:
+  new_recent_list_size = i
+  If MAX_RECENT_LIST_SIZE > 0 Then
+    new_recent_list_size = Min(new_recent_list_size, MAX_RECENT_LIST_SIZE)
   Endif
+  If Not already_in_recent_list Then
+    For i = new_recent_list_size To 2 Step -1
+      Settings["FormOpenWizard/option-" & i] = Settings["FormOpenWizard/option-" & (i - 1)]
+    Next
+    Settings["FormOpenWizard/option-1"] = next_file
+  Endif
+  Settings.Save()
 End
 
 Public Sub TreeViewMain_Menu()

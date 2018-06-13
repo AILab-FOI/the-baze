@@ -19,6 +19,7 @@ Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
   Dim xsb, flora2, save_shell As String
+  Dim i As Integer
   stop_event = False
   last_index = 0
   ' set return value to canceled in case the user clicks the x button
@@ -43,43 +44,15 @@ Public Sub Form_Open()
     TextBoxfflora2.Text = Left$(flora2, -1)
   Endif
   System.Shell = save_shell
-  setting = Settings["FormOpenWizard/first"]
-  helper = Split(setting, "/")
-  Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-  If setting <> "" Then
-    ListViewRecent.Add("first", setting)
-    setting = Settings["FormOpenWizard/second"]
-    helper = Split(setting, "/")
-    Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-    If setting <> "" Then
-      ListViewRecent.Add("second", setting)
-      setting = Settings["FormOpenWizard/third"]
-      helper = Split(setting, "/")
-      Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-      If setting <> "" Then
-        ListViewRecent.Add("third", setting)
-        setting = Settings["FormOpenWizard/fourth"]
-        helper = Split(setting, "/")
-        Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-        If setting <> "" Then
-          ListViewRecent.Add("fourth", setting)
-          setting = Settings["FormOpenWizard/fifth"]
-          helper = Split(setting, "/")
-          Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-          If setting <> "" Then
-            ListViewRecent.Add("fifth", setting)
-            setting = Settings["FormOpenWizard/sixth"]
-            helper = Split(setting, "/")
-            Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-            If setting <> "" Then
-              ListViewRecent.Add("sixth", setting)
-            Endif
-          Endif
-        Endif
-      Endif
+  For i = 1 To FMain.MAX_RECENT_LIST_SIZE
+    setting = Settings["FormOpenWizard/option-" & i]
+    If setting = Null Then
+      Break
     Endif
-    Else
-      hasrecent = False
+    ListViewRecent.Add(setting, Split(setting, "/").Pop())
+  Next
+  If i = 1 Then
+    hasrecent = False
   Endif
   load_odbc_dsn()
 End
@@ -398,9 +371,7 @@ End
 
 Public Sub ListViewRecent_Click()
   ' if recent file is selected update the file to be opened variable
-  Dim s As String
-  s = ListViewRecent.Current.Text
-  openfile = AUX.FindAll(s, "\\((.*)\\)", 1)[0]
+  openfile = ListViewRecent.Current.Key
 End
 
 Public Sub ComboBoxZStorageType_Click()
@@ -528,7 +499,7 @@ End
 Public Sub ToolButtonFindSDBFile_Click()
   ' find an existing SQLite DB file
   Dialog.Title = "Please find the SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.OpenFile() Then
     Return
   Endif
@@ -542,7 +513,7 @@ Public Sub ToolButtonSCreateNew_Click()
   Dim db As SQLiteDB
   Dim db_file, db_host As String
   Dialog.Title = "New SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.SaveFile() Then
     Return
   Endif
@@ -570,6 +541,16 @@ Public Sub ButtonSTest_Click()
   Endif
 End
 
+
+Public Sub ButtonOTest_Click()
+  ' Try to connect to SQLite db ' dsn_ As String, username As String, password As String, store_password As Boolean
+  Dim db As New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
+  If db.is_open Then
+    Try db.close()
+    Message.Info("Connection succesfull!")
+  Endif
+End
+
 Public Sub ButtonMgTest_Click()
   ' try to connect to MongoDB
   Dim db As New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
@@ -581,13 +562,3 @@ Public Sub ButtonMgTest_Click()
     Message.Info("Connection successful!")
   Endif
 End
-
-Public Sub ButtonOTest_Click()
-  ' Try to connect to SQLite db ' dsn_ As String, username As String, password As String, store_password As Boolean
-  Dim db As New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
-  If db.is_open Then
-    Try db.close()
-    Message.Info("Connection succesfull!")
-  Endif
-End
-
