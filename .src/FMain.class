@@ -76,6 +76,7 @@ End
 Public Sub handle_user_request()
   ' handle the users request
   ' open the wizard first
+  display_home_window:
   wiz = New FormOpenWizard
   wiz.ShowModal()
   Try wiz.Delete
@@ -113,13 +114,16 @@ Public Sub handle_user_request()
           Else
             Return
           Endif
-          Else
-            ' open an existing file
-            db = New DBaze
-            current_file = wizard_return
-            db = db.load_file(wizard_return)
-            db.initialize_gui()
-            shift_recent_files(current_file)
+        Else
+          ' open an existing file
+          db = New DBaze
+          current_file = wizard_return
+          Try db = db.load_file(wizard_return)
+          If Error
+            Goto display_home_window
+          Endif
+          db.initialize_gui()
+          shift_recent_files(current_file)
         End If
       End If
   Endif 

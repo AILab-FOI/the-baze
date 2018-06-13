@@ -12,3 +12,8 @@ Public Sub TextBoxPassword_KeyPress()
     ButtonOK_Click()
   Endif
 End
+
+Public Sub ButtonCancel_Click()
+  Me.Close
+  Error.Raise("") ' cancel process of connecting to existing database and return back to home window
+End
