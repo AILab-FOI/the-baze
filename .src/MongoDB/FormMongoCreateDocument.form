@@ -1,0 +1,69 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,84,59)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(3,2,79,56)
+    { FrameMain Frame
+      MoveScaled(2,2,74,29)
+      { LabelPath Label
+        MoveScaled(4,7,16,4)
+        Text = ("Document path:")
+      }
+      { TextBoxPath TextBox
+        MoveScaled(21,7,24,4)
+        Text = ("/")
+      }
+      { PanelToolBox Panel
+        MoveScaled(0,0,67,5)
+        { ToolButtonExecute ToolButton
+          MoveScaled(0,0,5,4)
+          ToolTip = ("Create document")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonCancel ToolButton
+          MoveScaled(5,0,5,4)
+          ToolTip = ("Cancel")
+          Picture = Picture["icon:/32/halt"]
+        }
+      }
+      { RadioButtonFromWeb RadioButton
+        MoveScaled(4,14,34,4)
+        Text = ("Load document from Web address")
+        Value = True
+      }
+      { RadioButtonFromFileSystem RadioButton
+        MoveScaled(4,19,34,4)
+        Text = ("Load document from file system")
+      }
+      { RadioButtonFromText RadioButton
+        MoveScaled(4,24,34,4)
+        Text = ("Edit document directly")
+      }
+      { TextBoxWWW TextBox
+        MoveScaled(38,14,27,4)
+        Text = ("http://")
+      }
+      { ToolButtonOpenFile ToolButton
+        MoveScaled(38,19,5,4)
+        Enabled = False
+        Picture = Picture["icon:/32/open"]
+      }
+      { LabelFileToOpen Label
+        MoveScaled(44,19,30,5)
+        Enabled = False
+      }
+      { ToolButtonLoad ToolButton
+        MoveScaled(65,14,4,4)
+        ToolTip = ("Load")
+        Picture = Picture["icon:/32/internet"]
+      }
+    }
+    { TextEditorJSON TextEditor
+      MoveScaled(3,35,68,17)
+      Enabled = False
+      Highlight = "JavaScript"
+    }
+  }
+}

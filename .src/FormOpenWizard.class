@@ -214,15 +214,14 @@ Public Sub WizardIntro_Change()
               db.close()
               FMain.connection_settings["connection"] = db
             Case "MongoDB"
-              FMain.connection_settings["mongo host"] = TextBoxMgHost.Text
-              FMain.connection_settings["mongo port"] = TextBoxMgPort.Text
+              FMain.connection_settings["host"] = TextBoxMgHost.Text
+              FMain.connection_settings["port"] = TextBoxMgPort.Text
+              FMain.connection_settings["dbname"] = TextBoxMgDBName.Text
+              FMain.connection_settings["authentication dbname"] = TextBoxMgAuthDBName.Text
               FMain.connection_settings["username"] = TextBoxMgUsername.Text
               FMain.connection_settings["password"] = TextBoxMgPassword.Text
-              FMain.connection_settings["rest host"] = TextBoxMgHostREST.Text
-              FMain.connection_settings["rest port"] = TextBoxMgPortREST.Text
               FMain.connection_settings["store password"] = CheckBoxMgStoreP.Value
-              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, TextBoxMgHostREST.Text, TextBoxMgPortREST.Text, CheckBoxOStoreP.Value)
-              db.close()
+              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
               FMain.connection_settings["connection"] = db
           End Select
           If dbtype = "XSB" Then
@@ -571,6 +570,17 @@ Public Sub ButtonSTest_Click()
   Endif
 End
 
+Public Sub ButtonMgTest_Click()
+  ' try to connect to MongoDB
+  Dim db As New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
+  Try db.connect()
+  If Error
+    Message.Error(Error.Text)
+  Else
+    db.close()
+    Message.Info("Connection successful!")
+  Endif
+End
 
 Public Sub ButtonOTest_Click()
   ' Try to connect to SQLite db ' dsn_ As String, username As String, password As String, store_password As Boolean

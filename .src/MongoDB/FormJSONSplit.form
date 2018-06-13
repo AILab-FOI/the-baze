@@ -1,0 +1,53 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Arrangement = Arrange.Fill
+  { VSplitMain VSplit
+    MoveScaled(0,0,62,62)
+    { VBox1 VBox
+      MoveScaled(2,2,57,31)
+      { PanelToolbar Panel
+        MoveScaled(1,1,55,5)
+        Arrangement = Arrange.Row
+        AutoResize = True
+        { ToolButtonExecute ToolButton
+          MoveScaled(1,0,5,4)
+          ToolTip = ("Execute query")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/make"]
+        }
+        { ToolButtonClose ToolButton
+          MoveScaled(6,0,5,4)
+          ToolTip = ("Close")
+          Text = ("ToolButton1")
+          Picture = Picture["icon:/32/close"]
+        }
+      }
+      { TextEditorJSON TextEditor
+        MoveScaled(1,6,55,24)
+        Mouse = Mouse.Text
+        Expand = True
+        Highlight = "JavaScript"
+      }
+    }
+    { TabStripResult TabStrip
+      MoveScaled(3,34,52,26)
+      Arrangement = Arrange.Fill
+      Count = 2
+      Index = 0
+      Text = ("Tree")
+      { TreeViewResult TreeView
+        MoveScaled(1,1,49,20)
+      }
+      Index = 1
+      Text = ("JSON")
+      { TextEditorResult TextEditor
+        MoveScaled(1,1,50,20)
+        Highlight = "HTML"
+        ReadOnly = True
+      }
+      Index = 0
+    }
+  }
+}

@@ -315,11 +315,12 @@ Public Sub load_file(dbfile As String) As Variant
         password = connection_settings["password"]
         save_password = True
       Endif
-      db = New MongoDB(connection_settings["mongo host"], connection_settings["mongo port"], connection_settings["username"], password, connection_settings["rest host"], connection_settings["rest port"], save_password) 
+      db = New MongoDB(connection_settings["host"], connection_settings["port"], connection_settings["dbname"], connection_settings["authentication dbname"], connection_settings["username"], password, save_password) 
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Goto mongonoconnect
       Endif
       db.baze_file = dbfile

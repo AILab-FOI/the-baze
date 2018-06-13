@@ -1,0 +1,43 @@
+' Gambas class file
+
+' request canceled inbox
+Public request_canceled As Boolean
+' document name inbox
+Public doc_name As String
+' collection name inbox
+Public collection_path As String
+
+Public Sub ToolButtonNewDocument_Click()
+  ' open the document creation window
+  Dim cho As New FormAskDocumentName
+  Dim table_updater As FormMongoCreateDocument
+  Dim i As Integer
+  request_canceled = False
+  cho.caller = Me
+  cho.ShowModal()
+  If Not request_canceled Then
+    For i = 0 To FMain.main_tabstrip.Count - 1
+      If FMain.main_tabstrip[i].Text = doc_name & " - JSON Document" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    FMain.main_tabstrip.count += 1
+    table_updater = New FormMongoCreateDocument(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = doc_name & " - JSON Document"
+  Endif
+End
+
+Public Sub ToolButtonNewCollection_Click()
+  ' create a new collection
+  Dim cho As New FormAskCollectionPath
+  request_canceled = False
+  cho.caller = Me
+  cho.ShowModal()
+  If Not request_canceled Then
+    If FMain.db.new_collection(collection_path) Then
+      Message.Info("Collection successfully created!")
+      FMain.db.refresh_db_tree()
+    Endif
+  Endif
+End
