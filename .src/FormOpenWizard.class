@@ -19,6 +19,7 @@ Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
   Dim xsb, flora2, save_shell As String
+  Dim i As Integer
   stop_event = False
   last_index = 0
   ' set return value to canceled in case the user clicks the x button
@@ -43,43 +44,15 @@ Public Sub Form_Open()
     TextBoxfflora2.Text = Left$(flora2, -1)
   Endif
   System.Shell = save_shell
-  setting = Settings["FormOpenWizard/first"]
-  helper = Split(setting, "/")
-  Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-  If setting <> "" Then
-    ListViewRecent.Add("first", setting)
-    setting = Settings["FormOpenWizard/second"]
-    helper = Split(setting, "/")
-    Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-    If setting <> "" Then
-      ListViewRecent.Add("second", setting)
-      setting = Settings["FormOpenWizard/third"]
-      helper = Split(setting, "/")
-      Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-      If setting <> "" Then
-        ListViewRecent.Add("third", setting)
-        setting = Settings["FormOpenWizard/fourth"]
-        helper = Split(setting, "/")
-        Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-        If setting <> "" Then
-          ListViewRecent.Add("fourth", setting)
-          setting = Settings["FormOpenWizard/fifth"]
-          helper = Split(setting, "/")
-          Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-          If setting <> "" Then
-            ListViewRecent.Add("fifth", setting)
-            setting = Settings["FormOpenWizard/sixth"]
-            helper = Split(setting, "/")
-            Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-            If setting <> "" Then
-              ListViewRecent.Add("sixth", setting)
-            Endif
-          Endif
-        Endif
-      Endif
+  For i = 1 To FMain.MAX_RECENT_LIST_SIZE
+    setting = Settings["FormOpenWizard/option-" & i]
+    If setting = Null Then
+      Break
     Endif
-    Else
-      hasrecent = False
+    ListViewRecent.Add(setting, Split(setting, "/").Pop())
+  Next
+  If i = 1 Then
+    hasrecent = False
   Endif
   load_odbc_dsn()
 End
@@ -214,15 +187,14 @@ Public Sub WizardIntro_Change()
               db.close()
               FMain.connection_settings["connection"] = db
             Case "MongoDB"
-              FMain.connection_settings["mongo host"] = TextBoxMgHost.Text
-              FMain.connection_settings["mongo port"] = TextBoxMgPort.Text
+              FMain.connection_settings["host"] = TextBoxMgHost.Text
+              FMain.connection_settings["port"] = TextBoxMgPort.Text
+              FMain.connection_settings["dbname"] = TextBoxMgDBName.Text
+              FMain.connection_settings["authentication dbname"] = TextBoxMgAuthDBName.Text
               FMain.connection_settings["username"] = TextBoxMgUsername.Text
               FMain.connection_settings["password"] = TextBoxMgPassword.Text
-              FMain.connection_settings["rest host"] = TextBoxMgHostREST.Text
-              FMain.connection_settings["rest port"] = TextBoxMgPortREST.Text
               FMain.connection_settings["store password"] = CheckBoxMgStoreP.Value
-              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, TextBoxMgHostREST.Text, TextBoxMgPortREST.Text, CheckBoxOStoreP.Value)
-              db.close()
+              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
               FMain.connection_settings["connection"] = db
           End Select
           If dbtype = "XSB" Then
@@ -399,9 +371,7 @@ End
 
 Public Sub ListViewRecent_Click()
   ' if recent file is selected update the file to be opened variable
-  Dim s As String
-  s = ListViewRecent.Current.Text
-  openfile = AUX.FindAll(s, "\\((.*)\\)", 1)[0]
+  openfile = ListViewRecent.Current.Key
 End
 
 Public Sub ComboBoxZStorageType_Click()
@@ -529,7 +499,7 @@ End
 Public Sub ToolButtonFindSDBFile_Click()
   ' find an existing SQLite DB file
   Dialog.Title = "Please find the SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.OpenFile() Then
     Return
   Endif
@@ -543,7 +513,7 @@ Public Sub ToolButtonSCreateNew_Click()
   Dim db As SQLiteDB
   Dim db_file, db_host As String
   Dialog.Title = "New SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.SaveFile() Then
     Return
   Endif
@@ -581,3 +551,14 @@ Public Sub ButtonOTest_Click()
   Endif
 End
 
+Public Sub ButtonMgTest_Click()
+  ' try to connect to MongoDB
+  Dim db As New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
+  Try db.connect()
+  If Error
+    Message.Error(Error.Text)
+  Else
+    db.close()
+    Message.Info("Connection successful!")
+  Endif
+End
