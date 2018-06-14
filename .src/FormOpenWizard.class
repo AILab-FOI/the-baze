@@ -75,6 +75,41 @@ Private Sub load_odbc_dsn()
   Next
 End
 
+Private Sub display_specific_container(dbname As String)
+  Dim index As Integer
+'  Dim i As Integer
+'  For i = 0 To WizardIntro.Count - 1
+'    WizardIntro[i].Hide
+'  Next
+  stop_event = True
+  Select dbname
+    Case "PostgreSQL"
+      index = 1
+    Case "XSB"
+      index = 2
+    Case "Flora2"
+      index = 3
+    Case "ZODB"
+      index = 4
+    Case "eXist"
+      index = 5
+    Case "CouchDB"
+      index = 6
+    Case "SQLite"
+      index = 7
+    Case "ODBC"
+      index = 8
+    Case "MongoDB"
+      index = 9
+    Default
+      index = 0
+  End Select
+'  WizardIntro[index].show
+  WizardIntro.Index = index
+  last_index = index
+  stop_event = False
+End
+
 
 Public Sub WizardIntro_Change()
   ' check which option was selected (new, open, connection)
@@ -84,7 +119,9 @@ Public Sub WizardIntro_Change()
   Dim please_wait As FormPleaseWait
   Dim i As Integer
   Dim res As Boolean
-  'Stop Event
+  If stop_event = True
+    Return
+  Endif
   If RadioButtonNew.Value Then ' create a new baze
     FMain.new_db_type = ComboBoxNewDatabase.Text
     FMain.wizard_return = "new" 'TODO: add another return value with the new db type (SQLite or ZODB)
@@ -92,6 +129,7 @@ Public Sub WizardIntro_Change()
   Else
     If RadioButtonOpen.Value Then ' open an existing baze
       If openfile = "" Then
+        display_specific_container("")
         Message.Error("Please choose a file to open!", "OK")
       Else
         FMain.wizard_return = openfile
@@ -99,8 +137,7 @@ Public Sub WizardIntro_Change()
       Endif
     Else ' connect to a database
       If RadioButtonConnect.Value Then
-        If dbtype <> "" And last_index < WizardIntro.Index Then ' a database type has already been selected, connect to it
-          FMain.connection_settings = New Collection
+        If dbtype <> "" And last_index <= WizardIntro.Index Then ' a database type has already been selected, connect to it
           Select Case dbtype
             Case "PostgreSQL"
               FMain.db = New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
@@ -120,20 +157,8 @@ Public Sub WizardIntro_Change()
             Case "eXist"
               FMain.db = New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
             Case "CouchDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[6].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
               FMain.db = New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
             Case "SQLite"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[7].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
               FMain.db = New SQLiteDB(TextBoxSDBFile.Text)
             Case "ODBC"
               FMain.db = New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
@@ -142,6 +167,7 @@ Public Sub WizardIntro_Change()
               FMain.db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
           End Select
           If dbtype = "XSB" Then
+            display_specific_container(dbtype)
             please_wait = New FormPleaseWait
             please_wait.db = FMain.db
             please_wait.silent = True
@@ -154,93 +180,29 @@ Public Sub WizardIntro_Change()
             If res Then
               Me.Close
             Endif
+            Try res = FMain.db.connect()
+			If  Not Error Then
+			  If res Then
+			    FMain.wizard_return = "connection"
+				Me.Close
+			  Else
+			    If dbtype Then
+				  display_specific_container(dbtype)
+				Endif
+				FMain.wizard_return = "canceled"
+				Message.Error("Error connecting to database! Please check you settings.")
+			  Endif
           Endif
         Else
           dbtype = ""
           selected = ""
         Endif
         If last_index > WizardIntro.Index Then
-          WizardIntro[0].show
+          display_specific_container("")
         Else
-          FMain.wizard_return = "connection"
           selected = ComboBoxDBTypes.Current.Text
           dbtype = selected
-          For i = 0 To WizardIntro.Count - 1 
-            WizardIntro[i].Hide
-          Next
-          Select Case selected ' show the appropriate menu
-            Case ""
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[0].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-              Message.Error("Please select a database type!", "OK")
-            Case "PostgreSQL"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[1].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "XSB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[2].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "Flora2"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[3].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "ZODB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[4].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "eXist"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[5].show
-                last_index = WizardIntro.Index
-                stop_event = False             
-              Endif
-            Case "CouchDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[6].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "SQLite"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[7].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "ODBC"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[8].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "MongoDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[9].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-          End Select
+          display_specific_container(selected)
         Endif
       Endif
     Endif
@@ -504,4 +466,8 @@ Public Sub ButtonMgTest_Click()
     db.close()
     Message.Info("Connection successful!")
   Endif
+End
+
+Public Sub WizardIntro_Close()  ' when user clicks on OK button on this form which is located only on MongoDB wizard control (because it is the last wizard on the form's list) - that OK button maybe should be replaced because of the consistency
+  WizardIntro_Change()
 End
