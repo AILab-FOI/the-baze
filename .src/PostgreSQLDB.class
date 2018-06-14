@@ -52,7 +52,7 @@ Public Sub _new(host_ As String, port_ As String, dbname_ As String, username_ A
   Endif 
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to the database
   Dim query As String
   Dim result_set As Object[]
@@ -66,8 +66,7 @@ Public Sub connect(Optional caller As Object = Null) As Boolean
     .Name = Me.dbname
     Try .Open
     If Error Then 
-      Message.Info(Error.Text)
-      Return False
+      Error.Propagate()
     End If  
   End With 
   execute("SET client_min_messages TO WARNING;")
@@ -84,7 +83,6 @@ Public Sub connect(Optional caller As Object = Null) As Boolean
   End If
   ' TODO: add this to enable datalog queries 
   Me.init_des()
-  Return True
   
 End
 

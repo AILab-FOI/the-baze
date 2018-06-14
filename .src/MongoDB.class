@@ -29,9 +29,7 @@ Public Sub _new(host_ As String, port_ As String, dbname_ As String, authDbname_
   Me.username = username_
   Me.password = password_
   Me.store_password = store_password_
-  
-  'base_url = Me.rest_host & ":" & Me.rest_port
-  
+
   Me.connection_settings["connection type"] = "MongoDB"
   Me.connection_settings["host"] = host_
   Me.connection_settings["port"] = port_
@@ -44,13 +42,12 @@ Public Sub _new(host_ As String, port_ As String, dbname_ As String, authDbname_
 End
 
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to MongoDB and initialize the MongoDB engine
   Try Me.con = New MongoEngine(Me.host, Me.port, Me.dbname, Me.authDbname, Me.username, Me.password)
   If Error Then
     Error.Propagate()
   Endif
-  Return True
 End
 
 Public Sub close()

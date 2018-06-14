@@ -171,27 +171,28 @@ Public Sub WizardIntro_Change()
             please_wait = New FormPleaseWait
             please_wait.db = FMain.db
             please_wait.silent = True
-            please_wait.ShowModal
-          Else
             Try please_wait.ShowModal
             If Error Then
-              Message.Error("Error connecting to database! Please check your settings.")
-            Endif
-            If res Then
+              Message.Error(Error.Text)
+            Else
               Me.Close
             Endif
-            Try res = FMain.db.connect()
-			If  Not Error Then
-			  If res Then
-			    FMain.wizard_return = "connection"
-				Me.Close
-			  Else
-			    If dbtype Then
-				  display_specific_container(dbtype)
-				Endif
-				FMain.wizard_return = "canceled"
-				Message.Error("Error connecting to database! Please check you settings.")
-			  Endif
+          Else
+            Try FMain.db.connect()
+            If Error Then
+              FMain.wizard_return = "canceled"
+              If dbtype Then
+                display_specific_container(dbtype)
+              Endif
+              If Error.Text Then
+                Message.Error(Error.Text)
+              Else
+                Message.Error("Error connecting to database! Please check your settings.")
+              Endif
+            Else
+              FMain.wizard_return = "connection"
+              Me.Close
+            Endif
           Endif
         Else
           dbtype = ""
@@ -329,18 +330,29 @@ Public Sub ButtonPGTest_Click()
   ' test the PostreSQL connection
   Dim db As New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
   
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error(Error.Text)
+  Else
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 
 Public Sub ButtonXTest_Click()
   ' test the XSB connection
-  Dim db As New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
+  Dim db As XSBDB
   Dim please_wait As New FormPleaseWait
-  please_wait.db = db
-  please_wait.ShowModal
+  Try db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text)
+  If Error Then
+    Message.Error(Error.Text)
+  Else
+    please_wait.db = db
+    Try please_wait.ShowModal
+    If Error Then
+      Message.Error(Error.Text)
+    Endif
+  Endif
 End
 
 Public Sub ToolButtonFindXSB_Click()
@@ -361,11 +373,12 @@ End
 
 Public Sub ButtonETest_Click()
   Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to eXist server!")
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to eXist server!")
   Endif
 End
 
@@ -382,22 +395,24 @@ End
 Public Sub ButtonfTest_Click()
   ' try to connect to Flora2
   Dim db As New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to Flora2 database!")
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to Flora2 database!")
   Endif
 End
 
 Public Sub ButtonCTest_Click()
   ' try to connect to couch db
   Dim db As New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to CouchDB!")
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to CouchDB!")
   Endif
 End
 
@@ -440,9 +455,12 @@ Public Sub ButtonSTest_Click()
  ' try to connect to SQLite db
   Dim db As New SQLiteDB(TextBoxSDBFile.Text)
   
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error(Error.Text)
+  Else
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 
@@ -452,7 +470,7 @@ Public Sub ButtonOTest_Click()
   Dim db As New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
   If db.is_open Then
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 

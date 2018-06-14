@@ -75,9 +75,7 @@ Public Sub load_file(dbfile As String) As Variant
   Exec ["tar", "xf", dbfile, "-C", temporary_folder] Wait
   Try js_file = Open temporary_folder &/ "baze.js" For Input
   If Error Then
-    Message.Error("This is not a valid baze file!")
-    FMain.Close
-    Return
+    Error.Raise("This is not a valid baze file!")
   Endif
   js_content = ""
   While Not Eof(js_file)
@@ -87,9 +85,7 @@ Public Sub load_file(dbfile As String) As Variant
   connection_settings = js.Decode(js_content)
   Try js_file = Open temporary_folder &/ "dbobjects.js" For Input
   If Error Then
-    Message.Error("This is not a valid baze file!")
-    FMain.Close
-    Return
+    Error.Raise("This is not a valid baze file!")
   Endif
   js_content = ""
   While Not Eof(js_file)
@@ -124,7 +120,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Goto login
       Endif
       db.baze_file = dbfile
@@ -178,7 +175,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Goto login
       Endif
       db.baze_file = dbfile
@@ -255,7 +253,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Goto login
       Endif
       db.baze_file = dbfile
@@ -266,7 +265,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -278,7 +278,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -295,7 +296,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -389,7 +391,7 @@ Public Sub delete_query(query As String, Optional type As String)
   Next
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' Connect to database
   ' NOP / Must be overriden in child class
   

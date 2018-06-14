@@ -27,7 +27,7 @@ Public Sub _new(host_ As String, port_ As String, username As String, password A
   Endif
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to eXist server
   Dim res As String
   con.Auth = Net.AuthBasic
@@ -38,16 +38,14 @@ Public Sub connect(Optional caller As Object = Null) As Boolean
   con.Timeout = 60
   con.Get
   If con.Status < 0 Then
-    Return False
+    Error.Raise("")
   Else
     For Each res In con.Headers
       If res = "Content-Length: 0" Or res = "HTTP/1.1 401 Unauthorized" Then
-        Message.Error(res)
-        Return False
+        Error.Raise(res)
       Endif
     Next
     If Lof(con) Then res = Read #con, Lof(con)
-    Return True
   Endif
 End
 

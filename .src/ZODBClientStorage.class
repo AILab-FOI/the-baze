@@ -21,11 +21,11 @@ Public Sub _new(host_ As String, port_ As String, username As String, password A
   Endif
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to the ZODB database
   Me.init_folder()
   Me.engine = New ZODBEngine(Me.host, "ClientStorage", Me.port, Me.username, Me.password)
-  Return Me.engine.connect()
+  Me.engine.connect()
 End
 
 Public Sub query(query_ As String) As Variant
