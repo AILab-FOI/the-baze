@@ -118,6 +118,7 @@ Public Sub handle_user_request()
           current_file = wizard_return
           Try db = db.load_file(wizard_return)
           If Error
+            handle_requested_file_absence(Error.Text)
             Goto display_home_window
           Endif
           db.initialize_gui()
@@ -125,6 +126,48 @@ Public Sub handle_user_request()
         End If
       End If
   Endif 
+End
+
+Public Sub handle_requested_file_absence(errorMessage As String)
+  ' notify user that the .baze file is missing/corrupted or contains invalid data and ask user if they would like to remove that .baze file from the list of the most recent files
+  Dim inMostRecentList As Boolean = False  ' or in other words, is the file in the list of the most recent files
+  Dim i As Integer
+  Dim YES_OPTION As Integer = 1
+  Dim result As String
+  If Not errorMessage Then
+    errorMessage = "An error occurred while trying to open selected .baze file!"
+  Endif
+  For i = 1 To MAX_RECENT_LIST_SIZE
+    If inMostRecentList Then
+      Settings["FormOpenWizard/option-" & (i - 1)] = Settings["FormOpenWizard/option-" & i]
+      Settings["FormOpenWizard/option-" & i] = Null
+    Else
+      If Settings["FormOpenWizard/option-" & i] = current_file Then
+        inMostRecentList = True
+        If Exist(current_file) Then
+          result = Message.Error(errorMessage & "\nDo you want to remove this .baze file from your system and from the list of the most recent files?", "Yes", "No")
+        Else
+          result = Message.Error(errorMessage & "\nDo you want to remove this .baze file from the list of the most recent files?", "Yes", "No")
+        Endif
+        If result = YES_OPTION Then
+          If Exist(current_file) Then
+            Kill current_file
+          Endif
+          Settings["FormOpenWizard/option-" & i] = Null
+        Else
+          Break
+        Endif
+      Endif
+    Endif
+  Next
+  If inMostRecentList Then
+    Settings.Save()
+  Else
+    result = Message.Error(errorMessage & "\nDo you want to remove this .baze file from your system?", "Yes", "No")
+    If result = YES_OPTION Then
+      Kill current_file
+    Endif
+  Endif
 End
 
 Public Sub Form_Open()

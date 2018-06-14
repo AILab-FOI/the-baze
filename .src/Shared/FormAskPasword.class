@@ -15,5 +15,5 @@ End
 
 Public Sub ButtonCancel_Click()
   Me.Close
-  Error.Raise("") ' cancel process of connecting to existing database and return back to home window
+  Error.Raise("Seems like you forgot password for selected database or it has been changed in meantime.") ' cancel process of connecting to existing database and return back to home window
 End
