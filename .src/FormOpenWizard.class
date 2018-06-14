@@ -137,7 +137,7 @@ Public Sub WizardIntro_Change()
       Endif
     Else ' connect to a database
       If RadioButtonConnect.Value Then
-        If dbtype <> "" And last_index <= WizardIntro.Index Then ' a database type has already been selected, connect to it
+        If dbtype <> "" And last_index < WizardIntro.Index Then ' a database type has already been selected, connect to it
           Select Case dbtype
             Case "PostgreSQL"
               FMain.db = New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
@@ -484,8 +484,4 @@ Public Sub ButtonMgTest_Click()
     db.close()
     Message.Info("Connection successful!")
   Endif
-End
-
-Public Sub WizardIntro_Close()  ' when user clicks on OK button on this form which is located only on MongoDB wizard control (because it is the last wizard on the form's list) - that OK button maybe should be replaced because of the consistency
-  WizardIntro_Change()
 End

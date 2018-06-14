@@ -7,7 +7,7 @@
   Resizable = False
   { WizardIntro Wizard
     MoveScaled(1,1,86,61)
-    Count = 10
+    Count = 11
     Index = 0
     Text = ("Database connection wizard")
     { PictureBox1 PictureBox
@@ -606,6 +606,8 @@
         Text = ("Store password")
       }
     }
-    Index = 0
+    Index = 10
+    Text = ("Connection settings - dummy (to make previous Wizard inconsistent, i.e. with Next button instead of OK button)")
+   Index = 0
   }
 }
