@@ -6,9 +6,6 @@
 ' a filename (if the file should be opened)
 ' connection (if a new connection should be established)
 Public wizard_return As String
-' if wizard_return is connection then here are the settings
-' else null
-Public connection_settings As Collection
 ' current file we are working on
 Public current_file As String
 ' password entered by user
@@ -87,12 +84,11 @@ Public Sub handle_user_request()
     Return
   Else
       If wizard_return = "connection" Then ' create a new connection
-        If connection_settings = Null Then ' no connection settings supplied (X button), close app
+        If db = Null Then ' no connection settings supplied (X button), close app
           Me.save_close
           Return
         End If
         save_file_as()
-        db = connection_settings["connection"]
         db.baze_file = current_file
         db.new_file()
         db.initialize_dbobjects()
