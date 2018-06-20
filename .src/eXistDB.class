@@ -342,6 +342,9 @@ Private Sub delete_object(path As String)
   Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ encode_path(path) To res
   If "HTTP/1.1 200 OK" <> Left$(res, Len("HTTP/1.1 200 OK")) Then
     Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ Right(encode_path(path), - (Len("db/"))) To res  ' some resources/collections are on eXistDB Web REST API sometimes located on /exist/rest/db/{path} relative path, but sometimes on /exist/rest/{path} - on second one were often/always collections/paths that contained non-standard characters (like "ć", "š", etc.) - this is probably bug in eXist DB Web REST API
+    If "HTTP/1.1 200 OK" <> Left$(res, Len("HTTP/1.1 200 OK")) Then
+      Error.Raise("An error has occurred while trying to delete selected object!")
+    Endif
   Endif
 End
 
