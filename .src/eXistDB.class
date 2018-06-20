@@ -226,11 +226,13 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
   Dim obj As Variant
   For Each col In objects["collections"]
     colname = Split(col["collection name"], "/").Pop()
+    colname = URL.Decode(colname)
     un_id = "col_" & col["collection name"]
     obj = tree.Add(un_id, colname, Picture.Load("images/directory.png"), parent)
     populate_tree(tree, un_id, col)
   Next
   For Each doc In objects["documents"]
+    doc = URL.Decode(doc)
     If parent = "Collections" Then
       un_id = "doc_/" & doc
     Else
@@ -314,6 +316,10 @@ Public Sub refresh_db_tree()
   End With
 End
 
+Private Function encode_path(path As String) As String
+  Return Replace(path, " ", "+")
+End
+
 Public Sub new_document(doc As String, path As String, content As String)
   ' create a new document on the given path with the given content
   Dim res As String
@@ -333,12 +339,12 @@ Private Sub delete_object(path As String)
   ' delete an object (document or collection) in the database
   ' for now over curl since DELETE request isn't implemented in HttpClient
   Dim res As String
-  If Left$(path, 1) = "/" Then
-    path = Mid$(path, 2)
+  Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ encode_path(path) To res
+  If "HTTP/1.1 200 OK" <> Left$(res, Len("HTTP/1.1 200 OK")) Then
+    Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ Right(encode_path(path), - (Len("db/"))) To res  ' some resources/collections are on eXistDB Web REST API sometimes located on /exist/rest/db/{path} relative path, but sometimes on /exist/rest/{path} - on second one were often/always collections/paths that contained non-standard characters (like "ć", "š", etc.) - this is probably bug in eXist DB Web REST API
   Endif
-  Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/db/" & path To res
-  If "HTTP/1.1 200 OK" = Left$(res, Len("HTTP/1.1 200 OK")) Then
-    Return True
+End
+
 Public Sub delete_document(doc As String, path As String)
   ' delete document from the database
   Try delete_object(path &/ doc)
