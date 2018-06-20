@@ -13,6 +13,7 @@ Public Sub ToolButtonNewDocument_Click()
   Dim table_updater As FormMongoCreateDocument
   Dim tabstrip_title As String
   Dim i As Integer
+  Dim newDocumentSuffix As Integer = 1
   request_canceled = False
   If Message.Question("Do you to manually specify document name?", "Yes", "No") = 1 Then
     cho = New FormAskDocumentName
@@ -21,14 +22,19 @@ Public Sub ToolButtonNewDocument_Click()
     tabstrip_title = doc_name & " - " & FMain.db.document_type & " Document"
   Else
     doc_name = Null
-    tabstrip_title = "New " & FMain.db.document_type & " Document"
+    tabstrip_title = "New " & FMain.db.document_type & " Document #" & newDocumentSuffix
   Endif
   
   If Not request_canceled Then
     For i = 0 To FMain.main_tabstrip.Count - 1
-      If FMain.main_tabstrip[i].Text = doc_name & " - JSON Document" Then 
-        FMain.main_tabstrip.Index = i
-        Return
+      If FMain.main_tabstrip[i].Text = tabstrip_title Then
+        If doc_name Then
+          FMain.main_tabstrip.Index = i
+          Return
+        Else
+          i += 1
+          tabstrip_title = Left$(tabstrip_title, RInStr(tabstrip_title, "#")) & i
+        Endif
       Endif
     Next
     FMain.main_tabstrip.count += 1
