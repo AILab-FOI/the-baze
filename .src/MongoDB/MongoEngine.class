@@ -8,6 +8,7 @@ Public result As String
 Public resultsArray As Object[]
 Private proc As Process
 Private buff_size As Integer
+Private Const CLOSING_IDENTIFIER_LENGTH As Integer = 30
 
 
 Public Sub _new(Optional hostname_ As String, Optional port_ As String, Optional dbname_ As String, Optional authDbname_ As String, Optional username_ As String = "", Optional password_ As String = "", Optional home As String = "/usr/bin/mongo", Optional params As String = "--ipv6 --verbose --quiet 2>&1") ' at first glance, combination of verbose and quiet flag seems like oxymoron, but that way I managed to get response from which is conclusive if the connection was accepted, rejected or dropped
@@ -55,7 +56,7 @@ Public Sub _new(Optional hostname_ As String, Optional port_ As String, Optional
     Else If Not proc.State = Process.Running Then
       Error.Raise("Unknown error occurred while trying to connect to specified database")
     Else If InStr(result, "connected connection!") Then
-      result = execute("show collections")
+      result = execute("db.getCollectionNames().forEach(function(colName){print(colName);})")
       If InStr(result, "Error: listCollections failed:")
         Error.Raise("You don't have privileges to access specified database")
       Else
@@ -74,9 +75,32 @@ Public Sub close()
   Close #proc
 End
 
-Public Sub execute(command As String) As String
-  Write #proc, command & "\n"
-  Sleep 0.1
-  Read #proc, result, buff_size
+Private Function generate_random_closing_identifier() As String
+  ' generate random string that will be used as closing identifier or stop signal when waiting for the end of process's output
+  Dim i As Integer
+  result = ""
+  For i = 1 To CLOSING_IDENTIFIER_LENGTH
+    result &= Chr(Rand(35, 90)) ' initially it was planned to generate this strings from wider range like 35-126, but backslash character ("\") was causing problems as it serves as character for escaping
+  Next
   Return result
+End
+
+Public Function execute(jsCommand As String) As String
+  ' execute JavaScript command and return result (directives like "show collections" and "show dbs" can't be used)
+  Dim closingIdentifier As String = generate_random_closing_identifier()
+  Dim retVal As String = ""
+  Write #proc, jsCommand & ";\nprint(\"" & closingIdentifier & "\")\n"
+  Read #proc, result, buff_size
+  retVal = ""
+  While Right$(result, CLOSING_IDENTIFIER_LENGTH + 1) <> closingIdentifier & "\n"
+    retVal &= result
+    Sleep 0.1
+    If proc.State = Process.Running Then
+      Read #proc, result, buff_size
+    Else
+      Return retVal
+    Endif
+  Wend
+  retVal &= Left$(result, - (CLOSING_IDENTIFIER_LENGTH + 1))
+  Return retVal
 End
