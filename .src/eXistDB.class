@@ -41,7 +41,14 @@ Public Sub connect(Optional caller As Object = Null)
   con.Timeout = 60
   con.Get
   If con.Status < 0 Then
-    Error.Raise("")
+    Select con.Status
+      Case -1006
+        Error.Raise("Name or service not known! Check entered hostname or try entering IP address in case you have DNS issues")
+      Case -1007
+        Error.Raise("Looks like the server with specified host is inaccessible or it isn't running eXist Web REST API on specified port")
+      Default
+        Error.Raise("")
+    End Select
   Else
     For Each res In con.Headers
       If res = "Content-Length: 0" Or res = "HTTP/1.1 401 Unauthorized" Then

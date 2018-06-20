@@ -375,7 +375,7 @@ Public Sub ButtonETest_Click()
   Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
   Try db.connect()
   If Error Then
-    Message.Error("Error connecting to eXist server!")
+    Message.Error("Error connecting to eXist server!\nError details: " & Error.Text)
   Else
     Try db.close()
     Message.Info("Connection successful!")
