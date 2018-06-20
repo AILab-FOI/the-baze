@@ -38,8 +38,8 @@ End
 
 Public Sub ToolButtonOpenFile_Click()
   ' find a file on the file system
-  Dialog.Title = "Please choose an XML file"
-  Dialog.Filter = ["*.xml", "XML Document"]
+  Dialog.Title = "Please choose an " & FMain.db.document_type & " file"
+  Dialog.Filter = ["*.xml", FMain.db.document_type & " Document"]
   If Dialog.OpenFile() Then
     Return
   Endif
@@ -65,8 +65,11 @@ Public Sub ToolButtonExecute_Click()
   ' create the document
   Dim doc_name As String
   Dim child As Variant
-  doc_name = Left$(FMain.main_tabstrip.Text, - Len(" - XML Document"))
-  If FMain.db.new_document(doc_name, TextBoxPath.Text, TextEditorXML.Text) Then
+  doc_name = Left$(FMain.main_tabstrip.Text, - Len(" - " & FMain.db.document_type & " Document"))
+  Try FMain.db.new_document(doc_name, TextBoxPath.Text, TextEditorXML.Text)
+  If Error Then
+    Message.Error(Error.Text)
+  Else
     With FMain.main_tabstrip.Current
       For Each child In .Children
         child.Close

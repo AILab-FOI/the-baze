@@ -483,14 +483,11 @@ End
 
 Public Sub MenuDeleteCollection_Click()
   ' delete the collection
-  Dim col As String
-  Dim path As String[]
+  Dim path As String
   If Message.Question("Are you sure that you want to delete collection " & TreeViewMain.Current.Text & "?\nAll child collections and documents will be deleted as well!", "Yes", "No") = 1 Then
-    col = Mid$(TreeViewMain.Current.Key, 5)
-    path = Split(col, "/")
-    path.Remove(1)
-    col = path.Join("/")
-    If Not db.delete_object(col) Then
+    path = Mid$(TreeViewMain.Current.Key, 5)
+    Try db.delete_collection(path)
+    If Error Then
       Message.Error("Error while deleting collection " & TreeViewMain.Current.Text & "!")
     Endif
     db.refresh_db_tree()
@@ -498,15 +495,16 @@ Public Sub MenuDeleteCollection_Click()
 End
 
 Public Sub MenuDeleteDocument_Click()
-  ' delete the collection
+  ' delete the document
   Dim doc As String
-  Dim path As String[]
+  Dim path As String
   If Message.Question("Are you sure that you want to delete document " & TreeViewMain.Current.Text & "?", "Yes", "No") = 1 Then
-    doc = Mid$(TreeViewMain.Current.Key, 5)
-    path = Split(doc, "/")
-    path.Remove(1)
-    doc = path.Join("/")
-    If Not db.delete_object(doc) Then
+    doc = TreeViewMain.Current.Text
+    If TreeViewMain.Current.ParentKey <> "Collections" Then
+      path = Mid$(TreeViewMain.Current.ParentKey, 5)
+    Endif
+    Try db.delete_document(doc, path)
+    If Error Then
       Message.Error("Error while deleting document " & TreeViewMain.Current.Text & "!")
     Endif
     db.refresh_db_tree()
@@ -516,27 +514,28 @@ End
 Public Sub MenuEditDocument_Click()
   ' delete the collection
   Dim doc As String
-  Dim path As String[]
-  Dim edit As FormeXistXMLEditor
+  Dim path As String
+  Dim edit As Variant
   Dim i As Integer
-  doc = Mid$(TreeViewMain.Current.Key, 5)
-  path = Split(doc, "/")
-  If path.Count > 2 Then
-    path.Remove(1)
-  Endif
-  doc = path.Join("/")
+  Dim tabName As String
+  doc = TreeViewMain.Current.Text
+  tabName = doc & " - " & db.document_type & " Document"
   For i = 0 To main_tabstrip.Count - 1
-    If main_tabstrip[i].Text = doc & " - XML Document" Then 
+    If main_tabstrip[i].Text = tabName Then 
       main_tabstrip.Index = i
       Return
     Endif
   Next
   main_tabstrip.count += 1
-  edit = New FormeXistXMLEditor(FMain.main_tabstrip)
-  edit.path = doc
-  edit.xml_editor.Text = db.get_xml_doc(doc)
+  edit = db.initialize_editor(FMain.main_tabstrip)
+  main_tabstrip.Text = tabName
   edit.but.Tooltip = "Update document"
-  main_tabstrip.Text = doc & " - XML Document"
+  edit.document_name = doc
+  If TreeViewMain.Current.ParentKey <> "Collections" Then
+    path = Mid$(TreeViewMain.Current.ParentKey, 5)
+  Endif
+  edit.path = path
+  edit.editor.Text = db.get_document(doc, path)
 End
 
 Public Sub MenuDeleteInsertRuleQuery_Click()
@@ -586,8 +585,8 @@ Public Sub TreeViewMain_DblClick()
   Dim pymapreduce_split As FormPyMapReduceSplit
   Dim py_edit As FormZODBPythonEditor
   Dim py_mani As FormZODBDataManipulationEditor
-  Dim ex_edit As FormeXistXMLEditor
-  Dim ex_mani As FormXMLSplit
+  Dim edit As Variant
+  Dim mani As Variant
   Dim fl_edit As FormFlora2Split
   Dim fl_insert As FormFlora2InsertEditor
   Dim fl_delete As FormFlora2DeleteEditor
@@ -736,9 +735,9 @@ Public Sub TreeViewMain_DblClick()
       py_mani.pyeditor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
     Else
       If db Is EXistDB Then
-        ex_edit = New FormeXistXMLEditor(TabStripMain)
-        ex_edit.query_type = "insert"
-        ex_edit.xml_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+        edit = db.initialize_editor(TabStripMain)
+        edit.query_type = "insert"
+        edit.editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
       Else
         If db Is Flora2DB Then
           fl_insert = New FormFlora2InsertEditor(TabStripMain)
@@ -781,9 +780,9 @@ Public Sub TreeViewMain_DblClick()
       py_mani.pyeditor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
     Else
       If db Is EXistDB Then
-        ex_edit = New FormeXistXMLEditor(TabStripMain)
-        ex_edit.query_type = "delete"
-        ex_edit.xml_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+        edit = db.initialize_editor(TabStripMain)
+        edit.query_type = "delete"
+        edit.editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
       Else
         If db Is Flora2DB Then
           fl_delete = New FormFlora2DeleteEditor(TabStripMain)
@@ -857,9 +856,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    ex_edit = New FormeXistXMLEditor(TabStripMain)
-    ex_edit.xml_editor.Text = db.dbobjects["queries"]["replace queries"][TreeViewMain.Current.Key]
-    ex_edit.query_type = "replace"
+    edit = db.initialize_editor(TabStripMain)
+    edit.editor.Text = db.dbobjects["queries"]["replace queries"][TreeViewMain.Current.Key]
+    edit.query_type = "replace"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Replace query"
   Endif
   If TreeViewMain.Current.ParentKey = "Rename queries" Then
@@ -871,9 +870,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    ex_edit = New FormeXistXMLEditor(TabStripMain)
-    ex_edit.xml_editor.Text = db.dbobjects["queries"]["rename queries"][TreeViewMain.Current.Key]
-    ex_edit.query_type = "rename"
+    edit = db.initialize_editor(TabStripMain)
+    edit.editor.Text = db.dbobjects["queries"]["rename queries"][TreeViewMain.Current.Key]
+    edit.query_type = "rename"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Rename query"
   Endif
   If TreeViewMain.Current.ParentKey = "Value queries" Then
@@ -885,9 +884,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    ex_edit = New FormeXistXMLEditor(TabStripMain)
-    ex_edit.xml_editor.Text = db.dbobjects["queries"]["value queries"][TreeViewMain.Current.Key]
-    ex_edit.query_type = "value"
+    edit = db.initialize_editor(TabStripMain)
+    edit.editor.Text = db.dbobjects["queries"]["value queries"][TreeViewMain.Current.Key]
+    edit.query_type = "value"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Value query"
   Endif
   If TreeViewMain.Current.ParentKey = "xPath queries" Then
@@ -899,10 +898,10 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    ex_mani = New FormXMLSplit(TabStripMain)
-    ex_mani.xml_editor.Text = db.dbobjects["queries"]["xpath queries"][TreeViewMain.Current.Key]
-    ex_mani.query_type = "xpath"
-    ex_mani.path = db.dbobjects["queries"]["xpath queries paths"][TreeViewMain.Current.Key]
+    mani = New FormXMLSplit(TabStripMain)
+    mani.editor.Text = db.dbobjects["queries"]["xpath queries"][TreeViewMain.Current.Key]
+    mani.query_type = "xpath"
+    mani.path = db.dbobjects["queries"]["xpath queries paths"][TreeViewMain.Current.Key]
     TabStripMain.Text = TreeViewMain.Current.Key & " - xPath query"
   Endif
   If TreeViewMain.Current.ParentKey = "xQueries" Then
@@ -914,9 +913,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    ex_mani = New FormXMLSplit(TabStripMain)
-    ex_mani.xml_editor.Text = db.dbobjects["queries"]["xquery queries"][TreeViewMain.Current.Key]
-    ex_mani.query_type = "xquery"
+    mani = New FormXMLSplit(TabStripMain)
+    mani.editor.Text = db.dbobjects["queries"]["xquery queries"][TreeViewMain.Current.Key]
+    mani.query_type = "xquery"
     TabStripMain.Text = TreeViewMain.Current.Key & " - xQuery"
   Endif
   With TreeViewMain.Current
