@@ -170,6 +170,7 @@ Public Sub handle_requested_file_absence(errorMessage As String)
   Endif
 End
 
+
 Public Sub Form_Open()
   ' setup the main window horizontal split
   HSplitMain.Settings = [1, 4, 1]
@@ -265,6 +266,8 @@ Public Sub TreeViewMain_Menu()
     Case "xPath queries"
       MenuQuery.Popup()
     Case "xQueries"
+      MenuQuery.Popup()
+    Case "Find queries"
       MenuQuery.Popup()
     Case "PyMapReduce queries"
       MenuQuery.Popup()
@@ -734,7 +737,7 @@ Public Sub TreeViewMain_DblClick()
       py_mani.context = " - Insert query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
     Else
-      If db Is EXistDB Then
+      If db Is EXistDB Or db Is MongoDB Then
         edit = db.initialize_editor(TabStripMain)
         edit.query_type = "insert"
         edit.editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
@@ -779,7 +782,7 @@ Public Sub TreeViewMain_DblClick()
       py_mani.context = " - Delete query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
     Else
-      If db Is EXistDB Then
+      If db Is EXistDB Or db Is MongoDB Then
         edit = db.initialize_editor(TabStripMain)
         edit.query_type = "delete"
         edit.editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
@@ -917,6 +920,20 @@ Public Sub TreeViewMain_DblClick()
     mani.editor.Text = db.dbobjects["queries"]["xquery queries"][TreeViewMain.Current.Key]
     mani.query_type = "xquery"
     TabStripMain.Text = TreeViewMain.Current.Key & " - xQuery"
+  Endif
+  If TreeViewMain.Current.ParentKey = "Find queries" Then
+    For i = 0 To TabStripMain.Count - 1
+      If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Find query" Then 
+        FMain.main_tabstrip.Index = i
+        Return
+      Endif
+    Next
+    TabStripMain.Count += 1
+    TabStripMain.Index = TabStripMain.count - 1
+    mani = New FormJSONSplit(TabStripMain)
+    mani.editor.Text = db.dbobjects["queries"]["find queries"][TreeViewMain.Current.Key]
+    mani.query_type = "find queries"
+    TabStripMain.Text = TreeViewMain.Current.Key & " - Find query"
   Endif
   With TreeViewMain.Current
     If .ParentKey = "Python" Or .ParentKey = "R" Or .ParentKey = "NodeJS" Then

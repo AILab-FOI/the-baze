@@ -9,12 +9,21 @@ Public collection_path As String
 
 Public Sub ToolButtonNewDocument_Click()
   ' open the document creation window
-  Dim cho As New FormAskDocumentName
+  Dim cho As FormAskDocumentName
   Dim table_updater As FormMongoCreateDocument
+  Dim tabstrip_title As String
   Dim i As Integer
   request_canceled = False
-  cho.caller = Me
-  cho.ShowModal()
+  If Message.Question("Do you to manually specify document name?", "Yes", "No") = 1 Then
+    cho = New FormAskDocumentName
+    cho.caller = Me
+    cho.ShowModal()
+    tabstrip_title = doc_name & " - " & FMain.db.document_type & " Document"
+  Else
+    doc_name = Null
+    tabstrip_title = "New " & FMain.db.document_type & " Document"
+  Endif
+  
   If Not request_canceled Then
     For i = 0 To FMain.main_tabstrip.Count - 1
       If FMain.main_tabstrip[i].Text = doc_name & " - JSON Document" Then 
@@ -24,18 +33,21 @@ Public Sub ToolButtonNewDocument_Click()
     Next
     FMain.main_tabstrip.count += 1
     table_updater = New FormMongoCreateDocument(FMain.main_tabstrip)
-    FMain.main_tabstrip.Text = doc_name & " - JSON Document"
+    FMain.main_tabstrip.Text = tabstrip_title
   Endif
 End
 
 Public Sub ToolButtonNewCollection_Click()
   ' create a new collection
-  Dim cho As New FormAskCollectionPath
+  Dim cho As New FormAskCollectionPath(Null, "")
   request_canceled = False
   cho.caller = Me
   cho.ShowModal()
   If Not request_canceled Then
-    If FMain.db.new_collection(collection_path) Then
+    Try FMain.db.new_collection(collection_path)
+    If Error Then
+      Message.Error(Error.Text)
+    Else
       Message.Info("Collection successfully created!")
       FMain.db.refresh_db_tree()
     Endif

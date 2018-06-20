@@ -1,9 +1,7 @@
 ' Gambas class file
 
 ' json TextEditor
-Public json_editor As TextEditor
-' path to document/collection being queried
-Public path As String
+Public editor As TextEditor
 ' type of query
 Public query_type As String
 ' unique key
@@ -11,7 +9,7 @@ Public unique_key As Integer
 
 Public Sub _new()
   ' make TextEditor visible
-  json_editor = TextEditorJSON
+  editor = TextEditorJSON
   VSplitMain.Layout = [1, 3]
   TextEditorJSON.ShowLineNumber = True
 End
@@ -21,46 +19,77 @@ Public Sub ToolButtonExecute_Click()
   ' if query then execute it and show the results
   ' else (JSON TextEditor) update the document on the given path
   Dim res, obj As Variant
-  If query_type = "xpath" Then
-    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, - Len(" - xPath query")), TextEditorJSON.Text, path)
-  Else
-    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, - Len(" - xQuery")), TextEditorJSON.Text)
+  Try res = FMain.db.new_query(Left$(FMain.main_tabstrip.Text, - Len(" - Find query")), TextEditorJSON.Text)
+  If Error Then
+    Message.Error(Error.Text)
+    Return
   Endif
   TextEditorResult.Text = res["json"]
   TreeViewResult.Clear()
   
-  For Each obj In res["collection"]["children"]
-    If TypeOf(obj) = gb.String Then
-      TreeViewResult.Add(Str(get_unique_key()), obj, Picture.Load("images/class.png"))
-    Else
-      create_json_treeview(obj, Null)
-    Endif
+  For Each obj In res["collection"]
+    create_json_treeview(obj, Null)
   Next
 End
 
-Public Sub create_json_treeview(objects As Collection, parent As String)
+Public Sub create_json_treeview(object As Collection, parent As String, Optional isObject As Boolean = True)  ' object can be Collection (in case of objects) or Variant[] (in case of arrays)
   ' construct the json treeview out of the result collection
-  Dim attr As Variant
+  Dim attr, elem As Variant
+  Dim tmpCollection As Collection
+  Dim i As Integer
   Dim ukey, pkey, skey As String
-  Dim child As Variant
+  Dim isAttrObject As Boolean
   With TreeViewResult
-    pkey = Str(get_unique_key())
-    .Add(pkey, objects["__node_name__"], Picture.Load("images/directory.png"), parent)
-    
-    For Each attr In objects
-      If objects.key <> "children" And objects.Key <> "__node_name__" Then
-        ukey = Str(get_unique_key())
-        .Add(ukey, objects.key, Picture.Load("images/directory.png"), pkey)
-        skey = Str(get_unique_key())
-        .Add(skey, attr, Picture.Load("images/class.png"), ukey)
+    If isObject Then
+      pkey = Str(get_unique_key())
+      If parent Then
+        .Add(pkey, "Object", Picture.Load("images/directory.png"), parent)
+      Else  ' top-level objects (i.e. resulted objects) almost always have "_id" property, so it is easier to find/spot wanted/relevant objects
+        Try .Add(pkey, "Object[" & JSON.Encode(Object["_id"]) & "]", Picture.Load("images/directory.png"), parent)
+        If Error Then   ' MongoDB database/collection can use mode where "_id" property isn't obligatory - in that case, resulted objects won't have identifiers
+          .Add(pkey, "Object", Picture.Load("images/directory.png"), parent)
+        Endif
       Endif
-    Next
-    For Each child In objects["children"]
-      If TypeOf(child) = gb.String Then
-        ukey = Str(get_unique_key())
-        .Add(ukey, child, Picture.Load("images/class.png"), pkey)
+    Else
+      pkey = parent
+    Endif
+    
+    For Each attr In object
+      isAttrObject = True
+      skey = Str(get_unique_key())
+      If TypeOf(attr) <> gb.Object Then
+        If isObject Then
+          .Add(skey, object.Key, Picture.Load("images/directory.png"), pkey)
+        Else
+          skey = pkey
+        Endif
+      Else If attr Is Array Then
+        isAttrObject = False
+        If isObject Then
+          .Add(skey, Object.Key, Picture.Load("images/directory.png"), pkey)
+        Else
+          .Add(skey, "Array", Picture.Load("images/directory.png"), pkey) ' in case that array is contained directly in another array, then it would be unnamed so here as second parameter can be set its placeholder
+        Endif
+        tmpCollection = New Collection
+        i = 0
+        For Each elem In attr
+          tmpCollection[i] = elem
+          i += 1
+        Next
+        attr = tmpCollection
       Else
-        create_json_treeview(child, pkey)
+        If isObject Then
+          .Add(skey, object.Key, Picture.Load("images/directory.png"), pkey)
+        Else
+          skey = pkey
+        Endif
+      Endif
+      If TypeOf(attr) <> gb.Object Then
+        ukey = Str(get_unique_key())
+        .Add(ukey, attr, Picture.Load("images/class.png"), skey)
+      Else
+        '.Add(skey, attr, Picture.Load("images/directory.png"), pkey)
+        create_json_treeview(attr, skey, isAttrObject)
       Endif
     Next
   End With
@@ -81,18 +110,10 @@ Public Sub ToolButtonClose_Click()
   Dim child As Variant
   Dim qname As String
   Dim ok As Boolean = False
-  If query_type = "xpath" Then
-    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xPath query"))
-  Else
-    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xQuery"))
-  Endif
-  If FMain.db.dbobjects["queries"][query_type & " queries"][qname] = TextEditorJSON.Text Then
-    If query_type = "xquery" Then
+  qname = Left$(FMain.main_tabstrip.Text, - Len(" - Find query"))
+  If FMain.db.dbobjects["queries"]["find queries"][qname] = TextEditorJSON.Text Then
+    If query_type = "find queries" Then
       ok = True
-    Else
-      If FMain.db.dbobjects["queries"][query_type & " queries paths"][qname] = path Then
-        ok = True
-      Endif 
     Endif
   Endif
   If Not ok Then

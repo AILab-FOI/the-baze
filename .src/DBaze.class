@@ -370,6 +370,9 @@ Public Sub initialize_dbobjects()
     Case "MongoDB"
       Me.dbobjects["queries"]["find queries"] = New Collection
       Me.dbobjects["queries"]["update queries"] = New Collection
+      Me.dbobjects["queries"]["replace queries"] = New Collection
+      Me.dbobjects["queries"]["delete queries"] = New Collection
+      Me.dbobjects["queries"]["insert queries"] = New Collection
   End Select
 End
 

@@ -15,10 +15,10 @@
     Text = ("Create replace query")
     Picture = Picture["icon:/32/replace"]
   }
-  { ToolButtonNewValueQuery ToolButton
+  { ToolButtonNewUpdateQuery ToolButton
     MoveScaled(3,24,38,7)
     Mouse = Mouse.Pointing
-    Text = ("Create value query")
+    Text = ("Create update query")
     Picture = Picture["icon:/32/edit"]
   }
   { ToolButtonNewDeleteQuery ToolButton

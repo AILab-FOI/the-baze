@@ -9,11 +9,10 @@
       MoveScaled(2,2,74,29)
       { LabelPath Label
         MoveScaled(4,7,16,4)
-        Text = ("Document path:")
+        Text = ("Collection name:")
       }
       { TextBoxPath TextBox
         MoveScaled(21,7,24,4)
-        Text = ("/")
       }
       { PanelToolBox Panel
         MoveScaled(0,0,67,5)

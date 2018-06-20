@@ -63,7 +63,7 @@ Public Sub ToolButtonNewReplaceQuery_Click()
   Endif
 End
 
-Public Sub ToolButtonNewValueQuery_Click()
+Public Sub ToolButtonNewUpdateQuery_Click()
   ' open the query TextEditor
   Dim get_name As FormAskQueryName
   Dim query_editor As FormMongoJSONEditor
@@ -76,7 +76,7 @@ Public Sub ToolButtonNewValueQuery_Click()
   If Not request_canceled Then
     If Not FMain.main_treeview.Exist(query_name) Then
       For i = 0 To FMain.main_tabstrip.Count - 1
-        If FMain.main_tabstrip[i].Text = query_name & " - Value query" Then 
+        If FMain.main_tabstrip[i].Text = query_name & " - Update query" Then 
           FMain.main_tabstrip.Index = i
           Return
         Endif
@@ -84,7 +84,7 @@ Public Sub ToolButtonNewValueQuery_Click()
       FMain.main_tabstrip.count += 1
       query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
       query_editor.query_type = "value"
-      FMain.main_tabstrip.Text = query_name & " - Value query"
+      FMain.main_tabstrip.Text = query_name & " - Update query"
     Else
       Message.Error(("Such a query name already exists! Please choose a different name."))
       Goto askagain

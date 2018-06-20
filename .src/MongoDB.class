@@ -16,10 +16,8 @@ Public authDbname As String
 Public username As String
 ' User's password
 Private password As String
-' JSON object of encoding/decoding
-Public js As New JSON
-' URL object for encoding/decoding
-Public enc As New URL
+' name of document type/format
+Public Const document_type As String = "JSON"
 
 Public Sub _new(host_ As String, port_ As String, dbname_ As String, authDbname_ As String, username_ As String, password_ As String, store_password_ As Boolean)
   Me.host = host_
@@ -83,19 +81,79 @@ Public Sub initialize_gui()
   
 End
 
+
+Public Sub populate_tree(tree As TreeView, parent As String, objects As Collection)
+  ' populate the tree view recursively
+  Dim col As Collection
+  Dim doc, colname, colpath As String
+  Dim un_id As String
+  Dim obj As Variant
+  For Each col In objects["collections"]
+    colpath = objects["collections"].Key
+    colname = Split(colpath, ".").Pop()
+    un_id = "col_" & colpath
+    obj = tree.Add(un_id, colname, Picture.Load("images/directory.png"), parent)
+    populate_tree(tree, un_id, col)
+  Next
+  If objects["documents"] Then
+    For Each doc In objects["documents"]
+      If parent = "Collections" Then
+        un_id = "doc_." & doc
+      Else
+        un_id = "doc_" & Mid$(parent, 5) & "." & doc
+      Endif
+      obj = tree.Add(un_id, doc, Picture.Load("images/document.png"), parent)
+    Next
+  End If
+End
+
+Public Function get_document(documentName As String, path As String) As String
+  ' get the JSON document and return it's content
+  Return con.execute("db." & path & ".findOne({\"_id\":" & documentName & "}, {\"_id\":0})")
+End
+
+Private Function group_collections(documentNamesByCollections As Collection) As Collection
+  ' embedded collections (or subcollections) are grouped inside belonging parent-collections
+  Dim groupedCollections As New Collection
+  Dim documentIds As String[]
+  Dim lowerLevelCollection As Collection
+  Dim currentLevelCollection As Collection
+  Dim collectionPath, collectionSubpath, collectionName As String
+  groupedCollections["collections"] = New Collection
+  For Each documentIds In documentNamesByCollections
+    collectionPath = documentNamesByCollections.Key
+    collectionSubpath = ""
+    lowerLevelCollection = groupedCollections
+    For Each collectionName In Split(collectionPath, ".")
+      If Not collectionSubpath Then
+        collectionSubpath = collectionName
+      Else
+        collectionSubpath &= "." & collectionName
+      Endif
+      currentLevelCollection = lowerLevelCollection["collections"][collectionSubpath]
+      If Not currentLevelCollection Then
+        currentLevelCollection = New Collection
+        currentLevelCollection["collections"] = New Collection
+        lowerLevelCollection["collections"][collectionSubpath] = currentLevelCollection
+      Endif
+      lowerLevelCollection = currentLevelCollection
+    Next
+    currentLevelCollection["documents"] = documentIds
+  Next
+  Return groupedCollections
+End
+
+
 Public Sub refresh_db_tree()
   ' refresh the database tree
   ' refresh the main tree view
-  Dim collections As String[]
+  Dim documentNamesByCollections, groupedCollections As Collection
   Dim o As String
   FMain.main_treeview.Clear
-  collections = get_db_objects()
+  documentNamesByCollections = get_db_objects()
+  groupedCollections = group_collections(documentNamesByCollections)
   FMain.main_treeview.Add("Collections", "Collections", Picture.Load("images/directory.png"))
-  If collections Then
-    For Each o In collections
-      FMain.main_treeview.Add(o, o, Picture.Load("images/table.png"), "Collections")
-    Next
-  Endif
+  populate_tree(FMain.main_treeview, "Collections", groupedCollections)
   ' create Baze object containers
   With FMain.main_treeview
     .Add("Queries", "Queries", Picture.Load("images/directory.png"))
@@ -106,6 +164,14 @@ Public Sub refresh_db_tree()
     .Add("Update queries", "Update queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["update queries"]
       .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
+    Next
+    .Add("Replace queries", "Replace queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["update queries"]
+      .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("images/query.png"), "Replace queries")
+    Next
+    .Add("Rename queries", "Rename queries", Picture.Load("images/directory.png"), "Queries")
+    For Each o In Me.dbobjects["queries"]["update queries"]
+      .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("images/query.png"), "Rename queries")
     Next
     .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
     For Each o In Me.dbobjects["queries"]["delete queries"]
@@ -139,23 +205,224 @@ Public Sub refresh_db_tree()
   End With
 End
 
-Public Sub executeCommandAndParseJsonResult(command As String) As Collection
+Public Sub executeCommandAndParseJsonResult(command As String) As Variant
   ' execute command in running Mongo shell
-  Dim result As Collection
+  Dim result As Variant
   Dim res As String
+  Dim collectionAndJson As Collection
   res = con.execute(command)
-  result = js.Decode(res)
-  If result["ok"] = 1 Then
+  Try result = JSON.Decode(res, True)
+  If Error Then
+    Error.Raise(res)
+  Endif
+  If TypeOf(result) = Gb.Boolean Then
     Return result
   Endif
-  Error.Raise(result["errmsg"])
-End
-
-Public Sub get_db_objects() As String[]
-  ' get all objects in MongoDB
-  Dim result As String[]
-  Try result = Split(con.execute("show collections"), "\n", "", True)
-  If Error Then Message.Error(Error.Text)
+  If result Is Array Then
+    collectionAndJson = New Collection
+    collectionAndJson["json"] = res
+    collectionAndJson["collection"] = result
+    Return collectionAndJson
+  Endif
   Return result
 End
 
+Public Sub get_db_objects() As Collection
+  ' get all objects in MongoDB
+  Dim result As String[]
+  Dim lineStr As String
+  Dim lineCollectionName As Boolean = True
+  Dim retVal As New Collection
+  Dim currentCollection As String
+  Try result = Split(con.execute("db.getCollectionNames().forEach(function(colName){"
+    	"print(colName);"
+    	"db[colName].find({}, {_id: 1}).map(function(item){  return item._id;}).forEach(function(val){"
+    		"printjson(val);"
+    	"});"
+    	"print(\"\\n\")"
+    "});"), "\n")
+  If Error Then
+    Message.Error(Error.Text)
+  Else
+    For Each lineStr In result
+      If lineStr Then
+        If lineCollectionName Then
+          currentCollection = lineStr
+          retVal[currentCollection] = New String[]
+          lineCollectionName = False
+        Else
+          retVal[currentCollection].Add(lineStr)
+        Endif
+      Else
+        lineCollectionName = True
+      Endif
+    Next
+    Return retVal
+  Endif
+End
+
+Public Sub new_document(doc As String, path As String, content As String)
+  ' create a new document on the given path with the given content
+  Dim command As String
+  Dim result As String
+  doc = Trim(doc)
+  If Trim(path) = "" Then
+    Error.Raise("Document can't be stored in root directory/collection in MongoDB! Please specify collection name")
+  Endif
+  content = Trim(content)
+  If Left$(content, 1) = "{" Then
+    content = Mid$(content, 2, -1)
+  Endif
+  If doc Then
+    command = "db." & path & ".insertOne({\"_id\":" & doc & "," & content & "})"
+  Else  ' if document name/identifier isn't specified, it will be auto-generated
+    command = "db." & path & ".insertOne({" & content & "})"
+  Endif
+  Try result = con.execute(command)
+  If Error Then
+    Error.Propagate()
+  Else
+    If InStr(result, "WriteError: E11000 duplicate key error collection:") Then
+      Error.Raise("Document with specified name/id already exists in specified collection!")
+    Else If InStr(result, "ReferenceError: " & doc & " is not defined")
+      Error.Raise("Looks like specified name/id is not valid!\nNote: in case you planned to set string as document name/id, you should set it inside of double quotation marks")
+    Endif
+  Endif
+End
+
+Public Sub new_collection(path As String)
+  ' create a new collection
+  Try executeCommandAndParseJsonResult("db.createCollection(\"" & path & "\")")
+  If Error Then
+    Error.Propagate()
+  Endif
+End
+
+Public Sub delete_document(doc As String, path As String)
+  ' delete a document from collection with specified path in the database
+  Dim result As Collection
+  Try result = executeCommandAndParseJsonResult("printjson(db." & path & ".remove({\"_id\":" & doc & "}))")
+  If Error Then
+    Error.Propagate()
+  Else
+    If Not result.Exist("nRemoved") Or If Result["nRemoved"] = 0 Then
+      Error.Raise("")
+    Endif
+  Endif
+End
+
+Public Sub delete_collection(path As String)
+  ' delete a collection in the database
+  If executeCommandAndParseJsonResult("db." & path & ".drop()") = False
+    Error.Raise("An error has occurred while trying to delete selected collection!")
+  Endif
+End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormMongoJSONEditor(parent)
+End
+
+Private Function perform_query(query_name As String, command As String, query_type As String, Optional prefix As String = "", Optional suffix As String = "") As Variant
+  Me.dbobjects["queries"][query_type][query_name] = command
+  Me.Save()
+  refresh_db_tree()
+  Try Return executeCommandAndParseJsonResult("try {" & prefix & Trim(command) & suffix & "} catch (e) {print(e.errmsg)}")
+  If Error Then
+    Error.Raise("An error has occurred while performing specified query! Check whether you specified collection name, there are any syntax errors in your query or query returns valid data for this query type\nError details: " & Error.Text)
+  Endif
+End
+
+Public Function new_query(query_name As String, command As String) As Collection
+  ' perform specified query (intented for .find method or SELECT operator), save it and return resulting collection
+  ' as user can perform find-queries using find and findOne method, following line handles both cases (if user is using find method, then Cursor/DBQuery object is always returned and it has toArray method that puts all results in a list; otherwise, found object or null is returned that is manually put in a list)
+  Try Return perform_query(query_name, command, "find queries", "var query = ", "; var result; if (query instanceof DBQuery) { result = query.toArray() } else { if (query === null) { result = [] } else { result = [ query ] } }; result;")
+  If Error Then
+    Error.Propagate()
+  Endif
+End
+
+Public Function new_insert_query(query_name As String, command As String) As Boolean
+  ' create a new insert query and execute it
+  Dim result As Collection
+  Try result = perform_query(query_name, command, "insert queries", "printjson(", ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+  If result.Exist("insertedId") Then
+    Return True
+  Endif
+  If result.Exist("nInserted") Then
+    Return Result["nInserted"] > 0
+  Else
+    Error.Raise("Your query has been executed successfully, but its result is unknown! Reason for that might be that you have used appropriate query form in this app for specified query")
+  Endif
+End
+
+Public Function new_replace_query(query_name As String, command As String) As Boolean
+  ' create a new replace query and execute it
+  Dim result As Collection
+  Try result = perform_query(query_name, command, "replace queries", "printjson(", ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+  If result.Exist("modifiedCount") Then
+    Return Result["modifiedCount"] > 0
+  Else If result.Exist("nModified") Then
+    Return Result["nModified"] > 0
+  Else
+    Error.Raise("Your query has been executed successfully, but its result is unknown! Reason for that might be that you have used appropriate query form in this app for specified query")
+  Endif
+End
+
+Public Function new_update_query(query_name As String, command As String) As Boolean
+  ' create a new update query and execute it
+  Dim result As Collection
+  Try result = perform_query(query_name, command, "update queries", "printjson(", ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+  If result.Exist("modifiedCount") Then
+    Return Result["modifiedCount"] > 0
+  Else If result.Exist("nModified") Then
+    Return Result["nModified"] > 0
+  Else
+    Error.Raise("Your query has been executed successfully, but its result is unknown! Reason for that might be that you have used appropriate query form in this app for specified query")
+  Endif
+End
+
+Public Function new_delete_query(query_name As String, command As String) As Boolean
+  ' create a new delete query and execute it
+  Dim result As Collection
+  Try result = perform_query(query_name, command, "delete queries", "printjson(", ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+  If result.Exist("nRemoved") Then
+    Return Result["nRemoved"] > 0
+  Else
+    Error.Raise("Your query has been executed successfully, but its result is unknown! Reason for that might be that you have used appropriate query form in this app for specified query")
+  Endif
+End
+
+Public Function new_rename_query(query_name As String, command As String) As Boolean
+  ' create a new rename query and execute it
+  Dim result As Collection
+  Try result = perform_query(query_name, command, "rename queries", "printjson(", ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+  If Result.Length = 1 Then
+    Return True
+  Else
+    Error.Raise("Your query has been executed successfully, but its result is unknown! Reason for that might be that you have used appropriate query form in this app for specified query")
+  Endif
+End
+
+Public Sub update_document(identifier As String, collectionPath As String, content As String)
+  content = Trim(content)
+  Try executeCommandAndParseJsonResult("db." & collectionPath & ".replaceOne({\"_id\":" & identifier & "}," & content & ")")
+  If Error Then
+    Error.Propagate()
+  Endif
+End
