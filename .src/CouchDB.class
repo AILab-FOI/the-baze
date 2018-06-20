@@ -26,7 +26,6 @@ End
 Public Sub connect(Optional caller As Object = Null)
   ' connect to the couch and see if authentication works
   Dim res As String
-  Dim js As JSON
   con.Auth = Net.AuthBasic
   con.URL = Me.host & ":" & Me.port
   con.User = Me.username
@@ -43,8 +42,7 @@ Public Sub connect(Optional caller As Object = Null)
       Endif
     Next
     If Lof(con) Then res = Read #con, Lof(con)
-    js = New JSON
-    If js.Decode(res)["couchdb"] = "Welcome" Then
+    If JSON.Decode(res)["couchdb"] = "Welcome" Then
       con.URL = Me.host & ":" & Me.port & "/Gambas_Test_DB_From_Baze"
       con.Put("application/json", "{\"test\":\"from gambas\"}") 'FIXME: Here it dies!
       ' If con.Status < 0 Then
@@ -52,7 +50,7 @@ Public Sub connect(Optional caller As Object = Null)
       ' Else
       '   If Lof(con) Then res = Read #con, Lof(con)
       '   Print res
-      '   'js.Decode(res)
+      '   'JSON.Decode(res)
       ' Endif
     Else
       Error.Raise("Authentication failure!")

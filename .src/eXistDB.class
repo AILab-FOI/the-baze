@@ -8,8 +8,6 @@ Public port As String
 ' http connection to the eXist server
 Public con As New HttpClient
 
-' unique id
-Public uid As Integer
 ' name of document type/format
 Public Const document_type As String = "XML"
 
@@ -185,11 +183,6 @@ Public Sub get_db_objects() As Collection
     Message.Error(Error.Text)
     Quit
   Endif
-  
-  objects["object types"] = [ 
-    "collections": "directory.png",
-    "documents": "document.png"]
-
   Return objects
 End
 
@@ -243,16 +236,6 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
     obj = tree.Add(un_id, doc, Picture.Load("images/document.png"), parent)
   Next
 End
-
-Public Sub get_unique_id() As Integer
-  ' get a unique id
-  If Not uid Then
-    uid = 0
-  Endif
-  uid += 1
-  Return uid
-End
-
 
 Public Sub refresh_db_tree()
   ' refresh the database tree

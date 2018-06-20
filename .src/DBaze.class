@@ -10,7 +10,6 @@ Public $baze_sqlite As New Connection
 Public baze_zodb As ZODBEngine
 Public connection_settings As New Collection
 Public dbobjects As New Collection
-Public js As New JSON
 
 Private Enum DONT_STORE, STORE, UNKNOWN
 
@@ -39,12 +38,12 @@ End
 
 Public Function contoJSON() As String
   'dump the connection settings to JSON
-  Return js.Encode(Me.connection_settings)
+  Return JSON.Encode(Me.connection_settings)
 End
 
 Public Function dbotoJSON() As String
   'dump the database objects to JSON
-  Return js.Encode(Me.dbobjects)
+  Return JSON.Encode(Me.dbobjects)
 End
 
 
@@ -82,7 +81,7 @@ Public Sub load_file(dbfile As String) As Variant
     Line Input #js_file, js_line
     js_content &= js_line
   Wend
-  connection_settings = js.Decode(js_content)
+  connection_settings = JSON.Decode(js_content)
   Try js_file = Open temporary_folder &/ "dbobjects.js" For Input
   If Error Then
     Error.Raise("This is not a valid baze file!")
@@ -95,7 +94,7 @@ Public Sub load_file(dbfile As String) As Variant
   If Len(js_content) = 0 Or Len(js_content) = 2 Then
     initialize_dbobjects()
   Else
-    dbobjects = js.Decode(js_content)
+    dbobjects = JSON.Decode(js_content)
   Endif
   
   login:
