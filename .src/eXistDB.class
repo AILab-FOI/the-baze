@@ -162,9 +162,11 @@ Public Sub get_collections(Optional root As String = "") As Collection
   objects["documents"] = New Variant[]
   For i = 0 To res["children"][0]["children"].count - 1
     If TypeOf(res["children"][0]["children"][i]) = gb.Object Then
-      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection" And res["children"][0]["children"][i]["@name"] <> "apps" And res["children"][0]["children"][i]["@name"] <> "system" Then
-        path = root &/ res["children"][0]["children"][i]["@name"]
-        objects["collections"].Add(get_collections(path))
+      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection"
+        If root <> "" Or If res["children"][0]["children"][i]["@name"] <> "apps" And res["children"][0]["children"][i]["@name"] <> "system" Then  ' if database contains collections with name "apps" or "system" that are not inside of root directory, those can be displayed
+          path = root &/ res["children"][0]["children"][i]["@name"]
+          objects["collections"].Add(get_collections(path))
+        Endif
       Endif
       If res["children"][0]["children"][i]["__node_name__"] = "exist:resource" Then
         objects["documents"].Add(res["children"][0]["children"][i]["@name"])
