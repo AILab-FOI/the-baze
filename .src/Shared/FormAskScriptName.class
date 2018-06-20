@@ -21,12 +21,7 @@ End
 Public Sub TextBoxScriptName_KeyPress()
     ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    If TextBoxScriptName.Text <> "" Then
-      caller.script_name = TextBoxScriptName.Text
-      Me.Close
-    Else
-      Message.Info("Please enter a script name!")
-    Endif
+    ButtonOK_Click()
   Endif
 End
 

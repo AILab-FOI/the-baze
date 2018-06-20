@@ -20,11 +20,6 @@ End
 Public Sub TextBoxIndexName_KeyPress()
     ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    If TextBoxIndexName.Text <> "" Then
-      caller.index_name = TextBoxIndexName.Text
-      Me.Hide
-    Else
-      Message.Info("Please enter an index name!")
-    Endif
+    ButtonOK_Click()
   Endif
 End

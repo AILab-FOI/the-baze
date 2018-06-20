@@ -20,11 +20,6 @@ End
 Public Sub TextBoxTriggerName_KeyPress()
     ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    If TextBoxTriggerName.Text <> "" Then
-      caller.trigger_name = TextBoxTriggerName.Text
-      Me.Hide
-    Else
-      Message.Info("Please enter a trigger name!")
-    Endif
+    ButtonOK_Click()
   Endif
 End

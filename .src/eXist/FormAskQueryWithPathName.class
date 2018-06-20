@@ -16,13 +16,7 @@ End
 Public Sub TextBoxQueryName_KeyPress()
   ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    If TextBoxQueryName.text Then
-      caller.query_name = TextBoxQueryName.Text
-    caller.path = TextBoxQueryPath.Text
-      Me.Hide
-    Else
-      Message.Warning("Please enter a query name!")
-    Endif
+    ButtonOK_Click()
   Endif
 End
 
@@ -35,12 +29,6 @@ End
 Public Sub TextBoxQueryPath_KeyPress()
   ' if enter is pressed close the form
   If Key.code = Key.Return Then
-    If TextBoxQueryName.text Then
-      caller.query_name = TextBoxQueryName.Text
-      caller.path = TextBoxQueryPath.Text
-      Me.Hide
-    Else
-      Message.Warning("Please enter a query name!")
-    Endif
+    ButtonOK_Click()
   Endif
 End
