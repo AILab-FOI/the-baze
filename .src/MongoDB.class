@@ -18,6 +18,10 @@ Public username As String
 Private password As String
 ' name of document type/format
 Public Const document_type As String = "JSON"
+' names of the subtypes of BinData BSON type
+Private binarySubtypes As Collection = ["0": "Generic binary subtype", "1": "Function", "2": "Binary (Old)", "3": "UUID (Old)", "4": "UUID", "5": "MD5", "128": "User defined"]
+' text that will be displayed next to object of BinData type in case its subtype code doesn't have defined belonging subtype name
+Private unknownBinarySubtypeTag As String = "unknown binary subtype"
 
 Public Sub _new(host_ As String, port_ As String, dbname_ As String, authDbname_ As String, username_ As String, password_ As String, store_password_ As Boolean)
   Me.host = host_
@@ -205,13 +209,24 @@ Public Sub refresh_db_tree()
   End With
 End
 
-Public Sub executeCommandAndParseJsonResult(command As String) As Variant
+Public Function executeCommandAndParseJsonResult(command As String, Optional specialTypesIdentifier As String = "") As Variant
   ' execute command in running Mongo shell
   Dim result As Variant
   Dim res As String
+  Dim deserializableJson As String
   Dim collectionAndJson As Collection
+  Dim p1 As String = "/(?<!\\\\)(?:\\\\{2})*\\K\"\\s*:\\s*(?:(undefined|null)|(?:(BinData)\\((\\d+),|(\\w+)\\()\\s*\"((?:[^\\\\\"]|\\.)*)\"\\))/"
+  Dim r1 As String = "defined($3) ? \"\\\":{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4 (@{[exists $substitutes{$3} ? $substitutes{$3} : $unknownSubtypeTag]})\\\", \\\"value\\\":\\\"$5\\\"}\" : \"\\\":{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4\\\", \\\"value\\\":\\\"$5\\\"}\""
+  Dim p2 As String = "/(?<!\\\\)(?:\\\\{2})*\\K\"\\s*:\\s*(\\/(?:[^\\\\\\/]|\\\\.)*\\/\\w*)/"
+  Dim r2 As String = "\":{\"" & specialTypesIdentifier & "\":\"RegExp\", \"value\":\"$1\"}"
+  Dim heredocClosingTag As String = AUX.generate_random_closing_identifier(65, 90)
+  Dim binarySubtypesPerlArray As String = ""
+  For Each res In binarySubtypes
+    binarySubtypesPerlArray &= "\"" & binarySubtypes.Key & "\" => \"" & Replace(Replace(res, "\"", "\\\\\\\""), "'", "'\\''") & "\","
+  Next
   res = con.execute(command)
-  Try result = JSON.Decode(res, True)
+  Shell "cat << " & heredocClosingTag & " | perl -ne 'my $unknownSubtypeTag = \"" & Replace(Replace(unknownBinarySubtypeTag, "\"", "\\\\\\\""), "'", "'\\''") & "\"; my %substitutes = (" & binarySubtypesPerlArray & "); s" & p1 & r1 & "/ge;' -e 's" & p2 & r2 & "/g; print;'\n" & res & heredocClosingTag To deserializableJson
+  Try result = JSON.Decode(deserializableJson)
   If Error Then
     Error.Raise(res)
   Endif
@@ -227,7 +242,7 @@ Public Sub executeCommandAndParseJsonResult(command As String) As Variant
   Return result
 End
 
-Public Sub get_db_objects() As Collection
+Public Function get_db_objects() As Collection
   ' get all objects in MongoDB
   Dim result As String[]
   Dim lineStr As String
@@ -323,20 +338,24 @@ Public Function initialize_editor(parent As Control) As Variant
   Return New FormMongoJSONEditor(parent)
 End
 
-Private Function perform_query(query_name As String, command As String, query_type As String, Optional prefix As String = "", Optional suffix As String = "") As Variant
+Private Function perform_query(query_name As String, command As String, query_type As String, Optional prefix As String = "", Optional suffix As String = "", Optional specialTypesIdentifier As String = "") As Variant
+  Dim retVal As Variant
   Me.dbobjects["queries"][query_type][query_name] = command
   Me.Save()
-  refresh_db_tree()
-  Try Return executeCommandAndParseJsonResult("try {" & prefix & Trim(command) & suffix & "} catch (e) {print(e.errmsg)}")
+  Try retVal = executeCommandAndParseJsonResult("try {" & prefix & Trim(command) & suffix & "} catch (e) {print(e.errmsg)}", specialTypesIdentifier)
   If Error Then
+    refresh_db_tree()
     Error.Raise("An error has occurred while performing specified query! Check whether you specified collection name, there are any syntax errors in your query or query returns valid data for this query type\nError details: " & Error.Text)
+  Else
+    refresh_db_tree()
+    Return retVal
   Endif
 End
 
-Public Function new_query(query_name As String, command As String) As Collection
+Public Function new_query(query_name As String, command As String, specialTypesIdentifier As String) As Collection
   ' perform specified query (intented for .find method or SELECT operator), save it and return resulting collection
   ' as user can perform find-queries using find and findOne method, following line handles both cases (if user is using find method, then Cursor/DBQuery object is always returned and it has toArray method that puts all results in a list; otherwise, found object or null is returned that is manually put in a list)
-  Try Return perform_query(query_name, command, "find queries", "var query = ", "; var result; if (query instanceof DBQuery) { result = query.toArray() } else { if (query === null) { result = [] } else { result = [ query ] } }; result;")
+  Try Return perform_query(query_name, command, "find queries", "var query = ", "; var result; if (query instanceof DBQuery) { result = query.toArray() } else { if (query === null) { result = [] } else { result = [ query ] } }; result;", specialTypesIdentifier)
   If Error Then
     Error.Propagate()
   Endif

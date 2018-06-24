@@ -6,6 +6,8 @@ Public editor As TextEditor
 Public query_type As String
 ' unique key
 Public unique_key As Integer
+' name of the attribute that contains object subtype (like ObjectId, Timestamp, BinData, ...)
+Private bsonTypeIdentifier As String
 
 Public Sub _new()
   ' make TextEditor visible
@@ -19,7 +21,8 @@ Public Sub ToolButtonExecute_Click()
   ' if query then execute it and show the results
   ' else (JSON TextEditor) update the document on the given path
   Dim res, obj As Variant
-  Try res = FMain.db.new_query(Left$(FMain.main_tabstrip.Text, - Len(" - Find query")), TextEditorJSON.Text)
+  bsonTypeIdentifier = AUX.generate_random_closing_identifier(65, 90)
+  Try res = FMain.db.new_query(Left$(FMain.main_tabstrip.Text, - Len(" - Find query")), TextEditorJSON.Text, bsonTypeIdentifier)
   If Error Then
     Message.Error(Error.Text)
     Return
@@ -39,13 +42,23 @@ Public Sub create_json_treeview(object As Collection, parent As String, Optional
   Dim i As Integer
   Dim ukey, pkey, skey As String
   Dim isAttrObject As Boolean
+  Dim bsonTypeName As String
   With TreeViewResult
     If isObject Then
       pkey = Str(get_unique_key())
       If parent Then
-        .Add(pkey, "Object", Picture.Load("images/directory.png"), parent)
+        bsonTypeName = Object[bsonTypeIdentifier]
+        If bsonTypeName Then
+          .Add(pkey, "Object [type=" & bsonTypeName & "]", Picture.Load("images/directory.png"), parent)
+          If bsonTypeName <> "null" And If bsonTypeName <> "undefined" Then
+            .Add(Str(get_unique_key()), Object["value"], Picture.Load("images/class.png"), pkey)
+          Endif
+          Return
+        Else
+          .Add(pkey, "Object", Picture.Load("images/directory.png"), parent)
+        Endif
       Else  ' top-level objects (i.e. resulted objects) almost always have "_id" property, so it is easier to find/spot wanted/relevant objects
-        Try .Add(pkey, "Object[" & JSON.Encode(Object["_id"]) & "]", Picture.Load("images/directory.png"), parent)
+        Try .Add(pkey, "Object[_id=" & RegExp.Replace(RegExp.Replace(JSON.Encode(Object["_id"]), "\\{\\s*\"" & bsonTypeIdentifier & "\"\\s*:\\s*\"(.*?)\"\\s*,\\s*\"value\"\\s*:\\s*\"((?:[^\\\\\"]|\\\\.)*?)\"\\}", "&1(\"&2\")") & "]", "\\{\\s*\"" & bsonTypeIdentifier & "\"\\s*:\\s*\"(.*?)\"\\s*}", "&1"), Picture.Load("images/directory.png"), parent) ' convert JSON back to the BSON representation, e.g. JSON string like    {"_id":{"BSON_TYPE_IDENTIFIER":"ObjectId", "value":"2343242"}, "attr1":"..."}   will be converted to    {"_id":ObjectId(2343242), "attr1":"..."}
         If Error Then   ' MongoDB database/collection can use mode where "_id" property isn't obligatory - in that case, resulted objects won't have identifiers
           .Add(pkey, "Object", Picture.Load("images/directory.png"), parent)
         Endif

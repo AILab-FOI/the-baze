@@ -1,5 +1,7 @@
 ' Gambas class file
 
+' length of all pseudo-randomly generated strings
+Static Public Const CLOSING_IDENTIFIER_LENGTH As Integer = 30
 
 Static Public Sub get_answer_from_proc(proc As Process, Optional cmd As String = "") As String
   ' send cmd to proces and get answer
@@ -39,7 +41,7 @@ Static Public Function FindAll(subj As String, pattern As String, Optional subma
           If Len(subj) > Len(re.text) Then
                   subj = Mid(subj, re.offset + Len(re.text) + 1)
           Else
-                  subj = ""       
+                  subj = ""
           End If
           If subj <> "" Then re.exec(subj)
     Loop
@@ -67,4 +69,14 @@ Static Public Function removeDups(listArray As String[]) As String[]
   
   Return list
   
+End
+
+Static Public Function generate_random_closing_identifier(Optional lowerBound As Integer = 40, Optional upperBound As Integer = 90) As String
+  ' generate random string that will be used as closing identifier or stop signal when waiting for the end of process's output
+  Dim i As Integer
+  Dim retVal As String = 0
+  For i = 1 To CLOSING_IDENTIFIER_LENGTH
+    retVal &= Chr(Rand(lowerBound, upperBound)) ' initially it was planned to generate this strings from wider range like 35-126, but backslash character ("\") was causing problems as it serves as character for escaping
+  Next
+  Return retVal
 End
