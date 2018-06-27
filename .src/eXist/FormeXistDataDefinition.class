@@ -30,7 +30,7 @@ End
 
 Public Sub ToolButtonNewCollection_Click()
   ' create a new collection
-  Dim cho As New FormAskCollectionPath
+  Dim cho As New FormAskCollectionPath("/")
   request_canceled = False
   cho.caller = Me
   cho.ShowModal()

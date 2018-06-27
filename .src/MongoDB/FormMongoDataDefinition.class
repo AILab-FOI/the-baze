@@ -15,15 +15,18 @@ Public Sub ToolButtonNewDocument_Click()
   Dim i As Integer
   Dim newDocumentSuffix As Integer = 1
   request_canceled = False
-  If Message.Question("Do you to manually specify document name?", "Yes", "No") = 1 Then
-    cho = New FormAskDocumentName
-    cho.caller = Me
-    cho.ShowModal()
-    tabstrip_title = doc_name & " - " & FMain.db.document_type & " Document"
-  Else
-    doc_name = Null
-    tabstrip_title = "New " & FMain.db.document_type & " Document #" & newDocumentSuffix
-  Endif
+  Select Message.Question("Do you to manually specify document name?", "Yes", "No", "Cancel")
+    Case 1 ' Yes button
+      cho = New FormAskDocumentName
+      cho.caller = Me
+      cho.ShowModal()
+      tabstrip_title = doc_name & " - " & FMain.db.document_type & " Document"
+    Case 2  'No button
+      doc_name = Null
+      tabstrip_title = "New " & FMain.db.document_type & " Document #" & newDocumentSuffix
+    Case 3  'Cancel button or Close button (X)
+      Return
+  End Select
   
   If Not request_canceled Then
     For i = 0 To FMain.main_tabstrip.Count - 1
@@ -45,7 +48,7 @@ End
 
 Public Sub ToolButtonNewCollection_Click()
   ' create a new collection
-  Dim cho As New FormAskCollectionPath(Null, "")
+  Dim cho As New FormAskCollectionPath("")
   request_canceled = False
   cho.caller = Me
   cho.ShowModal()

@@ -2,7 +2,7 @@
 
 Public caller As Object
 
-Public Sub _new(Optional defaultCollectionPath As String = "/")
+Public Sub _new(defaultCollectionPath As String)
   ' set default text value in TextBox control for entering collection path
   Me.TextBoxCollectionPath.Text = defaultCollectionPath
 End

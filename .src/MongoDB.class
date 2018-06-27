@@ -113,7 +113,7 @@ End
 
 Public Function get_document(documentName As String, path As String) As String
   ' get the JSON document and return it's content
-  Return con.execute("db." & path & ".findOne({\"_id\":" & documentName & "}, {\"_id\":0})")
+  Return con.execute("db[\"" & path & "\"].findOne({\"_id\":" & documentName & "}, {\"_id\":0})")
 End
 
 Private Function group_collections(documentNamesByCollections As Collection) As Collection
@@ -289,9 +289,9 @@ Public Sub new_document(doc As String, path As String, content As String)
     content = Mid$(content, 2, -1)
   Endif
   If doc Then
-    command = "db." & path & ".insertOne({\"_id\":" & doc & "," & content & "})"
+    command = "db[\"" & path & "\"].insertOne({\"_id\":" & doc & "," & content & "})"
   Else  ' if document name/identifier isn't specified, it will be auto-generated
-    command = "db." & path & ".insertOne({" & content & "})"
+    command = "db[\"" & path & "\"].insertOne({" & content & "})"
   Endif
   Try result = con.execute(command)
   If Error Then
@@ -316,7 +316,7 @@ End
 Public Sub delete_document(doc As String, path As String)
   ' delete a document from collection with specified path in the database
   Dim result As Collection
-  Try result = executeCommandAndParseJsonResult("printjson(db." & path & ".remove({\"_id\":" & doc & "}))")
+  Try result = executeCommandAndParseJsonResult("printjson(db[\"" & path & "\"].remove({\"_id\":" & doc & "}))")
   If Error Then
     Error.Propagate()
   Else
@@ -328,7 +328,7 @@ End
 
 Public Sub delete_collection(path As String)
   ' delete a collection in the database
-  If executeCommandAndParseJsonResult("db." & path & ".drop()") = False
+  If executeCommandAndParseJsonResult("db[\"" & path & "\"].drop()") = False
     Error.Raise("An error has occurred while trying to delete selected collection!")
   Endif
 End
@@ -440,7 +440,7 @@ End
 
 Public Sub update_document(identifier As String, collectionPath As String, content As String)
   content = Trim(content)
-  Try executeCommandAndParseJsonResult("db." & collectionPath & ".replaceOne({\"_id\":" & identifier & "}," & content & ")")
+  Try executeCommandAndParseJsonResult("db[\"" & collectionPath & "\"].replaceOne({\"_id\":" & identifier & "}," & content & ")")
   If Error Then
     Error.Propagate()
   Endif
