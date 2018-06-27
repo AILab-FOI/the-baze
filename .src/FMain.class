@@ -106,11 +106,12 @@ Public Sub handle_user_request()
             db.baze_file = current_file
             db.new_file()
             shift_recent_files(current_file)
-            If db.connect() Then
+            Try db.connect()
+            If Error Then
+              Message.Error(Error.Text)
+            Else
               db.initialize_gui()
             Endif
-          Else
-            Return
           Endif
         Else
           ' open an existing file
