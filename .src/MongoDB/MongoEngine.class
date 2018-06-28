@@ -46,13 +46,15 @@ Public Sub _new(Optional hostname_ As String, Optional port_ As String, Optional
       "-server with specified hostname is not running Mongo Daemon\n"
       "-server with specified hostname is running Mongo Daemon, but not on specified port\n"
       "-you have blocked access to server with specified hostname")
-    Else If InStr(result, "connection attempt failed") Then
+    Else If InStr(result, "connection attempt failed") Or InStr(result, "failed: Temporary failure in name resolution") Then
       Error.Raise("Destination server cannot is not accessible. Make sure you have access to the Internet and whether the server is online")
     Else If InStr(result, "Error: Authentication failed.") Then
       Error.Raise("Entered credentials are invalid!")
     Else If InStr(result, "Error: Missing expected field") Then
       Error.Raise("Some of required fields are missing!")
-    Else If Not proc.State = Process.Running Then
+    Else If InStr(result, "Error: ") Then
+      Error.Raise(Split(Mid(result, InStr(result, "Error: ") + Len("Error: ")), "\n")[0])
+    Else If Not (proc.State = Process.Running) Then
       Error.Raise("Unknown error occurred while trying to connect to specified database")
     Else If InStr(result, "connected connection!") Then
       result = execute("db.getCollectionNames().forEach(function(colName){print(colName);})")
