@@ -19,6 +19,7 @@ Public Sub Form_Open()
   Dim setting As String
   Dim helper As String[]
   Dim xsb, flora2, save_shell As String
+  Dim i As Integer
   stop_event = False
   last_index = 0
   ' set return value to canceled in case the user clicks the x button
@@ -43,43 +44,15 @@ Public Sub Form_Open()
     TextBoxfflora2.Text = Left$(flora2, -1)
   Endif
   System.Shell = save_shell
-  setting = Settings["FormOpenWizard/first"]
-  helper = Split(setting, "/")
-  Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-  If setting <> "" Then
-    ListViewRecent.Add("first", setting)
-    setting = Settings["FormOpenWizard/second"]
-    helper = Split(setting, "/")
-    Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-    If setting <> "" Then
-      ListViewRecent.Add("second", setting)
-      setting = Settings["FormOpenWizard/third"]
-      helper = Split(setting, "/")
-      Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-      If setting <> "" Then
-        ListViewRecent.Add("third", setting)
-        setting = Settings["FormOpenWizard/fourth"]
-        helper = Split(setting, "/")
-        Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-        If setting <> "" Then
-          ListViewRecent.Add("fourth", setting)
-          setting = Settings["FormOpenWizard/fifth"]
-          helper = Split(setting, "/")
-          Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-          If setting <> "" Then
-            ListViewRecent.Add("fifth", setting)
-            setting = Settings["FormOpenWizard/sixth"]
-            helper = Split(setting, "/")
-            Try setting = helper[helper.Count - 1] & " (" & setting & ")"
-            If setting <> "" Then
-              ListViewRecent.Add("sixth", setting)
-            Endif
-          Endif
-        Endif
-      Endif
+  For i = 1 To FMain.MAX_RECENT_LIST_SIZE
+    setting = Settings["FormOpenWizard/option-" & i]
+    If setting = Null Then
+      Break
     Endif
-    Else
-      hasrecent = False
+    ListViewRecent.Add(setting, Split(setting, "/").Pop())
+  Next
+  If i = 1 Then
+    hasrecent = False
   Endif
   load_odbc_dsn()
 End
@@ -102,17 +75,53 @@ Private Sub load_odbc_dsn()
   Next
 End
 
+Private Sub display_specific_container(dbname As String)
+  Dim index As Integer
+'  Dim i As Integer
+'  For i = 0 To WizardIntro.Count - 1
+'    WizardIntro[i].Hide
+'  Next
+  stop_event = True
+  Select dbname
+    Case "PostgreSQL"
+      index = 1
+    Case "XSB"
+      index = 2
+    Case "Flora2"
+      index = 3
+    Case "ZODB"
+      index = 4
+    Case "eXist"
+      index = 5
+    Case "CouchDB"
+      index = 6
+    Case "SQLite"
+      index = 7
+    Case "ODBC"
+      index = 8
+    Case "MongoDB"
+      index = 9
+    Default
+      index = 0
+  End Select
+'  WizardIntro[index].show
+  WizardIntro.Index = index
+  last_index = index
+  stop_event = False
+End
+
 
 Public Sub WizardIntro_Change()
   ' check which option was selected (new, open, connection)
   ' if new or open show the main frame
   ' else show the appropriate connection settings wizard
   Dim selected As String
-  Dim db As Variant
   Dim please_wait As FormPleaseWait
   Dim i As Integer
   Dim res As Boolean
-  'Stop Event
+  If stop_event = True
+    Return
+  Endif
   If RadioButtonNew.Value Then ' create a new baze
     FMain.new_db_type = ComboBoxNewDatabase.Text
     FMain.wizard_return = "new" 'TODO: add another return value with the new db type (SQLite or ZODB)
@@ -120,6 +129,7 @@ Public Sub WizardIntro_Change()
   Else
     If RadioButtonOpen.Value Then ' open an existing baze
       If openfile = "" Then
+        display_specific_container("")
         Message.Error("Please choose a file to open!", "OK")
       Else
         FMain.wizard_return = openfile
@@ -128,115 +138,59 @@ Public Sub WizardIntro_Change()
     Else ' connect to a database
       If RadioButtonConnect.Value Then
         If dbtype <> "" And last_index < WizardIntro.Index Then ' a database type has already been selected, connect to it
-          FMain.connection_settings = New Collection
           Select Case dbtype
             Case "PostgreSQL"
-              FMain.connection_settings["host"] = TextBoxPGHost.Text
-              FMain.connection_settings["port"] = TextBoxPGPort.Text
-              FMain.connection_settings["username"] = TextBoxPGUsername.Text
-              FMain.connection_settings["password"] = TextBoxPGPassword.Text
-              FMain.connection_settings["dbname"] = TextBoxPGDBName.Text
-              FMain.connection_settings["store password"] = CheckBoxPGStoreP.Value
-              db = New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
-              FMain.connection_settings["connection"] = db
+              FMain.db = New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
             Case "XSB"
-              FMain.connection_settings["dsn"] = ComboBoxXDSN.Text
-              FMain.connection_settings["username"] = TextBoxXUsername.Text
-              FMain.connection_settings["password"] = TextBoxXPassword.Text
-              FMain.connection_settings["xsb"] = TextBoxXXSB.Text
-              FMain.connection_settings["store password"] = CheckBoxXStoreP.Value
-              db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text)
-              FMain.connection_settings["connection"] = db
-              Me.Close
+              FMain.db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text)
             Case "Flora2"
-              FMain.connection_settings["dsn"] = ComboBoxfDSN.Text
-              FMain.connection_settings["username"] = TextBoxfUsername.Text
-              FMain.connection_settings["password"] = TextBoxfPassword.Text
-              FMain.connection_settings["flora2"] = TextBoxfflora2.Text
-              FMain.connection_settings["store password"] = CheckBoxfStoreP.Value
-              db = New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
-              FMain.connection_settings["connection"] = db
+              FMain.db = New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
             Case "ZODB"
               Select Case ComboBoxZStorageType.Text
                 Case "Embedded"
-                  FMain.connection_settings["connection type"] = "ZODBEmbedded"
-                  FMain.connection_settings["dbfile"] = "baze.fs"
-                  db = New ZODBEmbedded("baze.fs")
-                  FMain.connection_settings["connection"] = db
+                  FMain.db = New ZODBEmbedded("baze.fs")
                 Case "Client storage"
-                  FMain.connection_settings["connection type"] = "ZODBClientStorage"
-                  FMain.connection_settings["server"] = TextBoxZHost.Text
-                  FMain.connection_settings["port"] = TextBoxZPort.Text
-                  FMain.connection_settings["username"] = TextBoxZUsername.Text
-                  If CheckBoxZStoreP.Value Then
-                    FMain.connection_settings["password"] = TextBoxZPassword.Text
-                  Endif
-                  db = New ZODBClientStorage(TextBoxZHost.Text, TextBoxZPort.Text, TextBoxZUsername.Text, TextBoxZPassword.Text, CheckBoxZStoreP.Value)
-                  FMain.connection_settings["connection"] = db
+                  FMain.db = New ZODBClientStorage(TextBoxZHost.Text, TextBoxZPort.Text, TextBoxZUsername.Text, TextBoxZPassword.Text, CheckBoxZStoreP.Value)
                 Case "File storage"
-                  FMain.connection_settings["connection type"] = "ZODBFileStorage"
-                  FMain.connection_settings["dbfile"] = TextBoxZDBFile.Text
-                  db = New ZODBFileStorage(TextBoxZDBFile.Text)
-                  FMain.connection_settings["connection"] = db
+                  FMain.db = New ZODBFileStorage(TextBoxZDBFile.Text)
               End Select
             Case "eXist"
-              FMain.connection_settings["host"] = TextBoxEHost.Text
-              FMain.connection_settings["port"] = TextBoxEPort.Text
-              FMain.connection_settings["username"] = TextBoxEUsername.Text
-              If CheckBoxEStoreP.Value Then
-                FMain.connection_settings["password"] = TextBoxEPassword.Text
-              Endif
-              db = New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
-              FMain.connection_settings["connection"] = db
+              FMain.db = New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
             Case "CouchDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[6].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
+              FMain.db = New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
             Case "SQLite"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[7].show
-                last_index = WizardIntro.Index
-                db = New SQLiteDB(TextBoxSDBFile.Text)
-                FMain.connection_settings["dbfile"] = TextBoxSDBFile.Text
-                FMain.connection_settings["connection"] = db
-                stop_event = False
-              Endif
+              FMain.db = New SQLiteDB(TextBoxSDBFile.Text)
             Case "ODBC"
-              FMain.connection_settings["dsn"] = ComboBoxODSN.Text
-              FMain.connection_settings["username"] = TextBoxOUsername.Text
-              FMain.connection_settings["password"] = TextBoxOPassword.Text
-              FMain.connection_settings["store password"] = CheckBoxOStoreP.Value
-              db = New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
-              db.close()
-              FMain.connection_settings["connection"] = db
+              FMain.db = New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
+              FMain.db.close()
             Case "MongoDB"
-              FMain.connection_settings["mongo host"] = TextBoxMgHost.Text
-              FMain.connection_settings["mongo port"] = TextBoxMgPort.Text
-              FMain.connection_settings["username"] = TextBoxMgUsername.Text
-              FMain.connection_settings["password"] = TextBoxMgPassword.Text
-              FMain.connection_settings["rest host"] = TextBoxMgHostREST.Text
-              FMain.connection_settings["rest port"] = TextBoxMgPortREST.Text
-              FMain.connection_settings["store password"] = CheckBoxMgStoreP.Value
-              db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, TextBoxMgHostREST.Text, TextBoxMgPortREST.Text, CheckBoxOStoreP.Value)
-              db.close()
-              FMain.connection_settings["connection"] = db
+              FMain.db = New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
           End Select
           If dbtype = "XSB" Then
+            display_specific_container(dbtype)
             please_wait = New FormPleaseWait
-            please_wait.db = db
+            please_wait.db = FMain.db
             please_wait.silent = True
-            please_wait.ShowModal
-          Else
-            FMain.db = db
-            Try res = db.connect()
+            Try please_wait.ShowModal
             If Error Then
-              Message.Error("Error connecting to database! Please check your settings.")
+              Message.Error(Error.Text)
+            Else
+              Me.Close
             Endif
-            If res Then
+          Else
+            Try FMain.db.connect()
+            If Error Then
+              FMain.wizard_return = "canceled"
+              If dbtype Then
+                display_specific_container(dbtype)
+              Endif
+              If Error.Text Then
+                Message.Error(Error.Text)
+              Else
+                Message.Error("Error connecting to database! Please check your settings.")
+              Endif
+            Else
+              FMain.wizard_return = "connection"
               Me.Close
             Endif
           Endif
@@ -245,87 +199,11 @@ Public Sub WizardIntro_Change()
           selected = ""
         Endif
         If last_index > WizardIntro.Index Then
-          WizardIntro[0].show
+          display_specific_container("")
         Else
-          FMain.wizard_return = "connection"
           selected = ComboBoxDBTypes.Current.Text
           dbtype = selected
-          For i = 0 To WizardIntro.Count - 1 
-            WizardIntro[i].Hide
-          Next
-          Select Case selected ' show the appropriate menu
-            Case ""
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[0].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-              Message.Error("Please select a database type!", "OK")
-            Case "PostgreSQL"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[1].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "XSB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[2].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "Flora2"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[3].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "ZODB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[4].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "eXist"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[5].show
-                last_index = WizardIntro.Index
-                stop_event = False             
-              Endif
-            Case "CouchDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[6].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "SQLite"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[7].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "ODBC"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[8].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-            Case "MongoDB"
-              If Not stop_event Then
-                stop_event = True
-                WizardIntro[9].show
-                last_index = WizardIntro.Index
-                stop_event = False
-              Endif
-          End Select
+          display_specific_container(selected)
         Endif
       Endif
     Endif
@@ -399,9 +277,7 @@ End
 
 Public Sub ListViewRecent_Click()
   ' if recent file is selected update the file to be opened variable
-  Dim s As String
-  s = ListViewRecent.Current.Text
-  openfile = AUX.FindAll(s, "\\((.*)\\)", 1)[0]
+  openfile = ListViewRecent.Current.Key
 End
 
 Public Sub ComboBoxZStorageType_Click()
@@ -454,18 +330,29 @@ Public Sub ButtonPGTest_Click()
   ' test the PostreSQL connection
   Dim db As New PostgreSQLDB(TextBoxPGHost.Text, TextBoxPGPort.Text, TextBoxPGDBName.Text, TextBoxPGUsername.Text, TextBoxPGPassword.Text, CheckBoxPGStoreP.Value)
   
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error(Error.Text)
+  Else
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 
 Public Sub ButtonXTest_Click()
   ' test the XSB connection
-  Dim db As New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text) 
+  Dim db As XSBDB
   Dim please_wait As New FormPleaseWait
-  please_wait.db = db
-  please_wait.ShowModal
+  Try db = New XSBDB(ComboBoxXDSN.Text, TextBoxXUsername.Text, TextBoxXPassword.Text, CheckBoxXStoreP.Value, TextBoxXXSB.Text)
+  If Error Then
+    Message.Error(Error.Text)
+  Else
+    please_wait.db = db
+    Try please_wait.ShowModal
+    If Error Then
+      Message.Error(Error.Text)
+    Endif
+  Endif
 End
 
 Public Sub ToolButtonFindXSB_Click()
@@ -486,11 +373,12 @@ End
 
 Public Sub ButtonETest_Click()
   Dim db As New EXistDB(TextBoxEHost.Text, TextBoxEPort.Text, TextBoxEUsername.Text, TextBoxEPassword.Text, CheckBoxEStoreP.Value)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to eXist server!\nError details: " & Error.Text)
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to eXist server!")
   Endif
 End
 
@@ -507,29 +395,31 @@ End
 Public Sub ButtonfTest_Click()
   ' try to connect to Flora2
   Dim db As New Flora2DB(ComboBoxfDSN.Text, TextBoxfUsername.Text, TextBoxfPassword.Text, CheckBoxfStoreP.Value, TextBoxfflora2.Text)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to Flora2 database!")
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to Flora2 database!")
   Endif
 End
 
 Public Sub ButtonCTest_Click()
   ' try to connect to couch db
   Dim db As New CouchDB(TextBoxCHost.Text, TextBoxCPort.Text, TextBoxCUsername.Text, TextBoxCPassword.Text, CheckBoxCStoreP.Value)
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error("Error connecting to CouchDB!")
+  Else
     Try db.close()
     Message.Info("Connection successful!")
-  Else
-    Message.Error("Error connecting to CouchDB!")
   Endif
 End
 
 Public Sub ToolButtonFindSDBFile_Click()
   ' find an existing SQLite DB file
   Dialog.Title = "Please find the SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.OpenFile() Then
     Return
   Endif
@@ -543,7 +433,7 @@ Public Sub ToolButtonSCreateNew_Click()
   Dim db As SQLiteDB
   Dim db_file, db_host As String
   Dialog.Title = "New SQLite database file"
-  Dialog.Filter = ["*.sqlite3", "SQLite database file", "*", "All files"]
+  Dialog.Filter = ["*.sqlite;*.sqlite3", "SQLite database file", "*", "All files"]
   If Dialog.SaveFile() Then
     Return
   Endif
@@ -565,9 +455,12 @@ Public Sub ButtonSTest_Click()
  ' try to connect to SQLite db
   Dim db As New SQLiteDB(TextBoxSDBFile.Text)
   
-  If db.connect() Then
+  Try db.connect()
+  If Error Then
+    Message.Error(Error.Text)
+  Else
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 
@@ -577,7 +470,18 @@ Public Sub ButtonOTest_Click()
   Dim db As New ODBCDB(ComboBoxODSN.Text, TextBoxOUsername.Text, TextBoxOPassword.Text, CheckBoxOStoreP.Value)
   If db.is_open Then
     Try db.close()
-    Message.Info("Connection succesfull!")
+    Message.Info("Connection successful!")
   Endif
 End
 
+Public Sub ButtonMgTest_Click()
+  ' try to connect to MongoDB
+  Dim db As New MongoDB(TextBoxMgHost.Text, TextBoxMgPort.Text, TextBoxMgDBName.Text, TextBoxMgAuthDBName.Text, TextBoxMgUsername.Text, TextBoxMgPassword.Text, CheckBoxMgStoreP.Value)
+  Try db.connect()
+  If Error
+    Message.Error(Error.Text)
+  Else
+    db.close()
+    Message.Info("Connection successful!")
+  Endif
+End

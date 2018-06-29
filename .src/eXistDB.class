@@ -8,8 +8,9 @@ Public port As String
 ' http connection to the eXist server
 Public con As New HttpClient
 
-' unique id
-Public uid As Integer
+' name of document type/format
+Public Const document_type As String = "XML"
+
 
 Public Sub _new(host_ As String, port_ As String, username As String, password As String, store_password As Boolean)
   Me.host = host_
@@ -27,27 +28,32 @@ Public Sub _new(host_ As String, port_ As String, username As String, password A
   Endif
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to eXist server
   Dim res As String
   con.Auth = Net.AuthBasic
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/"
   con.User = Me.username
   con.Password = Me.password
   con.Async = False
   con.Timeout = 60
   con.Get
   If con.Status < 0 Then
-    Return False
+    Select con.Status
+      Case -1006
+        Error.Raise("Name or service not known! Check entered hostname or try entering IP address in case you have DNS issues")
+      Case -1007
+        Error.Raise("Looks like the server with specified host is inaccessible or it isn't running eXist Web REST API on specified port")
+      Default
+        Error.Raise("")
+    End Select
   Else
     For Each res In con.Headers
       If res = "Content-Length: 0" Or res = "HTTP/1.1 401 Unauthorized" Then
-        Message.Error(res)
-        Return False
+        Error.Raise(res)
       Endif
     Next
     If Lof(con) Then res = Read #con, Lof(con)
-    Return True
   Endif
 End
 
@@ -56,13 +62,7 @@ Public Sub query(query_ As String, Optional path As String) As Collection
   Dim res As String
   Dim result As New XmlDocument
 
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
-  If path Then
-    If Left$(path, 1) = "/" Then
-      path = Mid$(path, 2)
-    Endif
-    con.URL &= URL.Encode(path)
-  Endif
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/" &/ path
   If query_ Then
     con.URL &= "?_query=" & URL.Encode(query_)
   Endif
@@ -80,13 +80,7 @@ Public Sub query_xml(query_ As String, Optional path As String = "") As String
   ' query the db (optional path is a path to a collection or document)
   Dim res As String
 
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
-  If path Then
-    If Left$(path, 1) = "/" Then
-      path = Mid$(path, 2)
-    Endif
-    con.URL &= URL.Encode(path)
-  Endif
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/" &/ path
   If query_ Then
     con.URL &= "?_query=" & URL.Encode(query_)
   Endif
@@ -104,13 +98,7 @@ Public Sub query_both(query_ As String, Optional path As String = "") As Collect
   Dim res As String
   Dim result As New XmlDocument
   Dim both As New Collection
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
-  If path Then
-    If Left$(path, 1) = "/" Then
-      path = Mid$(path, 2)
-    Endif
-    con.URL &= URL.Encode(path)
-  Endif
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/" &/ path
   If query_ Then
     con.URL &= "?_query=" & URL.Encode(query_)
   Endif
@@ -172,9 +160,11 @@ Public Sub get_collections(Optional root As String = "") As Collection
   objects["documents"] = New Variant[]
   For i = 0 To res["children"][0]["children"].count - 1
     If TypeOf(res["children"][0]["children"][i]) = gb.Object Then
-      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection" And res["children"][0]["children"][i]["@name"] <> "apps" And res["children"][0]["children"][i]["@name"] <> "system" Then
-        path = root & "/" & res["children"][0]["children"][i]["@name"]
-        objects["collections"].Add(get_collections(path))
+      If res["children"][0]["children"][i]["__node_name__"] = "exist:collection"
+        If root <> "" Or If res["children"][0]["children"][i]["@name"] <> "apps" And res["children"][0]["children"][i]["@name"] <> "system" Then  ' if database contains collections with name "apps" or "system" that are not inside of root directory, those can be displayed
+          path = root &/ res["children"][0]["children"][i]["@name"]
+          objects["collections"].Add(get_collections(path))
+        Endif
       Endif
       If res["children"][0]["children"][i]["__node_name__"] = "exist:resource" Then
         objects["documents"].Add(res["children"][0]["children"][i]["@name"])
@@ -193,11 +183,6 @@ Public Sub get_db_objects() As Collection
     Message.Error(Error.Text)
     Quit
   Endif
-  
-  objects["object types"] = [ 
-    "collections": "directory.png",
-    "documents": "document.png"]
-
   Return objects
 End
 
@@ -236,11 +221,13 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
   Dim obj As Variant
   For Each col In objects["collections"]
     colname = Split(col["collection name"], "/").Pop()
+    colname = URL.Decode(colname)
     un_id = "col_" & col["collection name"]
     obj = tree.Add(un_id, colname, Picture.Load("images/directory.png"), parent)
     populate_tree(tree, un_id, col)
   Next
   For Each doc In objects["documents"]
+    doc = URL.Decode(doc)
     If parent = "Collections" Then
       un_id = "doc_/" & doc
     Else
@@ -249,16 +236,6 @@ Public Sub populate_tree(tree As TreeView, parent As String, objects As Collecti
     obj = tree.Add(un_id, doc, Picture.Load("images/document.png"), parent)
   Next
 End
-
-Public Sub get_unique_id() As Integer
-  ' get a unique id
-  If Not uid Then
-    uid = 0
-  Endif
-  uid += 1
-  Return uid
-End
-
 
 Public Sub refresh_db_tree()
   ' refresh the database tree
@@ -324,64 +301,72 @@ Public Sub refresh_db_tree()
   End With
 End
 
-Public Sub new_document(doc As String, path As String, content As String) As Boolean
+Private Function encode_path(path As String) As String
+  Return Replace(path, " ", "+")
+End
+
+Public Sub new_document(doc As String, path As String, content As String)
   ' create a new document on the given path with the given content
   Dim res As String
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
-  If Left$(path, 1) = "/" Then
-    path = Mid$(path, 2)
-  Endif
-  If Right$(path, 1) <> "/" And Not path = "" Then
-    path &= "/"
-  Endif
-  con.URL &= path & doc
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/" &/ encode_path(path &/ doc)
   Try con.Put("application/xml", content, ["Content-Length: " & Str(Len(content))])
+  If Error Then
+    Error.Propagate()
+  Endif
   If con.Status < 0 Then
-    Return False
+    Error.Raise("An error has occurred while trying to create new document!")
   Else
     If Lof(con) Then res = Read #con, Lof(con)
   Endif
-  Return True
 End
 
-Public Sub delete_object(path As String) As Boolean
+Private Sub delete_object(path As String)
   ' delete an object (document or collection) in the database
   ' for now over curl since DELETE request isn't implemented in HttpClient
   Dim res As String
-  If Left$(path, 1) = "/" Then
-    path = Mid$(path, 2)
+  Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ encode_path(path) To res
+  If "HTTP/1.1 200 OK" <> Left$(res, Len("HTTP/1.1 200 OK")) Then
+    Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/" &/ Right(encode_path(path), - (Len("db/"))) To res  ' some resources/collections are on eXistDB Web REST API sometimes located on /exist/rest/db/{path} relative path, but sometimes on /exist/rest/{path} - on second one were often/always collections/paths that contained non-standard characters (like "ć", "š", etc.) - this is probably bug in eXist DB Web REST API
+    If "HTTP/1.1 200 OK" <> Left$(res, Len("HTTP/1.1 200 OK")) Then
+      Error.Raise("An error has occurred while trying to delete selected object!")
+    Endif
   Endif
-  Shell "curl -u " & Me.username & ":" & Me.password & " -i -X DELETE http://" & Me.host & ":" & Me.port & "/exist/rest/db/" & path To res
-  If "HTTP/1.1 200 OK" = Left$(res, Len("HTTP/1.1 200 OK")) Then
-    Return True
-  Endif
-  Return False
 End
 
-Public Sub new_collection(path As String) As Boolean
+Public Sub delete_document(doc As String, path As String)
+  ' delete document from the database
+  Try delete_object(path &/ doc)
+  If Error Then
+    Error.Propagate()
+  Endif
+End
+
+Public Sub delete_collection(path As String)
+  ' delete collection from the database
+  Try delete_object(path)
+  If Error Then
+    Error.Propagate()
+  Endif
+End
+
+
+Public Sub new_collection(path As String)
   ' create a new collection
-  If new_document("bogus.xml", path, "<bogus />") Then
-    If Right$(path, 1) <> "/" Then
-      path &= "/"
-    Endif
-    If delete_object(path & "bogus.xml") Then
-      Return True
+  Try new_document("bogus.xml", path, "<bogus />")
+  If Error Then
+    Error.Propagate()
+  Else
+    Try delete_object(path &/ "bogus.xml")
+    If Error Then
+      Error.Propagate()
     Endif
   Endif
-  Return False
 End
 
-Public Sub get_xml_doc(path As String) As String
+Public Function get_document(documentName As String, path As String) As String
   ' get the XML document and return it's content
   Dim res As String
-  con.URL = Me.host & ":" & Me.port & "/exist/rest/db/"
-  If Left$(path, 1) = "/" Then
-    path = Mid$(path, 2)
-  Endif
-  If Right$(path, 1) <> "/" And Not path = "" Then
-    path &= "/"
-  Endif
-  con.URL &= path
+  con.URL = Me.host & ":" & Me.port & "/exist/rest/" &/ encode_path(path &/ documentName)
   con.Get
   If con.Status < 0 Then
     Return Null
@@ -480,4 +465,9 @@ Public Sub new_xquery(name As String, query_ As String) As Collection
   res = query_both(Replace$(query_, "\n", " "))
   refresh_db_tree()
   Return res
+End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormeXistXMLEditor(parent)
 End

@@ -1,6 +1,6 @@
 ' Gambas class file
 
-' xml TextEditor
+' JSON TextEditor
 Public editor As TextEditor
 ' execute button
 Public but As ToolButton
@@ -13,38 +13,53 @@ Public query_type As String
 
 Public Sub _new()
   ' make TextEditor visible
-  editor = TextEditorXML
+  editor = TextEditorJSON
   but = ToolButtonExecute
 End
 
 Public Sub Form_Open()
   VSplitMain.Settings = [1, 1]
-  TextEditorXML.ShowLineNumber = True
+  TextEditorJSON.ShowLineNumber = True
 End
 
 Public Sub ToolButtonExecute_Click()
   ' if query then execute it and show the results
-  ' else (XML TextEditor) update the document on the given path
-  Dim query_name As String
+  ' else (JSON TextEditor) update the document on the given path
+  Dim doc, query_name As String
   Dim child As Variant
-  Dim success As Boolean
+  Dim success As Boolean = False
   If but.Tooltip = "Execute query" Then
     Select Case query_type
       Case "insert"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Insert query"))
-        success = FMain.db.new_insert_query(query_name, TextEditorXML.Text)
+        Try success = FMain.db.new_insert_query(query_name, TextEditorJSON.Text)
+        If Error Then
+          Message.Error(Error.Text)
+        Endif
       Case "replace"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Replace query"))
-        success = FMain.db.new_replace_query(query_name, TextEditorXML.Text)
-      Case "value"
-        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Value query"))
-        success = FMain.db.new_value_query(query_name, TextEditorXML.Text)
+        Try success = FMain.db.new_replace_query(query_name, TextEditorJSON.Text)
+        If Error Then
+          Message.Error(Error.Text)
+        Endif
+      Case "update"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Update query"))
+        Try success = FMain.db.new_update_query(query_name, TextEditorJSON.Text)
+        If Error Then
+          Message.Error(Error.Text)
+        Endif
       Case "delete"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Delete query"))
-        success = FMain.db.new_delete_query(query_name, TextEditorXML.Text)
+        Try success = FMain.db.new_delete_query(query_name, TextEditorJSON.Text)
+        If Error Then
+          Message.Error(Error.Text)
+        Endif
       Case "rename"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Rename query"))
-        success = FMain.db.new_rename_query(query_name, TextEditorXML.Text)
+        Try success = FMain.db.new_rename_query(query_name, TextEditorJSON.Text)
+        If Error Then
+          Message.Error(Error.Text)
+        Endif
     End Select
     If success Then
       Message.Info("Query successfully executed!")
@@ -56,7 +71,7 @@ Public Sub ToolButtonExecute_Click()
       End With
     Endif
   Else
-    Try FMain.db.new_document(document_name, path, TextEditorXML.Text)
+    Try FMain.db.update_document(document_name, path, TextEditorJSON.Text)
     If Error Then
       Message.Error(Error.Text)
     Else
@@ -82,8 +97,8 @@ Public Sub ToolButtonClose_Click()
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Insert query"))
       Case "replace"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Replace query"))
-      Case "value"
-        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Value query"))
+      Case "update"
+        query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Update query"))
       Case "delete"
         query_name = Left$(FMain.main_tabstrip.Text, - Len(" - Delete query"))
       Case "rename"
@@ -94,11 +109,11 @@ Public Sub ToolButtonClose_Click()
     query_name = Left$(FMain.main_tabstrip.Text, - Len(" - " & FMain.db.document_type & " Document"))
   Endif
   If query_type <> "doc" Then
-    If FMain.db.dbobjects["queries"][query_type & " queries"][query_name] = TextEditorXML.Text Then
+    If FMain.db.dbobjects["queries"][query_type & " queries"][query_name] = TextEditorJSON.Text Then
       ok = True
     Endif
   Else
-    If FMain.db.get_document(query_name, path) = TextEditorXML.Text Then
+    If FMain.db.get_document(query_name, path) = TextEditorJSON.Text Then
       ok = True
     Endif
   Endif
@@ -115,19 +130,19 @@ Public Sub ToolButtonClose_Click()
   Endif
 End
 
-Public Sub TextEditorXML_KeyPress_()
+Public Sub TextEditorJSON_KeyPress_()
   ' handle copy, paste, cut, select all
   If Key.Code = Key["C"] And If Key.Control Then
-    TextEditorXML.Copy()
+    TextEditorJSON.Copy()
   Else
     If Key.Code = Key["V"] And If Key.Control Then
-      TextEditorXML.Paste()
+      TextEditorJSON.Paste()
     Else
       If Key.Code = Key["X"] And If Key.Control Then
-        TextEditorXML.Cut()
+        TextEditorJSON.Cut()
       Else
         If Key.Code = Key["A"] And If Key.Control Then
-          TextEditorXML.SelectAll()
+          TextEditorJSON.SelectAll()
         Endif
       Endif
     Endif

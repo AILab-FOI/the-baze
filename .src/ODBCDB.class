@@ -44,7 +44,10 @@ Public Sub _new(dsn_ As String, username As String, password As String, store_pa
   Endif
   init_isql()
   Me.init_des()
-  is_open = connect()
+  Try connect()
+  If Not Error Then
+    is_open = True
+  Endif
 End
 
 Public Sub close()
@@ -66,7 +69,7 @@ Public Sub init_isql()
 End
 
 
-Public Function connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to the database
   With con
     .Type = "odbc"
@@ -76,15 +79,12 @@ Public Function connect(Optional caller As Object = Null) As Boolean
     .Name = ""
     Try .Open
     If Error Then
-      Message.Error(Error.Text)
-      Return False
+      Error.Raise(Error.Text)
     Endif
     If .Opened = False Then
-      Message.Error("ODBC connection won't open!")
-      Return False
+      Error.Raise("ODBC connection won't open!")
     Endif
   End With
-  Return True
 End
 
 Public Sub initialize_gui()

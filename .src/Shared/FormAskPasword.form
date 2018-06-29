@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,38.5714,18.5714)
+  MoveScaled(0,0,38.625,18.625)
   Text = ("Please enter your password")
   Resizable = False
   { LabelPassword Label
@@ -15,5 +15,11 @@
   { ButtonOK Button
     MoveScaled(23,13,13,4)
     Text = ("OK")
+    Default = True
+  }
+  { ButtonCancel Button
+    MoveScaled(9,13,13,4)
+    Text = ("Cancel")
+    Cancel = True
   }
 }

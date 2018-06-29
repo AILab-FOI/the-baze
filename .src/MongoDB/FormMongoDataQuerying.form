@@ -1,0 +1,12 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,37,15)
+  Arrangement = Arrange.Column
+  { ToolButtonNewFindQuery ToolButton
+    MoveScaled(4,4,32,6)
+    Mouse = Mouse.Pointing
+    Text = ("New find query")
+    Picture = Picture["icon:/32/find"]
+  }
+}

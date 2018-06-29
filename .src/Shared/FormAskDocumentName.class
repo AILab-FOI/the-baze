@@ -9,18 +9,17 @@ End
 
 
 Public Sub ButtonOK_Click()
-  ' return the entered view name
-  If TextBoxSequenceName.Text Then
-    caller.sequence_name = TextBoxSequenceName.Text 
+  ' store the table name
+  If Trim(TextBoxDocumentName.Text) Then
+    caller.doc_name = Trim(TextBoxDocumentName.Text)
     caller.request_canceled = False
-    Me.Hide
+    Me.Close
   Else
-    Message.Warning("Please enter a sequence name!")
+    Message.Info("Please enter a document name!")
   Endif
 End
 
-
 Public Sub ButtonCancel_Click()
-  ' cancel the request
-  Me.Hide
+  ' close the form
+  Me.Close
 End

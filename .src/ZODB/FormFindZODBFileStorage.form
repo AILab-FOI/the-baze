@@ -9,9 +9,11 @@
   { ButtonCancel Button
     MoveScaled(62,38,13,4)
     Text = ("Cancel")
+    Cancel = True
   }
   { ButtonOK Button
     MoveScaled(77,38,13,4)
     Text = ("OK")
+    Default = True
   }
 }

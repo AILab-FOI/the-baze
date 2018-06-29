@@ -1,12 +1,12 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,64,64)
+  MoveScaled(0,0,65,64)
   Arrangement = Arrange.Fill
   { VSplitMain VSplit
     MoveScaled(0,0,62,62)
     { VBox1 VBox
-      MoveScaled(2,2,57,31)
+      MoveScaled(2,2,57,46)
       { PanelToolbar Panel
         MoveScaled(1,1,55,5)
         Arrangement = Arrange.Row
@@ -24,30 +24,12 @@
           Picture = Picture["icon:/32/close"]
         }
       }
-      { TextEditorXML TextEditor
+      { TextEditorJSON TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = "HTML"
+        Highlight = "JavaScript"
       }
-    }
-    { TabStripResult TabStrip
-      MoveScaled(3,34,52,26)
-      Arrangement = Arrange.Fill
-      Count = 2
-      Index = 0
-      Text = ("Tree")
-      { TreeViewResult TreeView
-        MoveScaled(1,1,49,20)
-      }
-      Index = 1
-      Text = ("XML")
-      { TextEditorResult TextEditor
-        MoveScaled(1,1,50,20)
-        Highlight = "HTML"
-        ReadOnly = True
-      }
-      Index = 0
     }
   }
 }

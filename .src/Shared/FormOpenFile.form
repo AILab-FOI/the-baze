@@ -1,16 +1,19 @@
 # Gambas Form File 3.0
-{ Form Form 
+
+{ Form Form
   MoveScaled(0,0,92,45)
-  { FileChooserMain FileChooser 
+  { FileChooserMain FileChooser
     MoveScaled(1,1,89,35)
     Filter = [("*.baze"), ("Baze file")]
   }
-  { ButtonOK Button 
+  { ButtonOK Button
     MoveScaled(77,39,13,4)
     Text = ("OK")
+    Default = True
   }
-  { ButtonCancel Button 
+  { ButtonCancel Button
     MoveScaled(62,39,13,4)
     Text = ("Cancel")
+    Cancel = True
   }
 }

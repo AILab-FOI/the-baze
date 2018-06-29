@@ -12,7 +12,7 @@ Public Sub RadioButtonFromWeb_Click()
     TextBoxWWW.Enabled = True
     ToolButtonLoad.Enabled = True
     ToolButtonOpenFile.Enabled = False
-    TextEditorXML.Enabled = False
+    TextEditorJSON.Enabled = False
   Endif
 End
 
@@ -22,7 +22,7 @@ Public Sub RadioButtonFromFileSystem_Click()
     TextBoxWWW.Enabled = False
     ToolButtonLoad.Enabled = False
     ToolButtonOpenFile.Enabled = True
-    TextEditorXML.Enabled = False
+    TextEditorJSON.Enabled = False
   Endif
 End
 
@@ -32,19 +32,19 @@ Public Sub RadioButtonFromText_Click()
     TextBoxWWW.Enabled = False
     ToolButtonLoad.Enabled = False
     ToolButtonOpenFile.Enabled = False
-    TextEditorXML.Enabled = True
+    TextEditorJSON.Enabled = True
   Endif
 End
 
 Public Sub ToolButtonOpenFile_Click()
   ' find a file on the file system
-  Dialog.Title = "Please choose an " & FMain.db.document_type & " file"
-  Dialog.Filter = ["*.xml", FMain.db.document_type & " Document"]
+  Dialog.Title = "Please choose a " & FMain.db.document_type & " file"
+  Dialog.Filter = ["*.json", FMain.db.document_type & " Document"]
   If Dialog.OpenFile() Then
     Return
   Endif
   LabelFileToOpen.Text = Dialog.Path
-  TextEditorXML.Text = File.Load(Dialog.Path)
+  TextEditorJSON.Text = File.Load(Dialog.Path)
 End
 
 Public Sub ToolButtonLoad_Click()
@@ -57,7 +57,7 @@ Public Sub ToolButtonLoad_Click()
   If http.Status < 0 Then
     Message.Error("Unable to connect to the given address!")
   Else
-    If Lof(http) Then TextEditorXML.Text = Read #http, Lof(http)
+    If Lof(http) Then TextEditorJSON.Text = Read #http, Lof(http)
   Endif
 End
 
@@ -65,8 +65,10 @@ Public Sub ToolButtonExecute_Click()
   ' create the document
   Dim doc_name As String
   Dim child As Variant
-  doc_name = Left$(FMain.main_tabstrip.Text, - Len(" - " & FMain.db.document_type & " Document"))
-  Try FMain.db.new_document(doc_name, TextBoxPath.Text, TextEditorXML.Text)
+  If FMain.main_tabstrip.Text Ends " - " & FMain.db.document_type & " Document" Then
+    doc_name = Left$(FMain.main_tabstrip.Text, - Len(" - " & FMain.db.document_type & " Document"))
+  Endif
+  Try FMain.db.new_document(doc_name, TextBoxPath.Text, TextEditorJSON.Text)
   If Error Then
     Message.Error(Error.Text)
   Else

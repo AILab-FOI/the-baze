@@ -7,16 +7,18 @@
     MoveScaled(1,1,38,4)
     Text = ("Please enter a collection path:")
   }
-  { TextBoxCollectionPath TextBox
+  { !TextBoxCollectionPath TextBox
     MoveScaled(1,6,38,4)
-    Text = ("/")
+    #Public = True
   }
   { ButtonOK Button
     MoveScaled(28,12,11,4)
     Text = ("OK")
+    Default = True
   }
   { ButtonCancel Button
     MoveScaled(15,12,11,4)
     Text = ("Cancel")
+    Cancel = True
   }
 }

@@ -24,11 +24,11 @@
           Picture = Picture["icon:/32/close"]
         }
       }
-      { TextEditorXML TextEditor
+      { TextEditorJSON TextEditor
         MoveScaled(1,6,55,24)
         Mouse = Mouse.Text
         Expand = True
-        Highlight = "HTML"
+        Highlight = "JavaScript"
       }
     }
     { TabStripResult TabStrip
@@ -41,7 +41,7 @@
         MoveScaled(1,1,49,20)
       }
       Index = 1
-      Text = ("XML")
+      Text = ("JSON")
       { TextEditorResult TextEditor
         MoveScaled(1,1,50,20)
         Highlight = "HTML"

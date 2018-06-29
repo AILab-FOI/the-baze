@@ -1,0 +1,64 @@
+' Gambas class file
+
+' request canceled inbox
+Public request_canceled As Boolean
+' document name inbox
+Public doc_name As String
+' collection name inbox
+Public collection_path As String
+
+Public Sub ToolButtonNewDocument_Click()
+  ' open the document creation window
+  Dim cho As FormAskDocumentName
+  Dim table_updater As FormMongoCreateDocument
+  Dim tabstrip_title As String
+  Dim i As Integer
+  Dim newDocumentSuffix As Integer = 1
+  request_canceled = False
+  Select Message.Question("Do you to manually specify document name?", "Yes", "No", "Cancel")
+    Case 1 ' Yes button
+      cho = New FormAskDocumentName
+      cho.caller = Me
+      cho.ShowModal()
+      tabstrip_title = doc_name & " - " & FMain.db.document_type & " Document"
+    Case 2  'No button
+      doc_name = Null
+      tabstrip_title = "New " & FMain.db.document_type & " Document #" & newDocumentSuffix
+    Case 3  'Cancel button or Close button (X)
+      Return
+  End Select
+  
+  If Not request_canceled Then
+    For i = 0 To FMain.main_tabstrip.Count - 1
+      If FMain.main_tabstrip[i].Text = tabstrip_title Then
+        If doc_name Then
+          FMain.main_tabstrip.Index = i
+          Return
+        Else
+          i += 1
+          tabstrip_title = Left$(tabstrip_title, RInStr(tabstrip_title, "#")) & i
+        Endif
+      Endif
+    Next
+    FMain.main_tabstrip.count += 1
+    table_updater = New FormMongoCreateDocument(FMain.main_tabstrip)
+    FMain.main_tabstrip.Text = tabstrip_title
+  Endif
+End
+
+Public Sub ToolButtonNewCollection_Click()
+  ' create a new collection
+  Dim cho As New FormAskCollectionPath("")
+  request_canceled = False
+  cho.caller = Me
+  cho.ShowModal()
+  If Not request_canceled Then
+    Try FMain.db.new_collection(collection_path)
+    If Error Then
+      Message.Error(Error.Text)
+    Else
+      Message.Info("Collection successfully created!")
+      FMain.db.refresh_db_tree()
+    Endif
+  Endif
+End

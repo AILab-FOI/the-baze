@@ -1,14 +1,11 @@
 ' Gambas class file
 
-
 Public Sub ButtonOK_Click()
   FMain.password = TextBoxPassword.Text
   Me.Close
 End
 
-Public Sub TextBoxPassword_KeyPress()
-  ' on press enter do like ok
-  If Key.Code = Key.Return Then
-    ButtonOK_Click()
-  Endif
+Public Sub ButtonCancel_Click()
+  Me.Close
+  Error.Raise("Seems like you forgot password for selected database or it has been changed in meantime.") ' cancel process of connecting to existing database and return back to home window
 End

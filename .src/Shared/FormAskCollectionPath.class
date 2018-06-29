@@ -2,6 +2,11 @@
 
 Public caller As Object
 
+Public Sub _new(defaultCollectionPath As String)
+  ' set default text value in TextBox control for entering collection path
+  Me.TextBoxCollectionPath.Text = defaultCollectionPath
+End
+
 Public Sub Form_Show()
   ' assume that the form will be closed by pressing Cancel button or Close (X) button
   caller.request_canceled = True
@@ -10,12 +15,12 @@ End
 
 Public Sub ButtonOK_Click()
   ' store the table name
-  If TextBoxFormName.Text <> "" Then
-    caller.form_name = TextBoxFormName.Text
+  If TextBoxCollectionPath.Text <> "" And TextBoxCollectionPath.Text <> "/" Then
+    caller.collection_path = TextBoxCollectionPath.Text
     caller.request_canceled = False
     Me.Close
   Else
-    Message.Info("Please enter a form name!")
+    Message.Info("Please enter a collection path!")
   Endif
 End
 
@@ -23,4 +28,3 @@ Public Sub ButtonCancel_Click()
   ' close the form
   Me.Close
 End
-

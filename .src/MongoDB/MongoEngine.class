@@ -1,1 +1,99 @@
 ' Gambas class file
+
+Export
+
+Public mongo_home As String
+Public mongo_command As String
+Public result As String
+Public resultsArray As Object[]
+Private proc As Process
+Private buff_size As Integer
+
+
+Public Sub _new(Optional hostname_ As String, Optional port_ As String, Optional dbname_ As String, Optional authDbname_ As String, Optional username_ As String = "", Optional password_ As String = "", Optional home As String = "/usr/bin/mongo", Optional params As String = "--ipv6 --verbose --quiet 2>&1") ' at first glance, combination of verbose and quiet flag seems like oxymoron, but that way I managed to get response from which is conclusive if the connection was accepted, rejected or dropped
+  mongo_home = home
+  buff_size = -20000 'TODO: should be an argument that will be increased dynamically if queries get big!
+  mongo_command = home
+  If hostname_ Then
+    mongo_command &= " --host \"" & hostname_ & "\""
+  Endif
+  If port_ Then
+    mongo_command &= " --port " & port_
+  Endif
+  If authDbname_ Then
+    mongo_command &= " --authenticationDatabase \"" & authDbname_ & "\""
+  Endif
+  If username_ Then
+    mongo_command &= " --username \"" & username_ & "\""
+  Endif
+  If password_ Then
+    mongo_command &= " --password \"" & password_ & "\""
+  Endif
+  If dbname_ Then
+    mongo_command &= " \"" & dbname_ & "\""
+  Endif
+  mongo_command &= " " & params
+  proc = Shell mongo_command For Read Write
+  Sleep 2
+  While True
+    Read #proc, result, buff_size
+    If InStr(result, "not found") Then
+      Error.Raise("Mongo shell cannot be launched! Check if it is installed at all.")
+    Else If InStr(result, "Name or service not known") Then
+      Error.Raise("Name or service not known! Check entered hostname or try entering IP address in case you have DNS issues")
+    Else If InStr(result, "Connection refused") Then
+      Error.Raise("Connection refused! The Reason might be one of the following:\n"
+      "-server with specified hostname is not running Mongo Daemon\n"
+      "-server with specified hostname is running Mongo Daemon, but not on specified port\n"
+      "-you have blocked access to server with specified hostname")
+    Else If InStr(result, "connection attempt failed") Or InStr(result, "failed: Temporary failure in name resolution") Then
+      Error.Raise("Destination server cannot is not accessible. Make sure you have access to the Internet and whether the server is online")
+    Else If InStr(result, "Error: Authentication failed.") Then
+      Error.Raise("Entered credentials are invalid!")
+    Else If InStr(result, "Error: Missing expected field") Then
+      Error.Raise("Some of required fields are missing!")
+    Else If InStr(result, "Error: ") Then
+      Error.Raise(Split(Mid(result, InStr(result, "Error: ") + Len("Error: ")), "\n")[0])
+    Else If Not (proc.State = Process.Running) Then
+      Error.Raise("Unknown error occurred while trying to connect to specified database")
+    Else If InStr(result, "connected connection!") Then
+      result = execute("db.getCollectionNames().forEach(function(colName){print(colName);})")
+      If InStr(result, "Error: listCollections failed:")
+        Error.Raise("You don't have privileges to access specified database")
+      Else
+        Return
+      Endif
+    Endif
+    Sleep 0.1
+  Wend
+  
+End
+
+
+Public Sub close()
+  ' disconnect from the server
+  Print #proc, "exit\n"
+  Close #proc
+End
+
+Public Function execute(jsCommand As String) As String
+  ' execute JavaScript command and return result (directives like "show collections" and "show dbs" can't be used)
+  Dim closingIdentifier As String = AUX.generate_random_closing_identifier()
+  Dim retVal As String = ""
+  Write #proc, jsCommand & ";\nprint(\"" & closingIdentifier & "\")\n"
+  Read #proc, result, buff_size
+  retVal = ""
+  While RTrim(result) Not Ends closingIdentifier
+    retVal &= result
+    Sleep 0.1
+    If proc.State = Process.Running Then
+      Read #proc, result, buff_size
+    Else
+      Return retVal
+    Endif
+  Wend
+  If Trim(result) <> closingIdentifier Then
+    retVal &= Left$(Trim(result), - (AUX.CLOSING_IDENTIFIER_LENGTH + 1))
+  Endif
+  Return retVal
+End
