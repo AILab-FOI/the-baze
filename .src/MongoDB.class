@@ -340,9 +340,22 @@ End
 
 Private Function perform_query(query_name As String, command As String, query_type As String, Optional prefix As String = "", Optional suffix As String = "", Optional specialTypesIdentifier As String = "") As Variant
   Dim retVal As Variant
+  Dim noMoreTrailingSemicolons As Boolean = False
   Me.dbobjects["queries"][query_type][query_name] = command
   Me.Save()
-  Try retVal = executeCommandAndParseJsonResult("try {" & prefix & Trim(command) & suffix & "} catch (e) {print(e.errmsg)}", specialTypesIdentifier)
+  While Not noMoreTrailingSemicolons
+    noMoreTrailingSemicolons = True
+    command = Trim(command)
+    If command Ends ";" Then
+      command = Left$(command, -1)
+      noMoreTrailingSemicolons = False ' still might be (e.g. "db.find({});;" - one semicolon was stripped but another one still remained)
+    Endif
+    If command Begins ";" Then
+      command = Right(command, -1)
+      noMoreTrailingSemicolons = False
+    Endif
+  Wend
+  Try retVal = executeCommandAndParseJsonResult("try {" & prefix & command & suffix & "} catch (e) {print(e.errmsg)}", specialTypesIdentifier)
   If Error Then
     refresh_db_tree()
     Error.Raise("An error has occurred while performing specified query! Check whether you specified collection name, there are any syntax errors in your query or query returns valid data for this query type\nError details: " & Error.Text)
