@@ -170,11 +170,11 @@ Public Sub refresh_db_tree()
       .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
     Next
     .Add("Replace queries", "Replace queries", Picture.Load("images/directory.png"), "Queries")
-    For Each o In Me.dbobjects["queries"]["update queries"]
+    For Each o In Me.dbobjects["queries"]["replace queries"]
       .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("images/query.png"), "Replace queries")
     Next
     .Add("Rename queries", "Rename queries", Picture.Load("images/directory.png"), "Queries")
-    For Each o In Me.dbobjects["queries"]["update queries"]
+    For Each o In Me.dbobjects["queries"]["rename queries"]
       .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("images/query.png"), "Rename queries")
     Next
     .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
