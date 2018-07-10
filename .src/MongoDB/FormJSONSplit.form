@@ -44,7 +44,7 @@
       Text = ("JSON")
       { TextEditorResult TextEditor
         MoveScaled(1,1,50,20)
-        Highlight = "HTML"
+        Highlight = "JavaScript"
         ReadOnly = True
       }
       Index = 0
