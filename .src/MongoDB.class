@@ -328,7 +328,7 @@ End
 
 Public Sub delete_collection(path As String)
   ' delete a collection in the database
-  If executeCommandAndParseJsonResult("db[\"" & path & "\"].drop()") = False
+  If executeCommandAndParseJsonResult("db.getCollectionNames().filter(function(colName) {return (colName + '.').startsWith('" & path & "' + '.') }).forEach(function(colName) {db[colName].drop()})") = False
     Error.Raise("An error has occurred while trying to delete selected collection!")
   Endif
 End
