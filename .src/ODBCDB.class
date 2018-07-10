@@ -399,5 +399,7 @@ Public Sub test_db_type() As String
 End
 
 
-
-
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormSQLSplit(parent)
+End

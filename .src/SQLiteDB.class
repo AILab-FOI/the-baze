@@ -229,3 +229,8 @@ Public Sub rename_table(old_name As String, new_name As String)
   ' rename a table in the database
   execute("ALTER TABLE \"" & FMain.pg_escape(old_name) & "\" RENAME TO \"" & FMain.pg_escape(new_name) & "\"")
 End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormSQLSplit(parent)
+End

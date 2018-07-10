@@ -370,3 +370,8 @@ Public Sub delete_datalog_module(module As String)
   Me.dbobjects["datalog modules"][module] = Null
   Me.Save()
 End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormSQLSplit(parent)
+End

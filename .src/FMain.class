@@ -519,7 +519,7 @@ Public Sub MenuEditDocument_Click()
   ' delete the collection
   Dim doc As String
   Dim path As String
-  Dim edit As Variant
+  Dim edit_view As Variant
   Dim i As Integer
   Dim tabName As String
   doc = TreeViewMain.Current.Text
@@ -531,15 +531,15 @@ Public Sub MenuEditDocument_Click()
     Endif
   Next
   main_tabstrip.count += 1
-  edit = db.initialize_editor(FMain.main_tabstrip)
+  edit_view = db.initialize_editor(FMain.main_tabstrip)
   main_tabstrip.Text = tabName
-  edit.but.Tooltip = "Update document"
-  edit.document_name = doc
+  edit_view.but.Tooltip = "Update document"
+  edit_view.document_name = doc
   If TreeViewMain.Current.ParentKey <> "Collections" Then
     path = Mid$(TreeViewMain.Current.ParentKey, 5)
   Endif
-  edit.path = path
-  edit.editor.Text = db.get_document(doc, path)
+  edit_view.path = path
+  edit_view.editor.Text = db.get_document(doc, path)
 End
 
 Public Sub MenuDeleteInsertRuleQuery_Click()
@@ -582,14 +582,13 @@ Public Sub TreeViewMain_DblClick()
   Dim table_updater As FormPostgreSQLEditTableData
   Dim con As Connection
   Dim i As Integer
-  Dim sql_view As FormSQLSplit
   Dim datalog_view As FormDatalogSplit
   Dim datalog_module As FormXSBCreateModule
   Dim datalog_rule As FormDatalogRule
   Dim pymapreduce_split As FormPyMapReduceSplit
   Dim py_edit As FormZODBPythonEditor
   Dim py_mani As FormZODBDataManipulationEditor
-  Dim edit As Variant
+  Dim edit_view As Variant
   Dim mani As Variant
   Dim fl_edit As FormFlora2Split
   Dim fl_insert As FormFlora2InsertEditor
@@ -707,8 +706,8 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    sql_view = New FormSQLSplit(TabStripMain)
-    sql_view.sql_editor.Text = db.dbobjects["queries"]["sql queries"][TreeViewMain.Current.Key]
+    edit_view = New FormSQLSplit(TabStripMain)
+    edit_view.editor.Text = db.dbobjects["queries"]["sql queries"][TreeViewMain.Current.Key]
     TabStripMain.Text = TreeViewMain.Current.Key & " - SQL query"
   Endif
   If TreeViewMain.Current.ParentKey = "Update queries" Then
@@ -720,8 +719,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    sql_view = New FormSQLSplit(TabStripMain)
-    sql_view.sql_editor.Text = db.dbobjects["queries"]["update queries"][TreeViewMain.Current.Key]
+    edit_view = db.initialize_editor(TabStripMain)
+    edit_view.editor.Text = db.dbobjects["queries"]["update queries"][TreeViewMain.Current.Key]
+	edit_view.query_type = "update"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Update query"
   Endif
   If TreeViewMain.Current.ParentKey = "Insert queries" Then
@@ -738,33 +738,28 @@ Public Sub TreeViewMain_DblClick()
       py_mani.context = " - Insert query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
     Else
-      If db Is EXistDB Or db Is MongoDB Then
-        edit = db.initialize_editor(TabStripMain)
-        edit.query_type = "insert"
-        edit.editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+      If db Is Flora2DB Then
+        fl_insert = New FormFlora2InsertEditor(TabStripMain)
+        fl_insert.flora2_literals.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_literals"]
+        fl_insert.flora2_query.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_query"]
+        Select Case db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_insop"]
+          Case "insert"
+            fl_insert.insert_rb.Value = True
+            fl_insert.trans_chk.Value = False
+          Case "insertall"
+            fl_insert.insertall_rb.Value = True
+            fl_insert.trans_chk.Value = False
+          Case "t_insert"
+            fl_insert.insert_rb.Value = True
+            fl_insert.trans_chk.Value = True
+          Case "t_insertall"
+            fl_insert.insertall_rb.Value = True
+            fl_insert.trans_chk.Value = True
+        End Select
       Else
-        If db Is Flora2DB Then
-          fl_insert = New FormFlora2InsertEditor(TabStripMain)
-          fl_insert.flora2_literals.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_literals"]
-          fl_insert.flora2_query.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_query"]
-          Select Case db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key & "_insop"]
-            Case "insert"
-              fl_insert.insert_rb.Value = True
-              fl_insert.trans_chk.Value = False
-            Case "insertall"
-              fl_insert.insertall_rb.Value = True
-              fl_insert.trans_chk.Value = False
-            Case "t_insert"
-              fl_insert.insert_rb.Value = True
-              fl_insert.trans_chk.Value = True
-            Case "t_insertall"
-              fl_insert.insertall_rb.Value = True
-              fl_insert.trans_chk.Value = True
-          End Select
-        Else
-          sql_view = New FormSQLSplit(TabStripMain)
-          sql_view.sql_editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
-        Endif
+        edit_view = db.initialize_editor(TabStripMain)
+        edit_view.editor.Text = db.dbobjects["queries"]["insert queries"][TreeViewMain.Current.Key]
+        edit_view.query_type = "insert"
       Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Insert query"
@@ -783,45 +778,40 @@ Public Sub TreeViewMain_DblClick()
       py_mani.context = " - Delete query"
       py_mani.pyeditor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
     Else
-      If db Is EXistDB Or db Is MongoDB Then
-        edit = db.initialize_editor(TabStripMain)
-        edit.query_type = "delete"
-        edit.editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+      If db Is Flora2DB Then
+        fl_delete = New FormFlora2DeleteEditor(TabStripMain)
+        fl_delete.flora2_literals.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_literals"]
+        fl_delete.flora2_query.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_query"]
+        Select Case db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_delop"]
+          Case "delete"
+            fl_delete.delete_rb.Value = True
+            fl_delete.trans_chk.Value = False
+          Case "deleteall"
+            fl_delete.deleteall_rb.Value = True
+            fl_delete.trans_chk.Value = False
+          Case "t_delete"
+            fl_delete.delete_rb.Value = True
+            fl_delete.trans_chk.Value = True
+          Case "t_deleteall"
+            fl_delete.deleteall_rb.Value = True
+            fl_delete.trans_chk.Value = True
+          Case "erase"
+            fl_delete.erase_rb.Value = True
+            fl_delete.trans_chk.Value = False
+          Case "eraseall"
+            fl_delete.eraseall_rb.Value = True
+            fl_delete.trans_chk.Value = False
+          Case "t_erase"
+            fl_delete.erase_rb.Value = True
+            fl_delete.trans_chk.Value = True
+          Case "t_eraseall"
+            fl_delete.eraseall_rb.Value = True
+            fl_delete.trans_chk.Value = True
+        End Select
       Else
-        If db Is Flora2DB Then
-          fl_delete = New FormFlora2DeleteEditor(TabStripMain)
-          fl_delete.flora2_literals.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_literals"]
-          fl_delete.flora2_query.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_query"]
-          Select Case db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key & "_delop"]
-            Case "delete"
-              fl_delete.delete_rb.Value = True
-              fl_delete.trans_chk.Value = False
-            Case "deleteall"
-              fl_delete.deleteall_rb.Value = True
-              fl_delete.trans_chk.Value = False
-            Case "t_delete"
-              fl_delete.delete_rb.Value = True
-              fl_delete.trans_chk.Value = True
-            Case "t_deleteall"
-              fl_delete.deleteall_rb.Value = True
-              fl_delete.trans_chk.Value = True
-            Case "erase"
-              fl_delete.erase_rb.Value = True
-              fl_delete.trans_chk.Value = False
-            Case "eraseall"
-              fl_delete.eraseall_rb.Value = True
-              fl_delete.trans_chk.Value = False
-            Case "t_erase"
-              fl_delete.erase_rb.Value = True
-              fl_delete.trans_chk.Value = True
-            Case "t_eraseall"
-              fl_delete.eraseall_rb.Value = True
-              fl_delete.trans_chk.Value = True
-          End Select
-        Else
-          sql_view = New FormSQLSplit(TabStripMain)
-          sql_view.sql_editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
-        Endif
+        edit_view = db.initialize_editor(TabStripMain)
+        edit_view.editor.Text = db.dbobjects["queries"]["delete queries"][TreeViewMain.Current.Key]
+        edit_view.query_type = "delete"
       Endif
     Endif
     TabStripMain.Text = TreeViewMain.Current.Key & " - Delete query"
@@ -860,9 +850,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    edit = db.initialize_editor(TabStripMain)
-    edit.editor.Text = db.dbobjects["queries"]["replace queries"][TreeViewMain.Current.Key]
-    edit.query_type = "replace"
+    edit_view = db.initialize_editor(TabStripMain)
+    edit_view.editor.Text = db.dbobjects["queries"]["replace queries"][TreeViewMain.Current.Key]
+    edit_view.query_type = "replace"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Replace query"
   Endif
   If TreeViewMain.Current.ParentKey = "Rename queries" Then
@@ -874,9 +864,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    edit = db.initialize_editor(TabStripMain)
-    edit.editor.Text = db.dbobjects["queries"]["rename queries"][TreeViewMain.Current.Key]
-    edit.query_type = "rename"
+    edit_view = db.initialize_editor(TabStripMain)
+    edit_view.editor.Text = db.dbobjects["queries"]["rename queries"][TreeViewMain.Current.Key]
+    edit_view.query_type = "rename"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Rename query"
   Endif
   If TreeViewMain.Current.ParentKey = "Value queries" Then
@@ -888,9 +878,9 @@ Public Sub TreeViewMain_DblClick()
     Next
     TabStripMain.Count += 1
     TabStripMain.Index = TabStripMain.count - 1
-    edit = db.initialize_editor(TabStripMain)
-    edit.editor.Text = db.dbobjects["queries"]["value queries"][TreeViewMain.Current.Key]
-    edit.query_type = "value"
+    edit_view = db.initialize_editor(TabStripMain)
+    edit_view.editor.Text = db.dbobjects["queries"]["value queries"][TreeViewMain.Current.Key]
+    edit_view.query_type = "value"
     TabStripMain.Text = TreeViewMain.Current.Key & " - Value query"
   Endif
   If TreeViewMain.Current.ParentKey = "xPath queries" Then
@@ -907,8 +897,7 @@ Public Sub TreeViewMain_DblClick()
     mani.query_type = "xpath"
     mani.path = db.dbobjects["queries"]["xpath queries paths"][TreeViewMain.Current.Key]
     TabStripMain.Text = TreeViewMain.Current.Key & " - xPath query"
-  Endif
-  If TreeViewMain.Current.ParentKey = "xQueries" Then
+  Else If TreeViewMain.Current.ParentKey = "xQueries" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - xQuery" Then 
         FMain.main_tabstrip.Index = i
@@ -921,8 +910,7 @@ Public Sub TreeViewMain_DblClick()
     mani.editor.Text = db.dbobjects["queries"]["xquery queries"][TreeViewMain.Current.Key]
     mani.query_type = "xquery"
     TabStripMain.Text = TreeViewMain.Current.Key & " - xQuery"
-  Endif
-  If TreeViewMain.Current.ParentKey = "Find queries" Then
+  Else If TreeViewMain.Current.ParentKey = "Find queries" Then
     For i = 0 To TabStripMain.Count - 1
       If TabStripMain[i].Text = TreeViewMain.Current.Text & " - Find query" Then 
         FMain.main_tabstrip.Index = i
