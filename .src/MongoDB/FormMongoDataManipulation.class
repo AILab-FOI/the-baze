@@ -83,7 +83,7 @@ Public Sub ToolButtonNewUpdateQuery_Click()
       Next
       FMain.main_tabstrip.count += 1
       query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
-      query_editor.query_type = "value"
+      query_editor.query_type = "update"
       FMain.main_tabstrip.Text = query_name & " - Update query"
     Else
       Message.Error(("Such a query name already exists! Please choose a different name."))

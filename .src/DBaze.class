@@ -368,6 +368,7 @@ Public Sub initialize_dbobjects()
       Me.dbobjects["queries"]["xquery queries"] = New Collection
     Case "MongoDB"
       Me.dbobjects["queries"]["find queries"] = New Collection
+      Me.dbobjects["queries"]["rename queries"] = New Collection
       Me.dbobjects["queries"]["update queries"] = New Collection
       Me.dbobjects["queries"]["replace queries"] = New Collection
       Me.dbobjects["queries"]["delete queries"] = New Collection

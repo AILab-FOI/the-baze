@@ -170,11 +170,11 @@ Public Sub refresh_db_tree()
       .Add(Me.dbobjects["queries"]["update queries"].key, Me.dbobjects["queries"]["update queries"].key, Picture.Load("images/query.png"), "Update queries")
     Next
     .Add("Replace queries", "Replace queries", Picture.Load("images/directory.png"), "Queries")
-    For Each o In Me.dbobjects["queries"]["update queries"]
+    For Each o In Me.dbobjects["queries"]["replace queries"]
       .Add(Me.dbobjects["queries"]["replace queries"].key, Me.dbobjects["queries"]["replace queries"].key, Picture.Load("images/query.png"), "Replace queries")
     Next
     .Add("Rename queries", "Rename queries", Picture.Load("images/directory.png"), "Queries")
-    For Each o In Me.dbobjects["queries"]["update queries"]
+    For Each o In Me.dbobjects["queries"]["rename queries"]
       .Add(Me.dbobjects["queries"]["rename queries"].key, Me.dbobjects["queries"]["rename queries"].key, Picture.Load("images/query.png"), "Rename queries")
     Next
     .Add("Delete queries", "Delete queries", Picture.Load("images/directory.png"), "Queries")
@@ -215,17 +215,17 @@ Public Function executeCommandAndParseJsonResult(command As String, Optional spe
   Dim res As String
   Dim deserializableJson As String
   Dim collectionAndJson As Collection
-  Dim p1 As String = "/(?<!\\\\)(?:\\\\{2})*\\K\"\\s*:\\s*(?:(undefined|null)|(?:(BinData)\\((\\d+),|(\\w+)\\()\\s*\"((?:[^\\\\\"]|\\.)*)\"\\))/"
-  Dim r1 As String = "defined($3) ? \"\\\":{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4 (@{[exists $substitutes{$3} ? $substitutes{$3} : $unknownSubtypeTag]})\\\", \\\"value\\\":\\\"$5\\\"}\" : \"\\\":{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4\\\", \\\"value\\\":\\\"$5\\\"}\""
-  Dim p2 As String = "/(?<!\\\\)(?:\\\\{2})*\\K\"\\s*:\\s*(\\/(?:[^\\\\\\/]|\\\\.)*\\/\\w*)/"
-  Dim r2 As String = "\":{\"" & specialTypesIdentifier & "\":\"RegExp\", \"value\":\"$1\"}"
-  Dim heredocClosingTag As String = AUX.generate_random_closing_identifier(65, 90)
+  Dim p1 As String = "/(?:(?<!\\\\)(?:\\\\{2})*\"\\s*:\\s*|^\\s*)\\K(\\/(?:[^\\\\\\/]|\\\\.)*\\/\\w*)/"
+  Dim r1 As String = "(sub { $retVal = $_[0]; $retVal =~ s#([\\\\\"])#\\\\$1#g; return \"{\\\"" & specialTypesIdentifier & "\\\":\\\"RegExp\\\", \\\"value\\\":\\\"\" . $retVal . \"\\\"}\"; })->($1)"
+  Dim p2 As String = "/(?:(?<!\\\\)(?:\\\\{2})*\"\\s*:\\s*|^\\s*)\\K(?:(undefined|null)|(?:(BinData)\\((\\d+),|(\\w+)\\()\\s*\"((?:[^\\\\\"]|\\.)*)\"\\))/"
+  Dim r2 As String = "defined($3) ? \"{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4 (@{[exists $substitutes{$3} ? $substitutes{$3} : $unknownSubtypeTag]})\\\", \\\"value\\\":\\\"$5\\\"}\" : \"{\\\"" & specialTypesIdentifier & "\\\":\\\"$1$2$4\\\", \\\"value\\\":\\\"$5\\\"}\""
+  Dim nowdocClosingTag As String = AUX.generate_random_closing_identifier(65, 90)
   Dim binarySubtypesPerlArray As String = ""
   For Each res In binarySubtypes
     binarySubtypesPerlArray &= "\"" & binarySubtypes.Key & "\" => \"" & Replace(Replace(res, "\"", "\\\\\\\""), "'", "'\\''") & "\","
   Next
   res = con.execute(command)
-  Shell "cat << " & heredocClosingTag & " | perl -ne 'my $unknownSubtypeTag = \"" & Replace(Replace(unknownBinarySubtypeTag, "\"", "\\\\\\\""), "'", "'\\''") & "\"; my %substitutes = (" & binarySubtypesPerlArray & "); s" & p1 & r1 & "/ge;' -e 's" & p2 & r2 & "/g; print;'\n" & res & heredocClosingTag To deserializableJson
+  Shell "cat << '" & nowdocClosingTag & "' | perl -ne 's" & p1 & r1 & "/gme;' -e 'my $unknownSubtypeTag = \"" & Replace(Replace(unknownBinarySubtypeTag, "\"", "\\\\\\\""), "'", "'\\''") & "\"; my %substitutes = (" & binarySubtypesPerlArray & "); s" & p2 & r2 & "/gme; print;'\n" & res & nowdocClosingTag To deserializableJson
   Try result = JSON.Decode(deserializableJson)
   If Error Then
     Error.Raise(res)
@@ -328,7 +328,7 @@ End
 
 Public Sub delete_collection(path As String)
   ' delete a collection in the database
-  If executeCommandAndParseJsonResult("db[\"" & path & "\"].drop()") = False
+  If executeCommandAndParseJsonResult("db.getCollectionNames().filter(function(colName) {return (colName + '.').startsWith('" & path & "' + '.') }).forEach(function(colName) {db[colName].drop()})") = False
     Error.Raise("An error has occurred while trying to delete selected collection!")
   Endif
 End
@@ -340,9 +340,22 @@ End
 
 Private Function perform_query(query_name As String, command As String, query_type As String, Optional prefix As String = "", Optional suffix As String = "", Optional specialTypesIdentifier As String = "") As Variant
   Dim retVal As Variant
+  Dim noMoreTrailingSemicolons As Boolean = False
   Me.dbobjects["queries"][query_type][query_name] = command
   Me.Save()
-  Try retVal = executeCommandAndParseJsonResult("try {" & prefix & Trim(command) & suffix & "} catch (e) {print(e.errmsg)}", specialTypesIdentifier)
+  While Not noMoreTrailingSemicolons
+    noMoreTrailingSemicolons = True
+    command = Trim(command)
+    If command Ends ";" Then
+      command = Left$(command, -1)
+      noMoreTrailingSemicolons = False ' still might be (e.g. "db.find({});;" - one semicolon was stripped but another one still remained)
+    Endif
+    If command Begins ";" Then
+      command = Right(command, -1)
+      noMoreTrailingSemicolons = False
+    Endif
+  Wend
+  Try retVal = executeCommandAndParseJsonResult("try {" & prefix & command & suffix & "} catch (e) {print(e.errmsg)}", specialTypesIdentifier)
   If Error Then
     refresh_db_tree()
     Error.Raise("An error has occurred while performing specified query! Check whether you specified collection name, there are any syntax errors in your query or query returns valid data for this query type\nError details: " & Error.Text)

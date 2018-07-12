@@ -56,7 +56,7 @@ Public Sub ToolButtonNewUpdateQuery_Click()
       FMain.main_tabstrip.Text = query_name & " - Update query"
       FMain.db.new_sql_query(query_name, " ", "update queries")
       ui = New FormSQLSplit(FMain.main_tabstrip)
-      ui.sql_editor.text = "UPDATE "
+      ui.editor.text = "UPDATE "
     Else
       Message.Error("Such a query name already exists! Please choose a different name.")
       Goto askagain
@@ -81,7 +81,7 @@ Public Sub ToolButtonNewInsertQuery_Click()
       FMain.main_tabstrip.Text = query_name & " - Insert query"
       FMain.db.new_sql_query(query_name, " ", "insert queries")
       ui = New FormSQLSplit(FMain.main_tabstrip)
-      ui.sql_editor.text = "INSERT INTO "
+      ui.editor.text = "INSERT INTO "
     Else
       Message.Error("Such a query name already exists! Please choose a different name.")
       Goto askagain
@@ -106,7 +106,7 @@ Public Sub ToolButtonNewDeleteQuery_Click()
       FMain.main_tabstrip.Text = query_name & " - Delete query"
       FMain.db.new_sql_query(query_name, " ", "delete queries")
       ui = New FormSQLSplit(FMain.main_tabstrip)
-      ui.sql_editor.text = "DELETE FROM "
+      ui.editor.text = "DELETE FROM "
     Else
       Message.Error("Such a query name already exists! Please choose a different name.")
       Goto askagain

@@ -602,8 +602,8 @@ Public Sub alter_drop_column(att_name As String) As Boolean
       db.execute(query)
       Return True
     Endif
-    Else
-      Return True
+  Else
+    Return True
   Endif
   Return False
 End

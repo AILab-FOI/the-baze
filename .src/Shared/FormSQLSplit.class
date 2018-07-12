@@ -1,10 +1,11 @@
 ' Gambas class file
 
-Public sql_editor As TextEditor
+Public editor As TextEditor
+Public query_type As String ' value will never will be used, but has to be here due to consistency with FormJSONSplit and FormXMLSplit
 
 Public Sub _new()
   ' make TextEditor visible
-  sql_editor = TextEditorSQL
+  editor = TextEditorSQL
 End
 
 Public Sub Form_Open()
