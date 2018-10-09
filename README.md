@@ -51,7 +51,7 @@ $ rm nodesource_setup.sh
 Then install the following packages:
 
 ```
-$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base r-cran-rjson nodejs gambas3-gb-qt4-webkit mongodb-org-shell
+$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog swi-prolog-odbc unixodbc odbcinst r-base r-cran-rjson nodejs gambas3-gb-qt4-webkit mongodb-org-shell
 ```
 
 Now you can compile the-baze with:
