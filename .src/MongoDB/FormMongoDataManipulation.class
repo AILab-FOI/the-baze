@@ -1,0 +1,151 @@
+' Gambas class file
+
+' request cancelled inbox
+Public request_canceled As Boolean
+'query name inbox
+Public query_name As String
+
+Public Sub ToolButtonNewInsertQuery_Click()
+  ' open the query TextEditor
+  Dim get_name As FormAskQueryName
+  Dim query_editor As FormMongoJSONEditor
+  Dim i As Integer
+  askagain:
+  request_canceled = False
+  get_name = New FormAskQueryName
+  get_name.caller = Me
+  get_name.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      For i = 0 To FMain.main_tabstrip.Count - 1
+        If FMain.main_tabstrip[i].Text = query_name & " - Insert query" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      FMain.main_tabstrip.count += 1
+      query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
+      query_editor.query_type = "insert"
+      FMain.main_tabstrip.Text = query_name & " - Insert query"
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewReplaceQuery_Click()
+  ' open the query TextEditor
+  Dim get_name As FormAskQueryName
+  Dim query_editor As FormMongoJSONEditor
+  Dim i As Integer
+  askagain:
+  request_canceled = False
+  get_name = New FormAskQueryName
+  get_name.caller = Me
+  get_name.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      For i = 0 To FMain.main_tabstrip.Count - 1
+        If FMain.main_tabstrip[i].Text = query_name & " - Replace query" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      FMain.main_tabstrip.count += 1
+      query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
+      query_editor.query_type = "replace"
+      FMain.main_tabstrip.Text = query_name & " - Replace query"
+    Else
+      Message.Error("Such a query name already exists! Please choose a different name.")
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewUpdateQuery_Click()
+  ' open the query TextEditor
+  Dim get_name As FormAskQueryName
+  Dim query_editor As FormMongoJSONEditor
+  Dim i As Integer
+  askagain:
+  request_canceled = False
+  get_name = New FormAskQueryName
+  get_name.caller = Me
+  get_name.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      For i = 0 To FMain.main_tabstrip.Count - 1
+        If FMain.main_tabstrip[i].Text = query_name & " - Update query" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      FMain.main_tabstrip.count += 1
+      query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
+      query_editor.query_type = "update"
+      FMain.main_tabstrip.Text = query_name & " - Update query"
+    Else
+      Message.Error(("Such a query name already exists! Please choose a different name."))
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewDeleteQuery_Click()
+  ' open the query TextEditor
+  Dim get_name As FormAskQueryName
+  Dim query_editor As FormMongoJSONEditor
+  Dim i As Integer
+  askagain:
+  request_canceled = False
+  get_name = New FormAskQueryName
+  get_name.caller = Me
+  get_name.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      For i = 0 To FMain.main_tabstrip.Count - 1
+        If FMain.main_tabstrip[i].Text = query_name & " - Delete query" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      FMain.main_tabstrip.count += 1
+      query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
+      query_editor.query_type = "delete"
+      FMain.main_tabstrip.Text = query_name & " - Delete query"
+    Else
+      Message.Error(("Such a query name already exists! Please choose a different name."))
+      Goto askagain
+    Endif
+  Endif
+End
+
+Public Sub ToolButtonNewRenameQuery_Click()
+  ' open the query TextEditor
+  Dim get_name As FormAskQueryName
+  Dim query_editor As FormMongoJSONEditor
+  Dim i As Integer
+  askagain:
+  request_canceled = False
+  get_name = New FormAskQueryName
+  get_name.caller = Me
+  get_name.ShowModal()
+  If Not request_canceled Then
+    If Not FMain.main_treeview.Exist(query_name) Then
+      For i = 0 To FMain.main_tabstrip.Count - 1
+        If FMain.main_tabstrip[i].Text = query_name & " - Rename query" Then 
+          FMain.main_tabstrip.Index = i
+          Return
+        Endif
+      Next
+      FMain.main_tabstrip.count += 1
+      query_editor = New FormMongoJSONEditor(FMain.main_tabstrip)
+      query_editor.query_type = "rename"
+      FMain.main_tabstrip.Text = query_name & " - Rename query"
+    Else
+      Message.Error(("Such a query name already exists! Please choose a different name."))
+      Goto askagain
+    Endif
+  Endif
+End

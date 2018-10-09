@@ -19,22 +19,24 @@ Public Sub _new(dbfile_ As String)
   Me.connection_settings["dbfile"] = dbfile
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to DB
-  With con
-    .Type = "sqlite"
-    .Host = Me.dbfile
-    .Name = Me.dbfile
-    Try .Open
-    If Error Then 
-      Message.Info(Error.Text)
-      Return False
-    End If  
-  End With 
-  ' TODO: add this to enable datalog queries 
-  
-  Me.init_des()
-  Return True
+  If Me.dbfile Then
+    With con
+      .Type = "sqlite"
+      .Host = Me.dbfile
+      .Name = Me.dbfile
+      Try .Open
+      If Error Then 
+        Error.Propagate()
+      End If
+    End With
+    ' TODO: add this to enable datalog queries 
+    
+    Me.init_des()
+  Else
+    Error.Raise("File name hasn't been specified!")
+  Endif
 End
 
 Public Sub initialize_gui()
@@ -226,4 +228,9 @@ End
 Public Sub rename_table(old_name As String, new_name As String)
   ' rename a table in the database
   execute("ALTER TABLE \"" & FMain.pg_escape(old_name) & "\" RENAME TO \"" & FMain.pg_escape(new_name) & "\"")
+End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormSQLSplit(parent)
 End

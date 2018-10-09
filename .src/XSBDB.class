@@ -23,18 +23,16 @@ Public Sub close()
 End
 
 
-Public Function connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to the database
   xsb_engine = New XSBEngine(Me.xsb)
   Try Datalog_con = New DatalogConnection(xsb_engine, Me.dsn, Me.username, Me.password)
   If Error Then
-    Message.Error(Error.Text)
-    Return False
+    Error.Propagate()
   Endif
   Try Datalog_con.connect(caller)
   If Error Then
-    Message.Error(Error.Text)
-    Return False
+    Error.Propagate()
   Endif
   With con
     .Type = "odbc"
@@ -44,15 +42,12 @@ Public Function connect(Optional caller As Object = Null) As Boolean
     .Name = ""
     Try .Open
     If Error Then
-      Message.Error(Error.Text)
-      Return False
+      Error.Propagate()
     Endif
     If .Opened = False Then
-      Message.Error("ODBC connection won't open!")
-      Return False
+      Error.Raise("ODBC connection won't open!")
     Endif
   End With
-  Return True
 End
 
 Public Function executeDatalog(query As String, Optional distinct As Boolean = False) As Object[]
@@ -374,4 +369,9 @@ Public Sub delete_datalog_module(module As String)
   Endif
   Me.dbobjects["datalog modules"][module] = Null
   Me.Save()
+End
+
+Public Function initialize_editor(parent As Control) As Variant
+  ' return editor for document of this database type
+  Return New FormSQLSplit(parent)
 End

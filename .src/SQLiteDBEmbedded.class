@@ -10,19 +10,17 @@ Public Sub _new(dbfile_ As String)
    
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to DB
   With Me.con
     .Type = "sqlite"
     .Name = Me.temporary_folder &/ Me.dbfile
     Try .Open
     If Error Then 
-      Message.Info(Error.Text)
-      Return False
-    End If  
-  End With 
+      Error.Propagate()
+    End If
+  End With
   ' TODO: add this to enable datalog queries 
   
   Me.init_des()
-  Return True
 End

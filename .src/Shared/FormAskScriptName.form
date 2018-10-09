@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,38.5714,18)
+  MoveScaled(0,0,38.625,18)
   { LabelScriptName Label
     MoveScaled(1,1,38,4)
     Text = ("Please enter a name and type for the script:")
@@ -12,10 +12,12 @@
   { ButtonOK Button
     MoveScaled(26,12,11,4)
     Text = ("OK")
+    Default = True
   }
   { ButtonCancel Button
     MoveScaled(13,12,11,4)
     Text = ("Cancel")
+    Cancel = True
   }
   { ComboBoxScriptType ComboBox
     MoveScaled(25,6,12,4)

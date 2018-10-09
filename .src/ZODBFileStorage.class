@@ -12,10 +12,10 @@ Public Sub _new(dbfile_ As String)
   Me.connection_settings["dbfile"] = dbfile_
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' connect to the ZODB database
   Me.engine = New ZODBEngine(Me.connection_settings["dbfile"])
-  Return Me.engine.connect()
+  Me.engine.connect()
 End
 
 Public Sub query(query_ As String) As Variant

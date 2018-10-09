@@ -6,12 +6,12 @@ LibreOffice Base, Query Anaylzer and similar. It aims on being a Swiss
 army knife for the data scientist.
 
 It supports a number of SQL and NoSQL databases (PostgreSQL, SQLite, 
-ODBC; eXist DB, XSB, Flora-2, DES, ZODB) and support for other systems 
-is pending.
+ODBC; MongoDB, eXist DB, XSB, Flora-2, DES, ZODB) and support for other 
+systems is pending.
 
 It supports a number of query languages (SQL, Datalog, Py-MapReduce,
-xPath, xQuery, transactional frame logic) and implements an experimental
-scripting interface in Python, NodeJS and the R language. 
+xPath, xQuery, transactional frame logic, Mongo JavaScript) and implements 
+an experimental scripting interface in Python, NodeJS and the R language. 
 
 Creation of user designed forms is partially supported (experimental)
 and support for report creation is pending.
@@ -51,7 +51,7 @@ $ rm nodesource_setup.sh
 Then install the following packages:
 
 ```
-$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog unixodbc odbcinst r-base r-cran-rjson nodejs gambas3-gb-qt4-webkit
+$ sudo apt-get -y install gambas3 gambas3-gb-qt5-webkit gambas3-gb-qt5 git python-zodb python-jsonpickle swi-prolog swi-prolog-odbc unixodbc odbcinst r-base r-cran-rjson nodejs gambas3-gb-qt4-webkit mongodb-org-shell
 ```
 
 Now you can compile the-baze with:

@@ -13,10 +13,12 @@
   { ButtonOK Button
     MoveScaled(25,22,11,4)
     Text = ("OK")
+    Default = True
   }
   { ButtonCancel Button
     MoveScaled(12,22,11,4)
     Text = ("Cancel")
+    Cancel = True
   }
   { LabelQueryPath Label
     MoveScaled(1,11,30,4)

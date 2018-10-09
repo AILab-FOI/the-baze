@@ -10,7 +10,8 @@ Public $baze_sqlite As New Connection
 Public baze_zodb As ZODBEngine
 Public connection_settings As New Collection
 Public dbobjects As New Collection
-Public js As New JSON
+
+Private Enum DONT_STORE, STORE, UNKNOWN
 
 Public Sub init_folder()
   ' create a new temporary folder
@@ -37,12 +38,12 @@ End
 
 Public Function contoJSON() As String
   'dump the connection settings to JSON
-  Return js.Encode(Me.connection_settings)
+  Return JSON.Encode(Me.connection_settings)
 End
 
 Public Function dbotoJSON() As String
   'dump the database objects to JSON
-  Return js.Encode(Me.dbobjects)
+  Return JSON.Encode(Me.dbobjects)
 End
 
 
@@ -65,7 +66,7 @@ Public Sub load_file(dbfile As String) As Variant
   ' load a given baze file and return the appropriate DB connection object
   Dim js_content, js_line As String
   Dim js_file As File
-  Dim save_password As Boolean
+  Dim save_password As Integer = UNKNOWN  ' as in Gambas Basic is empty string is equal to null, and elements with null value are not stored in Collection, then program tries to connect to the database with default password (most likely empty string, i.e. without password) if the password for accessing database is not stored in .baze file (this way it is avoided prompting user to enter password for database that doesn't even require password)
   Dim db As Variant
   Dim please_wait As FormPleaseWait
   temporary_folder = Temp()
@@ -73,21 +74,17 @@ Public Sub load_file(dbfile As String) As Variant
   Exec ["tar", "xf", dbfile, "-C", temporary_folder] Wait
   Try js_file = Open temporary_folder &/ "baze.js" For Input
   If Error Then
-    Message.Error("This is not a valid baze file!")
-    FMain.Close
-    Return
+    Error.Raise("This is not a valid baze file!")
   Endif
   js_content = ""
   While Not Eof(js_file)
     Line Input #js_file, js_line
     js_content &= js_line
   Wend
-  connection_settings = js.Decode(js_content)
+  connection_settings = JSON.Decode(js_content)
   Try js_file = Open temporary_folder &/ "dbobjects.js" For Input
   If Error Then
-    Message.Error("This is not a valid baze file!")
-    FMain.Close
-    Return
+    Error.Raise("This is not a valid baze file!")
   Endif
   js_content = ""
   While Not Eof(js_file)
@@ -97,19 +94,19 @@ Public Sub load_file(dbfile As String) As Variant
   If Len(js_content) = 0 Or Len(js_content) = 2 Then
     initialize_dbobjects()
   Else
-    dbobjects = js.Decode(js_content)
+    dbobjects = JSON.Decode(js_content)
   Endif
   
+  login:
   Select Case connection_settings["connection type"]
     Case "PostgreSQL"
-      pgnoconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
       db = New PostgreSQLDB(
         connection_settings["host"], 
@@ -122,21 +119,21 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
-        Goto pgnoconnect
+      Try db.connect()
+      If Error Then
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
       Return db
     Case "XSB"
-      xsbnoconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
       db = New XSBDB(
         connection_settings["dsn"],
@@ -153,20 +150,19 @@ Public Sub load_file(dbfile As String) As Variant
       please_wait.silent = True
       please_wait.ShowModal
       If Not db.con.opened Then
-        Goto xsbnoconnect
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
       Return db
     Case "Flora2"
-      fl2noconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
       db = New Flora2DB(
         connection_settings["dsn"],
@@ -178,8 +174,9 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
-        Goto fl2noconnect
+      Try db.connect()
+      If Error Then
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
@@ -191,7 +188,6 @@ Public Sub load_file(dbfile As String) As Variant
       db.temporary_folder = temporary_folder
       db.connect()
       If Not db.engine.is_open Then
-        'Goto zodbembnoconnect
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -212,14 +208,13 @@ Public Sub load_file(dbfile As String) As Variant
       db.Save()
       Return db
     Case "ZODBClientStorage"
-      zodbnoconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
       db = New ZODBClientStorage(
         connection_settings["host"],
@@ -233,20 +228,19 @@ Public Sub load_file(dbfile As String) As Variant
       db.temporary_folder = temporary_folder
       db.connect()
       If Not db.engine.is_open Then
-        Goto zodbnoconnect
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
       Return db
     Case "eXist"
-      exnoconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
       db = New EXistDB(
         connection_settings["host"], 
@@ -258,8 +252,9 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
-        Goto exnoconnect
+      Try db.connect()
+      If Error Then
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
@@ -269,7 +264,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -281,7 +277,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -298,7 +295,8 @@ Public Sub load_file(dbfile As String) As Variant
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
+      Try db.connect()
+      If Error Then
         Error.Raise("Couldn't open dbfile!")
         Quit
       Endif
@@ -306,21 +304,21 @@ Public Sub load_file(dbfile As String) As Variant
       db.Save()
       Return db
     Case "MongoDB"
-      mongonoconnect:
-      If Not connection_settings.Exist("password") Then
+      If save_password <> UNKNOWN Then
         FormAskPasword.ShowModal
         password = FMain.password
-        save_password = False
+        save_password = DONT_STORE
       Else
         password = connection_settings["password"]
-        save_password = True
+        save_password = STORE
       Endif
-      db = New MongoDB(connection_settings["mongo host"], connection_settings["mongo port"], connection_settings["username"], password, connection_settings["rest host"], connection_settings["rest port"], save_password) 
+      db = New MongoDB(connection_settings["host"], connection_settings["port"], connection_settings["dbname"], connection_settings["authentication dbname"], connection_settings["username"], password, save_password) 
       db.connection_settings = connection_settings
       db.dbobjects = dbobjects
       db.temporary_folder = temporary_folder
-      If Not db.connect() Then
-        Goto mongonoconnect
+      Try db.connect()
+      If Error Then
+        Goto login
       Endif
       db.baze_file = dbfile
       db.Save()
@@ -370,7 +368,11 @@ Public Sub initialize_dbobjects()
       Me.dbobjects["queries"]["xquery queries"] = New Collection
     Case "MongoDB"
       Me.dbobjects["queries"]["find queries"] = New Collection
+      Me.dbobjects["queries"]["rename queries"] = New Collection
       Me.dbobjects["queries"]["update queries"] = New Collection
+      Me.dbobjects["queries"]["replace queries"] = New Collection
+      Me.dbobjects["queries"]["delete queries"] = New Collection
+      Me.dbobjects["queries"]["insert queries"] = New Collection
   End Select
 End
 
@@ -392,7 +394,7 @@ Public Sub delete_query(query As String, Optional type As String)
   Next
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
+Public Sub connect(Optional caller As Object = Null)
   ' Connect to database
   ' NOP / Must be overriden in child class
   

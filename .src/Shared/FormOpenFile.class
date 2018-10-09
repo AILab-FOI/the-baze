@@ -12,6 +12,5 @@ Public Sub ButtonCancel_Click()
 End
 
 Public Sub FileChooserMain_DblClick()
-  caller.openfile = FileChooserMain.Value
-  Me.Close  
+  ButtonOK_Click()
 End

@@ -9,6 +9,7 @@ Static Public buff_size As Integer = -20000
 ' Integrated DES command line tool
 Public des_command As String
 Public des_proc As Process
+Private des_inited As Boolean = False
 
 Public Sub init_des()
   ' Initialize the DES shell
@@ -80,6 +81,11 @@ Public Sub executeDES(query As String, Optional no_messages As Boolean, Optional
   Dim counter As Integer = 0
   Dim header_found As Boolean = False
   
+  If Not des_inited Then
+    init_des()
+    des_inited = True
+  Endif
+  
   If distinct Then
     Try get_answer_from_proc(des_proc, "/tapi /duplicates off\n")
     If Error Then
@@ -133,7 +139,7 @@ Public Sub executeDES(query As String, Optional no_messages As Boolean, Optional
     ' Cannot find header!
     Return Null
   Endif
-  answers = Split(result, "\n")
+  answers = Split(result, "\r\n")
   status = "break"
   counter = 0
   For Each ans_line In answers
@@ -212,7 +218,7 @@ Static Public Sub create_user_dsn(con As Connection) As String
   
   DSNs = get_all_dsns()
   For Each dsn_name In DSNs
-    Try new_num = Val(AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)")[0])
+    Try new_num = Val(AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)", 1)[0])
     If max_num < new_num Then
       max_num = new_num
     Endif
@@ -222,7 +228,7 @@ Static Public Sub create_user_dsn(con As Connection) As String
   Try hproc = Shell " odbcinst -j" For Input
   Sleep 0.1
   txt = Read #hproc, buff_size
-  txt = AUX.FindAll(txt, "USER DATA SOURCES[.][.][:] ([^\n]*)", 1)[0]
+  txt = AUX.FindAll(txt, "USER DATA SOURCES[.][.][:] ([^\r\n]*)", 1)[0]
   
   odbc_ini = Open txt For Append
   
@@ -236,7 +242,7 @@ Static Public Sub create_user_dsn(con As Connection) As String
   
   postgresql_dsn = "[(dsn_name)]\n" & 
     "Description=(description)\n" & 
-    "Driver=PostgreSQL\n" & 
+    "Driver=PostgreSQL Unicode\n" & 
     "Trace=Yes\n" & 
     "TraceFile=/tmp/psqlodbc.log\n" & 
     "Database=(database)\n" & 
@@ -298,7 +304,7 @@ Static Public Sub create_user_dsn(con As Connection) As String
       Return Null
   End Select
   
-  Print #odbc_ini, "\n\n" & tdsn & "\n\n"
+  Write #odbc_ini, "\n\n" & tdsn & "\n\n"
   odbc_ini.Close()
   
   Return dsn_name

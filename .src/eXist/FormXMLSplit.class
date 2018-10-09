@@ -1,7 +1,7 @@
 ' Gambas class file
 
 ' xml TextEditor
-Public xml_editor As TextEditor
+Public editor As TextEditor
 ' path to document/collection being queried
 Public path As String
 ' type of query
@@ -11,7 +11,7 @@ Public unique_key As Integer
 
 Public Sub _new()
   ' make TextEditor visible
-  xml_editor = TextEditorXML
+  editor = TextEditorXML
   VSplitMain.Layout = [1, 3]
   TextEditorXML.ShowLineNumber = True
 End

@@ -7,7 +7,7 @@
   Resizable = False
   { WizardIntro Wizard
     MoveScaled(1,1,86,61)
-    Count = 10
+    Count = 11
     Index = 0
     Text = ("Database connection wizard")
     { PictureBox1 PictureBox
@@ -33,7 +33,7 @@
         Text = ("Connect to existing database")
       }
       { ComboBoxDBTypes ComboBox
-        MoveScaled(23.1429,45,23,4)
+        MoveScaled(23.125,45,23,4)
         Enabled = False
         ReadOnly = True
         List = [("SQLite"), ("PostgreSQL"), ("ODBC"), ("XSB"), ("Flora2"), ("ZODB"), ("eXist"), ("CouchDB"), ("MongoDB")]
@@ -82,7 +82,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FramePostgreSQLConnrction Frame
+    { FramePGConnection Frame
       MoveScaled(35,-2,49,52)
       Background = Color.Background
       { LabelPGHost Label
@@ -263,7 +263,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FramePostgreSQLConnrction4 Frame
+    { FrameZConnection Frame
       MoveScaled(35,-2,49,52)
       Background = Color.Background
       { LabelZHost Label
@@ -350,7 +350,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FramePostgreSQLConnrction5 Frame
+    { FrameEConnection Frame
       MoveScaled(35,1,49,49)
       Background = Color.Background
       { LabelEHost Label
@@ -405,7 +405,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FramePostgreSQLConnrction6 Frame
+    { FrameCConnection Frame
       MoveScaled(35,-2,49,52)
       Background = Color.Background
       { LabelCHost Label
@@ -460,7 +460,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FramePostgreSQLConnrction7 Frame
+    { FrameSConnection Frame
       MoveScaled(35,-2,49,52)
       Background = Color.Background
       { LabelSPlease Label
@@ -497,7 +497,7 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FrameODBCConnection Frame
+    { FrameOConnection Frame
       MoveScaled(36,-1,49,52)
       Background = Color.Background
       { LabelOHost Label
@@ -514,10 +514,10 @@
         Text = ("Password")
       }
       { TextBoxOUsername TextBox
-        MoveScaled(26,22.1429,19,4)
+        MoveScaled(26,22.125,19,4)
       }
       { TextBoxOPassword TextBox
-        MoveScaled(26,29.1429,19,4)
+        MoveScaled(26,29.125,19,4)
         Password = True
       }
       { LabelXPlease3 Label
@@ -545,42 +545,56 @@
       Expand = True
       Picture = Picture["images/majin_buu.jpg"]
     }
-    { FrameMgConnrction Frame
-      MoveScaled(36,1,49,52)
+    { FrameMgConnection Frame
+      MoveScaled(35,-2,49,52)
       Background = Color.Background
       { LabelMgHost Label
-        MoveScaled(4,7,16,4)
-        Text = ("MongoDB host")
+        MoveScaled(4,10,9,4)
+        Text = ("Host")
       }
       { LabelMgPort Label
-        MoveScaled(4,12,15,4)
-        Text = ("MongoDB port")
+        MoveScaled(4,15,9,4)
+        Text = ("Port")
+      }
+      { LabelMgDBName Label
+        MoveScaled(4,20,15,4)
+        Text = ("Database name")
+      }
+      { LabelMgAuthDBName Label
+        MoveScaled(4,25,22,4)
+        Text = ("Authentication database")
       }
       { LabelMgUsername Label
-        MoveScaled(4,17,10,4)
+        MoveScaled(4,30,10,4)
         Text = ("Username")
       }
       { LabelMgPassword Label
-        MoveScaled(4,22,9,4)
+        MoveScaled(4,35,9,4)
         Text = ("Password")
       }
       { TextBoxMgHost TextBox
-        MoveScaled(27,7,19,4)
+        MoveScaled(25,10,19,4)
         Text = ("localhost")
       }
       { TextBoxMgPort TextBox
-        MoveScaled(27,12,7,4)
+        MoveScaled(25,15,7,4)
         Text = ("27017")
       }
+      { TextBoxMgDBName TextBox
+        MoveScaled(25,20,19,4)
+      }
+      { TextBoxMgAuthDBName TextBox
+        MoveScaled(25,25,19,4)
+      }
       { TextBoxMgUsername TextBox
-        MoveScaled(27,17,19,4)
+        MoveScaled(25,30,19,4)
       }
       { TextBoxMgPassword TextBox
-        MoveScaled(27,22,19,4)
+        MoveScaled(25,35,19,4)
         Password = True
       }
       { LabelMgPlease Label
-        MoveScaled(4,2,37,4)
+        MoveScaled(4,4,40,4)
         Text = ("Please enter the MongoDB connection data:")
       }
       { ButtonMgTest Button
@@ -588,26 +602,12 @@
         Text = ("Test settings")
       }
       { CheckBoxMgStoreP CheckBox
-        MoveScaled(29,38,18,4)
+        MoveScaled(25,40,18,4)
         Text = ("Store password")
       }
-      { TextBoxMgHostREST TextBox
-        MoveScaled(27,27,19,4)
-        Text = ("localhost")
-      }
-      { LabelMgHostREST Label
-        MoveScaled(4,27,19,4)
-        Text = ("Sleepy Mongoose host")
-      }
-      { LabelMgPortREST Label
-        MoveScaled(4,32,20,4)
-        Text = ("Sleepy Mongoose port")
-      }
-      { TextBoxMgPortREST TextBox
-        MoveScaled(27,32,7,4)
-        Text = ("27080")
-      }
     }
-    Index = 0
+    Index = 10
+    Text = ("Connection settings - dummy (to make previous Wizard inconsistent, i.e. with Next button instead of OK button)")
+   Index = 0
   }
 }

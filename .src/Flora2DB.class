@@ -27,14 +27,20 @@ Public Sub _new(dsn_ As String, username_ As String, password_ As String, store_
   Endif
 End
 
-Public Sub connect(Optional caller As Object = Null) As Boolean
-  ' connect to Flora2 and initialize the ODBC connection
-  con = New Flora2Engine(Me.flora2)
+Public Sub connect(Optional caller As Object = Null)
+  ' connect to Flora2 and initialize the Flora2 engine
+  If Me.flora2 Then
+    con = New Flora2Engine(Me.flora2)
+  Else
+    con = New Flora2Engine
+  Endif
   Try con.execute("main[attach(" & Me.dsn & ",?_," & Me.username & "," & Me.password & ")]@pm.")
   If Error Then
-    Message.Error(Error.Text)
+    Error.Raise(Error.Text)
   Endif
-  Return con.success
+  If Not con.success Then
+    Error.Raise("Error connecting to Flora2 database!")
+  Endif
 End
 
 Public Sub close()
@@ -50,7 +56,7 @@ Public Sub query(query_ As String, Optional distinct As Boolean = False) As Coll
 End
 
 Public Sub initialize_gui()
-  ' initialize the GUI for PostgreSQL database
+  ' initialize the GUI for flora2 database
   Dim documentation As New WebView(FMain.main_tabstrip)
   Dim data_definition As FormFlora2DataDefinition
   Dim data_manipulation As FormFlora2DataManipulation

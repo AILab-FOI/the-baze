@@ -1,0 +1,25 @@
+' Gambas class file
+
+Public caller As Object
+
+Public Sub Form_Show()
+  ' assume that the form will be closed by pressing Cancel button or Close (X) button
+  caller.request_canceled = True
+End
+
+
+Public Sub ButtonOK_Click()
+  ' store the table name
+  If Trim(TextBoxDocumentName.Text) Then
+    caller.doc_name = Trim(TextBoxDocumentName.Text)
+    caller.request_canceled = False
+    Me.Close
+  Else
+    Message.Info("Please enter a document name!")
+  Endif
+End
+
+Public Sub ButtonCancel_Click()
+  ' close the form
+  Me.Close
+End

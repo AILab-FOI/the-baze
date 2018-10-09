@@ -1,0 +1,98 @@
+' Gambas class file
+
+Public Sub Form_Show()
+  ' arrange the vsplit
+  VSplitMain.Layout = [2, 3]
+End
+
+
+Public Sub RadioButtonFromWeb_Click()
+  ' toggle enabled elements
+  If RadioButtonFromWeb.Value Then
+    TextBoxWWW.Enabled = True
+    ToolButtonLoad.Enabled = True
+    ToolButtonOpenFile.Enabled = False
+    TextEditorJSON.Enabled = False
+  Endif
+End
+
+Public Sub RadioButtonFromFileSystem_Click()
+  ' toggle enabled elements
+  If RadioButtonFromFileSystem.Value Then
+    TextBoxWWW.Enabled = False
+    ToolButtonLoad.Enabled = False
+    ToolButtonOpenFile.Enabled = True
+    TextEditorJSON.Enabled = False
+  Endif
+End
+
+Public Sub RadioButtonFromText_Click()
+  ' toggle enabled elements
+  If RadioButtonFromText.Value Then
+    TextBoxWWW.Enabled = False
+    ToolButtonLoad.Enabled = False
+    ToolButtonOpenFile.Enabled = False
+    TextEditorJSON.Enabled = True
+  Endif
+End
+
+Public Sub ToolButtonOpenFile_Click()
+  ' find a file on the file system
+  Dialog.Title = "Please choose a " & FMain.db.document_type & " file"
+  Dialog.Filter = ["*.json", FMain.db.document_type & " Document"]
+  If Dialog.OpenFile() Then
+    Return
+  Endif
+  LabelFileToOpen.Text = Dialog.Path
+  TextEditorJSON.Text = File.Load(Dialog.Path)
+End
+
+Public Sub ToolButtonLoad_Click()
+  ' load the file and display it in the TextEditor
+  Dim http As New HttpClient
+  http.URL = TextBoxWWW.Text
+  http.Async = False
+  http.Timeout = 60
+  http.Get
+  If http.Status < 0 Then
+    Message.Error("Unable to connect to the given address!")
+  Else
+    If Lof(http) Then TextEditorJSON.Text = Read #http, Lof(http)
+  Endif
+End
+
+Public Sub ToolButtonExecute_Click()
+  ' create the document
+  Dim doc_name As String
+  Dim child As Variant
+  If FMain.main_tabstrip.Text Ends " - " & FMain.db.document_type & " Document" Then
+    doc_name = Left$(FMain.main_tabstrip.Text, - Len(" - " & FMain.db.document_type & " Document"))
+  Endif
+  Try FMain.db.new_document(doc_name, TextBoxPath.Text, TextEditorJSON.Text)
+  If Error Then
+    Message.Error(Error.Text)
+  Else
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+    FMain.db.refresh_db_tree()
+  Endif
+End
+
+Public Sub ToolButtonCancel_Click()
+  ' ask the user if she/he is sure and if yes close the TextEditor
+  Dim child As Variant
+  If Message.Question("Do you want to discard your document design? If yes all entered data will be lost.", "Yes", "No, continue editing") = 1 Then
+    With FMain.main_tabstrip.Current
+      For Each child In .Children
+        child.Close
+      Next
+      .Delete
+    End With
+    FMain.main_tabstrip.index = 0
+  Endif
+End

@@ -149,6 +149,7 @@ Public Sub exec(cmd As String) As String
     Do While Left$(result, 4) = "... " 
       result = Right$(result, -4)
     Loop
+    result = Replace(result, cmd & "\r\n", "")
     If result Then
       If AUX.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
         Error.Raise(result)
@@ -204,7 +205,7 @@ Public Sub load(folder As String, module As String)
   exec("from " & module & " import *")
 End
 
-Public Sub connect() As Boolean
+Public Sub connect()
   ' connect to file or server
   Dim con_string As String
   open()
@@ -224,6 +225,5 @@ Public Sub connect() As Boolean
   con_string &= "db = DB(storage)\ncon = db.open()\nroot = con.root()"
   execute(con_string)
   is_open = True
-  Return True
 End
 

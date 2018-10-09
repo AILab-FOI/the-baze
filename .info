@@ -135,6 +135,37 @@ close
 m
 
 
+#MongoEngine
+
+C
+mongo_home
+v
+s
+
+mongo_command
+v
+s
+
+result
+v
+s
+
+resultsArray
+v
+Object[]
+
+_new
+m
+
+[(hostname_)s(port_)s(dbname_)s(authDbname_)s(username_)s(password_)s(home)s(params)s]
+execute
+m
+s
+(jsCommand)s
+close
+m
+
+
 #XSBEngine
 
 C
