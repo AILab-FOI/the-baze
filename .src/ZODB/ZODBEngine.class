@@ -149,6 +149,7 @@ Public Sub exec(cmd As String) As String
     Do While Left$(result, 4) = "... " 
       result = Right$(result, -4)
     Loop
+    result = Replace(result, cmd & "\r\n", "")
     If result Then
       If AUX.FindAll(result, "File \"<stdin>\", line").Count > 0 Then
         Error.Raise(result)

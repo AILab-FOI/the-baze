@@ -139,7 +139,7 @@ Public Sub executeDES(query As String, Optional no_messages As Boolean, Optional
     ' Cannot find header!
     Return Null
   Endif
-  answers = Split(result, "\n")
+  answers = Split(result, "\r\n")
   status = "break"
   counter = 0
   For Each ans_line In answers
@@ -218,7 +218,7 @@ Static Public Sub create_user_dsn(con As Connection) As String
   
   DSNs = get_all_dsns()
   For Each dsn_name In DSNs
-    Try new_num = Val(AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)")[0])
+    Try new_num = Val(AUX.FindAll(dsn_name, "the_baze_dsn_name_([0-9]+)", 1)[0])
     If max_num < new_num Then
       max_num = new_num
     Endif
