@@ -237,7 +237,7 @@ Public Sub get_scripts() As String
   Next
   result = JSON.Encode(scripts)
   result = Replace(result, "'", "\\'")
-  result = Replace(result, "\\n", " ")
+  result = Replace(result, "\\n", "\\\\n") 
   Return result
 End
 
