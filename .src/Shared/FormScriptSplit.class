@@ -126,6 +126,7 @@ Public Sub RequestObserver_NewRequest(data As String)
   Dim infile As File
   Dim jsres As String
   Dim counter As Integer = 0
+  Dim script_content As String
   req = JSON.Decode(data)
   ' TODO: implement cases showform, showreport and runscript
   Select req["type"]
@@ -137,7 +138,7 @@ Public Sub RequestObserver_NewRequest(data As String)
       counter += 1
       Try res[req["oid"]]["result"] = FMain.db.run_query(req["oid"])
       If Error Then
-        Print "HERE:", Error.Text
+        Print "HERE:", Error.Text ' TODO: Debug this and diplay error message to user
         If counter < 5 Then
           FMain.db.close()
           FMain.db.connect()
@@ -145,6 +146,14 @@ Public Sub RequestObserver_NewRequest(data As String)
         Endif
         res[req["oid"]]["success"] = False
       Endif
+    Case "runscript"
+      ' TODO: do the following:
+      ' get script_content depending on req["oid"]
+      ' create new shell process depending on type
+      ' setup baze environment in shell
+      ' pipe in the script_content
+      ' get result and display it in the current shell
+      ' kill new shell
   End Select
   infile = Open infile_name For Write Create
   jsres = JSON.Encode(res)
@@ -202,26 +211,29 @@ Public Sub get_reports() As String
 End
 
 Public Sub get_scripts() As String
-  ' Get all forms from the current database and generate JSON for script interface
+  ' Get all scripts from the current database and generate JSON for script interface
   Dim scripts, qcol As New Collection
   Dim s, k, result As String
   For Each s In FMain.db.dbobjects["scripts"]["python"]
     k = FMain.db.dbobjects["scripts"]["python"].key
     scripts[k] = New Collection
-    scripts[k]["name"] = s
+    scripts[k]["name"] = k
     scripts[k]["type"] = "python"
+    scripts[k]["script"] = s
   Next
   For Each s In FMain.db.dbobjects["scripts"]["r"]
     k = FMain.db.dbobjects["scripts"]["r"].key
     scripts[k] = New Collection
-    scripts[k]["name"] = s
+    scripts[k]["name"] = k
     scripts[k]["type"] = "r"
+    scripts[k]["script"] = s
   Next
   For Each s In FMain.db.dbobjects["scripts"]["nodejs"]
     k = FMain.db.dbobjects["scripts"]["nodejs"].key
     scripts[k] = New Collection
-    scripts[k]["name"] = s
+    scripts[k]["name"] = k
     scripts[k]["type"] = "nodejs"
+    scripts[k]["script"] = s
   Next
   result = JSON.Encode(scripts)
   result = Replace(result, "'", "\\'")

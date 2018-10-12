@@ -1,9 +1,9 @@
 # Gambas Project File 3.0
-# Compiled with Gambas 3.8.90
+# Compiled with Gambas 3.9.2
 Title=Baze Database Environment
 Startup=FMain
 Icon=images/majin-bu.png
-Version=0.6.0
+Version=0.6.1
 Component=gb.image
 Component=gb.qt5
 Component=gb.form
@@ -28,8 +28,8 @@ Component=gb.qt5.webkit
 Component=gb.web
 Component=gb.xml
 Component=gb.xml.xslt
-Description="The Baze is a database development environment similar to MS Access, LibreOffice Base or Query Anaylzer. It supports a number of SQL and NoSQL databases (ODBC, PostgreSQL, SQLite; eXist DB, XSB, Flora-2, ZODB, DES) and support for other systems is pending."
-Authors="Markus Schatten <markus_dot_schatten_at_foi_dot_hr>"
+Description="The Baze is a database development environment similar to MS Access, LibreOffice Base or Query Anaylzer. It supports a number of SQL and NoSQL databases (ODBC, PostgreSQL, SQLite; Mongo DB, eXist DB, XSB, Flora-2, ZODB, DES) and support for other systems is pending."
+Authors="Markus Schatten <markus_dot_schatten_at_foi_dot_hr>\n\nThanks to contributors:\nPetar Šestak (MongoDB interface and bug fixes)"
 TabSize=2
 Translate=1
 Language=en_US
