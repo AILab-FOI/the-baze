@@ -168,6 +168,7 @@ Public Sub get_queries() As String
   Dim q, result As String
   For Each qcol In FMain.db.dbobjects["queries"]
     For Each q In qcol
+      q = Replace(q, "\"", "\\\"")
       queries[qcol.key] = New Collection
       queries[qcol.key]["name"] = qcol.key
       queries[qcol.key]["query"] = q
@@ -189,6 +190,7 @@ Public Sub get_forms() As String
     forms[k] = New Collection
     forms[k]["name"] = f
   Next
+  f = Replace(f, "\"", "\\\"")
   result = JSON.Encode(forms)
   result = Replace(result, "'", "\\'")
   result = Replace(result, "\\n", " ")
@@ -219,6 +221,7 @@ Public Sub get_scripts() As String
     scripts[k] = New Collection
     scripts[k]["name"] = k
     scripts[k]["type"] = "python"
+    s = Replace(s, "\"", "\\\"")
     scripts[k]["script"] = s
   Next
   For Each s In FMain.db.dbobjects["scripts"]["r"]
@@ -226,6 +229,7 @@ Public Sub get_scripts() As String
     scripts[k] = New Collection
     scripts[k]["name"] = k
     scripts[k]["type"] = "r"
+    s = Replace(s, "\"", "\\\"")
     scripts[k]["script"] = s
   Next
   For Each s In FMain.db.dbobjects["scripts"]["nodejs"]
@@ -233,6 +237,7 @@ Public Sub get_scripts() As String
     scripts[k] = New Collection
     scripts[k]["name"] = k
     scripts[k]["type"] = "nodejs"
+    s = Replace(s, "\"", "\\\"")
     scripts[k]["script"] = s
   Next
   result = JSON.Encode(scripts)
@@ -243,10 +248,31 @@ End
 
 Public Sub ToolButtonImportAsModule_Click()
   ' TODO: save the script to a file and load it as a module
+  Dim tmp_path, module_file_name, import_cmd As String
+  Dim module_file As File
   FMain.db.new_script(stitle, TextEditorScript.Text, type)
   reload_baze()
   clear_terminal()
-  Write #proc, TextEditorScript.Text & "\n\n"
+  tmp_path = Temp()
+  Mkdir tmp_path
+  
+  Select type
+      Case "Python"
+        module_file_name = "module.py"
+        import_cmd = "import sys\n\nsys.path.append('" & tmp_path & "') \n\nimport module\n\nmodule.dbaze = dbaze\n\nfrom module import *\n\n"
+      Case "R"
+        module_file_name = "module.R"
+        import_cmd = "source('" & tmp_path &/ "module.R' )\n\n"
+      Case "NodeJS"
+        module_file_name = "module.js"
+        import_cmd = "var script = require('" & tmp_path &/ "module.js')\n\n"
+  End Select
+  
+  module_file = Open tmp_path &/ module_file_name For Write Create
+  Write #module_file, TextEditorScript.Text
+  module_file.Close()
+  Write #proc, import_cmd
+  clear_terminal()
 End
 
 Public Sub ToolButtonClose_Click()

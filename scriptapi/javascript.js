@@ -26,7 +26,7 @@ function baze( infile, outfile, queries, forms, reports, scripts )
         var qu = new query( this, queries[ q ].name );
         qu.run = function()
         {
-            this.parent.runQuery( this.name );
+            return this.parent.runQuery( this.name );
         }
         qu.type = queries[ q ].type
         qu.query = queries[ q ].query
@@ -40,7 +40,7 @@ function baze( infile, outfile, queries, forms, reports, scripts )
         var fo = new form( this, forms[ f ].name );
         fo.show = function()
         {
-            this.parent.showForm( this.name );
+            return this.parent.showForm( this.name );
         }
         this.forms[ forms[ f ].name ] = fo
     }
@@ -52,7 +52,7 @@ function baze( infile, outfile, queries, forms, reports, scripts )
         var re = new report( this, reports[ r ].name );
         re.show = function()
         {
-            this.parent.showReport( this.name );
+            return this.parent.showReport( this.name );
         }
         this.reports[ reports[ r ].name ] = re
     }
@@ -64,7 +64,7 @@ function baze( infile, outfile, queries, forms, reports, scripts )
         var sc = new script( this, scripts[ s ].name );
         sc.run = function()
         {
-            this.parent.runScript( this.name );
+            return this.parent.runScript( this.name );
         }
         sc.type = scripts[ s ].type
         sc.script = scripts[ s ].script
@@ -118,7 +118,9 @@ baze.prototype.sendRequest = function( typ, oid, command, params )
 baze.prototype.runQuery = function( query )
 {
     this.sendRequest( 'runquery', query );
-    return this.getResult( query );
+    var res = this.getResult( query );
+    // TODO: there seems to be a bug here (or maybe somwhere else), when a query is run (usually the first time) an "Unexpected end of JSON input" error is thrown. I'm guessing this has something to do with the asynchronous nature of nodejs, but I might be wrong. Need to inspect this!
+    return res;
 } 
 
 baze.prototype.showForm = function( form )
