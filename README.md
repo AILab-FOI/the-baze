@@ -2,14 +2,14 @@ Intro
 -----
 
 The Baze is a database development environment similar to MS Access, 
-LibreOffice Base, Query Anaylzer and similar. It aims on being a Swiss
+LibreOffice Base, Query Analyzer and similar. It aims on being a Swiss
 army knife for the data scientist.
 
 It supports a number of SQL and NoSQL databases (PostgreSQL, SQLite, 
 ODBC; MongoDB, eXist DB, XSB, Flora-2, DES, ZODB) and support for other 
 systems is pending.
 
-It supports a number of query languages (SQL, Datalog, Py-MapReduce,
+It supports a number of query languages (SQL, Datalog, Python, MapReduce,
 xPath, xQuery, transactional frame logic, Mongo JavaScript) and implements 
 an experimental scripting interface in Python, NodeJS and the R language. 
 
