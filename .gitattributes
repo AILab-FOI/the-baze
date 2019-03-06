@@ -1,5 +1,5 @@
 des/* linguist-vendored
 scriptapi/jquery-ui-1.11.4.custom/* linguist-vendored
-*.class 	text diff=Visual Basic
-*.class		text diff=Visual Basic
+*.class 	linguist-language=Gambas
+*.form		linguist-language=Gambas
 
