@@ -2,6 +2,6 @@ des/* linguist-vendored
 scriptapi/jquery-ui-1.11.4.custom/* linguist-vendored
 *.class linguist-detectable=true
 *.form linguist-detectable=true
-*.class	linguist-language=Visual Basic
-*.form	linguist-language=Visual Basic
+*.class	linguist-language=REALbasic
+*.form	linguist-language=REALbasic
 
