@@ -1,4 +1,4 @@
-des/* linguist-vendored
+#des/* linguist-vendored
 scriptapi/jquery-ui-1.11.4.custom/* linguist-vendored
 *.class linguist-detectable=true
 *.form linguist-detectable=true
