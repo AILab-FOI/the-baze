@@ -66,7 +66,7 @@ End
 Public Sub load_ui_from_db()
   ' load all table definitions from the db and paste it into the UI
   Dim i As Integer
-  pgtable.load_from_db(Left(FMain.main_tabstrip.Text, - Len(" - Alter Table")))
+  pgtable.load_from_db(Left(FMain.main_tabstrip.Text, -Len(" - Alter Table")))
   
   For i = 0 To pgtable.attributes.Max
     With TableViewMain

@@ -22,9 +22,9 @@ Public Sub ToolButtonExecute_Click()
   ' else (XML TextEditor) update the document on the given path
   Dim res, obj As Variant
   If query_type = "xpath" Then
-    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, - Len(" - xPath query")), TextEditorXML.Text, path)
+    res = FMain.db.new_xpath_query(Left$(FMain.main_tabstrip.Text, -Len(" - xPath query")), TextEditorXML.Text, path)
   Else
-    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, - Len(" - xQuery")), TextEditorXML.Text)
+    res = FMain.db.new_xquery(Left$(FMain.main_tabstrip.Text, -Len(" - xQuery")), TextEditorXML.Text)
   Endif
   TextEditorResult.Text = res["xml"]
   TreeViewResult.Clear()
@@ -82,9 +82,9 @@ Public Sub ToolButtonClose_Click()
   Dim qname As String
   Dim ok As Boolean = False
   If query_type = "xpath" Then
-    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xPath query"))
+    qname = Left$(FMain.main_tabstrip.Text, -Len(" - xPath query"))
   Else
-    qname = Left$(FMain.main_tabstrip.Text, - Len(" - xQuery"))
+    qname = Left$(FMain.main_tabstrip.Text, -Len(" - xQuery"))
   Endif
   If FMain.db.dbobjects["queries"][query_type & " queries"][qname] = TextEditorXML.Text Then
     If query_type = "xquery" Then

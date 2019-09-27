@@ -126,6 +126,7 @@ End
 Public Sub connect(Optional caller As Object = Null)
   ' connect to the database and import the realtions
   Dim query As String
+  Dim res As Collection
   If Not IsNull(caller) Then
     caller.ProgressBarLoading.Value = 0.0
   Endif
@@ -164,9 +165,9 @@ Public Sub connect(Optional caller As Object = Null)
     caller.ProgressBarLoading.Value = 0.3
   Endif
   query = ""
-  For Each result In resultSet
-    query = query & Left(constructUpdateQuery("insert", result["Relation"], result["NumArgs"]), -1) & ", "
-    query = query & Left(constructUpdateQuery("delete", result["Relation"], result["NumArgs"]), -1) & ", "
+  For Each res In resultSet
+    query = query & Left(constructUpdateQuery("insert", res["Relation"], res["NumArgs"]), -1) & ", "
+    query = query & Left(constructUpdateQuery("delete", res["Relation"], res["NumArgs"]), -1) & ", "
     If Not IsNull(caller) Then
       caller.ProgressBarLoading.Value += 0.7 / resultSet.Count
     Endif

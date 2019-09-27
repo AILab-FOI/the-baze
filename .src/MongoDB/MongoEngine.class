@@ -93,7 +93,7 @@ Public Function execute(jsCommand As String) As String
     Endif
   Wend
   If Trim(result) <> closingIdentifier Then
-    retVal &= Left$(Trim(result), - (AUX.CLOSING_IDENTIFIER_LENGTH + 1))
+    retVal &= Left$(Trim(result), -(AUX.CLOSING_IDENTIFIER_LENGTH + 1))
   Endif
   Return retVal
 End
